@@ -1,6 +1,26 @@
 <!DOCTYPE html>
-<canvas id="myCanvas" width="600" height="600"></canvas>
-<script src="Shapes.js"></script>
-<script src="Color.js"></script>
-<script src="LevelData.js"></script>
-<script src="Main.js"></script>
+<html>
+    <head>
+        <script src="Shapes.js"></script>
+        <script src="Color.js"></script>
+        <script src="Slider.js"></script>
+        <script src="LevelData.js"></script>
+        <script src="Main.js"></script>
+        <style>
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+        </style>
+    </head>
+<body style="background-color:rgb(40, 40, 40);">
+    <audio id="myAudio">
+        <source src="audio/click_001.ogg" type="audio/ogg">
+    </audio>
+    <canvas id="myCanvas" width="800" height="600"></canvas>
+</body>
+ 
+</html>

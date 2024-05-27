@@ -22,9 +22,26 @@ const data = {
 
 // It might just be easier to have a function for each level.... We'll see.
 // Need an efficient way to do code resuse.
+// Many of the levels will be similar. But also I want the freedom to have a lot of variety...
+// How about a separate function for each type of level...
 
-function loadLevel(ctx){
-    Shapes.Grid(ctx, 100,100, 300,300, 4, 10)
-    Shapes.VerticalSlider(ctx, 500,100, 300, 6,3, 10)
-    
+function loadLevel(levelNumber){
+    switch (levelNumber){
+        case 1: return sliderGridLevel();
+        default: return sliderGridLevel();
+    }
+}
+
+
+function sliderGridLevel(){
+    const slider = new Slider(600,100,300, 10, -1, 10)
+    const objs = [slider]
+    function winCon(objs){
+        return objs[0].value == 0 && objs[0].grabbed == false
+    }
+    return {objs: objs, winCon: winCon}
+}
+
+function level1(ctx){
+
 }
