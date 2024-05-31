@@ -23,8 +23,8 @@ function setup() { "use strict";
   // to all objects.
   canvas.addEventListener('mousedown', function (event) {
     var rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const x = (event.clientX - rect.left)*(canvas.width/rect.width);
+    const y = (event.clientY - rect.top)*(canvas.height/rect.height);
     objects.forEach(obj => {
       const priority = obj.mouseMove(x,y)
       if (priority > grabbedObj.priority){
@@ -42,8 +42,8 @@ function setup() { "use strict";
   // When the mouse is moved, we alert all objects
   canvas.addEventListener('mousemove', function (event) {
     var rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const x = (event.clientX - rect.left)*(canvas.width/rect.width);
+    const y = (event.clientY - rect.top)*(canvas.height/rect.height);
     
     canvas.style.cursor = 'default'
     objects.forEach(obj => {
@@ -60,8 +60,8 @@ function setup() { "use strict";
 
   canvas.addEventListener('mouseup', function (event) {
     var rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const x = (event.clientX - rect.left)*(canvas.width/rect.width);
+    const y = (event.clientY - rect.top)*(canvas.height/rect.height);
     
     if (grabbedObj.obj){
       grabbedObj.obj.release(x,y)
@@ -81,13 +81,14 @@ function setup() { "use strict";
   });
 
   function draw() {
-    if (level.winCon(objects)){
+    if (level.winCon()){
+      console.log("correct")
       new Audio('audio/confirmation_001.ogg').play();
       level = loadLevel(levelNumber + 1)
+      levelNumber ++
       objects = level.objs
     }
     var ctx = canvas.getContext('2d');
-    canvas.width = canvas.width;
 
     //Background
     Color.setColor(ctx,Color.black)

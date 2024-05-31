@@ -1,6 +1,6 @@
 class Slider{
 
-    constructor(x, top_y, height, numDivision=4, subdivision=2, lineWidthMax=10){
+    constructor(x, top_y, height, numDivision=4, subdivision=2, lineWidthMax=10,circleRadius=15){
         this.x = x
         this.top_y = top_y
         this.height = height
@@ -11,23 +11,26 @@ class Slider{
         this.circle_y = top_y + height/2
         this.grabbed = false
         this.grab_y = 0
-        this.circleRadius = 15
+        this.circleRadius = circleRadius
     }
 
     draw(ctx){
-        Color.setColor(ctx, Color.white)
-        Shapes.RoundedLine(ctx, this.x, this.top_y, this.x, this.top_y + this.height, this.lineWidthMax)
+        if(this.lineWidthMax != -1){
 
-        for (let i = 0; i <= this.numDivision; i++){
-            const horizontalLength = 20
-            const lineWidth = this.lineWidthMax * (i % this.subdivision == 0 ? 1 : 1/2)
-            if (i == this.value && !this.grabbed){
-                Color.setColor(ctx, Color.red)
-            }else{
-                Color.setColor(ctx, Color.white)
+            Color.setColor(ctx, Color.white)
+            Shapes.RoundedLine(ctx, this.x, this.top_y, this.x, this.top_y + this.height, this.lineWidthMax)
+            
+            for (let i = 0; i <= this.numDivision; i++){
+                const horizontalLength = 20
+                const lineWidth = this.lineWidthMax * (i % this.subdivision == 0 ? 1 : 1/2)
+                if (i == this.value && !this.grabbed){
+                    Color.setColor(ctx, Color.red)
+                }else{
+                    Color.setColor(ctx, Color.white)
+                }
+                Shapes.RoundedLine(ctx, this.x-horizontalLength, this.top_y+i*this.height/this.numDivision,
+                this.x+horizontalLength, this.top_y+i*this.height/this.numDivision, lineWidth)
             }
-            Shapes.RoundedLine(ctx, this.x-horizontalLength, this.top_y+i*this.height/this.numDivision,
-                                    this.x+horizontalLength, this.top_y+i*this.height/this.numDivision, lineWidth)
         }
 
         Color.setColor(ctx, Color.red)
@@ -56,7 +59,9 @@ class Slider{
     grab(x,y){
         this.grabbed = true
         this.grab_y = y - this.circle_y
+        
         new Audio('audio/click_003.ogg').play();
+          
     }
 
     release(x,y){
