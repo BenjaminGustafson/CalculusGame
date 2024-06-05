@@ -1,6 +1,6 @@
 class Slider{
 
-    constructor(x, top_y, height, numDivision=4, subdivision=2, lineWidthMax=10,circleRadius=15){
+    constructor(x, top_y, height, numDivision=4, subdivision=2, lineWidthMax=10,circleRadius=15,axis=-1){
         this.x = x
         this.top_y = top_y
         this.height = height
@@ -12,6 +12,7 @@ class Slider{
         this.grabbed = false
         this.grab_y = 0
         this.circleRadius = circleRadius
+        this.axis = axis
     }
 
     draw(ctx){
@@ -28,8 +29,9 @@ class Slider{
                 }else{
                     Color.setColor(ctx, Color.white)
                 }
-                Shapes.RoundedLine(ctx, this.x-horizontalLength, this.top_y+i*this.height/this.numDivision,
-                this.x+horizontalLength, this.top_y+i*this.height/this.numDivision, lineWidth)
+                Shapes.Line(ctx, this.x-horizontalLength, this.top_y+i*this.height/this.numDivision,
+                                 this.x+horizontalLength, this.top_y+i*this.height/this.numDivision, 
+                            lineWidth, (i==this.axis ? "arrow": "rounded"))
             }
         }
 

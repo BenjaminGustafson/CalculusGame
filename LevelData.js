@@ -27,44 +27,63 @@ const data = {
 
 function loadLevel(levelNumber){
     switch (levelNumber){
-        // Use for testing only
-        case 0: return multiSliderLevel([{start_x:-1, start_y:1, end_x:0, end_y:0},{start_x:0, start_y:0, end_x:1, end_y:1}],[-1,1],4,4,-1);
-
-        // case 0: return slidableGridLevel([
-        //     {start_x:-2, start_y:-2, end_x:-1, end_y:-1},
-        //     {start_x:-1, start_y:-1, end_x:0, end_y:1},
-        //     {start_x:0, start_y:1, end_x:1, end_y:0},
-        //     {start_x:1, start_y:0, end_x:2, end_y:1},
-        // ],
-        //     [1,2,-1,1],16,16,-1,4);
-
-        // Starts here
-        // Probably change these to be objects, for readability
         case 1: return simpleSlopeLevel({start_x:0, start_y:0, end_x:1, end_y:1},1,4,4,-1);
         case 2: return simpleSlopeLevel({start_x:0, start_y:0, end_x:1, end_y:2},2,4,4,-1);
         case 3: return simpleSlopeLevel({start_x:0, start_y:0, end_x:1, end_y:-1},-1,4,4,-1);
         case 4: return simpleSlopeLevel({start_x:0, start_y:0, end_x:2, end_y:1},1/2,4,8,2);
         case 5: return simpleSlopeLevel({start_x:-1, start_y:0, end_x:2, end_y:1},1/3,4,12,3);
         case 6: return simpleSlopeLevel({start_x:0, start_y:0, end_x:2, end_y:2},1,4,8,2);
-        case 7: return multiSliderLevel([{start_x:-1, start_y:1, end_x:0, end_y:0},{start_x:0, start_y:0, end_x:1, end_y:1}],[-1,1],4,4,-1);
+        case 7: return multiSliderLevel([{start_x:-1, start_y:1, end_x:0, end_y:0},{start_x:0, start_y:0, end_x:1, end_y:1}],[-1,1],4,4,-1,2);
         case 8: return slidableGridLevel([
             {start_x:-2, start_y:-2, end_x:-1, end_y:-1},
             {start_x:-1, start_y:-1, end_x:0, end_y:1},
             {start_x:0, start_y:1, end_x:1, end_y:0},
-            {start_x:1, start_y:0, end_x:2, end_y:1},
-        ],
+            {start_x:1, start_y:0, end_x:2, end_y:1},],
             [1,2,-1,1],4,4,-1,10);
+        case 9: return multiSliderLevel([
+            {start_x:-2, start_y:2, end_x:-1, end_y:-1},
+            {start_x:-1, start_y:-1, end_x:0, end_y:-2},
+            {start_x:0, start_y:-2, end_x:1, end_y:-1},
+            {start_x:1, start_y:-1, end_x:2, end_y:2},],
+            [-3,-1,1,3],4,6,-1,4);
+        case 0: // Move this line for testing
+        case 10: return multiSliderLevel(plotGrid(x => x*x, 4),
+            [-3,-1,1,3],4,6,-1,4);
+        case 100: return slidableGridLevel([
+            {start_x:-2, start_y:2, end_x:-1, end_y:-1},
+            {start_x:-1, start_y:-1, end_x:0, end_y:-2},
+            {start_x:0, start_y:-2, end_x:1, end_y:-1},
+            {start_x:1, start_y:-1, end_x:2, end_y:2},],
+            [-3,-1,1,3],8,8,-1,10);
         default: return endLevel();
     }
 }
 
+
+function plotGrid(f, gridSize, x_axis, y_axis, x_scale, y_scale){
+    var plot = []
+    for (let i = 0; i < gridSize; i++){
+        const x = i-gridSize/2
+        plot.push({
+            start_x: x,
+            start_y: f(x),
+            end_x: x+1,
+            end_y: f(x+1)
+        })
+    }
+    return plot
+}
+
 function slidableGridLevel(lines, answer, gridSize, sliderSize, sliderDivision, lineWidth){
-    const grid1 = new Grid(50,150,300,300,gridSize,lineWidth)
-    const grid2 = new Grid(450,150,300,300,gridSize,lineWidth)
+    const grid1 = new Grid(200,200,500,500,gridSize,lineWidth)
+    const grid2_x = 900
+    const grid2_y = 200
+    const grid2_size = 500
+    const grid2 = new Grid(grid2_x,grid2_y,grid2_size,grid2_size,gridSize,lineWidth)
     var sliders = []
     var objs = [grid1,grid2]
     for (let i = 0; i < gridSize; i++){
-        const slider = new Slider(450+(i+0.5)*300/gridSize,150,300, sliderSize, sliderDivision, -1, lineWidth*1.5)
+        const slider = new Slider(grid2_x+(i+0.5)*grid2_size/gridSize,grid2_y,grid2_size, sliderSize, sliderDivision, -1, lineWidth*1.5)
         objs.push(slider)
         sliders.push(slider)
     }
@@ -98,11 +117,11 @@ function simpleSlopeLevel(line, answer, gridSize, sliderSize, sliderDivision){
 
 
 function multiSliderLevel(lines, answer, gridSize, sliderSize, sliderDivision, numSliders){
-    const grid = new Grid(400,200,500,500,gridSize,10)
+    const grid = new Grid(400,200,500,500,gridSize,10,2,2)
     var objs = [grid]
     var sliders = []
     for (let i = 0; i < numSliders; i++){
-        const slider = new Slider(600,100,400, sliderSize, sliderDivision, 10)
+        const slider = new Slider(1100+i*100,200,500, sliderSize, sliderDivision, 10)
         objs.push(slider)
         sliders.push(slider)
     }
@@ -112,7 +131,7 @@ function multiSliderLevel(lines, answer, gridSize, sliderSize, sliderDivision, n
     function winCon(){
         for (let i = 0; i < numSliders; i++){
             tickValue = (sliderSize/2 - sliders[i].value)/(sliderDivision == -1 ? 1 : sliderDivision)
-            if (tickValue != answer[i || sliders[i].grabbed])
+            if (tickValue != answer[i] || sliders[i].grabbed)
                 return false
         }
         return true
@@ -126,8 +145,3 @@ function endLevel(){
     return {objs: [], winCon: ()=>false}
 }
 
-
-
-function level1(ctx){
-
-}
