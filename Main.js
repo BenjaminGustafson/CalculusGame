@@ -10,13 +10,30 @@ function setup() { "use strict";
   //  - have a method grab(x,y) that is called if the grab is successful
   //  - have a release(x,y) method that is called when the 
   //    object is grabbed and then released
-
-  const s = new Slider(600,100,300, 10, -1, 10)
   
+  const nextLevelAudio = new Audio('audio/confirmation_001.ogg')
+  const myAudio = document.getElementById('myAudio')
+
+  const myAudio2 = new Audio('audio/confirmation_001.ogg')
+  //myAudio.load()
+
+  
+
   var levelNumber = 1
+  var storedLevelNumber = localStorage.getItem('levelNumber')
+  if (storedLevelNumber){
+    console.log("restore progress level", storedLevelNumber)
+    levelNumber = parseInt(storedLevelNumber)
+  }
+  if (isNaN(levelNumber)){
+    console.log("error getting level from local storage")
+    levelNumber = 1
+  }
+  console.log("levelNumber",levelNumber)
   var level = loadLevel(levelNumber)
   var objects = level.objs
-  
+  var solved = false
+
   var grabbedObj = {priority:-1, obj:null};
 
   // When the mouse is clicked, the (x,y) of the click is broadcast
@@ -82,11 +99,13 @@ function setup() { "use strict";
 
   function draw() {
     if (level.winCon()){
+      solved = true
       console.log("correct")
-      new Audio('audio/confirmation_001.ogg').play();
+      myAudio.play();
       level = loadLevel(levelNumber + 1)
       levelNumber ++
       objects = level.objs
+      localStorage.setItem("levelNumber",levelNumber)
     }
     var ctx = canvas.getContext('2d');
 

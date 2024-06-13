@@ -8,6 +8,7 @@ class Color {
     static black = new Color(40,40,40);
     static white = new Color(230,230,230);
     static red = new Color(248,60,65);
+    static green = new Color(78, 242, 121);
 
     static setColor(ctx, color){
         ctx.strokeStyle = `rgb(${color.r},${color.g},${color.b})`
