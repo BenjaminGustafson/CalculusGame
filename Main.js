@@ -1,37 +1,44 @@
+/**
+ * 
+ *  The game state is:
+ *    - the current level number
+ *    - the game objects in that level
+ * 
+ *  All game objects must:
+ *    - have a draw(ctx) method
+ *    - have a mouseMove(x,y) method that checks if the mouse is over the object and
+ *      returns the grab priority of that object, or -1 if the mouse is not over the object
+ *    - have a method grab(x,y) that is called if the grab is successful
+ *    - have a release(x,y) method that is called when the 
+ *      object is grabbed and then released.
+ * 
+ *  A level is an object with:
+ *    - objs: a list of game objects
+ *    - winCon: a function that checks whether the level is solved
+ * 
+ */
+
 
 function setup() { "use strict";
 
   var canvas = document.getElementById('myCanvas');
-  //  All objects must:
-  //  - have a draw(ctx) method
-  //  - have a mouseMove(x,y) method that checks if the mouse is over the object
-  //    returns the grab priority of that object, or
-  //    -1 if the mouse is not over the object
-  //  - have a method grab(x,y) that is called if the grab is successful
-  //  - have a release(x,y) method that is called when the 
-  //    object is grabbed and then released
-  
-  const nextLevelAudio = new Audio('audio/confirmation_001.ogg')
-  const myAudio = document.getElementById('myAudio')
-
-  const myAudio2 = new Audio('audio/confirmation_001.ogg')
-  //myAudio.load()
 
   var gameState = {
-    levelNumber: 1, 
-    objects: [], 
+    levelNumber: 0, 
+    objects: [], // TODO: swap this to level
     solved: false,
   }
 
+  const levelList = [
+    "intro3",
+  ]
 
-  var storedLevelNumber = localStorage.getItem('levelNumber')
-  if (storedLevelNumber){
-    gameState.levelNumber = 1//parseInt(storedLevelNumber)
-  }
-
-  var level = loadLevel(gameState.levelNumber)
+  var level = playLevel(levelList[gameState.levelNumber])
   gameState.objects = level.objs
 
+  // ----------------------------------------------------------------------------------------------
+  // Mouse events
+  // ----------------------------------------------------------------------------------------------
   // We handle which object can be grabbed in the main class
   var grabbedObj = {priority:-1, obj:null};
 
@@ -99,15 +106,11 @@ function setup() { "use strict";
   });
 
 
-  function sectionMenu(){
 
-  }
-  
-  function levelNavigation(){
-  
-  }
-
-  function draw() {
+  // ----------------------------------------------------------------------------------------------
+  // The main update loop
+  // ----------------------------------------------------------------------------------------------
+  function update() {
     if (level.winCon()){
       gameState.solved = true
       console.log("correct")
@@ -115,7 +118,6 @@ function setup() { "use strict";
       level = loadLevel(gameState.levelNumber + 1)
       gameState.levelNumber ++
       gameState.objects = level.objs
-      //localStorage.setItem("levelNumber",levelNumber)
     }
     var ctx = canvas.getContext('2d');
 
@@ -125,23 +127,15 @@ function setup() { "use strict";
     Color.setColor(ctx,new Color(10,10,10))
     ctx.strokeRect(0,0,canvas.width,canvas.height);
 
-    // Color.setColor(ctx,Color.white)
-    // loadLevel(ctx)
-
-    // Color.setColor(ctx,Color.red)
-    // Shapes.LineSegment(ctx, 100,500, 200,550, 10, 15)
-    // Shapes.Circle(ctx, 250,250, 15)
-
-    
 
     for (let i = 0; i < gameState.objects.length; i++){
       gameState.objects[i].draw(ctx);
     }
 
 
-    window.requestAnimationFrame(draw); 
+    window.requestAnimationFrame(update); 
   }
-  draw();
+  update();
   console.log(gameState.objects)
 }
 window.onload = setup;

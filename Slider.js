@@ -25,7 +25,7 @@ class Slider{
      * @param {*} circleRadius 
      * @param {*} axis Where 0 is on the slider. Counting from the top down starting at zero.
      */
-    constructor(x, top_y, height, numDivision=4, subdivision=2, axis=-1, lineWidthMax=10,circleRadius=15){
+    constructor(x, top_y, height, numDivision=4, subdivision=1, axis=-1, lineWidthMax=10,circleRadius=15){
         this.x = x
         this.top_y = top_y
         this.height = height

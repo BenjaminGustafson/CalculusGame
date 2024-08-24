@@ -1,19 +1,61 @@
 /**
  * This file contains all of the data for the levels.
+ * 
+ * The canvas is set to 1600 x 900 px, and scaled down if the window is too small.
+ * We do all layout math relative to the 1600 x 900 px.
+ * 
+ * Hardcoding pixel values might seem like bad practice, but we know that we want 
+ * the aspect ratio to be 16:9. And its arguably more human readable.
+ * 
+ * 
  */
 
-// You could make it so that each level function takes in a single js object
-// Then if we wanted to use json for data storage later, you could just load in each object and pass it to the function....
-// You would need to also store the level type. 
-// TODO: implement this kind of thing
-data = {
-    sections:[
-        {levels:[
-            {id:"slope1", }
-            ,]
-        }
-    ],
 
+function playLevel(levelID){
+    switch (levelID){
+        case "intro1":{
+            const gridLeft = new Grid(500,200,200,400,1,2,5)
+            const gridRight = new Grid(900,200,200,400,1,2,5)
+            return {objs:[gridLeft,gridRight], winCon: ()=>false} 
+        }
+        case "intro3":{
+            // Right align 100px left of middle (800-100-400=300)
+            // Center vertically (450-400/2=250)
+            const gridLeft = new Grid(300,250,400,400,4,4,5)
+            // Left align 100px right of middle (800+100=900)
+            const gridRight = new Grid(900,250,400,400,4,4,5)
+            // On first four cols of gridRight
+            // x = 900, 950, 1000, 1050. top_y = 250.  
+            const slider1 = new Slider(900, 250, 400, 4)
+            return {objs:[gridLeft,gridRight,slider1], winCon: ()=>false} 
+        }
+    }
+}
+
+/**
+ * Puzzles in section 1.1-1.4
+ * 
+ * @param params object containing:
+ * - line: {start_x, start_y, end_x, end_y}
+ * - gridSize
+ * - sliderSize
+ * - sliderDivision
+ * @returns object containing:
+ * - objs a list of game objects
+ * - winCon a function that returns true when the level is passed
+ */
+function simpleSlopeLevel(params){
+    // Draw the grid on the left and the slider on the right.
+    // Make the squares 200 x 200 each time
+    const unitSize = 200
+    const width = params.grid.gridWidth * unitSize 
+    const height = params.grid.gridHeight * unitSize
+    const grid = new Grid(800-100-width,450-height/2,width,height,params.grid.gridWidth, params.grid.gridHeight,10)
+    const objs = [grid]
+    function winCon(){
+        return false
+    }
+    return {objs: objs, winCon: winCon}
 }
 
 
@@ -93,33 +135,6 @@ function loadLevel(levelNumber){
 }
 
 
-/**
- * Puzzles in section 1.1-1.4
- * 
- * @param params object containing:
- * - line: {start_x, start_y, end_x, end_y}
- * - gridSize
- * - sliderSize
- * - sliderDivision
- * @returns object containing:
- * - objs a list of game objects
- * - winCon a function that returns true when the level is passed
- */
-function simpleSlopeLevel(params){
-    // Draw the grid on the left and the slider on the right.
-    // Make the squares 200 x 200 each time
-    const unitSize = 200
-    const width = params.grid.gridWidth * unitSize 
-    const height = params.grid.gridHeight * unitSize
-    const slider = new Slider(800+100+width/2,450-height/2,height, params.slider.sliderSize, params.slider.sliderDivision, params.slider.axis, 10)
-    const grid = new Grid(800-100-width,450-height/2,width,height,params.grid.gridWidth, params.grid.gridHeight,10)
-    grid.addLine(params.line)
-    const objs = [slider,grid]
-    function winCon(){
-        return slider.value == params.answer && slider.grabbed == false
-    }
-    return {objs: objs, winCon: winCon}
-}
 
 
 

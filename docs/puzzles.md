@@ -1,22 +1,9 @@
 
-# 1. Single slopes
+# 1. Introduction
 
-## 1.1 Introduction
-
-Things learned here:
-- how the slider interface works
-- what the grids look like
-- the basic idea of slope
-
-TODO: make some sort of prompt that helps show which part is grabbable,
-like have the slider blink  
-
-Done:
-1. 1
-2. 2
-3. 3
-TODO:
-
+- 1.1
+- 1.2
+- 1.3
 
 ## 1.2 Negative slopes
 We now introduce that the zero is denoted by having an arrow.
