@@ -5,16 +5,15 @@
 // You could make it so that each level function takes in a single js object
 // Then if we wanted to use json for data storage later, you could just load in each object and pass it to the function....
 // You would need to also store the level type. 
-
+// TODO: implement this kind of thing
 data = {
     sections:[
-        {section: 1,
-        levels: [
-            {},
-            {},
-        ]
+        {levels:[
+            {id:"slope1", }
+            ,]
         }
-    ,]
+    ],
+
 }
 
 
@@ -93,9 +92,6 @@ function loadLevel(levelNumber){
     }
 }
 
-function levelNavigation(){
-
-}
 
 /**
  * Puzzles in section 1.1-1.4

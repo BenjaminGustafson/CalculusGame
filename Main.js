@@ -17,23 +17,22 @@ function setup() { "use strict";
   const myAudio2 = new Audio('audio/confirmation_001.ogg')
   //myAudio.load()
 
-  
+  var gameState = {
+    levelNumber: 1, 
+    objects: [], 
+    solved: false,
+  }
 
-  var levelNumber = 1
+
   var storedLevelNumber = localStorage.getItem('levelNumber')
   if (storedLevelNumber){
-    console.log("restore progress level", storedLevelNumber)
-    levelNumber = parseInt(storedLevelNumber)
+    gameState.levelNumber = 1//parseInt(storedLevelNumber)
   }
-  if (isNaN(levelNumber)){
-    console.log("error getting level from local storage")
-    levelNumber = 1
-  }
-  console.log("levelNumber",levelNumber)
-  var level = loadLevel(levelNumber)
-  var objects = level.objs
-  var solved = false
 
+  var level = loadLevel(gameState.levelNumber)
+  gameState.objects = level.objs
+
+  // We handle which object can be grabbed in the main class
   var grabbedObj = {priority:-1, obj:null};
 
   // When the mouse is clicked, the (x,y) of the click is broadcast
@@ -42,7 +41,7 @@ function setup() { "use strict";
     var rect = canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left)*(canvas.width/rect.width);
     const y = (event.clientY - rect.top)*(canvas.height/rect.height);
-    objects.forEach(obj => {
+    gameState.objects.forEach(obj => {
       const priority = obj.mouseMove(x,y)
       if (priority > grabbedObj.priority){
         grabbedObj.priority = priority
@@ -63,10 +62,12 @@ function setup() { "use strict";
     const y = (event.clientY - rect.top)*(canvas.height/rect.height);
     
     canvas.style.cursor = 'default'
-    objects.forEach(obj => {
+    gameState.objects.forEach(obj => {
       // If any object returns true, we are hovering over a clickable object
-      if (obj.mouseMove(x,y) != -1){
+      if (obj.mouseMove(x,y) != 1){ // TODO: fix magic number
         canvas.style.cursor = 'grab'
+      }else if (obj.mouseMove(x,y) == 2){
+        canvas.style.cursor = 'pointer'
       }
     })
     // If an object is already grabbed
@@ -88,7 +89,7 @@ function setup() { "use strict";
       
       // Revert the cursor
       canvas.style.cursor = 'default'
-      objects.forEach(obj => {
+      gameState.objects.forEach(obj => {
         // If any object returns true, we are hovering over a clickable object
         if (obj.mouseMove(x,y) != -1){
           canvas.style.cursor = 'grab'
@@ -97,15 +98,24 @@ function setup() { "use strict";
     }
   });
 
+
+  function sectionMenu(){
+
+  }
+  
+  function levelNavigation(){
+  
+  }
+
   function draw() {
     if (level.winCon()){
-      solved = true
+      gameState.solved = true
       console.log("correct")
       myAudio.play();
-      level = loadLevel(levelNumber + 1)
-      levelNumber ++
-      objects = level.objs
-      localStorage.setItem("levelNumber",levelNumber)
+      level = loadLevel(gameState.levelNumber + 1)
+      gameState.levelNumber ++
+      gameState.objects = level.objs
+      //localStorage.setItem("levelNumber",levelNumber)
     }
     var ctx = canvas.getContext('2d');
 
@@ -124,14 +134,18 @@ function setup() { "use strict";
 
     
 
-    for (let i = 0; i < objects.length; i++){
-      objects[i].draw(ctx);
+    for (let i = 0; i < gameState.objects.length; i++){
+      gameState.objects[i].draw(ctx);
     }
 
 
     window.requestAnimationFrame(draw); 
   }
   draw();
-  console.log(objects)
+  console.log(gameState.objects)
 }
 window.onload = setup;
+
+
+
+
