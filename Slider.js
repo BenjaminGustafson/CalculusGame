@@ -20,18 +20,14 @@ class Slider{
      * @param {*} top_y 
      * @param {*} height 
      * @param {*} numDivision The slider will have numDivision+1 tick marks.
-     * @param {*} subdivision 
-     * @param {*} lineWidthMax 
-     * @param {*} circleRadius 
      * @param {*} axis Where 0 is on the slider. Counting from the top down starting at zero.
+     * @param {*} circleRadius 
      */
-    constructor(x, top_y, height, numDivision=4, subdivision=1, axis=-1, lineWidthMax=10,circleRadius=15){
+    constructor(x, top_y, height, numDivision, startValue, axis=-1, circleRadius=15){
         this.x = x
         this.top_y = top_y
         this.height = height
         this.numDivision = numDivision
-        this.subdivision = subdivision
-        this.lineWidthMax = lineWidthMax
         this.grabbed = false
         this.grab_y = 0
         this.circleRadius = circleRadius
@@ -42,7 +38,7 @@ class Slider{
             this.axis = axis
             this.showAxis = true
         }
-        this.value = 0 // The true value of the slider
+        this.value = startValue // The true value of the slider
         this.unitLength = this.height/this.numDivision
         // The circle goes at the tick mark given by the value
         this.circle_y = this.top_y + (this.axis - this.value)* this.unitLength
@@ -50,31 +46,8 @@ class Slider{
     }
 
     draw(ctx){
-        if(this.lineWidthMax != -1){
 
-            Color.setColor(ctx, Color.white)
-            Shapes.RoundedLine(ctx, this.x, this.top_y, this.x, this.top_y + this.height, this.lineWidthMax)
-            
-            for (let i = 0; i <= this.numDivision; i++){
-                const horizontalLength = 20
-                const lineWidth = this.lineWidthMax * (i % this.subdivision == 0 ? 1 : 1/2)
-                const value = this.axis - i
-                if (value == this.value && !this.grabbed){
-                    Color.setColor(ctx, this.circleColor)
-                }else{
-                    Color.setColor(ctx, Color.white)
-                }
-                var lineType = "rounded"
-                if (this.showAxis == true && i == this.axis){
-                    lineType = "arrow"
-                }
-                Shapes.Line(ctx, this.x-horizontalLength, this.top_y+i*this.unitLength,
-                                 this.x+horizontalLength, this.top_y+i*this.unitLength, 
-                            lineWidth, lineType)
-            }
-        }
-
-        Color.setColor(ctx, this.circleColor)
+        Color.setColor(ctx, Color.red)
         Shapes.Circle(ctx, this.x,this.circle_y, this.circleRadius)
 
     }
@@ -84,7 +57,7 @@ class Slider{
             this.circle_y = Math.max(Math.min(y - this.grab_y, this.top_y+this.height), this.top_y)
             const value =  this.axis - Math.round((this.circle_y-this.top_y)/this.unitLength)
             if (value != this.value){
-                new Audio('audio/click_003.mp3').play()
+                // new Audio('audio/click_003.mp3').play()
                 this.value = value
                 console.log('value', value)
             }

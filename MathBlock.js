@@ -1,25 +1,50 @@
 
 class MathBlock {
+
+    static VARIABLE = 0
+    static POWER = 1
+    static EXPONENT = 2
+    static FUNCTION = 3
+    static CONSTANT = 4
+    static BIN_OP = 5
+
     depth = 0
     x = 0
     y = 0 
     w = 0
     h = 0
 
-    grabbed = false
-    color = "rgb(0,0,0)";
-    grabColor = "rgb(100,100,100)"
-    
-    origin_x = 10
-    origin_y = 100
-    base_width = 50
-    base_height = 70
-    padding = 5
-    
+    translate_x = 0
+    translate_y = 0
+    scale_x = 1
+    scale_y = 1
 
-    constructor (num_children, token){
-        this.num_children = num_children
-        this.children = new Array(num_children)
+    grabbed = false
+    
+    base_width = 50
+    base_height = 50
+    padding = 10
+        
+    lineWidth = 5
+
+    constructor (type, token, origin_x, origin_y){
+        this.origin_x = origin_x
+        this.origin_y = origin_y
+        this.type = type
+        switch (type){
+            case this.POWER:
+            case this.EXPONENT:
+            case this.FUNCTION:
+                this.num_children = 1
+                break
+            case this.BIN_OP:
+                this.num_children = 2
+                break
+            default:
+                this.num_children = 0
+                break
+        }
+        this.children = new Array(this.num_children)
         this.token = token
     }
 
@@ -31,17 +56,28 @@ class MathBlock {
     setupChildren (x = this.origin_x,y=this.origin_y,depth=0){
         this.x = x
         this.y = y
-        this.h = this.base_height
-        this.w = this.base_width
         this.depth = depth
+        if (this.num_children == 0){
+            this.h = this.base_height
+            this.w = this.base_width
+        }
 
+        
+
+        this.w = this.padding*3 // left padding + 2 * token padding, token width added in draw method....... this won't work
         for (let i = 0; i < this.num_children; i++){
             const child = this.children[i]
-            child.setupChildren(x+this.w+this.padding,y+this.padding,depth+1)
-            this.w += child.w + this.padding
-            this.h = Math.max(this.h, child.h) + this.padding
+            if (child){
+                child.setupChildren(x+this.w+this.padding,y+this.padding,depth+1)
+                this.w += child.w + this.padding
+                this.h = Math.max(this.h, child.h) + this.padding*2
+            }else{
+                this.w += this.base_width
+                this.h = this.h + this.padding*2
+            }
         }
     }
+
 
 
     setChild(n, child){
@@ -52,33 +88,59 @@ class MathBlock {
         return this.children[n]
     }
 
-    mouseDown(mx,my,grabber){
-        this.children.forEach(c => c.mouseDown(mx,my,grabber))   
+    grab(mx,my){
+        this.grabbed = true
     }
 
-    mouseUp(mx,my){
-        this.children.forEach(c => c.mouseUp(mx,my))
+    release(mx,my){
+        this.grabbed = false
     }
 
     mouseMove(mx,my){
-        this.children.forEach(c => c.mouseMove(mx,my))
+        //this.children.forEach(c => c.mouseMove(mx,my))
+        if (mx >= this.x && mx <= this.x + this.w && my >= this.y && my <= this.y + this.h){
+            return 1
+        }else{
+            return -1
+        }
     }
 
     draw (ctx){
         
 
         if (this.grabbed){
-            ctx.strokeStyle = this.grabColor
+            Color.setColor(ctx,Color.light_gray)
         }else{
-            ctx.strokeStyle = this.color
+            Color.setColor(ctx,Color.white)
         }
-        ctx.fillStyle = ctx.strokeStyle
-        ctx.font = "50px serif";
-        ctx.fillText(this.token, this.x + 10, this.y + this.height/2+20);
-        ctx.strokeRect(this.x,this.y,this.w,this.h)
 
-        for (let i = 0; i < this.num_children; i++){
-            this.children[i].draw(ctx);
+        
+
+        if (this.num_children == 0){
+            ctx.font = "40px monospace";
+            ctx.fillText(this.token, this.x + 15, this.y + this.h/2+10);
+            ctx.lineWidth = this.lineWidth
+            ctx.strokeRect(this.x,this.y,this.w,this.h)
+        }else if (this.num_children == 1){
+            ctx.font = "40px monospace";
+            ctx.fillText(this.token, this.x + 15, this.y + this.h/2+10);
+            ctx.lineWidth = this.lineWidth
+            ctx.strokeRect(this.x,this.y,this.w,this.h)
+            if (!this.children[0]){
+                ctx.strokeRect(this.x+this.w-this.base_width-this.padding,this.y+this.h/2-this.base_height/2,this.base_width,this.base_height)
+            }
+
+        }else if (this.num_children == 2){
+            ctx.font = "40px monospace";
+            ctx.fillText(this.token + "•", this.x + this.w/2 - ctx.measureText(this.token).width/2, this.y + this.h/2+10);
+            ctx.lineWidth = this.lineWidth
+            ctx.strokeRect(this.x,this.y,this.w,this.h)
+            if (!this.children[0]){
+                ctx.strokeRect(this.x+this.padding,this.y+this.h/2-this.base_height/2,this.base_width,this.base_height)
+            }
+            if (!this.children[1]){
+                ctx.strokeRect(this.x+this.w-this.base_width-this.padding,this.y+this.h/2-this.base_height/2,this.base_width,this.base_height)
+            }
         }
         
     }
@@ -112,14 +174,6 @@ class MathBlock {
     }
 
     
-
-    static derivative(block){
-
-    }
-
-    static associate(block){
-
-    }
 
 
 }

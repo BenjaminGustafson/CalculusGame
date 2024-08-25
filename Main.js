@@ -30,7 +30,7 @@ function setup() { "use strict";
   }
 
   const levelList = [
-    "intro3",
+    "demoCont",
   ]
 
   var level = playLevel(levelList[gameState.levelNumber])
@@ -70,10 +70,11 @@ function setup() { "use strict";
     
     canvas.style.cursor = 'default'
     gameState.objects.forEach(obj => {
-      // If any object returns true, we are hovering over a clickable object
-      if (obj.mouseMove(x,y) != 1){ // TODO: fix magic number
+      // If any object returns 1, we are hovering over a grabbable object
+      if (obj.mouseMove(x,y) == 1){ // TODO: fix magic number
         canvas.style.cursor = 'grab'
-      }else if (obj.mouseMove(x,y) == 2){
+      }
+      else if (obj.mouseMove(x,y) == 2){ // Clickable object
         canvas.style.cursor = 'pointer'
       }
     })
@@ -114,10 +115,7 @@ function setup() { "use strict";
     if (level.winCon()){
       gameState.solved = true
       console.log("correct")
-      myAudio.play();
-      level = loadLevel(gameState.levelNumber + 1)
       gameState.levelNumber ++
-      gameState.objects = level.objs
     }
     var ctx = canvas.getContext('2d');
 
@@ -135,6 +133,15 @@ function setup() { "use strict";
 
     window.requestAnimationFrame(update); 
   }
+
+  var ctx = canvas.getContext('2d');
+  ctx.font = "40px monospace";
+  const tokens = ["x","f","+","•","sin","e","-"]
+  for (let i = 0 ; i < tokens.length; i ++){
+      console.log(tokens[i], ctx.measureText(tokens[i]).width)
+  }
+
+
   update();
   console.log(gameState.objects)
 }
