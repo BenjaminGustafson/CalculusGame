@@ -42,11 +42,13 @@ function playLevel(levelID){
             const block1 = new MathBlock(MathBlock.VARIABLE,"x",1200,400)
             const block2 = new MathBlock(1,"f",1300,400)
             const block3 = new MathBlock(2,"+",1200,500)
+            const slider1 = new Slider(1300, 250, 400, 8, 0, 4, 0.1, true, true)
+            const slider2 = new Slider(400, 800, 400, 8, 0, 4, 0.1, true, false)
             block2.setChild(0,block1)
             block1.setupChildren()
             block2.setupChildren()
             block3.setupChildren()
-            return {objs:[gridLeft,gridRight,block1], winCon: ()=>false} 
+            return {objs:[gridLeft,gridRight,block1,slider1,slider2], winCon: ()=>false} 
         }
     }
 }

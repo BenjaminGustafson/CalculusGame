@@ -1,11 +1,14 @@
 class Slider{
+
+
+    lineWidth = 5
     /**
      * 
      * Ex: 
      *
-     * _____ i=0 value = 2   y = top_y 
+     * _____ i=0 value = 2   y = y 
      *   |
-     * __|__ i=1 value = 1   y = top_y + unitLength
+     * __|__ i=1 value = 1   y = y + unitLength
      *   |
      * <_|_> i=2 value = 0  axis = 2
      *   |
@@ -23,13 +26,15 @@ class Slider{
      * @param {*} axis Where 0 is on the slider. Counting from the top down starting at zero.
      * @param {*} circleRadius 
      */
-    constructor(x, top_y, height, numDivision, startValue, axis=-1, circleRadius=15){
+    constructor(x, y, length, numDivision, startValue,  axis, increment = 0.1, visible = true, vertical = true, circleRadius=15){
         this.x = x
-        this.top_y = top_y
-        this.height = height
+        this.y = y
+        this.length = length
         this.numDivision = numDivision
         this.grabbed = false
-        this.grab_y = 0
+        this.grab_pos = 0
+        this.visible = visible
+        this.increment = increment
         this.circleRadius = circleRadius
         if (axis == -1 || axis == null){
             this.axis = this.numDivision
@@ -39,31 +44,91 @@ class Slider{
             this.showAxis = true
         }
         this.value = startValue // The true value of the slider
-        this.unitLength = this.height/this.numDivision
+        this.unitLength = this.length/this.numDivision
         // The circle goes at the tick mark given by the value
-        this.circle_y = this.top_y + (this.axis - this.value)* this.unitLength
+        if (vertical){
+            this.circle_pos = this.y + (this.axis - this.value)* this.unitLength
+        }else{
+            this.circle_pos = this.x + (this.axis - this.value)* this.unitLength
+        }
         this.circleColor = Color.red
+
+        this.vertical = vertical
+        this.end_x = x + length
+        this.end_y = y
+        if (vertical){
+            this.end_x = x
+            this.end_y = y + length
+        }
     }
 
     draw(ctx){
+        if(this.lineWidthMax != -1){
+
+            Color.setColor(ctx, Color.white)
+            
+            Shapes.RoundedLine(ctx, this.x, this.y, this.end_x, this.end_y, this.lineWidthMax)
+            if (this.visible){
+                for (let i = 0; i <= this.numDivision; i++){
+                    const crossLength = 15
+                    const lineWidth = this.lineWidth
+                    var value = this.axis - i
+                    if (!this.vertical){
+                        value = -this.axis + i
+                    }
+                    if (value == this.value && !this.grabbed){
+                        Color.setColor(ctx, this.circleColor)
+                    }else{
+                        Color.setColor(ctx, Color.white)
+                    }
+                    var lineType = "rounded"
+                    if (this.showAxis == true && i == this.axis){
+                        lineType = "arrow"
+                    }
+                    if (this.vertical){
+                        Shapes.Line(ctx, this.x-crossLength, this.y+i*this.unitLength,
+                        this.x+crossLength, this.y+i*this.unitLength, 
+                        lineWidth, lineType)
+                    }else{
+                        Shapes.Line(ctx, this.x+i*this.unitLength, this.y -crossLength,
+                            this.x+i*this.unitLength, this.y+crossLength, 
+                            lineWidth, lineType)
+                    }
+                }
+            }
+        }
 
         Color.setColor(ctx, Color.red)
-        Shapes.Circle(ctx, this.x,this.circle_y, this.circleRadius)
+        if (this.vertical){
+            Shapes.Circle(ctx, this.x,this.circle_pos, this.circleRadius)
+        }else{
+            Shapes.Circle(ctx, this.circle_pos,this.y, this.circleRadius)
+        }
 
     }
 
     mouseMove(x,y){
         if (this.grabbed){
-            this.circle_y = Math.max(Math.min(y - this.grab_y, this.top_y+this.height), this.top_y)
-            const value =  this.axis - Math.round((this.circle_y-this.top_y)/this.unitLength)
+            
+            this.circle_pos = Math.max(Math.min(y - this.grab_pos, this.y+this.length), this.y)
+            var value =  this.axis - Math.round((this.circle_pos-this.y)/this.unitLength/this.increment)*this.increment
+            if (!this.vertical){
+                this.circle_pos = Math.max(Math.min(x - this.grab_pos, this.x+this.length), this.x)
+                value = - this.axis + Math.round((this.circle_pos-this.x)/this.unitLength/this.increment)*this.increment
+            }
             if (value != this.value){
                 // new Audio('audio/click_003.mp3').play()
                 this.value = value
                 console.log('value', value)
             }
-            this.circle_y = this.top_y + (this.axis - this.value)* this.unitLength
+            if (this.vertical){
+                this.circle_pos = this.y + (this.axis - this.value)* this.unitLength
+            }else{
+                this.circle_pos = this.x + this.length - (this.axis - this.value)* this.unitLength
+            }
         }
-        if ((this.x - x)*(this.x - x) + (this.circle_y - y)*(this.circle_y- y) <= this.circleRadius*this.circleRadius){
+        if ((this.vertical && (this.x - x)*(this.x - x) + (this.circle_pos - y)*(this.circle_pos- y) <= this.circleRadius*this.circleRadius)
+        || (!this.vertical && (this.y - y)*(this.y - y) + (this.circle_pos - x)*(this.circle_pos- x) <= this.circleRadius*this.circleRadius)){
             // request grab
             return 1
         }
@@ -72,7 +137,11 @@ class Slider{
 
     grab(x,y){
         this.grabbed = true
-        this.grab_y = y - this.circle_y
+        if (this.vertical){
+            this.grab_pos = y - this.circle_pos
+        }else{
+            this.grab_pos = x - this.circle_pos
+        }
         
         //new Audio('audio/click_003.ogg').play();
           
@@ -81,8 +150,8 @@ class Slider{
     release(x,y){
         this.grabbed = false
         //new Audio('audio/click_001.ogg').play();
-        // this.value = Math.round((this.circle_y-this.top_y)/this.height*this.numDivision)
-        // this.circle_y = this.top_y + this.value* this.height/this.numDivision
+        // this.value = Math.round((this.circle_pos-this.y)/this.length*this.numDivision)
+        // this.circle_y = this.y + this.value* this.length/this.numDivision
     }
 
     solved(){
