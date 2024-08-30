@@ -39,16 +39,19 @@ function playLevel(levelID){
             const gridLeft = new Grid(100,250,400,400,4,4,5)
             // Left align 100px right of middle (800+100=900)
             const gridRight = new Grid(700,250,400,400,4,4,5)
-            const block1 = new MathBlock(MathBlock.VARIABLE,"x",1200,400)
+            const block1 = new MathBlock(MathBlock.VARIABLE,"x",1400,250)
             const block2 = new MathBlock(1,"f",1300,400)
             const block3 = new MathBlock(2,"+",1200,500)
-            const slider1 = new Slider(1300, 250, 400, 8, 0, 4, 0.1, true, true)
-            const slider2 = new Slider(400, 800, 400, 8, 0, 4, 0.1, true, false)
+            const tx_slider = new Slider(700, 750, 400, 8, 0, 4, 0.1, true, false)
+            const sx_slider = new Slider(700, 850, 400, 8, 1, 4, 0.1, true, false)
+            const ty_slider = new Slider(1200, 250, 400, 8, 0, 4, 0.1, true, true)
+            const sy_slider = new Slider(1300, 250, 400, 8, 1, 4, 0.1, true, true)
+            const mngr = new MathBlockManager([block1],700,150, ty_slider, sy_slider)
             block2.setChild(0,block1)
             block1.setupChildren()
             block2.setupChildren()
             block3.setupChildren()
-            return {objs:[gridLeft,gridRight,block1,slider1,slider2], winCon: ()=>false} 
+            return {objs:[mngr,gridLeft,gridRight,block1,ty_slider,sy_slider], winCon: ()=>false} 
         }
     }
 }

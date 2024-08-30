@@ -14,9 +14,7 @@ class MathBlock {
     w = 0
     h = 0
 
-    translate_x = 0
     translate_y = 0
-    scale_x = 1
     scale_y = 1
 
     grabbed = false
@@ -26,6 +24,11 @@ class MathBlock {
     padding = 10
         
     lineWidth = 5
+
+    grab_x = 0
+    grab_y = 0
+
+    manager = null
 
     constructor (type, token, origin_x, origin_y){
         this.origin_x = origin_x
@@ -78,6 +81,9 @@ class MathBlock {
         }
     }
 
+    setManager(manager){
+        this.manager = manager
+    }
 
 
     setChild(n, child){
@@ -90,20 +96,29 @@ class MathBlock {
 
     grab(mx,my){
         this.grabbed = true
+        this.grab_x = mx - this.x
+        this.grab_y = my - this.y
     }
 
     release(mx,my){
         this.grabbed = false
+        this.manager.placeBlock(this,mx,my)
     }
 
     mouseMove(mx,my){
         //this.children.forEach(c => c.mouseMove(mx,my))
+        if (this.grabbed){
+            this.x = mx - this.grab_x
+            this.y = my - this.grab_y
+        }
+
         if (mx >= this.x && mx <= this.x + this.w && my >= this.y && my <= this.y + this.h){
             return 1
         }else{
             return -1
         }
     }
+
 
     draw (ctx){
         
@@ -114,11 +129,34 @@ class MathBlock {
             Color.setColor(ctx,Color.white)
         }
 
-        
+        const ty =  Number(this.translate_y.toFixed(1))
+        const sy =  Number(this.scale_y.toFixed(1))
+        var full_string = this.token
+
+        if (sy != 1){
+            if (sy == -1){
+                full_string = "-" + full_string
+            }else{
+                full_string = sy.toString() + full_string
+            }
+            if (sy == 0){
+                full_string = "0"
+            }
+        }
+        if (ty != 0){
+            if (ty < 0 ){
+                full_string = full_string  + ty.toString()
+            }else{
+                full_string = full_string + "+" + ty.toString()
+            }
+            if (sy == 0){
+                full_string = ty.toString()
+            }
+        }
 
         if (this.num_children == 0){
             ctx.font = "40px monospace";
-            ctx.fillText(this.token, this.x + 15, this.y + this.h/2+10);
+            ctx.fillText(full_string, this.x + 15, this.y + this.h/2+10);
             ctx.lineWidth = this.lineWidth
             ctx.strokeRect(this.x,this.y,this.w,this.h)
         }else if (this.num_children == 1){

@@ -46,6 +46,16 @@ class Shapes {
         
     }
 
+    static Rectangle(ctx,start_x,start_y,width,height,strokeWidth,fill=false){
+        this.Line(ctx, start_x, start_y, start_x+width, start_y,strokeWidth)
+        this.Line(ctx, start_x, start_y, start_x, start_y+height,strokeWidth)
+        this.Line(ctx, start_x+width, start_y, start_x+width, start_y+height,strokeWidth)
+        this.Line(ctx, start_x, start_y+height, start_x+width, start_y+height,strokeWidth)
+        if (fill){
+            ctx.fillRect(start_x,start_y,width,height)
+        }
+    }
+
     static Function(ctx, f, start_x, start_y, width, height, x_min, x_max, y_min, y_max, lineWidth, endCapStyle){
         
     }

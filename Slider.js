@@ -49,7 +49,7 @@ class Slider{
         if (vertical){
             this.circle_pos = this.y + (this.axis - this.value)* this.unitLength
         }else{
-            this.circle_pos = this.x + (this.axis - this.value)* this.unitLength
+            this.circle_pos = this.x + this.length - (this.axis - this.value)* this.unitLength
         }
         this.circleColor = Color.red
 
