@@ -11,6 +11,7 @@ class Color {
     static gray = new Color(150,150,150)
     static red = new Color(240,70,40)
     static green = new Color(0,158,115)
+    static magenta = new Color(204,121,167)
     static blue = new Color(86,180,233)
     static yellow = new Color(240,228,66)
 

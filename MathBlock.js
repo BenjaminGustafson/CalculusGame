@@ -1,28 +1,26 @@
 
 class MathBlock {
 
-    static VARIABLE = 0
-    static POWER = 1
-    static EXPONENT = 2
-    static FUNCTION = 3
-    static CONSTANT = 4
-    static BIN_OP = 5
+    static VARIABLE = 0 // mx+b
+    static POWER = 1    // m[]^2+b
+    static EXPONENT = 2 // me^[]+b
+    static FUNCTION = 3 // mf([])+b
+    static BIN_OP = 4   // []+[] ?include scale or no... []*[] it would have weird interactions with the inside...
 
     depth = 0
-    x = 0
-    y = 0 
-    w = 0
-    h = 0
-
+    
     translate_y = 0
     scale_y = 1
-
-    grabbed = false
     
+    grabbed = false
+    attached = false
+
     base_width = 50
     base_height = 50
     padding = 10
-        
+    w = 50
+    h = 50
+    
     lineWidth = 5
 
     grab_x = 0
@@ -30,17 +28,22 @@ class MathBlock {
 
     manager = null
 
+    prefix = ""
+    suffix = ""
+
     constructor (type, token, origin_x, origin_y){
         this.origin_x = origin_x
         this.origin_y = origin_y
+        this.x = origin_x
+        this.y = origin_y
         this.type = type
         switch (type){
-            case this.POWER:
-            case this.EXPONENT:
-            case this.FUNCTION:
+            case MathBlock.POWER:
+            case MathBlock.EXPONENT:
+            case MathBlock.FUNCTION:
                 this.num_children = 1
                 break
-            case this.BIN_OP:
+            case MathBlock.BIN_OP:
                 this.num_children = 2
                 break
             default:
@@ -51,35 +54,6 @@ class MathBlock {
         this.token = token
     }
 
-    /**
-     * Call this function after setting up the connections for the tree.
-     * 
-     * Calculates: depth, x, y, width, height 
-     */
-    setupChildren (x = this.origin_x,y=this.origin_y,depth=0){
-        this.x = x
-        this.y = y
-        this.depth = depth
-        if (this.num_children == 0){
-            this.h = this.base_height
-            this.w = this.base_width
-        }
-
-        
-
-        this.w = this.padding*3 // left padding + 2 * token padding, token width added in draw method....... this won't work
-        for (let i = 0; i < this.num_children; i++){
-            const child = this.children[i]
-            if (child){
-                child.setupChildren(x+this.w+this.padding,y+this.padding,depth+1)
-                this.w += child.w + this.padding
-                this.h = Math.max(this.h, child.h) + this.padding*2
-            }else{
-                this.w += this.base_width
-                this.h = this.h + this.padding*2
-            }
-        }
-    }
 
     setManager(manager){
         this.manager = manager
@@ -135,52 +109,51 @@ class MathBlock {
 
         if (sy != 1){
             if (sy == -1){
-                full_string = "-" + full_string
+                this.prefix = "-"
             }else{
-                full_string = sy.toString() + full_string
+                this.prefix = sy.toString()
             }
             if (sy == 0){
-                full_string = "0"
+                this.prefix = "0"
             }
         }
         if (ty != 0){
             if (ty < 0 ){
-                full_string = full_string  + ty.toString()
+                this.suffix = ty.toString()
             }else{
-                full_string = full_string + "+" + ty.toString()
+                this.suffix = "+" + ty.toString()
             }
             if (sy == 0){
-                full_string = ty.toString()
+                this.suffix = ty.toString()
             }
         }
 
-        if (this.num_children == 0){
-            ctx.font = "40px monospace";
-            ctx.fillText(full_string, this.x + 15, this.y + this.h/2+10);
-            ctx.lineWidth = this.lineWidth
-            ctx.strokeRect(this.x,this.y,this.w,this.h)
-        }else if (this.num_children == 1){
-            ctx.font = "40px monospace";
-            ctx.fillText(this.token, this.x + 15, this.y + this.h/2+10);
-            ctx.lineWidth = this.lineWidth
-            ctx.strokeRect(this.x,this.y,this.w,this.h)
-            if (!this.children[0]){
-                ctx.strokeRect(this.x+this.w-this.base_width-this.padding,this.y+this.h/2-this.base_height/2,this.base_width,this.base_height)
+        ctx.font = "40px monospace";
+        if (this.attached){
+            switch (this.type){
+                case MathBlock.VARIABLE:
+                    const str = this.prefix + this.token + this.suffix 
+                    this.w = ctx.measureText(str).width + this.padding*2
+                    ctx.fillText(str, this.x + this.padding, this.y + this.h/2+10);
+                    Shapes.Rectangle(ctx, this.x, this.y, this.w, this.h, this.lineWidth)
+                    break
+                case MathBlock.FUNCTION:
+                    const str1 = this.prefix + this.token + "("
+                    const str2 = ")" + this.suffix
+                    const w1 = ctx.measureText(str1).width
+                    const w2 = ctx.measureText(str2).width
+                    this.w = w1+w2 + this.padding*2
+                    ctx.fillText(str1, this.x + this.padding, this.y + this.h/2+10)
+                    ctx.fillText(str2, this.x + this.padding + w1, this.y + this.h/2+10)
+                    Shapes.Rectangle(ctx, this.x, this.y, this.w, this.h, this.lineWidth)
+                    break
+                default:
+                    break
             }
-
-        }else if (this.num_children == 2){
-            ctx.font = "40px monospace";
-            ctx.fillText(this.token + "•", this.x + this.w/2 - ctx.measureText(this.token).width/2, this.y + this.h/2+10);
-            ctx.lineWidth = this.lineWidth
-            ctx.strokeRect(this.x,this.y,this.w,this.h)
-            if (!this.children[0]){
-                ctx.strokeRect(this.x+this.padding,this.y+this.h/2-this.base_height/2,this.base_width,this.base_height)
-            }
-            if (!this.children[1]){
-                ctx.strokeRect(this.x+this.w-this.base_width-this.padding,this.y+this.h/2-this.base_height/2,this.base_width,this.base_height)
-            }
+        }else{
+            ctx.fillText(this.token, this.x + this.padding, this.y + this.h/2+10);
+            Shapes.Rectangle(ctx, this.x, this.y, this.w, this.h, this.lineWidth)
         }
-        
     }
 
     static fromSyntaxTree (tree){
