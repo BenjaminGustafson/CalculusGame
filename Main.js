@@ -39,8 +39,6 @@ function setup() { "use strict";
   // ----------------------------------------------------------------------------------------------
   // Mouse events
   // ----------------------------------------------------------------------------------------------
-  // We handle which object can be grabbed in the main class
-  var grabbedObj = {priority:-1, obj:null};
 
   // When the mouse is clicked, the (x,y) of the click is broadcast
   // to all objects.
@@ -48,62 +46,46 @@ function setup() { "use strict";
     var rect = canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left)*(canvas.width/rect.width);
     const y = (event.clientY - rect.top)*(canvas.height/rect.height);
+    canvas.style.cursor = 'default'
     gameState.objects.forEach(obj => {
-      const priority = obj.mouseMove(x,y)
-      if (priority > grabbedObj.priority){
-        grabbedObj.priority = priority
-        grabbedObj.obj = obj
-      }
+        if (typeof obj.mouseDown === 'function'){
+            const cursor = obj.mouseDown(x,y)
+            if (cursor != null){
+                canvas.style.cursor = cursor
+            }
+        }
     })
-    if (grabbedObj.obj){
-      console.log("grabbed")
-      grabbedObj.obj.grab(x,y)
-      canvas.style.cursor = 'grabbing'
-    }
+
   });
 
-  // When the mouse is moved, we alert all objects
   canvas.addEventListener('mousemove', function (event) {
     var rect = canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left)*(canvas.width/rect.width);
     const y = (event.clientY - rect.top)*(canvas.height/rect.height);
-    
     canvas.style.cursor = 'default'
     gameState.objects.forEach(obj => {
-      // If any object returns 1, we are hovering over a grabbable object
-      if (obj.mouseMove(x,y) == 1){ // TODO: fix magic number
-        canvas.style.cursor = 'grab'
-      }
-      else if (obj.mouseMove(x,y) == 2){ // Clickable object
-        canvas.style.cursor = 'pointer'
-      }
+        if (typeof obj.mouseMove === 'function'){
+            const cursor = obj.mouseMove(x,y)
+            if (cursor != null){
+                canvas.style.cursor = cursor
+            }
+        }
     })
-    // If an object is already grabbed
-    if (grabbedObj.obj){
-      canvas.style.cursor = 'grabbing'
-    }
   });
 
   canvas.addEventListener('mouseup', function (event) {
     var rect = canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left)*(canvas.width/rect.width);
     const y = (event.clientY - rect.top)*(canvas.height/rect.height);
-    
-    if (grabbedObj.obj){
-      grabbedObj.obj.release(x,y)
-      console.log(`let go ${grabbedObj.obj}`)
-      // reset grabbedObj
-      grabbedObj = {priority:-1, obj:null};
-      
-      // Revert the cursor
-      canvas.style.cursor = 'default'
-      gameState.objects.forEach(obj => {
-        // If any object returns true, we are hovering over a clickable object
-        if (obj.mouseMove(x,y) != -1){
-          canvas.style.cursor = 'grab'
+    canvas.style.cursor = 'default'
+    gameState.objects.forEach(obj => {
+        if (typeof obj.mouseUp === 'function'){
+            const cursor = obj.mouseUp(x,y)
+            if (cursor != null){
+                canvas.style.cursor = cursor
+            }
         }
-      })
-    }
+    })
   });
 
 

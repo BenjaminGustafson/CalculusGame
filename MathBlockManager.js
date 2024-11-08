@@ -1,10 +1,18 @@
+/**
+ * 
+ * The manager 
+ * 
+ */
 class MathBlockManager {
 
     highlighted = null
     field_block = null
+    grabbed = null
+    grab_moved = false
+    grab_x = 0
+    grab_y = 0
 
-
-    constructor (blocks, field_x, field_y, translate_y_slider,scale_y_slider){
+    constructor (blocks, field_x, field_y, translate_y_slider,scale_y_slider,tracer){
         this.blocks = blocks
         this.field_x = field_x
         this.field_y = field_y
@@ -12,48 +20,176 @@ class MathBlockManager {
         this.height = 50
         this.translate_y_slider = translate_y_slider
         this.scale_y_slider = scale_y_slider
-        blocks.forEach(b => b.setManager(this));
+        blocks.forEach(b => b.manager = this);
+        this.field_color = Color.gray
+        this.tool_bar = []
+        this.blocks.forEach(b => {
+            this.tool_bar.push(b)
+        })
+        this.tracer = tracer
     }
+
 
     draw(ctx){
-        if (this.field_block == null){
-            Color.setColor(ctx,Color.gray)
+        if (this.field_block){             
+            this.field_block.draw(ctx)
+            this.tracer.display = true
+            const field_block_fun = this.field_block.toFunction()
+            // Check that the 
+            if (field_block_fun != null){
+                // Set the tracer's function to the fieldblock, and use sliders for scale and translate
+                this.tracer.fun = (x => this.translate_y_slider.value + this.scale_y_slider.value * field_block_fun(x))
+            }
+        }else{
+            // If there is no fieldblock, we cannot trace the function
+            this.tracer.display = false
+            // Draw the placeholder for the block
+            Color.setColor(ctx,this.field_color)
             Shapes.Rectangle(ctx,this.field_x,this.field_y,this.width,this.height,10,true)
         }
-        this.blocks.forEach(b => b.draw(ctx))
-    }
-
-    placeBlock(block,x,y){
-        console.log(x,y)
-        if (this.field_block == null && x >= this.field_x && x <= this.field_x + this.width && y >= this.field_y && y <= this.field_y + this.height){
-            block.x = this.field_x
-            block.y = this.field_y
-            this.field_block = block
-            block.attached = true
-        }else{
-            block.x = block.origin_x
-            block.y = block.origin_y
-            if (block == this.field_block){
-                this.field_block = null
-            }
-            block.attached = false
+        this.tool_bar.forEach(b => b.draw(ctx))
+        if (this.grabbed){
+            this.grabbed.draw(ctx)
         }
     }
 
+
     mouseMove(x,y){
+        
         if (this.field_block){
             this.field_block.translate_y = this.translate_y_slider.value
             this.field_block.scale_y = this.scale_y_slider.value
+        }else if (this.grabbed && this.checkInField(x,y)){
+            this.field_color = Color.light_gray
+        }else{
+            this.field_color = Color.gray
         }
-        return -1
+        var cursor = null
+        if (this.grabbed){
+            cursor = 'grabbing'
+            if (!this.grab_moved){
+                // The grabbed object has now been moved
+                this.grab_moved = true
+                if (this.grabbed.parent){
+                    // The block has a parent
+                    this.grabbed.detachFromParent()
+                }
+                if (this.field_block == this.grabbed){
+                    this.field_block = null
+                }
+            }
+            this.grabbed.x = x - this.grab_x
+            this.grabbed.y = y - this.grab_y
+            if (this.field_block){
+                this.field_block.checkAttach(x,y)
+            }
+        }else {
+            this.blocks.forEach(b => {
+                if (b.checkGrab(x,y)){
+                    cursor = 'grab'
+                }
+            })
+            
+        }
+        return cursor
     }
 
-    grab(x,y){
+    mouseDown(x,y){
+        this.mouseIsDown = true
+        var cursor = null
+        var top_priority = -1
+        this.blocks.forEach(b => {
+            if(b.checkGrab(x,y)){
+                if (top_priority < b.depth){
+                    top_priority = b.depth
+                    this.grabbed = b 
+                    this.grab_x = x - b.x
+                    this.grab_y = y - b.y
+                    this.grab_moved = false//don't detach the block before it is moved
+                    this.tool_bar = this.tool_bar.filter(o => o != b)
+                }
+                cursor = 'grabbing'
+            }
+        })
+        return cursor
     }
 
-    release(x,y){
+    checkInField(x,y){
+        return x >= this.field_x && x <= this.field_x + this.width && y >= this.field_y && y <= this.field_y + this.height
     }
 
+
+    mouseUp(x,y){
+        this.mouseIsDown = false
+        
+        if (this.grabbed){ 
+            const g = this.grabbed
+            // There was something grabbed, now release it
+            if (!this.grab_moved){
+                // The grabbed object was not moved
+                if (!g.attached){
+                    // The block was clicked in the tool bar
+                    this.tool_bar.push(g)
+                }
+            }else if (this.field_block == null && this.checkInField(x, y)){
+                console.log('aaa')
+                // The block is over the field and the field is empty
+                this.field_block = this.grabbed
+                this.grabbed.attached = true
+                this.grabbed.x = this.field_x
+                this.grabbed.y = this.field_y
+                if (g.on_tool_bar){
+                    g.on_tool_bar = false
+                    const new_g = new MathBlock(g.type,g.token,g.origin_x,g.origin_y)
+                    this.blocks.push(new_g)
+                    this.tool_bar.push(new_g)
+                }
+                
+
+            }else if (g == this.field_block){
+                // The block was the field and now the field is empty                
+
+            }else{
+
+                const attach = this.field_block ? this.field_block.checkAttach(x,y) : null
+                if (attach){
+                    // The block is attaching to another block 
+                    attach.block.children[attach.child] = g
+                    g.attached = true
+                    g.depth = attach.block.depth + 1
+                    g.child_num = attach.child
+                    g.parent = attach.block
+                    if (g.on_tool_bar){
+                        g.on_tool_bar = false
+                        const new_g = new MathBlock(g.type,g.token,g.origin_x,g.origin_y)
+                        this.blocks.push(new_g)
+                        this.tool_bar.push(new_g)
+                    }
+                }else{
+                    // The block is not attaching to anything
+                    if(g.on_tool_bar){
+                        // The block came from the tool bar
+                        this.tool_bar.push(this.grabbed)
+                        this.grabbed.x = this.grabbed.origin_x
+                        this.grabbed.y = this.grabbed.origin_y
+                        
+                    }else{
+                        // The block did not come from the tool bar
+                        this.blocks = this.blocks.filter(o => o != g)
+                    }
+                }
+            }
+        } 
+        this.grabbed = null
+
+        var cursor = null
+        this.blocks.forEach(b => {
+            if (b.checkGrab(x,y)){
+                cursor = 'grab'
+            }
+        })
+        return cursor
+    }
 
 
 }

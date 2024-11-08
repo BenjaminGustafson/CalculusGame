@@ -14,17 +14,20 @@ class MathBlock {
     
     grabbed = false
     attached = false
+    parent = null
+    child_num = null
 
     base_width = 50
     base_height = 50
     padding = 10
     w = 50
     h = 50
+
+    on_tool_bar = true
+
+    attach_hover = -1
     
     lineWidth = 5
-
-    grab_x = 0
-    grab_y = 0
 
     manager = null
 
@@ -51,62 +54,49 @@ class MathBlock {
                 break
         }
         this.children = new Array(this.num_children)
+        this.attach_squares = new Array(this.num_children)
         this.token = token
+        this.color = Color.white
     }
 
 
-    setManager(manager){
-        this.manager = manager
+    checkGrab(x,y){
+        return x >= this.x && x <= this.x + this.w && y >= this.y && y <= this.y + this.h
     }
 
-
-    setChild(n, child){
-        this.children[n] = child
-    }
-
-    getChild(n){
-        return this.children[n]
-    }
-
-    grab(mx,my){
-        this.grabbed = true
-        this.grab_x = mx - this.x
-        this.grab_y = my - this.y
-    }
-
-    release(mx,my){
-        this.grabbed = false
-        this.manager.placeBlock(this,mx,my)
-    }
-
-    mouseMove(mx,my){
-        //this.children.forEach(c => c.mouseMove(mx,my))
-        if (this.grabbed){
-            this.x = mx - this.grab_x
-            this.y = my - this.grab_y
+    checkAttach(x,y){
+        this.attach_hover = -1
+        for(let i = 0; i < this.attach_squares.length; i++){
+            const a = this.attach_squares[i]
+            if (a && x >= a.x && x <= a.x + a.w && y >= a.y && y <= a.y + a.h){
+                this.attach_hover = i
+                return {block: this, child:i}
+            }
         }
-
-        if (mx >= this.x && mx <= this.x + this.w && my >= this.y && my <= this.y + this.h){
-            return 1
-        }else{
-            return -1
+        for(let i = 0; i < this.children.length; i++){
+            if (this.children[i]){
+                const check = this.children[i].checkAttach(x,y)
+                if (check){
+                    return check
+                }
+            }
         }
+        return null
     }
 
+    detachFromParent(){
+        this.attached = false
+        this.parent.children[this.child_num] = null
+        this.parent = null
+        this.child_num = null
+    }
 
     draw (ctx){
-        
-
-        if (this.grabbed){
-            Color.setColor(ctx,Color.light_gray)
-        }else{
-            Color.setColor(ctx,Color.white)
-        }
-
         const ty =  Number(this.translate_y.toFixed(1))
         const sy =  Number(this.scale_y.toFixed(1))
-        var full_string = this.token
 
+        this.prefix = ""
+        this.suffix = ""
         if (sy != 1){
             if (sy == -1){
                 this.prefix = "-"
@@ -123,37 +113,89 @@ class MathBlock {
             }else{
                 this.suffix = "+" + ty.toString()
             }
-            if (sy == 0){
-                this.suffix = ty.toString()
-            }
         }
+        //console.log(this.prefix,this.suffix)
 
         ctx.font = "40px monospace";
-        if (this.attached){
-            switch (this.type){
-                case MathBlock.VARIABLE:
-                    const str = this.prefix + this.token + this.suffix 
-                    this.w = ctx.measureText(str).width + this.padding*2
-                    ctx.fillText(str, this.x + this.padding, this.y + this.h/2+10);
-                    Shapes.Rectangle(ctx, this.x, this.y, this.w, this.h, this.lineWidth)
-                    break
-                case MathBlock.FUNCTION:
-                    const str1 = this.prefix + this.token + "("
-                    const str2 = ")" + this.suffix
-                    const w1 = ctx.measureText(str1).width
+        switch (this.type){
+            case MathBlock.VARIABLE:
+                const str = this.prefix + this.token + this.suffix 
+                this.w = ctx.measureText(str).width + this.padding*2
+                Color.setColor(ctx,Color.black)
+                Shapes.Rectangle(ctx, this.x, this.y, this.w, this.h, this.lineWidth,true)
+                Color.setColor(ctx, this.color)
+                ctx.fillText(str, this.x + this.padding, this.y + this.h/2+10);
+                Shapes.Rectangle(ctx, this.x, this.y, this.w, this.h, this.lineWidth)
+                break
+            case MathBlock.FUNCTION:
+                var str1 = this.prefix + this.token + "("
+                var str2 = ")" + this.suffix
+                const w1 = ctx.measureText(str1).width
+                const w2 = ctx.measureText(str2).width
+                var child_w = this.children[0] ? this.children[0].w : this.base_width
+                this.w = w1+w2 + child_w + this.padding*2
+                Color.setColor(ctx,Color.black)
+                Shapes.Rectangle(ctx, this.x, this.y, this.w, this.h, this.lineWidth,true)
+                if (this.children[0]){
+                    this.children[0].draw(ctx)
+                    this.h = this.children[0].h + this.padding*2
+                    this.children[0].x = this.x+w1+this.padding
+                    this.children[0].y = this.y+this.padding
+                }else{
+                    if (this.attach_hover == 0){
+                        Color.setColor(ctx,Color.light_gray)
+                    }else{
+                        Color.setColor(ctx,Color.gray)
+                    }
+                    Shapes.Rectangle(ctx, this.x+w1+this.padding,this.y+this.padding,this.base_width,this.base_height,this.lineWidth,true)
+                    this.attach_squares[0] = {x:this.x+w1+this.padding,y:this.y+this.padding,w:this.base_width,h:this.base_height}
+                    this.h = this.base_height + this.padding*2
+                }
+                Color.setColor(ctx,Color.white)
+                ctx.fillText(str1, this.x + this.padding, this.y + this.h/2+10)
+                ctx.fillText(str2, this.x + this.padding + w1 + child_w, this.y + this.h/2+10)
+                Shapes.Rectangle(ctx, this.x, this.y, this.w, this.h, this.lineWidth)
+                break
+            case MathBlock.POWER:
+                {
+                    var str1 = this.prefix 
+                    var str2 = this.suffix
+                    const w1 = ctx.measureText(str1).width +  (sy != 1 ? this.padding  : 0)
                     const w2 = ctx.measureText(str2).width
-                    this.w = w1+w2 + this.padding*2
-                    ctx.fillText(str1, this.x + this.padding, this.y + this.h/2+10)
-                    ctx.fillText(str2, this.x + this.padding + w1, this.y + this.h/2+10)
+                    ctx.font = "32px monospace"
+                    const w_exp = ctx.measureText(this.token).width
+                    var child_w = this.children[0] ? this.children[0].w : this.base_width
+                    this.w = w1+w2 + child_w + w_exp + this.padding*3
+                    Color.setColor(ctx,Color.black)
+                    Shapes.Rectangle(ctx, this.x, this.y, this.w, this.h, this.lineWidth,true)
+                    if (this.children[0]){
+                        this.children[0].draw(ctx)
+                        this.h = this.children[0].h + this.padding*2 + 12
+                        this.children[0].x = this.x+w1+this.padding
+                        this.children[0].y = this.y+this.padding+12
+                    }else{
+                        if (this.attach_hover == 0){
+                            Color.setColor(ctx,Color.light_gray)
+                        }else{
+                            Color.setColor(ctx,Color.gray)
+                        }
+                        Shapes.Rectangle(ctx, this.x+w1+this.padding,this.y+this.padding+12,this.base_width,this.base_height,this.lineWidth,true)
+                        this.attach_squares[0] = {x:this.x+w1+this.padding,y:this.y+this.padding + 12,w:this.base_width,h:this.base_height}
+                        this.h = this.base_height + this.padding*2 + 12
+                    }
+                    Color.setColor(ctx,Color.white)
+                    ctx.font = "32px monospace"
+                    ctx.fillText(this.token, this.x + this.padding*2 + w1 + child_w, this.y+32)
+                    ctx.font = "40px monospace"
+                    ctx.fillText(str1, this.x + this.padding, this.y + this.h/2+22)
+                    ctx.fillText(str2, this.x + this.padding + w1 + child_w + w_exp + 12, this.y + this.h/2+22)
                     Shapes.Rectangle(ctx, this.x, this.y, this.w, this.h, this.lineWidth)
-                    break
-                default:
-                    break
-            }
-        }else{
-            ctx.fillText(this.token, this.x + this.padding, this.y + this.h/2+10);
-            Shapes.Rectangle(ctx, this.x, this.y, this.w, this.h, this.lineWidth)
+                }
+                break
+            default:
+                break
         }
+        
     }
 
     static fromSyntaxTree (tree){
@@ -184,6 +226,30 @@ class MathBlock {
         return arr
     }
 
+
+    /**
+     * 
+     * Returns null if the function tree is not complete
+     * 
+     * @param {*} scale 
+     * @param {*} offset 
+     * @returns 
+     */
+    toFunction(scale = 1, offset = 0){
+        switch(this.type){
+            case MathBlock.VARIABLE:
+                return (x => x)
+            case MathBlock.POWER:
+                if (this.children[0] && this.children[0].toFunction()){
+                    return (x => (this.children[0].toFunction()(x))**2)
+                }else{
+                    return null
+                }
+            default:
+                return null
+
+        }
+    }
     
 
 

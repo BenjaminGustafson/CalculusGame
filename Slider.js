@@ -126,29 +126,38 @@ class Slider{
             }else{
                 this.circle_pos = this.x + this.length - (this.axis - this.value)* this.unitLength
             }
+            return 'grabbing'
         }
         if ((this.vertical && (this.x - x)*(this.x - x) + (this.circle_pos - y)*(this.circle_pos- y) <= this.circleRadius*this.circleRadius)
         || (!this.vertical && (this.y - y)*(this.y - y) + (this.circle_pos - x)*(this.circle_pos- x) <= this.circleRadius*this.circleRadius)){
-            // request grab
-            return 1
+            return 'grab'
         }
-        return -1
+        return null
     }
 
-    grab(x,y){
-        this.grabbed = true
-        if (this.vertical){
-            this.grab_pos = y - this.circle_pos
-        }else{
-            this.grab_pos = x - this.circle_pos
+    mouseDown(x,y){
+        if ((this.vertical && (this.x - x)*(this.x - x) + (this.circle_pos - y)*(this.circle_pos- y) <= this.circleRadius*this.circleRadius)
+            || (!this.vertical && (this.y - y)*(this.y - y) + (this.circle_pos - x)*(this.circle_pos- x) <= this.circleRadius*this.circleRadius)){
+            this.grabbed = true
+            if (this.vertical){
+                this.grab_pos = y - this.circle_pos
+            }else{
+                this.grab_pos = x - this.circle_pos
+            }
+            return 'grabbing'
         }
-        
+        return null
         //new Audio('audio/click_003.ogg').play();
           
     }
 
-    release(x,y){
+    mouseUp(x,y){
         this.grabbed = false
+        if ((this.vertical && (this.x - x)*(this.x - x) + (this.circle_pos - y)*(this.circle_pos- y) <= this.circleRadius*this.circleRadius)
+            || (!this.vertical && (this.y - y)*(this.y - y) + (this.circle_pos - x)*(this.circle_pos- x) <= this.circleRadius*this.circleRadius)){
+            return 'grab'
+        }
+        return null
         //new Audio('audio/click_001.ogg').play();
         // this.value = Math.round((this.circle_pos-this.y)/this.length*this.numDivision)
         // this.circle_y = this.y + this.value* this.length/this.numDivision
