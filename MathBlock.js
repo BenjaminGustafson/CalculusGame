@@ -183,7 +183,7 @@ class MathBlock {
                         this.attach_squares[0] = {x:this.x+w1+this.padding,y:this.y+this.padding + 12,w:this.base_width,h:this.base_height}
                         this.h = this.base_height + this.padding*2 + 12
                     }
-                    Color.setColor(ctx,Color.white)
+                    Color.setColor(ctx,this.color)
                     ctx.font = "32px monospace"
                     ctx.fillText(this.token, this.x + this.padding*2 + w1 + child_w, this.y+32)
                     ctx.font = "40px monospace"
@@ -238,10 +238,10 @@ class MathBlock {
     toFunction(scale = 1, offset = 0){
         switch(this.type){
             case MathBlock.VARIABLE:
-                return (x => x)
+                return (x => this.translate_y + this.scale_y*x)
             case MathBlock.POWER:
-                if (this.children[0] && this.children[0].toFunction()){
-                    return (x => (this.children[0].toFunction()(x))**2)
+                if (this.children[0] != null && this.children[0].toFunction() != null){
+                    return (x => (this.translate_y + this.scale_y*(this.children[0].toFunction()(x))**this.token))
                 }else{
                     return null
                 }

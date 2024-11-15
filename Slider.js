@@ -62,6 +62,11 @@ class Slider{
         }
     }
 
+    setValue(val){
+        this.value = val
+        this.circle_pos = this.y + (this.axis - this.value)* this.unitLength
+    }
+
     draw(ctx){
         if(this.lineWidthMax != -1){
 

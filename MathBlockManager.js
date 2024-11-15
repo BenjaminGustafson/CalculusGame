@@ -33,12 +33,15 @@ class MathBlockManager {
     draw(ctx){
         if (this.field_block){             
             this.field_block.draw(ctx)
-            this.tracer.display = true
             const field_block_fun = this.field_block.toFunction()
-            // Check that the 
+            // Check that the function is not incomplete
             if (field_block_fun != null){
+                this.tracer.display = true
                 // Set the tracer's function to the fieldblock, and use sliders for scale and translate
-                this.tracer.fun = (x => this.translate_y_slider.value + this.scale_y_slider.value * field_block_fun(x))
+                this.tracer.fun = (x => field_block_fun(x))
+            }else{
+                // Set display false so that we don't evaluate the incomplete function
+                this.tracer.display = false
             }
         }else{
             // If there is no fieldblock, we cannot trace the function
@@ -55,10 +58,13 @@ class MathBlockManager {
 
 
     mouseMove(x,y){
+        if (this.highlighted){
+            this.highlighted.translate_y = this.translate_y_slider.value
+            this.highlighted.scale_y = this.scale_y_slider.value
+        }
         
         if (this.field_block){
-            this.field_block.translate_y = this.translate_y_slider.value
-            this.field_block.scale_y = this.scale_y_slider.value
+            
         }else if (this.grabbed && this.checkInField(x,y)){
             this.field_color = Color.light_gray
         }else{
@@ -98,19 +104,31 @@ class MathBlockManager {
         this.mouseIsDown = true
         var cursor = null
         var top_priority = -1
+        var flag = false
+        // check if a block is being grabbed
         this.blocks.forEach(b => {
             if(b.checkGrab(x,y)){
+                flag = true
                 if (top_priority < b.depth){
                     top_priority = b.depth
                     this.grabbed = b 
-                    this.grab_x = x - b.x
-                    this.grab_y = y - b.y
-                    this.grab_moved = false//don't detach the block before it is moved
-                    this.tool_bar = this.tool_bar.filter(o => o != b)
                 }
-                cursor = 'grabbing'
             }
         })
+        if (flag){
+            this.grab_x = x - this.grabbed.x
+            this.grab_y = y - this.grabbed.y
+            this.grab_moved = false//don't detach the block before it is moved
+            this.tool_bar = this.tool_bar.filter(o => o != this.grabbed)
+            cursor = 'grabbing'
+            if (this.highlighted){
+                this.highlighted.color = Color.white
+            }
+            this.highlighted = this.grabbed
+            this.highlighted.color = Color.green
+            this.scale_y_slider.setValue(this.highlighted.scale_y)
+            this.translate_y_slider.setValue(this.highlighted.translate_y)
+        }
         return cursor
     }
 
