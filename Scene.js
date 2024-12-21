@@ -3,42 +3,34 @@
  * 
  * The canvas is set to 1600 x 900 px, and scaled down if the window is too small.
  * We do all layout math relative to the 1600 x 900 px.
- * 
- * Hardcoding pixel values might seem like bad practice, but we know that we want 
- * the aspect ratio to be 16:9. And its arguably more human readable.
+ * We know that we want the aspect ratio to be 16:9, so we hardcode to 1600 x 900.
+ * Its arguably more human readable.
  * 
  * 
 */
 
 /**
- * Defining these levels without code reuse is tricky
- * What we really want is to be able to say level 2 is 
- * the same as level 1, with some changes.
- * All we need is the objects and update. You can't access other levels in the switch case.
- * Store each as a variable. Access via the variable name?! Seems like a bad idea.
- * But a switch case from strings to variable names is not useful...
- * Really I want a tree data structure. But the elements of the tree are instructions
- * Make them variables or functions?
- * I think functions is the better option because you don't need to load everything into memory.
- * Not that it matters for this size of information.
  * 
- * scene1(gameState) returns nothing
- * scene2(gameState){
- *   gameState.objs["name"].field = modify
- * }
- * so objs should be a dict, not a list...
+ * Template levels are defined in functions for reuse.
+ * 
+ * Rather than thinking of this as a dependency tree between levels,
+ * you could also just write helper functions that are reused
+ * That way its not taking an existing level and modifying it, 
+ * and each level is presented constructively.
+ * 
  */
 
 function mainMenu(gameState){
     gameState.objects = {
+        // Could use alignment and distribution helpers
         button1 : new NavButton(300,250,100,100, (()=> gameState.sceneName = "introMenu"), "1"),
         button2 : new NavButton(600,250,100,100, (()=> gameState.sceneName = "quadMenu"), "2"),
-        button3 : new NavButton(900,250,100,100, (()=> gameState.sceneName = ""), "3"),
-        button4 : new NavButton(1200,250,100,100, (()=> gameState.sceneName = ""), "4"),
-        button5 : new NavButton(300,550,100,100, (()=> gameState.sceneName = ""), "5"),
-        button6 : new NavButton(600,550,100,100, (()=> gameState.sceneName = ""), "6"),
-        button7 : new NavButton(900,550,100,100, (()=> gameState.sceneName = ""), "7"),
-        button8 : new NavButton(1200,550,100,100, (()=> gameState.sceneName = ""), "8"),
+        button3 : new NavButton(900,250,100,100, (()=> gameState.sceneName = "cubicMenu"), "3"),
+        button4 : new NavButton(1200,250,100,100, (()=> gameState.sceneName = "expMenu"), "4"),
+        button5 : new NavButton(300,550,100,100, (()=> gameState.sceneName = "sineMenu"), "5"),
+        button6 : new NavButton(600,550,100,100, (()=> gameState.sceneName = "sumMenu"), "6"),
+        button7 : new NavButton(900,550,100,100, (()=> gameState.sceneName = "prodMenu"), "7"),
+        button8 : new NavButton(1200,550,100,100, (()=> gameState.sceneName = "chainMenu"), "8"),
     }
     gameState.update = (()=>{})
 }
@@ -51,6 +43,8 @@ function introMenu(gameState){
     gameState.objects.button2.label = "1.2"
     gameState.objects.button3.onclick =  (()=> gameState.sceneName = "intro3")
     gameState.objects.button3.label = "1.3"
+    gameState.objects.button4.onclick =  (()=> gameState.sceneName = "intro4")
+    gameState.objects.button4.label = "1.4"
     delete gameState.objects.button5
     delete gameState.objects.button6
     delete gameState.objects.button7
@@ -68,6 +62,7 @@ function introMenu(gameState){
     })
 
 }
+
 
 function introLevels(gameState, vals, name, next){
     // Right align 100px left of middle (800-100-400=300)
@@ -109,6 +104,54 @@ function introLevels(gameState, vals, name, next){
     gameState.update = update
 }
 
+function quadContLevel(gameState, target_coords, next){
+    console.log("AA")
+    // Right align 100px left of middle (800-100-400=300)
+    // Center vertically (450-400/2=250)
+    const y_adjust = 100
+    const gridLeft = new Grid(100,250+y_adjust,400,400,4,4,5,4,2)
+    // Left align 100px right of middle (800+100=900)
+    const gridRight = new Grid(600,250+y_adjust,400,400,4,4,5,2,2)
+    const block1 = new MathBlock(MathBlock.VARIABLE,"x",1300,250+y_adjust)
+    const ty_slider = new Slider(1100, 250+y_adjust, 400, 8, 0, 4, 0.1, true, true)
+    const sy_slider = new Slider(1200, 250+y_adjust, 400, 8, 1, 4, 0.1, true, true)
+    const funRight = new FunctionTracer(gridRight)
+    //const funLeft = new FunctionTracer(gridLeft, (x => x*x))
+    //funLeft.color = Color.red
+    const mngr = new MathBlockManager([block1],600,150+y_adjust, ty_slider, sy_slider, funRight)
+    console.log("A")
+    targets = []
+    for (let i = 0; i < target_coords.length; i++){
+        const canvas_coords = gridLeft.gridToCanvas(target_coords[i][0],target_coords[i][1])
+        targets.push(new Target(canvas_coords.x, canvas_coords.y,10))
+    }
+    const tracer = new ContinuousTracer(100,450+y_adjust,gridLeft,{type:"mathBlock",mathBlockMngr:mngr},60,targets)
+    console.log("B")
+    // Nav buttons
+    const back_button = new NavButton(100,100,100,100, (()=> gameState.sceneName = "quadMenu"),"↑")
+    const forward_button = new NavButton(300,100,100,100, (()=> gameState.sceneName = next),"→")
+    forward_button.active = false
+    
+    function update (){
+        if(tracer.solved && !gameState.completedLevels[gameState.sceneName]){
+            //localStorage.setItem(gameState.sceneName, "solved");
+            gameState.completedLevels[gameState.sceneName] = true
+            gameState.writeToStorage = true
+            
+        }
+        if (gameState.completedLevels[gameState.sceneName]){
+            forward_button.active = true
+        }
+    }
+    gameState.objects = [gridLeft,gridRight,sy_slider,ty_slider,mngr,funRight,tracer,forward_button,back_button].concat(targets)
+    gameState.update = update
+}
+
+
+/**
+ * 
+ * The main function for serving up scenes.
+ */
 
 function loadScene(gameState){
     switch (gameState.sceneName){
@@ -177,12 +220,12 @@ function loadScene(gameState){
             const target3 = new Target(target3_coord.x,target3_coord.y,10)
             const target4 = new Target(target4_coord.x,target4_coord.y,10)
             const tracer = new Tracer(300,450,gridLeft,[slider1,slider2,slider3,slider4],60,[target1,target2,target3,target4])
-            const back_button = new NavButton(100,100,100,100, (()=> gameState.sceneName = "quadMenu"),"←")
+            const back_button = new NavButton(100,100,100,100, (()=> gameState.sceneName = "quadMenu"),"↑")
             const forward_button = new NavButton(300,100,100,100, (()=> gameState.sceneName = next),"→")
             forward_button.active = false
             function update (){
                 if(tracer.solved){
-                    localStorage.setItem(name, "solved");
+                    localStorage.setItem(gameState.sceneName, "solved");
                     forward_button.active = true
                 }
             }
@@ -191,6 +234,22 @@ function loadScene(gameState){
             gameState.update = update
             break
         }
+
+        case "quad2":{
+            console.log("Z")
+            const targets = [
+                [-1,0.5],
+                [0,0]
+            ]
+            quadContLevel(gameState, targets, "quad3")
+            break
+        }
+
+        case "quad3":{
+            quadContLevel(gameState, "quad3")
+            break
+        }
+
         case "demoDisc":{
             // Right align 100px left of middle (800-100-400=300)
             // Center vertically (450-400/2=250)

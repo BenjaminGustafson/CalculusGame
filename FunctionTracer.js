@@ -1,3 +1,8 @@
+/**
+ * Traces a given function onto a grid
+ * 
+ */
+
 class FunctionTracer {
     frame = 0
     index = 0

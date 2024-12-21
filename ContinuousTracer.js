@@ -1,3 +1,8 @@
+/**
+ * 
+ * Traces the numeric integral of a given input
+ */
+
 class ContinuousTracer {
     frame = 0
     index = 0

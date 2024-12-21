@@ -1,6 +1,7 @@
 /**
  * 
- * The manager 
+ * The manager handles how mathblocks attach to each other.
+ * 
  * 
  */
 class MathBlockManager {

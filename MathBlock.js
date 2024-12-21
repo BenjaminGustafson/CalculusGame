@@ -1,4 +1,12 @@
 
+/**
+ * 
+ * A MathBlock is a draggable rectangle that has a single 
+ * 
+ * 
+ */
+
+
 class MathBlock {
 
     static VARIABLE = 0 // mx+b

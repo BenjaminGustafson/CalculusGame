@@ -1,4 +1,10 @@
-// TODO: add y limits
+/**
+ * 
+ * A tracer is 
+ * 
+ * 
+ * 
+ */
 class Tracer {
     frame = 0
     index = 0
