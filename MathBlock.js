@@ -13,7 +13,7 @@ class MathBlock {
     static POWER = 1    // m[]^2+b
     static EXPONENT = 2 // me^[]+b
     static FUNCTION = 3 // mf([])+b
-    static BIN_OP = 4   // []+[] ?include scale or no... []*[] it would have weird interactions with the inside...
+    static BIN_OP = 4   // m([]+[])+b ?include scale or no... []*[] it would have weird interactions with the inside...
 
     depth = 0
     
@@ -43,6 +43,7 @@ class MathBlock {
     suffix = ""
 
     constructor (type, token, origin_x, origin_y){
+        // origin_x, _y is where the block is spawned. x,y is where it currently is
         this.origin_x = origin_x
         this.origin_y = origin_y
         this.x = origin_x
@@ -200,6 +201,56 @@ class MathBlock {
                     Shapes.Rectangle(ctx, this.x, this.y, this.w, this.h, this.lineWidth)
                 }
                 break
+                case MathBlock.EXPONENT:{
+                    /**
+                     * ----------------------------------
+                     * |                 []             |
+                     * |   1*     e               + 2   |
+                     * ----------------------------------
+                     * |p|w1  |token_w|p?|child_w |p?| w2  |p|
+                     * ^ 
+                     * x 
+                     * 
+                     *  TODO: fix this messy code
+                     * 
+                     */
+                    var str1 = this.prefix 
+                    var str2 = this.suffix
+                    const w1 = ctx.measureText(str1).width +  (sy != 1 ? this.padding  : 0)
+                    const w2 = ctx.measureText(str2).width
+                    ctx.font = "40px monospace"
+                    const token_w = ctx.measureText(this.token).width
+                    const token_h = 32
+                    const exp_shift = 12
+                    var child_w = this.children[0] ? this.children[0].w : this.base_width
+                    this.w = w1+w2 + child_w + token_w + this.padding*3
+                    // Black background
+                    Color.setColor(ctx,Color.black)
+                    Shapes.Rectangle(ctx, this.x, this.y, this.w, this.h, this.lineWidth,true)
+                    if (this.children[0]){
+                        this.children[0].draw(ctx)
+                        this.h = this.children[0].h + this.padding*2 + 12
+                        this.children[0].x = this.x+this.padding+w1+token_w+this.padding
+                        this.children[0].y = this.y+this.padding
+                    }else{
+                        // Draw the attachment rectangle
+                        if (this.attach_hover == 0){
+                            Color.setColor(ctx,Color.light_gray)
+                        }else{
+                            Color.setColor(ctx,Color.gray)
+                        }
+                        const sq = {x:this.x+this.padding+w1+token_w+this.padding,y:this.y+this.padding,w:this.base_width,h:this.base_height}
+                        this.attach_squares[0] = sq 
+                        Shapes.Rectangle(ctx, sq.x,sq.y,sq.w,sq.h,this.lineWidth,true)
+                        this.h = this.base_height + this.padding*2 + exp_shift
+                    }
+                    Color.setColor(ctx,this.color)
+                    ctx.fillText(this.token, this.x + this.padding + w1, this.y+this.h-token_h/2)
+                    ctx.fillText(str1, this.x + this.padding, this.y+this.h-token_h/2)
+                    ctx.fillText(str2, this.x + this.padding + w1 + child_w + token_w + this.padding, this.y+this.h-token_h/2)
+                    Shapes.Rectangle(ctx, this.x, this.y, this.w, this.h, this.lineWidth)
+                    }
+                    break
             default:
                 break
         }
@@ -252,6 +303,28 @@ class MathBlock {
                     return (x => (this.translate_y + this.scale_y*(this.children[0].toFunction()(x))**this.token))
                 }else{
                     return null
+                }
+            case MathBlock.EXPONENT:
+                if (this.children[0] != null && this.children[0].toFunction() != null){
+                    var tokenval = this.token
+                    if (this.token == "e"){
+                        tokenval = Math.E
+                    }
+                    return (x => (this.translate_y + this.scale_y*(tokenval**this.children[0].toFunction()(x))))
+                }else{
+                    return null
+                }
+            case MathBlock.FUNCTION:
+                if (this.children[0] == null || this.children[0].toFunction() == null){
+                    return null
+                }
+                switch (this.token){
+                    case "sin":
+                        return (x => this.translate_y + this.scale_y*Math.sin(this.children[0].toFunction()(x)))
+                    case "cos":
+                        return (x => this.translate_y + this.scale_y*Math.cos(this.children[0].toFunction()(x)))
+                    default:
+                        return null
                 }
             default:
                 return null

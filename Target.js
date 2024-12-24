@@ -16,6 +16,7 @@ class Target{
         Shapes.Rectangle(ctx,this.x-this.size/2,this.y-this.size/2,this.size,this.size,5,true)
     }
 
+
     isTouching(x,y){
         return x >= this.x - this.size/2 && x <= this.x+this.size/2 && y >= this.y - this.size/2 && y <= this.y + this.size/2
     }

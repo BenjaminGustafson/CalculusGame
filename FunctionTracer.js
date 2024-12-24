@@ -25,7 +25,7 @@ class FunctionTracer {
         if (this.display){
 
             Color.setColor(ctx, this.color)
-            ctx.lineWidth = 10;
+            ctx.strokeWidth = 10;
             ctx.beginPath();
             
             var cy = this.grid.gridToCanvas(this.fun(this.grid.canvasToGrid(this.origin_x,0).x))

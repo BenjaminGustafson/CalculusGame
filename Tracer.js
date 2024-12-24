@@ -1,10 +1,12 @@
 /**
  * 
- * A tracer is 
+ * A discrete tracer
  * 
- * 
+ * The tracer does not need to know its coordinates relative to the grid.
  * 
  */
+
+// TODO refactor as discrete tracer or combine with continuous
 class Tracer {
     frame = 0
     index = 0
@@ -13,6 +15,16 @@ class Tracer {
     unsolved_color = Color.red
     solved = false
 
+
+    /**
+     * 
+     * @param {*} origin_x the canvas starting x coordinate
+     * @param {*} origin_y the canvas starting y coordinate
+     * @param {*} grid the grid to draw on
+     * @param {[Slider]} sliders the sliders controlling the slopes of the tracer
+     * @param {*} frames_per_unit how fast to animate the tracer
+     * @param {[Target]} targets a list of the targets the tracer should hit
+     */
     constructor(origin_x, origin_y, grid, sliders, frames_per_unit, targets){
         this.origin_x = origin_x
         this.origin_y = origin_y

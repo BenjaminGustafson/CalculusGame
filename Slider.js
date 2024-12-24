@@ -68,12 +68,12 @@ class Slider{
     }
 
     draw(ctx){
+
         if(this.lineWidthMax != -1){
 
             Color.setColor(ctx, Color.white)
-            
-            Shapes.RoundedLine(ctx, this.x, this.y, this.end_x, this.end_y, this.lineWidthMax)
             if (this.visible){
+                Shapes.RoundedLine(ctx, this.x, this.y, this.end_x, this.end_y, this.lineWidthMax)
                 for (let i = 0; i <= this.numDivision; i++){
                     const crossLength = 15
                     const lineWidth = this.lineWidth
