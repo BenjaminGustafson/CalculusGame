@@ -82,7 +82,7 @@ function subMenu(gameState, num, name){
     
 }
 
-
+// TODO: switch over to one tracer class
 function introLevels(gameState, vals, name, next){
     // Right align 100px left of middle (800-100-400=300)
     // Center vertically (450-400/2=250)
@@ -91,10 +91,10 @@ function introLevels(gameState, vals, name, next){
     const gridRight = new Grid(900,250,400,400,4,4,5,2,2)
     // On first four cols of gridRight
     // x = 900, 950, 1000, 1050. top_y = 250.  
-    const slider1 = new Slider(900, 250, 400, 8, 0, 4, 0.2, false)
-    const slider2 = new Slider(1000, 250, 400,  8, 0, 4, 0.2, false)
-    const slider3 = new Slider(1100, 250, 400,  8, 0, 4, 0.2, false)
-    const slider4 = new Slider(1200, 250, 400,  8, 0, 4, 0.2, false)
+    const slider1 = new Slider(900, 250, 400,  4, 0, 2, 0.1, false)
+    const slider2 = new Slider(1000, 250, 400, 4, 0, 2, 0.1, false)
+    const slider3 = new Slider(1100, 250, 400, 4, 0, 2, 0.1, false)
+    const slider4 = new Slider(1200, 250, 400, 4, 0, 2, 0.1, false)
     const target1_coord = gridLeft.gridToCanvas(-1,vals[0])
     const target2_coord = gridLeft.gridToCanvas(0,vals[1])
     const target3_coord = gridLeft.gridToCanvas(1,vals[2])
@@ -103,7 +103,9 @@ function introLevels(gameState, vals, name, next){
     const target2 = new Target(target2_coord.x,target2_coord.y,15)
     const target3 = new Target(target3_coord.x,target3_coord.y,15)
     const target4 = new Target(target4_coord.x,target4_coord.y,15)
-    const tracer = new Tracer(300,450,gridLeft,[slider1,slider2,slider3,slider4],60,[target1,target2,target3,target4])
+    const tracer = new Tracer(300,450,gridLeft,
+        {type:"sliders",sliders:[slider1,slider2,slider3,slider4],slider_spacing:100},
+        4,[target1,target2,target3,target4])
     const back_button = new NavButton(100,100,100,100, (()=> gameState.sceneName = "introMenu"),"↑")
     const forward_button = new NavButton(300,100,100,100, (()=> gameState.sceneName = next),"→")
     forward_button.active = false
@@ -123,6 +125,8 @@ function introLevels(gameState, vals, name, next){
     gameState.update = update
 }
 
+
+
 function quadDiscLevel(gameState, num_sliders, next){
     const gridLeft = new Grid(300,250,400,400,4,4,5,2,2)
     const gridRight = new Grid(900,250,400,400,4,4,5,2,2)
@@ -141,7 +145,7 @@ function quadDiscLevel(gameState, num_sliders, next){
         const coord = gridLeft.gridToCanvas(target_coords[i][0],target_coords[i][1])
         targets.push(new Target(coord.x, coord.y, 10))
     }
-    const tracer = new ContinuousTracer(300,250,gridLeft,
+    const tracer = new Tracer(300,250,gridLeft,
         {type:"sliders",sliders:sliders,slider_spacing:slider_spacing},
         4,targets)
     const back_button = new NavButton(100,100,100,100, (()=> gameState.sceneName = "quadMenu"),"↑")
@@ -184,7 +188,7 @@ function cubicDiscLevel(gameState, num_sliders, next){
         targets.push(new Target(coord.x, coord.y, 10))
     }
     const tracer_start = gridLeft.gridToCanvas(-2,fun(-2))
-    const tracer = new ContinuousTracer(tracer_start.x,tracer_start.y,gridLeft,
+    const tracer = new Tracer(tracer_start.x,tracer_start.y,gridLeft,
         {type:"sliders",sliders:sliders,slider_spacing:slider_spacing},
         4,targets)
     const back_button = new NavButton(100,100,100,100, (()=> gameState.sceneName = "cubicMenu"),"↑")
@@ -204,7 +208,6 @@ function cubicDiscLevel(gameState, num_sliders, next){
     gameState.objects = objs
     gameState.update = update
 }
-
 
 function expDiscLevel(gameState, num_sliders, next){
     // To generalize
@@ -227,7 +230,7 @@ function expDiscLevel(gameState, num_sliders, next){
         targets.push(new Target(coord.x, coord.y, 10))
     }
     const tracer_start = gridLeft.gridToCanvas(-2,0.1)
-    const tracer = new ContinuousTracer(tracer_start.x,tracer_start.y,gridLeft,
+    const tracer = new Tracer(tracer_start.x,tracer_start.y,gridLeft,
         {type:"sliders",sliders:sliders,slider_spacing:slider_spacing},
         4,targets)
     const back_button = new NavButton(100,100,100,100, (()=> gameState.sceneName = "expMenu"),"↑")
@@ -274,7 +277,7 @@ function expDiscLevel(gameState, num_sliders, next){
 //         const canvas_coords = gridLeft.gridToCanvas(target_coords[i][0],target_coords[i][1])
 //         targets.push(new Target(canvas_coords.x, canvas_coords.y,10))
 //     }
-//     const tracer = new ContinuousTracer(100+x_adjust,250+y_adjust,gridLeft,{type:"mathBlock",mathBlockMngr:mngr},4,targets)
+//     const tracer = new Tracer(100+x_adjust,250+y_adjust,gridLeft,{type:"mathBlock",mathBlockMngr:mngr},4,targets)
 //     // Nav buttons
 //     const back_button = new NavButton(100,100,100,100, (()=> gameState.sceneName = "quadMenu"),"↑")
 //     const forward_button = new NavButton(300,100,100,100, (()=> gameState.sceneName = next),"→")
@@ -324,7 +327,7 @@ function cubicContLevel(gameState, fun, next){
         targets.push(new Target(canvas_coords.x, canvas_coords.y,10))
     }
     tracer_start = gridLeft.gridToCanvas(-2,fun(-2))
-    const tracer = new ContinuousTracer(tracer_start.x,tracer_start.y,gridLeft,{type:"mathBlock",mathBlockMngr:mngr},4,targets)
+    const tracer = new Tracer(tracer_start.x,tracer_start.y,gridLeft,{type:"mathBlock",mathBlockMngr:mngr},4,targets)
     // Nav buttons
     const back_button = new NavButton(100,100,100,100, (()=> gameState.sceneName = "cubicMenu"),"↑")
     const forward_button = new NavButton(300,100,100,100, (()=> gameState.sceneName = next),"→")
@@ -346,8 +349,9 @@ function cubicContLevel(gameState, fun, next){
 }
 
 
-function genContLevel(gameState, fun, blocks, next){
-
+function genContLevel(gameState, fun, blocks, next, back,
+    grid_setting = {grid_width: 4, grid_height: 4, x_axis: 2, y_axis: 2}
+){
     const target_coords = []
     const num_targets = 16
     for (let i = 0; i < num_targets; i++){
@@ -358,8 +362,8 @@ function genContLevel(gameState, fun, blocks, next){
 
     const y_adjust = 100
     const x_adjust = 100
-    const gridLeft = new Grid(100+x_adjust,250+y_adjust,400,400,4,4,5,2,2)
-    const gridRight = new Grid(600+x_adjust,250+y_adjust,400,400,4,4,5,2,2)
+    const gridLeft = new Grid(100+x_adjust,250+y_adjust,400,400,grid_setting.grid_width,grid_setting.grid_height,5,grid_setting.x_axis,grid_setting.y_axis)
+    const gridRight = new Grid(600+x_adjust,250+y_adjust,400,400,grid_setting.grid_width,grid_setting.grid_height,5,grid_setting.x_axis,grid_setting.y_axis)
     const ty_slider = new Slider(1100+x_adjust, 250+y_adjust, 400, 8, 0, 4, 0.1, true, true)
     const sy_slider = new Slider(1200+x_adjust, 250+y_adjust, 400, 8, 1, 4, 0.1, true, true)
     const funRight = new FunctionTracer(gridRight)
@@ -376,9 +380,9 @@ function genContLevel(gameState, fun, blocks, next){
         targets.push(new Target(canvas_coords.x, canvas_coords.y,10))
     }
     tracer_start = gridLeft.gridToCanvas(-2,fun(-2))
-    const tracer = new ContinuousTracer(tracer_start.x,tracer_start.y,gridLeft,{type:"mathBlock",mathBlockMngr:mngr},4,targets)
+    const tracer = new Tracer(tracer_start.x,tracer_start.y,gridLeft,{type:"mathBlock",mathBlockMngr:mngr},4,targets)
     // Nav buttons
-    const back_button = new NavButton(100,100,100,100, (()=> gameState.sceneName = "cubicMenu"),"↑")
+    const back_button = new NavButton(100,100,100,100, (()=> gameState.sceneName = back),"↑")
     const forward_button = new NavButton(300,100,100,100, (()=> gameState.sceneName = next),"→")
     forward_button.active = false
     
@@ -403,8 +407,11 @@ function genContLevel(gameState, fun, blocks, next){
 /**
  * 
  * The main function for serving up scenes.
+ * 
+ * The comments above each level describe the intended 
+ * things that the level should teach.
+ * 
  */
-
 function loadScene(gameState){
     switch (gameState.sceneName){
         case "":
@@ -412,86 +419,199 @@ function loadScene(gameState){
             mainMenu(gameState)
             break
         }
+
+        /** Intro Levels
+         * Difficulty here is quite low, player should only struggle with
+         * understanding what the goal is and what they have under their
+         * control. They should grasp this in the first 4 puzzles, and 
+         * then 5-8 are a victory lap to encourage them before we introduce
+         * complexity in 2.
+         */
         case "introMenu":{
             introMenu(gameState)
             break
         }
-        case "quadMenu":{
-            subMenu(gameState,"2","quad")
-            break
-        }
         
+        /**
+         * - The purple squares turn blue when hit by the line.   
+         * - The sliders change the line
+         */
         case "intro1":{
             introLevels(gameState, [0,1,1,2], "intro1", "intro2")
             break
         }
+
+        /**
+         * - Moving the slider up makes the line go up, and likewise down.
+         * - One unit on the slider corresponds to one unit on the tracer.
+         */
         case "intro2":{
             introLevels(gameState, [1,0,-1,0], "intro2", "intro3")
             break
         }
+
+        /**
+         * - Sliders can be set to partial units, specifically half
+         * - The end spot of the tracer is not the slider location, 
+         *   but the accumulation of slider values
+         */
         case "intro3":{
             introLevels(gameState, [0.5,1,0.5,1.5], "intro3", "intro4")
             break
         }
+
+        /**
+         * - Reinforce 1.1-1.3 while using max slider values
+         */
         case "intro4":{
             introLevels(gameState, [2,1.5,-0.5,-2], "intro4", "intro5")
             break
         }
+
+        /**
+         * - If sliders are on half units, the resulting slope is halved.
+         */
+        case "intro5":{
+            introLevels(gameState, [2,1.5,-0.5,-2], "intro4", "intro5")
+            break
+        }
+
+        /**
+         * 
+         */
+        case "intro6":{
+            introLevels(gameState, [2,1.5,-0.5,-2], "intro4", "intro5")
+            break
+        }
+
+        /**
+         * 
+         */
+        case "intro7":{
+            introLevels(gameState, [2,1.5,-0.5,-2], "intro4", "intro5")
+            break
+        }
+
+        /**
+         * 
+         */
+        case "intro8":{
+            introLevels(gameState, [2,1.5,-0.5,-2], "intro4", "intro5")
+            break
+        }
+
+
+        /**
+         * Quadratic Levels
+         * We introduce the mathblock interface while teaching that the 
+         * derivative of $x^2$ is $x$. We don't actually identify the 
+         * quadratic as $x^2$ until the next section.
+         */
+        case "quadMenu":{
+            subMenu(gameState,"2","quad")
+            break
+        }
+
+        /**
+         * - A quadratic shape on the left can be achieved by a linear
+         *   shape on the right.
+         */
         case "quad1":{
             quadDiscLevel(gameState,4,"quad4")
             break
         }
 
+        /**
+         * - As we add more sliders the curve becomes smoother
+         */
         case "quad2":{
             quadDiscLevel(gameState,8,"quad4")
             break
         }
 
+        /**
+         * - As we add more sliders the curve becomes smoother
+         */
         case "quad3":{
             quadDiscLevel(gameState,16,"quad4")
             break
         }
 
+        /**
+         * - We introduce symbols for the first time. The level solves itself.
+         * - You have to drag the mathblocks to the field.
+         */
         case "quad4":{
             const fun = x => x*x/2
             const blocks = [[MathBlock.VARIABLE,"x"]]
-            genContLevel(gameState, fun, blocks, "quad5")
+            genContLevel(gameState, fun, blocks, "quad5", "quadMenu")
             break
         }
 
+        /**
+         * Scaling the line smaller scales the quadratic smaller.
+         */
         case "quad5":{
             const fun = x => x*x/4
             const blocks = [[MathBlock.VARIABLE,"x"]]
-            genContLevel(gameState, fun, blocks, "quad6")
+            genContLevel(gameState, fun, blocks, "quad6", "quadMenu")
             break
         }
 
+        /**
+         * Scaling the line larger scales the quadratic larger.
+         */
         case "quad6":{
             const fun = x => x*x
             const blocks = [[MathBlock.VARIABLE,"x"]]
-            genContLevel(gameState, fun, blocks, "quad7")
+            genContLevel(gameState, fun, blocks, "quad7", "quadMenu", {grid_width:4, grid_height:4, x_axis:4, y_axis:2})
             break
         }
 
+        /**
+         * Shifting the line up/down shifts the quadratic left/right.
+         */
         case "quad7":{
             const fun = x => x*x/4
             const blocks = [[MathBlock.VARIABLE,"x"]]
-            genContLevel(gameState, fun, blocks, "quad8")
+            genContLevel(gameState, fun, blocks, "quad8", "quadMenu")
             break
         }
 
+        /**
+         * Shifting the line up/down shifts the quadratic left/right.
+         */
         case "quad8":{
             const fun = x => x*x/4
             const blocks = [[MathBlock.VARIABLE,"x"]]
-            genContLevel(gameState, fun, blocks, "cubicMenu")
+            genContLevel(gameState, fun, blocks, "cubicMenu", "quadMenu")
             break
         }
 
+        /**
+         * - Scaling the line by a negative flips it.
+         */
+        case "quad9":{
+            const fun = x => -x*x/2
+            const blocks = [[MathBlock.VARIABLE,"x"]]
+            genContLevel(gameState, fun, blocks, "cubicMenu", "quadMenu")
+            break
+        }
+
+        // I vote no more puzzles here to reduce fatigue of quadratic
+        //  style puzzles. Can cover negative scaling and shifting in cubic 5-8.
+
+        /**
+         * Cubic levels
+         */
         case "cubicMenu":{
             subMenu(gameState,"3","cubic")
             break
         }
 
+        /**
+         * Same as 2.1-2.3, just with the cubic target.
+         */
         case "cubic1":{
             cubicDiscLevel(gameState, 4, "cubic2")
             break
@@ -507,6 +627,9 @@ function loadScene(gameState){
             break
         }
 
+        /**
+         * Might want to label x^3 here. After this we don't off x^3 as a mathblock.
+         */
         case "cubic4":{
             const fun = x => x*x*x/6
             cubicContLevel(gameState, fun, "cubic5")
@@ -519,6 +642,10 @@ function loadScene(gameState){
             break
         }
 
+        /**
+         * Exponential Levels
+         * 
+         */
         case "expMenu":{
             subMenu(gameState,"4","exp")
             break
@@ -539,10 +666,13 @@ function loadScene(gameState){
             break
         }
 
+        /**
+         * 
+         */
         case "exp5":{
             const fun = x => Math.E ** x
             const blocks = [[MathBlock.VARIABLE,"x"],[MathBlock.POWER,"2"],[MathBlock.EXPONENT,"e"],[MathBlock.FUNCTION,"sin"]]
-            genContLevel(gameState, fun, blocks, "exp6")
+            genContLevel(gameState, fun, blocks, "exp6", "expMenu")
             break
         }
         

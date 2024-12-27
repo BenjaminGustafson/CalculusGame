@@ -5,7 +5,8 @@
 class Shapes {
     
     /**
-     * 
+     * TODO: Could you not just use the built in endCap? There's no arrow option, so whats 
+     * the best way to handle that?
      * 
      * @param {context} ctx the context of the canvas to draw on
      * @param {int} start_x the x coordinate of the middle of the start point
