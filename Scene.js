@@ -27,7 +27,7 @@ function mainMenu(gameState){
         button2 : new NavButton(600,250,100,100, (()=> gameState.sceneName = "quadMenu"), "2"),
         button3 : new NavButton(900,250,100,100, (()=> gameState.sceneName = "cubicMenu"), "3"),
         button4 : new NavButton(1200,250,100,100, (()=> gameState.sceneName = "expMenu"), "4"),
-        button5 : new NavButton(300,550,100,100, (()=> gameState.sceneName = "sineMenu"), "5"),
+        button5 : new NavButton(300,550,100,100, (()=> gameState.sceneName = "sinMenu"), "5"),
         button6 : new NavButton(600,550,100,100, (()=> gameState.sceneName = "sumMenu"), "6"),
         button7 : new NavButton(900,550,100,100, (()=> gameState.sceneName = "prodMenu"), "7"),
         button8 : new NavButton(1200,550,100,100, (()=> gameState.sceneName = "chainMenu"), "8"),
@@ -35,33 +35,33 @@ function mainMenu(gameState){
     gameState.update = (()=>{})
 }
 
-function introMenu(gameState){
-    mainMenu(gameState)
-    gameState.objects.button1.onclick =  (()=> gameState.sceneName = "intro1")
-    gameState.objects.button1.label = "1.1"
-    gameState.objects.button2.onclick =  (()=> gameState.sceneName = "intro2")
-    gameState.objects.button2.label = "1.2"
-    gameState.objects.button3.onclick =  (()=> gameState.sceneName = "intro3")
-    gameState.objects.button3.label = "1.3"
-    gameState.objects.button4.onclick =  (()=> gameState.sceneName = "intro4")
-    gameState.objects.button4.label = "1.4"
-    delete gameState.objects.button5
-    delete gameState.objects.button6
-    delete gameState.objects.button7
-    delete gameState.objects.button8
-    gameState.objects.backButton = new NavButton(100,100,100,100, (()=> gameState.sceneName = "mainMenu"), "↑"),
-    buttons = [gameState.objects.button1, gameState.objects.button2,gameState.objects.button3,
-        gameState.objects.button4,gameState.objects.button5,gameState.objects.button6,gameState.objects.button7,gameState.objects.button8
-    ]
-    gameState.update = (()=>{
-        for (let i = 0; i < buttons.length; i++){
-            if (gameState.completedLevels["intro"+(i+1)]){
-                gameState.objects["button"+(i+1)].color = Color.blue
-            }
-        }
-    })
+// function introMenu(gameState){
+//     mainMenu(gameState)
+//     gameState.objects.button1.onclick =  (()=> gameState.sceneName = "intro1")
+//     gameState.objects.button1.label = "1.1"
+//     gameState.objects.button2.onclick =  (()=> gameState.sceneName = "intro2")
+//     gameState.objects.button2.label = "1.2"
+//     gameState.objects.button3.onclick =  (()=> gameState.sceneName = "intro3")
+//     gameState.objects.button3.label = "1.3"
+//     gameState.objects.button4.onclick =  (()=> gameState.sceneName = "intro4")
+//     gameState.objects.button4.label = "1.4"
+//     delete gameState.objects.button5
+//     delete gameState.objects.button6
+//     delete gameState.objects.button7
+//     delete gameState.objects.button8
+//     gameState.objects.backButton = new NavButton(100,100,100,100, (()=> gameState.sceneName = "mainMenu"), "↑"),
+//     buttons = [gameState.objects.button1, gameState.objects.button2,gameState.objects.button3,
+//         gameState.objects.button4,gameState.objects.button5,gameState.objects.button6,gameState.objects.button7,gameState.objects.button8
+//     ]
+//     gameState.update = (()=>{
+//         for (let i = 0; i < buttons.length; i++){
+//             if (gameState.completedLevels["intro"+(i+1)]){
+//                 gameState.objects["button"+(i+1)].color = Color.blue
+//             }
+//         }
+//     })
 
-}
+// }
 
 function subMenu(gameState, num, name){
     buttons = []
@@ -125,6 +125,42 @@ function introLevels(gameState, vals, name, next){
     gameState.update = update
 }
 
+function simpleDiscLevel(gameState, target_vals, next, tracer_start = 0){
+    const num_sliders = target_vals.length
+    const gridLeft = new Grid(300,250,400,400,4,4,5,2,2)
+    const gridRight = new Grid(900,250,400,400,4,4,5,2,2)
+    var sliders = []
+    const slider_spacing = 400/num_sliders
+    for (let i = 0; i < num_sliders; i++){
+        sliders.push(new Slider(900+slider_spacing*i, 250, 400, 4, 0, 2, 0.01, false, vertical=true,circleRadius=10))
+    }
+    var targets = []
+    for (let i = 0; i < num_sliders; i++){
+        const x = -2 + (i+1)/num_sliders*4
+        const coord = gridLeft.gridToCanvas(x,target_vals[i])
+        targets.push(new Target(coord.x, coord.y, 10))
+    }
+    const tracer_coord = gridLeft.gridToCanvas(-2,tracer_start)
+    const tracer = new Tracer(tracer_coord.x,tracer_coord.y,gridLeft,
+        {type:"sliders",sliders:sliders,slider_spacing:slider_spacing},
+        4,targets)
+    const back_button = new NavButton(100,100,100,100, (()=> gameState.sceneName = "introMenu"),"↑")
+    const forward_button = new NavButton(300,100,100,100, (()=> gameState.sceneName = next),"→")
+    forward_button.active = false
+    function update (){
+        if(tracer.solved && !gameState.completedLevels[gameState.sceneName]){
+            gameState.completedLevels[gameState.sceneName] = true
+            gameState.writeToStorage = true
+            
+        }
+        if (gameState.completedLevels[gameState.sceneName]){
+            forward_button.active = true
+        }
+    }
+    const objs = [gridLeft,gridRight,tracer, back_button, forward_button].concat(targets).concat(sliders)
+    gameState.objects = objs
+    gameState.update = update
+}
 
 
 function quadDiscLevel(gameState, num_sliders, next){
@@ -229,7 +265,7 @@ function expDiscLevel(gameState, num_sliders, next){
         const coord = gridLeft.gridToCanvas(target_coords[i][0],target_coords[i][1])
         targets.push(new Target(coord.x, coord.y, 10))
     }
-    const tracer_start = gridLeft.gridToCanvas(-2,0.1)
+    const tracer_start = gridLeft.gridToCanvas(-2,0.15)
     const tracer = new Tracer(tracer_start.x,tracer_start.y,gridLeft,
         {type:"sliders",sliders:sliders,slider_spacing:slider_spacing},
         4,targets)
@@ -238,7 +274,7 @@ function expDiscLevel(gameState, num_sliders, next){
     forward_button.active = false
     function update (){
         for (let i = 0; i < num_sliders-1; i++){
-            targets[i].y = gridLeft.gridToCanvas(0,sliders[i+1].value).y
+            targets[i].setPosition(targets[i].x,gridLeft.gridToCanvas(0,sliders[i+1].value).y)
         }
 
         if(tracer.solved && !gameState.completedLevels[gameState.sceneName]){
@@ -255,6 +291,59 @@ function expDiscLevel(gameState, num_sliders, next){
     gameState.objects = objs
     gameState.update = update
 }
+
+function sinDiscLevel(gameState, num_sliders, next){
+    // To generalize
+
+    const grid1 = new Grid(100,250,400,400,4,4,5,4,2)
+    const grid2 = new Grid(600,250,400,400,4,4,5,4,2)
+    const grid3 = new Grid(1100,250,400,400,4,4,5,4,2)
+    var sliders = []
+    const slider_spacing = 400/num_sliders
+    for (let i = 0; i < num_sliders; i++){
+        sliders.push(new Slider(900+slider_spacing*i, 250, 400, 4, 0, 4, 0.01, false, vertical=true,circleRadius=10))
+    }
+    const target_coords = []
+    for (let i = 0; i<num_sliders-1; i++){
+        const x = -2 + (i+1)/num_sliders*4
+        target_coords.push([x,0])
+    }
+    var targets = []
+    for (let i = 0; i < target_coords.length; i++){
+        const coord = grid3.gridToCanvas(target_coords[i][0],target_coords[i][1])
+        targets.push(new Target(coord.x, coord.y, 10))
+    }
+    const tracer1_start = grid1.gridToCanvas(-2,0.15)
+    const tracer1 = new Tracer(tracer1_start.x,tracer1_start.y,grid1,
+        {type:"sliders",sliders:sliders,slider_spacing:slider_spacing},
+        4,targets)
+    const tracer2_start = grid2.gridToCanvas(-2,0.15)
+    const tracer2 = new Tracer(tracer2_start.x,tracer2_start.y,grid2,
+        {type:"sliders",sliders:sliders,slider_spacing:slider_spacing},
+        4,targets)
+    const back_button = new NavButton(100,100,100,100, (()=> gameState.sceneName = "expMenu"),"↑")
+    const forward_button = new NavButton(300,100,100,100, (()=> gameState.sceneName = next),"→")
+    forward_button.active = false
+    function update (){
+        for (let i = 0; i < num_sliders-1; i++){
+            targets[i].setPosition(targets[i].x,grid2.gridToCanvas(0,sliders[i+1].value).y)
+        }
+
+        if(tracer1.solved && !gameState.completedLevels[gameState.sceneName]){
+            gameState.completedLevels[gameState.sceneName] = true
+            gameState.writeToStorage = true
+            
+        }
+        if (gameState.completedLevels[gameState.sceneName]){
+            forward_button.active = true
+        }
+    }
+
+    const objs = [grid1,grid2,grid3,tracer1,tracer2, back_button, forward_button].concat(targets).concat(sliders.slice(1))
+    gameState.objects = objs
+    gameState.update = update
+}
+
 
 // NOT USED DELETE
 // function quadContLevel(gameState, target_coords, next){
@@ -428,7 +517,7 @@ function loadScene(gameState){
          * complexity in 2.
          */
         case "introMenu":{
-            introMenu(gameState)
+            subMenu(gameState,"1","intro")
             break
         }
         
@@ -472,7 +561,7 @@ function loadScene(gameState){
          * - If sliders are on half units, the resulting slope is halved.
          */
         case "intro5":{
-            introLevels(gameState, [2,1.5,-0.5,-2], "intro4", "intro5")
+            simpleDiscLevel(gameState, [1,0.5,-0.1,-0.8,-0.4,0.6,0.2,0.4], "intro6")
             break
         }
 
@@ -480,7 +569,8 @@ function loadScene(gameState){
          * 
          */
         case "intro6":{
-            introLevels(gameState, [2,1.5,-0.5,-2], "intro4", "intro5")
+            simpleDiscLevel(gameState, [0.25,0.5,0.75,1,1.25,1,0.75,0.5,
+                                        0.25,0,0.5,1,0.5,0,0.5,1], "intro7")
             break
         }
 
@@ -488,7 +578,8 @@ function loadScene(gameState){
          * 
          */
         case "intro7":{
-            introLevels(gameState, [2,1.5,-0.5,-2], "intro4", "intro5")
+            simpleDiscLevel(gameState, [1,0,-1,0], "intro8",1)
+break
             break
         }
 
@@ -496,7 +587,7 @@ function loadScene(gameState){
          * 
          */
         case "intro8":{
-            introLevels(gameState, [2,1.5,-0.5,-2], "intro4", "intro5")
+            simpleDiscLevel(gameState, [-1,-0.5,-0.1,0.2,0.4,0.5,0.3,0.6], "quadMenu", -1.5)
             break
         }
 
@@ -572,27 +663,27 @@ function loadScene(gameState){
          * Shifting the line up/down shifts the quadratic left/right.
          */
         case "quad7":{
-            const fun = x => x*x/4
+            const fun = x => x*x/4+x-1
             const blocks = [[MathBlock.VARIABLE,"x"]]
             genContLevel(gameState, fun, blocks, "quad8", "quadMenu")
             break
         }
 
         /**
-         * Shifting the line up/down shifts the quadratic left/right.
+         * - Scaling the line by a negative flips it.
          */
         case "quad8":{
-            const fun = x => x*x/4
+            const fun = x =>-x*x/2+2
             const blocks = [[MathBlock.VARIABLE,"x"]]
             genContLevel(gameState, fun, blocks, "cubicMenu", "quadMenu")
             break
         }
 
         /**
-         * - Scaling the line by a negative flips it.
+         *  Shifting the line up/down shifts the quadratic left/right.
          */
         case "quad9":{
-            const fun = x => -x*x/2
+            const fun = x =>   x*x/4-x-1
             const blocks = [[MathBlock.VARIABLE,"x"]]
             genContLevel(gameState, fun, blocks, "cubicMenu", "quadMenu")
             break
@@ -636,11 +727,37 @@ function loadScene(gameState){
             break
         }
 
+        /**
+         * Small scale
+         */
         case "cubic5":{
             const fun = x => x*x*x/10
             cubicContLevel(gameState, fun, "cubic6")
             break
         }
+
+        /**
+         * 
+         */
+        case "cubic6":{
+            const fun = x => x*x*x*2/3 - x*2 
+            cubicContLevel(gameState, fun, "cubic7")
+            break
+        }
+
+        case "cubic7":{
+            const fun = x => -x*x*x*2/3 + x*2 
+            cubicContLevel(gameState, fun, "cubic8")
+            break
+        }
+
+        case "cubic8":{
+            const fun = x => 0.1*x*x*x+0.3*x*x+0.3*x-1
+            cubicContLevel(gameState, fun, "expMenu")
+            break
+        }
+
+
 
         /**
          * Exponential Levels
@@ -669,14 +786,22 @@ function loadScene(gameState){
         /**
          * 
          */
-        case "exp5":{
+        case "exp4":{
             const fun = x => Math.E ** x
             const blocks = [[MathBlock.VARIABLE,"x"],[MathBlock.POWER,"2"],[MathBlock.EXPONENT,"e"],[MathBlock.FUNCTION,"sin"]]
-            genContLevel(gameState, fun, blocks, "exp6", "expMenu")
+            genContLevel(gameState, fun, blocks, "exp5", "expMenu")
             break
         }
         
-        
+        case "sinMenu":{
+            subMenu(gameState,"5","sin")
+            break
+        }
+
+        case "sin1":{
+            sinDiscLevel(gameState, 4, "sin2")
+            break
+        }
     }
 }
 
