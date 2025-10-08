@@ -187,22 +187,45 @@ export class FunctionTracer {
                 ctx.restore()
             }
 
-
-            // Check if line hit targets on last iteration
-            if (!cyObj.out){ //i == this.pixelIndex && 
-                this.targets.forEach(t => {
-                    if (t.lineIntersect(x,prevCy,x+1,cy) || t.pointIntersect(x,prevCy)){
-                        if (!t.hit){
-                            audioManager.play('drop_002',{pitch:this.gridYs[i-1]/this.grid.gridHeight*12, channel:this.audioChannel})
-                        }
-                        t.hit = true
-                    }
-                })
-            }
                 
             // Set vars for next iter
             prevCy = cy
             prevOob = cyObj.out
+        }
+
+        // Check if targets are hit by line
+        this.targets.forEach(t => {
+            var hit = false
+            var cyObj = this.grid.gridToCanvasBoundedY(this.gridYs[0])
+            var prevCy = cyObj.y
+            var prevOob = cyObj.out
+            for (let i = 1; i <= this.pixelIndex; i++){
+                const x = this.originCanvasX+i
+                const cyObj = this.grid.gridToCanvasBoundedY(this.gridYs[i])
+                const cy = cyObj.y
+                if (!cyObj.out && (t.lineIntersect(x,prevCy,x+1,cy) || t.pointIntersect(x,prevCy))){
+                    if (!t.hit){
+                        audioManager.play('drop_002',{pitch:this.gridYs[i-1]/this.grid.gridHeight*12, channel:this.audioChannel})
+                    }
+                    hit = true
+                }
+                prevCy = cy
+                prevOob = cyObj.out
+            }
+            t.hit = hit
+        })
+
+        if (!this.animated){
+            var solved = true
+            this.targets.forEach(t => {
+                if (!t.hit){
+                    solved = false
+                }
+            })
+            if (!this.solved && solved){
+                audioManager.play('confirmation_001', {channel:this.audioChannel, pitch:-7*this.audioChannel})
+            }
+            this.solved = solved
         }
 
 
