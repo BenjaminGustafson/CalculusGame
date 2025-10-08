@@ -275,27 +275,38 @@ function sineLevel (gameState, {
 
 function springLevel(gameState, {
     nextScenes,
+    targetFun= x => Math.cos(2*x),
+    numTargets = 100
 }){
     const gss = gameState.stored
     const backButton = Planet.backButton(gameState)
     const nextButton = Planet.nextButton(gameState, nextScenes)
 
-    
+    const targetGrid = new Grid({canvasX: 825, canvasY: 350, gridXMin:0, gridXMax:4})
 
-    const spring = new SpringMass({originX:400, originY:200})
+    const targets = []
+    for (let i = 0; i < numTargets; i++){
+        const x = targetGrid.gridXMin+i*targetGrid.gridWidth/numTargets
+        targets.push(new Target({grid: targetGrid, gridX:x, gridY:targetFun(x), size:10}))
+    }
 
-    gameState.objects = [backButton, nextButton, spring]
-    Planet.winCon(gameState, ()=>false, nextButton)
+    const spring = new SpringMass({originX:700, originY:350})
+    const tracer = new FunctionTracer({grid: targetGrid, animated:true, resetCondition: ()=> spring.grabbed,
+        inputFunction: x => spring.positionFunction(x), autoStart:true,
+        pixelsPerSec: targetGrid.canvasWidth / targetGrid.gridWidth,
+        targets:targets
+    })
+
+
+    gameState.objects = [backButton, nextButton, spring, targetGrid, tracer, ...targets]
+    gameState.update = () =>{
+    }
+    Planet.winCon(gameState, ()=>tracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
 
 
 
-/**
- * 
- * 
- * 
- */
 class SpringMass extends GameObject {
     constructor({
         originX, originY,
@@ -309,15 +320,13 @@ class SpringMass extends GameObject {
         this.massCanvasY = originY
         this.time = 0
         this.position = 0
-        this.acceleration = 0
-        this.velocity = -1
-        this.amplitude = 1
+        this.amplitude = 0
         this.frequency = 2
-
         this.grabbed = false
         this.grabOffset = 0
 
         this.prevDateTime = Date.now()
+        this.positionFunction = t => 0
     }
     
     mouseInput(mouse){
@@ -348,18 +357,20 @@ class SpringMass extends GameObject {
         return this.originY - (y - this.maxExtension) * this.canvasLength / (this.maxExtension*2)
     }
 
+
     update(ctx, audio, mouse){
         this.mouseInput(mouse)
 
         if (this.grabbed){
-            this.position = this.canvasToLocal(mouse.y + this.grabOffset) 
+            this.position = this.canvasToLocal(mouse.y - this.grabOffset) 
         }else{
             const dateTime = Date.now()
             this.time += (dateTime - this.prevDateTime)/1000
             if (this.time > Math.PI*2){
                 this.time = 0
             }
-            this.position = Math.cos(this.time * this.frequency)*this.amplitude
+            this.positionFunction = t => Math.cos(t*this.frequency)*this.amplitude
+            this.position = this.positionFunction(this.time)
             this.prevDateTime = dateTime
         }
         if (this.position < -this.maxExtension) this.position = - this.maxExtension
@@ -378,9 +389,7 @@ class SpringMass extends GameObject {
         for (let i = 0; i < n; i++){
             const nx = this.originX + Math.sin(i*spirals/n)*springWidth
             const ny = this.originY + i/n*(this.massCanvasY - this.originY) + Math.cos(i*spirals/n)*springWidth*0.2
-            if (Math.round(nx) != Math.round(x) || Math.round(ny) != Math.round(ny)){
-                ctx.lineTo(x,y)
-            }else{console.log('!')}
+            ctx.lineTo(x,y)
             x = nx
             y = ny
         }
