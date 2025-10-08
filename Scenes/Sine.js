@@ -21,7 +21,16 @@ const nodes = {
     'sine.puzzle.8': [13,1, 0,-1],
     'sine.puzzle.9': [14,1, 0,-1],
     'sine.puzzle.10':[15,1, 0,-1],
-    'sine.lab':      [16,1, 0,-1],
+    'sine.puzzle.11': [6, 3, 0,-1],
+    'sine.puzzle.12': [7, 3, 0,-1],
+    'sine.puzzle.13': [8, 3, 0,-1],
+    'sine.puzzle.14': [9, 3, 0,-1],
+    'sine.puzzle.15': [10,3, 0,-1],
+    'sine.puzzle.16': [11,3, 0,-1],
+    'sine.puzzle.17': [12,3, 0,-1],
+    'sine.puzzle.18': [13,3, 0,-1],
+    'sine.puzzle.19': [14,3, 0,-1],
+    'sine.puzzle.20': [15,3, 0,-1],
 }
 
 const paths = 
@@ -36,7 +45,15 @@ const paths =
     {start: 'sine.puzzle.7', end: 'sine.puzzle.8', steps: [] },
     {start: 'sine.puzzle.8', end: 'sine.puzzle.9', steps: [] },
     {start: 'sine.puzzle.9', end: 'sine.puzzle.10', steps: [] },
-    {start: 'sine.puzzle.10', end: 'sine.lab', steps: []},
+    {start: 'sine.puzzle.11', end: 'sine.puzzle.12', steps: [] },
+    {start: 'sine.puzzle.12', end: 'sine.puzzle.13', steps: [] },
+    {start: 'sine.puzzle.13', end: 'sine.puzzle.14', steps: [] },
+    {start: 'sine.puzzle.14', end: 'sine.puzzle.15', steps: [] },
+    {start: 'sine.puzzle.15', end: 'sine.puzzle.16', steps: [] },
+    {start: 'sine.puzzle.16', end: 'sine.puzzle.17', steps: [] },
+    {start: 'sine.puzzle.17', end: 'sine.puzzle.18', steps: [] },
+    {start: 'sine.puzzle.18', end: 'sine.puzzle.19', steps: [] },
+    {start: 'sine.puzzle.19', end: 'sine.puzzle.20', steps: [] },
 ]
 
 
@@ -90,6 +107,9 @@ export function loadScene(gameState, sceneName, message = {}){
                     // I can't solve my own puzzle! Maybe I just put those starting numbers in by accident
                     sineLevel(gameState, {numSliders:100, sliderSize:5, targetSize:12, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:6,
                             nextScenes:["sine.puzzle.10"], withMathBlock:true, increment:0.05, tracerLeftStart:1, tracerMiddleStart:-1})
+                    break
+                case '10':
+                    springLevel(gameState, {nextScenes:["sine.puzzle.10"],})
                     break
             }
         break
@@ -251,17 +271,136 @@ function sineLevel (gameState, {
     Planet.unlockScenes(nextScenes, gss)
 }
 
-function pendulumLevel(gameState, {
 
+
+function springLevel(gameState, {
+    nextScenes,
 }){
+    const gss = gameState.stored
+    const backButton = Planet.backButton(gameState)
+    const nextButton = Planet.nextButton(gameState, nextScenes)
 
+    
+
+    const spring = new SpringMass({originX:400, originY:200})
+
+    gameState.objects = [backButton, nextButton, spring]
+    Planet.winCon(gameState, ()=>false, nextButton)
+    Planet.unlockScenes(nextScenes, gss)
 }
+
+
+
+/**
+ * 
+ * 
+ * 
+ */
+class SpringMass extends GameObject {
+    constructor({
+        originX, originY,
+        canvasLength=400,
+        maxExtension=2,
+        massSize=50,
+    }){
+        super()
+        Object.assign(this, { originX, originY, length, massSize, canvasLength, maxExtension})
+        this.canvasY = originY + length
+        this.massCanvasY = originY
+        this.time = 0
+        this.position = 0
+        this.acceleration = 0
+        this.velocity = -1
+        this.amplitude = 1
+        this.frequency = 2
+
+        this.grabbed = false
+        this.grabOffset = 0
+
+        this.prevDateTime = Date.now()
+    }
+    
+    mouseInput(mouse){
+        if (mouse.x >= this.originX-this.massSize/2 && mouse.x <= this.originX+this.massSize/2
+            && mouse.y >= this.massCanvasY-this.massSize/2 &&  mouse.y <= this.massCanvasY+this.massSize/2
+        ){
+            if (mouse.down){
+                this.grabbed = true
+                this.grabOffset = mouse.y - this.massCanvasY
+                mouse.cursor = 'grabbing'
+            }else{
+                mouse.cursor = 'grab'
+            }
+        }
+        if (this.grabbed && mouse.up){
+            this.grabbed = false
+            this.amplitude = this.position
+            this.prevDateTime = Date.now()
+            this.time = 0
+        }
+    }
+
+    canvasToLocal(y){
+        return this.maxExtension - (y - this.originY) / this.canvasLength * (this.maxExtension*2)
+    }
+
+    localToCanvas(y){
+        return this.originY - (y - this.maxExtension) * this.canvasLength / (this.maxExtension*2)
+    }
+
+    update(ctx, audio, mouse){
+        this.mouseInput(mouse)
+
+        if (this.grabbed){
+            this.position = this.canvasToLocal(mouse.y + this.grabOffset) 
+        }else{
+            const dateTime = Date.now()
+            this.time += (dateTime - this.prevDateTime)/1000
+            if (this.time > Math.PI*2){
+                this.time = 0
+            }
+            this.position = Math.cos(this.time * this.frequency)*this.amplitude
+            this.prevDateTime = dateTime
+        }
+        if (this.position < -this.maxExtension) this.position = - this.maxExtension
+        if (this.position > this.maxExtension) this.position = this.maxExtension
+
+        this.massCanvasY = this.localToCanvas(this.position)
+        Color.setColor(ctx, Color.white)
+        const spirals = Math.PI*10
+        const springWidth = 20
+        ctx.lineWidth = 5
+        ctx.lineJoin = 'round'
+        ctx.beginPath()
+        const n = 100
+        var x = this.originX
+        var y = this.originY
+        for (let i = 0; i < n; i++){
+            const nx = this.originX + Math.sin(i*spirals/n)*springWidth
+            const ny = this.originY + i/n*(this.massCanvasY - this.originY) + Math.cos(i*spirals/n)*springWidth*0.2
+            if (Math.round(nx) != Math.round(x) || Math.round(ny) != Math.round(ny)){
+                ctx.lineTo(x,y)
+            }else{console.log('!')}
+            x = nx
+            y = ny
+        }
+        ctx.stroke()
+        Color.setColor(ctx, Color.red)
+        Shapes.Rectangle({ctx:ctx, originX: this.originX-this.massSize/2, originY:this.massCanvasY-this.massSize/2, width:this.massSize, height:this.massSize,
+            shadow : 4, inset : true})
+
+    }
+}
+
 
 class Pendulum extends GameObject{
     constructor({
-        
+        originX, originY,
+        length = 100,
+        startTheta = 0,
     }){
         super()
+        Object.assign(this, {})
     }
 
     update(ctx, audio, mouse){
@@ -269,3 +408,25 @@ class Pendulum extends GameObject{
     }
 }
 
+
+class Orbit extends GameObject {
+    constructor({
+        originX, originY,
+        radius = 100,
+        startTheta = 0,
+    }){
+        super()
+        Object.assign(this, { originX, originY, radius, startTheta,})
+        this.x = originX + Math.cos(startTheta)*radius
+        this.y = originY + Math.sin(startTheta)*radius
+        this.theta = startTheta
+    }
+    
+    update(ctx, audio, mouse){
+        this.x = originX + Math.cos(theta)*radius
+        this.y = originY + Math.sin(theta)*radius
+        Shapes()
+
+        '🪐☀️🌑🌒🌓🌔🌕'
+    }
+}
