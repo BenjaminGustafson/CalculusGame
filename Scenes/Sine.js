@@ -291,15 +291,22 @@ function springLevel(gameState, {
     }
 
     const spring = new SpringMass({originX:700, originY:350})
-    const tracer = new FunctionTracer({grid: targetGrid, animated:true, resetCondition: ()=> spring.grabbed,
+    const massSlider = new Slider({canvasX: 350,  canvasY: 250, canvasLength: 400, vertical: false, minValue:1, maxValue:16, increment:1, startValue:4})
+    const tracer = new FunctionTracer({grid: targetGrid, animated:true, 
+        resetCondition: ()=> spring.grabbed || massSlider.grabbed,
         inputFunction: x => spring.positionFunction(x), autoStart:true,
         pixelsPerSec: targetGrid.canvasWidth / targetGrid.gridWidth,
         targets:targets
     })
 
 
-    gameState.objects = [backButton, nextButton, spring, targetGrid, tracer, ...targets]
+    gameState.objects = [backButton, nextButton, spring, targetGrid, tracer, ...targets, massSlider]
     gameState.update = () =>{
+        if (massSlider.grabbed){
+            spring.time = 0
+            spring.frequency = Math.sqrt(massSlider.value)
+            spring.massSize = 25 * spring.frequency
+        }
     }
     Planet.winCon(gameState, ()=>tracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
