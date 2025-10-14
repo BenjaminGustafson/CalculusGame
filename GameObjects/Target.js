@@ -39,6 +39,11 @@ export class Target{
         this.bottom = this.y+this.size/2
     }
 
+    setSize(s){
+        this.size = s
+        this.setPosition(this.x, this.y)
+    }
+
     setGridYPosition(y){
         this.setPosition(this.x, this.grid.gridToCanvasBoundedY(y).y)
     }

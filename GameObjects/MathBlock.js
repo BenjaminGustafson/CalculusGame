@@ -281,7 +281,6 @@ export class MathBlock {
         const ty =  Number(this.translateY.toFixed(6))
         const sy =  Number(this.scaleY.toFixed(6))
 
-        console.log(ty)
 
         this.prefix = ""
         this.suffix = ""

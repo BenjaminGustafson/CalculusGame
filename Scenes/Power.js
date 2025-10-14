@@ -21,7 +21,16 @@ const nodes = {
     'power.puzzle.8': [13,1, 0,-1],
     'power.puzzle.9': [14,1, 0,-1],
     'power.puzzle.10':[15,1, 0,-1],
-    'power.lab':      [16,1, 0,-1],
+    'power.puzzle.11': [6, 3, 0,-1],
+    'power.puzzle.12': [7, 3, 0,-1],
+    'power.puzzle.13': [8, 3, 0,-1],
+    'power.puzzle.14': [9, 3, 0,-1],
+    'power.puzzle.15': [10,3, 0,-1],
+    'power.puzzle.16': [11,3, 0,-1],
+    'power.puzzle.17': [12,3, 0,-1],
+    'power.puzzle.18': [13,3, 0,-1],
+    'power.puzzle.19': [14,3, 0,-1],
+    'power.puzzle.20': [15,3, 0,-1],
 }
 
 const paths = 
@@ -36,12 +45,18 @@ const paths =
     {start: 'power.puzzle.7', end: 'power.puzzle.8', steps: [] },
     {start: 'power.puzzle.8', end: 'power.puzzle.9', steps: [] },
     {start: 'power.puzzle.9', end: 'power.puzzle.10', steps: [] },
-    {start: 'power.puzzle.10', end: 'power.lab', steps: []},
+    {start: 'power.puzzle.10', end: 'power.puzzle.11', steps: []},
+    {start: 'power.puzzle.11', end: 'power.puzzle.12', steps: [] },
+    {start: 'power.puzzle.12', end: 'power.puzzle.13', steps: [] },
+    {start: 'power.puzzle.13', end: 'power.puzzle.14', steps: [] },
+    {start: 'power.puzzle.14', end: 'power.puzzle.15', steps: [] },
+    {start: 'power.puzzle.15', end: 'power.puzzle.16', steps: [] },
+    {start: 'power.puzzle.16', end: 'power.puzzle.17', steps: [] },
+    {start: 'power.puzzle.17', end: 'power.puzzle.18', steps: [] },
+    {start: 'power.puzzle.18', end: 'power.puzzle.19', steps: [] },
+    {start: 'power.puzzle.19', end: 'power.puzzle.20', steps: [] },
 ]
 
-
-const experimentData =  {
-}
 
 
 export function loadScene(gameState, sceneName, message = {}){
@@ -166,6 +181,7 @@ function powerLevel (gameState, {
     const backButton = Planet.backButton(gameState)
     const nextButton = Planet.nextButton(gameState, nextScenes)
 
+    // Grids
     const gridLeft = new Grid({canvasX:50, canvasY:350, canvasWidth:400, canvasHeight:400, 
         gridXMin:gridXMin, gridYMin:gridYMin, gridXMax:gridXMax, gridYMax:gridYMax, labels:true, arrows:false, autoCellSize: true})
     const gridMiddle = new Grid({canvasX: 500, canvasY:350, canvasWidth:400, canvasHeight:400, 
@@ -173,6 +189,8 @@ function powerLevel (gameState, {
     const gridRight = new Grid({canvasX:950, canvasY:350, canvasWidth:400, canvasHeight:400, 
         gridXMin:gridXMin, gridYMin:gridYMin, gridXMax:gridXMax, gridYMax:gridYMax, labels:true, arrows:false, autoCellSize: true})
     
+
+    // Sliders
     const spacing = gridLeft.gridWidth/numSliders
     var sliders = []
     for (let i = 0; i < numSliders; i++){
@@ -180,8 +198,8 @@ function powerLevel (gameState, {
             increment: increment,circleRadius:sliderSize}))
     }
 
+    // Targets
     var targets = []
-
     for (let i = 0; i < numSliders; i++) {
         const x = gridLeft.gridXMin+(i+1)*spacing
         const y = targetFun(x)
@@ -189,23 +207,22 @@ function powerLevel (gameState, {
             targets.push(new Target({grid: gridLeft, gridX:x, gridY:targetFun(x), size:targetSize}))
     }
     
-    const tracerMiddle = new IntegralTracer({grid: gridMiddle, sliders: sliders, targets:targets, originGridY:tracerMiddleStart, 
+    // Tracers
+    const tracerMiddle = new IntegralTracer({grid: gridMiddle, input:{type:'sliders', sliders: sliders}, originGridY:tracerMiddleStart, 
         spacing: gridLeft.gridWidth / (numSliders)
     })
     if (tracerLeftStart == null){
         tracerLeftStart = targetFun(gridXMin)
     }
-    const tracerLeft = new IntegralTracer({grid: gridLeft, inputTracer: tracerMiddle, targets:targets, originGridY:tracerLeftStart, 
+    const tracerLeft = new IntegralTracer({grid: gridLeft, input:{type:'tracer', tracer: tracerMiddle}, targets:targets, originGridY:tracerLeftStart, 
     })
     
     
+    // Mathblocks
     const blocks = [
         new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
     ]
     if (withPowerBlock) blocks.push(new MathBlock({type:MathBlock.POWER, token:'n'}))
-    // for (let b of gss.mathBlocksUnlocked){
-    //     blocks.push(new MathBlock({type: b.type, token: b.token}))
-    // }
 
     gameState.objects = [gridLeft, gridMiddle, gridRight, tracerLeft,
         tracerMiddle, backButton, nextButton].concat(targets).concat(sliders)

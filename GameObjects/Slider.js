@@ -31,10 +31,11 @@ export class Slider{
         lineWidth = 4,
         tickLength = 8,
         valueLabel = true,
+        name='',
     }){
         Object.assign(this, {
             canvasLength, sliderLength, minValue, maxValue, startValue, increment, circleRadius,
-            vertical, showLines, showAxis, circleColor, lineWidth, gridPos, valueLabel, tickLength
+            vertical, showLines, showAxis, circleColor, lineWidth, gridPos, valueLabel, tickLength, name
         })
 
         if (canvasX != null && canvasY != null){
@@ -270,8 +271,16 @@ export class Slider{
             shadow:this.grabbed, 
         })
 
+        ctx.font = `${this.circleRadius} px monospace`
+        if (this.name != ''){
+            Color.setColor(ctx, Color.white)
+            ctx.textAlign = this.vertical ? 'center' : 'right'
+            ctx.textBaseline = this.vertical ? top : 'middle'
+            const nameX = this.canvasX + (this.vertical ? 0 : -20)
+            const nameY = this.canvasY + (this.vertical ? -20 : 0) 
+            ctx.fillText(this.name, nameX, nameY)
+        }
         if (this.valueLabel && (this.mouseOver || this.grabbed)){
-            ctx.font = `${this.circleRadius} px monospace`
             const text = Number(this.value.toFixed(6))
             const textWidth = ctx.measureText(text).width
             const labelPad = 10
@@ -291,6 +300,7 @@ export class Slider{
             ctx.fillText(text,labelRight - labelPad, circleY)
             
         }
+        
         
     }
 

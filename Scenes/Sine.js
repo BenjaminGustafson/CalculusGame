@@ -45,6 +45,7 @@ const paths =
     {start: 'sine.puzzle.7', end: 'sine.puzzle.8', steps: [] },
     {start: 'sine.puzzle.8', end: 'sine.puzzle.9', steps: [] },
     {start: 'sine.puzzle.9', end: 'sine.puzzle.10', steps: [] },
+    {start: 'sine.puzzle.10', end: 'sine.puzzle.11', steps: []},
     {start: 'sine.puzzle.11', end: 'sine.puzzle.12', steps: [] },
     {start: 'sine.puzzle.12', end: 'sine.puzzle.13', steps: [] },
     {start: 'sine.puzzle.13', end: 'sine.puzzle.14', steps: [] },
@@ -207,7 +208,7 @@ function sineLevel (gameState, {
         targets.push(new Target({grid: gridLeft, gridX:x, gridY:0, size:targetSize}))
     }
     
-    const tracerMiddle = new IntegralTracer({grid: gridMiddle, input:{type:'sliders', sliders: sliders}, targets:targets, originGridY:tracerMiddleStart, 
+    const tracerMiddle = new IntegralTracer({grid: gridMiddle, input:{type:'sliders', sliders: sliders}, originGridY:tracerMiddleStart, 
         spacing: gridLeft.gridWidth / (numSliders)
     })
     const tracerLeft = new IntegralTracer({grid: gridLeft, input:{type:'tracer', tracer: tracerMiddle}, targets:targets, originGridY:tracerLeftStart, 
@@ -300,12 +301,14 @@ function springLevel(gameState, {
     })
 
 
-    gameState.objects = [backButton, nextButton, spring, targetGrid, tracer, ...targets, massSlider]
+    gameState.objects = [backButton, nextButton, spring, targetGrid, tracer, ...targets]
+    // Taking mass slider out for now, spring equilibrium length changes as mass increases... and period decreases
+    //
     gameState.update = () =>{
         if (massSlider.grabbed){
             spring.time = 0
             spring.frequency = Math.sqrt(massSlider.value)
-            spring.massSize = 25 * spring.frequency
+            spring.massSize = 100 / spring.frequency
         }
     }
     Planet.winCon(gameState, ()=>tracer.solved, nextButton)
