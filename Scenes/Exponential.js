@@ -22,6 +22,17 @@ const nodes = {
     'exponential.puzzle.9': [14,1, 0,-1],
     'exponential.puzzle.10':[15,1, 0,-1],
     'exponential.lab':      [16,1, 0,-1],
+    'exponential.puzzle.11': [6, 3, 0,-1],
+    'exponential.puzzle.12': [7, 3, 0,-1],
+    'exponential.puzzle.13': [8, 3, 0,-1],
+    'exponential.puzzle.14': [9, 3, 0,-1],
+    'exponential.puzzle.15': [10,3, 0,-1],
+    'exponential.puzzle.16': [11,3, 0,-1],
+    'exponential.puzzle.17': [12,3, 0,-1],
+    'exponential.puzzle.18': [13,3, 0,-1],
+    'exponential.puzzle.19': [14,3, 0,-1],
+    'exponential.puzzle.20': [15,3, 0,-1],
+    'exponential.puzzle.∞': [15,5, 0,-1],
 }
 
 const paths = 
@@ -36,85 +47,17 @@ const paths =
     {start: 'exponential.puzzle.7', end: 'exponential.puzzle.8', steps: [] },
     {start: 'exponential.puzzle.8', end: 'exponential.puzzle.9', steps: [] },
     {start: 'exponential.puzzle.9', end: 'exponential.puzzle.10', steps: [] },
-    {start: 'exponential.puzzle.10', end: 'exponential.lab', steps: []},
+    {start: 'exponential.puzzle.10', end: 'exponential.puzzle.11', steps: []},
+    {start: 'exponential.puzzle.11', end: 'exponential.puzzle.12', steps: [] },
+    {start: 'exponential.puzzle.12', end: 'exponential.puzzle.13', steps: [] },
+    {start: 'exponential.puzzle.13', end: 'exponential.puzzle.14', steps: [] },
+    {start: 'exponential.puzzle.14', end: 'exponential.puzzle.15', steps: [] },
+    {start: 'exponential.puzzle.15', end: 'exponential.puzzle.16', steps: [] },
+    {start: 'exponential.puzzle.16', end: 'exponential.puzzle.17', steps: [] },
+    {start: 'exponential.puzzle.17', end: 'exponential.puzzle.18', steps: [] },
+    {start: 'exponential.puzzle.18', end: 'exponential.puzzle.19', steps: [] },
+    {start: 'exponential.puzzle.19', end: 'exponential.puzzle.20', steps: [] },
 ]
-
-
-const experimentData =  {
-    '1':{
-        solutionFun: x=>0.5*x,
-        solutionDdx:x=>0.5,
-        solutionFunString:"0.5t",
-        solutionDdxString:"0.5",
-        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-        syDdxMax: 2,
-        syDdxLen: 4,
-        tyDdxMax: 2,
-        tyDdxLen: 4,
-        numMeasurement:5,
-        ddxSliderSpacing:2,
-    },
-    '2': {
-        solutionFun: x=>5-0.5*x,
-        solutionDdx: x=>-0.5,
-        solutionFunString:"-0.5t + 5",
-        solutionDdxString:"-0.5",
-        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-        syDdxMax: 2,
-        syDdxLen: 4,
-        tyDdxMax: 2,
-        tyDdxLen: 4,
-        numMeasurement:5,
-        ddxSliderSpacing:2,
-    },
-    '3':{
-        solutionFun: x=>1+1.5*x,
-        solutionDdx: x=>-0.5,
-        solutionFunString:"1.5t + 1",
-        solutionDdxString:"1.5",
-        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-        syDdxMax: 2,
-        syDdxLen: 4,
-        tyDdxMax: 2,
-        tyDdxLen: 4,
-        numMeasurement:4,
-        ddxSliderSpacing:2,
-    },
-    '4':{
-        solutionFun: x=>2*x,
-        solutionDdx: x=>2,
-        solutionFunString:"2 t",
-        solutionDdxString:"2",
-        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-        syDdxMax: 2,
-        syDdxLen: 4,
-        tyDdxMax: 2,
-        tyDdxLen: 4,
-        numMeasurement:5,
-        ddxSliderSpacing:1,
-    },
-    '5':{
-        solutionFun: x=>10-x,
-        solutionDdx: x=>-1,
-        solutionFunString:"-1t + 10",
-        solutionDdxString:"-1",
-        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-        syDdxMax: 2,
-        syDdxLen: 4,
-        tyDdxMax: 2,
-        tyDdxLen: 4,
-        numMeasurement:5,
-        ddxSliderSpacing:2,
-    }
-}
-
-function demoEnd(gameState){
-    gameState.objects = [
-       new TextBox({originX:800, originY:450, content: 'You have reached the end of the demo.',
-        align:'center', color:Color.white, font:'40px monospace'}),
-        new Button({originX: 700, originY:600, width:250, height: 100, label:'Back to game', onclick: ()=>Scene.loadScene(gameState, 'quadratic')})
-    ]
-}
 
 export function loadScene(gameState, sceneName, message = {}){
     gameState.stored.planet = 'exponential'
@@ -132,66 +75,50 @@ export function loadScene(gameState, sceneName, message = {}){
         case "puzzle": 
             switch(sceneNameSplit[2]){
                 case '1':
-                    exponentialLevel(gameState, {numSliders:4, nextScenes:["exponential.puzzle.2"], gridXMax:4,gridYMax:16, lastTarget:16})
+                    exponentialLevel(gameState, {numSliders:4, nextScenes:["exponential.puzzle.2"], gridXMax:4,gridYMax:16})
                     break
-                // case '2':
-                //     exponentialLevel(gameState, {numSliders:8, nextScenes:["exponential.puzzle.3"],  gridXMax:4,gridYMax:30,
-                //         sliderSize: 15, targetSize:16, lastTarget:27, increment:0.5}
-                //     )
-                //     break
                 case '2':
-                    exponentialLevel(gameState, {numSliders:4, nextScenes:["exponential.puzzle.3"], withMathBlock:true,
+                    exponentialLevel(gameState, {numSliders:8, nextScenes:["exponential.puzzle.3"],  gridXMax:4,gridYMax:30,
+                        sliderSize: 15, targetSize:16, increment:1}
+                    )
+                    break
+                case '3':
+                    exponentialLevel(gameState, {numSliders:4, nextScenes:["exponential.puzzle.4"], withMathBlock:true,
                         gridXMax:4,gridYMax:16,
                         lastTarget:16,
                         increment: 0.2,
                         oneSlider:true,
                     })
                     break
-                case '3':
-                    exponentialLevel(gameState, {numSliders:8, nextScenes:["exponential.puzzle.4"], withMathBlock:true,
+                case '4':
+                    exponentialLevel(gameState, {numSliders:8, nextScenes:["exponential.puzzle.5"], withMathBlock:true,
                         gridXMax:4,gridYMax:30,
                         lastTarget:27,
                         sliderSize: 12, targetSize:16, increment: 0.2,
                         oneSlider:true,
                     })
                     break
-                case '4':
-                    exponentialLevel(gameState, {numSliders:16, nextScenes:["exponential.puzzle.5"], withMathBlock:true,
+                case '5':
+                    exponentialLevel(gameState, {numSliders:16, nextScenes:["exponential.puzzle.6"], withMathBlock:true,
                         gridXMax:4,gridYMax:40,
                         lastTarget:38,
                         sliderSize: 10, targetSize:15, increment: 0.2,
                         oneSlider:true,
                     })
                     break
-                case '5':
-                    exponentialLevel(gameState, {numSliders:200, nextScenes:["exponential.puzzle.6"], withMathBlock:true,
+                case '6':
+                    exponentialLevel(gameState, {numSliders:200, nextScenes:["exponential.puzzle.7"], withMathBlock:true,
                         gridXMax:4,gridYMax:60,
                         lastTarget:53,
                         sliderSize: 5, targetSize:10, increment: 0.1,
                         oneSlider:true,
                     })
                     break
-                case '6':
-                    exponentialLevel(gameState, {numSliders:5, nextScenes:["exponential.puzzle.7"],
-                        gridXMax:1,gridYMax:3,
-                        increment: 0.1,
-                    })
-                    break
                 case '7':
-                    exponentialLevel(gameState, {numSliders:200, nextScenes:["exponential.puzzle.8"],
-                        gridXMax:1,gridYMax:3,
-                        sliderSize: 5, targetSize:4, increment: 0.01,
-                        withMathBlock:true, oneSlider:true,
+                    populationLevel(gameState, {nextScenes:["exponential.puzzle.8"]
                     })
                     break
-                case '8':
-                    exponentialLevel(gameState, {numSliders:400, nextScenes:["exponential.puzzle.8"],
-                        gridXMax:1,gridYMax:3,
-                        sliderSize: 5, targetSize:5, increment: 0.01,
-                        withMathBlock:true, oneSlider:true,
-                        nSliderMin:2,nSliderMax:3,nSliderIncrement:0.01,
-                    })
-                    break
+               
             }
         break
 
@@ -284,7 +211,7 @@ function exponentialLevel (gameState, {
     targetSize = 20, sliderSize = 15,
     nextScenes, 
     gridXMax=4,gridYMax=16, increment=1,
-    lastTarget,
+    //lastTarget,
     oneSlider = false,
     nSliderMin=0,nSliderMax=5,nSliderIncrement=0.1,
 }){
@@ -299,7 +226,7 @@ function exponentialLevel (gameState, {
     
     const spacing = gridLeft.gridWidth/numSliders
     var sliders = []
-    for (let i = 0; i < numSliders; i++){
+    for (let i = 0; i <= numSliders; i++){
         sliders.push(new Slider({grid:gridRight, gridPos:gridRight.gridXMin + i * spacing,
             increment: increment,circleRadius:sliderSize}))
     }
@@ -311,16 +238,16 @@ function exponentialLevel (gameState, {
     // }
 
     var targets = []
-    for (let i = 0; i < numSliders; i++) {
+    for (let i = 0; i <= numSliders; i++) {
         const x = gridLeft.gridXMin+(i)*spacing
         targets.push(new Target({grid: gridLeft, gridX:x, gridY:0, size:targetSize}))
     }
-    if (lastTarget != null)
-        targets.push(new Target({grid: gridLeft, gridX:gridLeft.gridXMax, gridY:lastTarget, size:targetSize}))
+    // if (lastTarget != null)
+    //     targets.push(new Target({grid: gridLeft, gridX:gridLeft.gridXMax, gridY:lastTarget, size:targetSize}))
     
     
-    const tracer = new IntegralTracer({grid: gridLeft, sliders: sliders, targets:targets, originGridY:tracerStart, 
-        spacing: gridLeft.gridWidth / (numSliders)
+    const tracer = new IntegralTracer({grid: gridLeft, input:{type:'sliders', sliders: sliders, spacing: gridLeft.gridWidth / (numSliders)}, targets:targets, originGridY:tracerStart, 
+        
     })
     
     const blocks = [
@@ -333,7 +260,7 @@ function exponentialLevel (gameState, {
 
     gameState.objects = [gridLeft, gridRight, tracer, backButton, nextButton].concat(targets).concat(sliders)
     gameState.update = ()=> {
-        for (let i = 0; i < numSliders; i++) {
+        for (let i = 0; i <= numSliders; i++) {
             targets[i].setGridYPosition(sliders[i].value)
         }
     }
@@ -364,7 +291,7 @@ function exponentialLevel (gameState, {
             if (mbField.rootBlock != null){
                 const fun = mbField.rootBlock.toFunction()
                 if (fun != null){
-                    for (let i = 0; i < numSliders; i++){
+                    for (let i = 0; i <= numSliders; i++){
                         sliders[i].moveToValue(fun(sliders[i].gridPos))
                         //sliders[i].setValue(fun(sliders[i].gridPos))
                     }
@@ -376,6 +303,187 @@ function exponentialLevel (gameState, {
     Planet.winCon(gameState, ()=>tracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
+
+function populationLevel (gameState, {
+    nextScenes, tMax=10
+}){
+    const gss = gameState.stored
+    const backButton = Planet.backButton(gameState)
+    const nextButton = Planet.nextButton(gameState, nextScenes)
+
+
+
+    var initialPop = 2
+    const petri = new PetriDish ({originX: 300, originY:450})
+    const birthSlider = new Slider({canvasX:1100,canvasY:200,canvasLength:200,
+        sliderLength:4, maxValue:4, vertical:false, increment:0.1, startValue:2})
+
+    function popFunction (t) {
+        return initialPop * Math.pow(1+birthSlider.value, t)
+    }
+    const grid = new Grid({canvasX: 850, canvasY: 350, gridXMin:0, gridXMax:tMax, gridYMin:0, gridYMax:1000,
+        autoCellSize:true, labels:true, arrows:false})
+
+    const tracer = new FunctionTracer({grid:grid, inputFunction: x => popFunction(x), 
+        resetCondition: ()=> birthSlider.grabbed})
+
+    var time = 0
+    var playing = true
+    var startTime = Date.now()
+    var startValue = 0
+    const tSlider = new Slider({canvasX:1100,canvasY:150,canvasLength:450,
+        sliderLength:tMax, maxValue:tMax, vertical:false, increment:0.1})
+    const timeLabel = new TextBox({originX:1000,originY:80, font:'26px monospace'})
+    const playPauseButton = new Button({originX:1000,originY:120,width:50,height:50,
+        onclick: function(){
+            if (time >= tMax){
+                playing = true
+                time = 0
+                startTime = Date.now()
+                startValue = 0
+                tSlider.setValue(0)
+            }else{
+                if (playing){
+                    playing = false
+                }else{
+                    startTime = Date.now()
+                    startValue = time
+                    playing = true
+                }
+            } 
+        },
+        label:"⏸", lineWidth:5
+    }) 
+
+
+
+    gameState.update = () => {
+        petri.population = Math.min(1000,popFunction(time))
+        tracer.pixelIndex = Math.floor(time/tMax * grid.canvasWidth)
+
+        tSlider.active = !playing
+        if (playing){
+            time = (Date.now() - startTime)/1000 + startValue // time in secs to 1 decimal
+            tSlider.setValue(time)
+            playPauseButton.label =  '⏸'
+        }else{
+            playPauseButton.label =  '⏵'
+            time = tSlider.value
+        }
+        if (time >= tMax){
+            time = tMax
+            playing = false
+            playPauseButton.label = '⏮'
+        }
+        timeLabel.content = "t = " + time.toFixed(1)
+    }
+
+
+    gameState.objects = [backButton, nextButton, petri, playPauseButton, tSlider, timeLabel,  birthSlider,
+         grid, tracer]
+    Planet.winCon(gameState, ()=>false, nextButton)
+    Planet.unlockScenes(nextScenes, gss)
+    
+}
+
+class PetriDish extends GameObject{
+    constructor({
+        originX, originY,
+        cellRadius = 10,
+        dishRadius = 200,
+    }){
+        super()
+        Object.assign(this, {originX, originY,
+            cellRadius,
+            dishRadius,})
+        this.population = 100
+    }
+
+    hash01(i){
+        let n = (i|0) >>> 0;                     // coerce to 32-bit unsigned
+        n = ((n >>> 16) ^ n) * 0x45d9f3b;       // mix
+        n = ((n >>> 16) ^ n) * 0x45d9f3b;       // mix again
+        n = (n >>> 16) ^ n;
+        return (n >>> 0) / 4294967296;          // normalize to [0,1)
+    }
+
+
+    update(ctx, audio,mouse){
+
+        Color.setColor(ctx,Color.white)
+        Shapes.Circle({ctx:ctx, centerX:this.originX, centerY:this.originY, radius:this.dishRadius, shadow:true})
+
+        ctx.globalAlpha = 0.8
+        Color.setColor(ctx, Color.green)
+        for (let i = 0; i< this.population; i++ ){
+            const r =  this.hash01(i*2)*(this.dishRadius-this.cellRadius)
+            const theta = this.hash01(i*2+1)*Math.PI*2
+            Shapes.Circle({ctx:ctx,centerX: this.originX + Math.cos(theta)*r,
+                centerY: this.originY + Math.sin(theta)*r, 
+                radius:this.cellRadius})
+        }
+        ctx.globalAlpha = 1
+
+
+        // var layer = 1
+        // var side = 1
+        // var j = 0
+        // var x = 1
+        // const sqrt3 = Math.sqrt(3)
+        // var y = -sqrt3
+       
+        // Color.setColor(ctx, Color.green)
+        // Shapes.Circle({ctx:ctx,
+        //     centerX: this.originX,
+        //     centerY: this.originY, radius:this.cellRadius})
+        // for (let i = 0; i < 100; i++){
+        //     // draw circle at rx, ry
+        //     Shapes.Circle({ctx:ctx,
+        //         centerX: this.originX + this.cellRadius * x,
+        //         centerY: this.originY + this.cellRadius * y, radius:this.cellRadius})
+            
+        //     switch(side){
+        //         case 0:
+        //             x -= 1
+        //             y -= sqrt3
+        //         break
+        //         case 1:
+        //             x-=2
+        //         break
+        //         case 2:
+        //             x -= 1
+        //             y += sqrt3
+        //         break
+        //         case 3:
+        //             x += 1
+        //             y += sqrt3
+        //         break
+        //         case 4:
+        //             x += 2
+        //         break
+        //         case 5:
+        //             x += 1
+        //             y -= sqrt3
+        //         break
+                
+        //     }
+        //     j++
+        //     if (j >= layer){
+        //         side++
+        //         j = 0
+        //         if (side == 5) j = -1
+        //         if (side == 6) {
+        //             j = 1
+        //             layer++
+        //             side = 0
+        //         }
+        //     }
+            
+        // }
+        
+    }
+}
+
 
 function placeHolderLevel(gameState){
 
