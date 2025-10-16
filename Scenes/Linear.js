@@ -197,6 +197,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     turtlePuzzle(gameState, {
                         nextScenes:["linear.puzzle.15"],
                         version:'sliders',
+                        facingRight:false,
                         solutionFun: x=>5-0.5*x,
                         solutionDdx: x=>-0.5,
                         solutionFunString:"-0.5t + 5",
@@ -209,6 +210,7 @@ export function loadScene(gameState, sceneName, message = {}){
                         numMeasurement:5,
                         ddxSliderSpacing:2,
                     })
+                    break
                 case '15':
                     turtlePuzzle(gameState, {
                         nextScenes:["linear.puzzle.16"],
@@ -552,6 +554,7 @@ export function turtlePuzzle(gameState, {
     syFunMax, syFunLen, tyFunMax, tyFunLen,
     syDdxMax, syDdxLen, tyDdxMax, tyDdxLen,
     numMeasurement,
+    facingRight = true,
     ddxSliderSpacing,
 }){
     const gss = gameState.stored
@@ -614,8 +617,8 @@ export function turtlePuzzle(gameState, {
             const x = this.originX - width + (solutionFun(time) * maxDist/maxTime)
             ctx.font = "100px monospace"
             ctx.translate(x,this.originY)
-            ctx.scale(-1,1)
-            ctx.textAlign = 'right'
+            if (facingRight) ctx.scale(-1,1)
+            ctx.textAlign = facingRight ? 'right' : 'left'
             ctx.fillText("🐢", 0, 0)
             ctx.resetTransform()
         }

@@ -78,7 +78,7 @@ export function navScene(gameState) {
     })
     const funRight = new FunctionTracer({grid:gridRight, lineWidth:5, xStep:0.1})
 
-    const funLeft = new FunctionTracer({grid:gridLeft, inputFun:fun, lineWidth:5, xStep:0.1, color:Color.magenta})
+    const funLeft = new FunctionTracer({grid:gridLeft, inputFunction:fun, lineWidth:5, xStep:0.1, unsolvedColor:Color.magenta})
 
     const mathBlocks = [
         new MathBlock({type:MathBlock.CONSTANT}),
@@ -187,7 +187,7 @@ export function navScene(gameState) {
             ctx.clip()
             Shapes.Rectangle({ctx:ctx, originX:this.originX, originY:this.originY, width:this.width,height:this.height,inset:true} )
             if (state == 'Trace'){
-                this.shipX = tracer.currentValue
+                this.shipX = tracer.currentY
                 this.shipXMin = this.shipX - this.shipWidth/2
                 this.shipXMax = this.shipX + this.shipWidth/2
             }
@@ -425,7 +425,7 @@ export function navScene(gameState) {
             }
                 break
             case "Trace":{
-                if (tracer.state == tracer.STOPPED_AT_END) {
+                if (tracer.state == 'STOPPED_AT_END') {
                     // Correct answer
                     if (tracer.solved) {
                         updateNavigationProgress(gameState, gss.currentNavPuzzleType, 1)
