@@ -243,6 +243,7 @@ export function loadScene(gameState, sceneName, message = {}){
                         tyDdxLen: 4,
                         numMeasurement:4,
                         ddxSliderSpacing:2,
+                        barMax: 8,
                     })
                     break
                 case '17':
@@ -277,6 +278,8 @@ export function loadScene(gameState, sceneName, message = {}){
                         tyDdxLen: 4,
                         numMeasurement:5,
                         ddxSliderSpacing:1,
+                        barStep:1,
+                        barMax:6,
                     })
                     break
                 case '19':
@@ -556,6 +559,8 @@ export function turtlePuzzle(gameState, {
     numMeasurement,
     facingRight = true,
     ddxSliderSpacing,
+    barMax=12,
+    barStep=2,
 }){
     const gss = gameState.stored
     const backButton = Planet.backButton(gameState)
@@ -571,7 +576,7 @@ export function turtlePuzzle(gameState, {
 
     const sySlider = new Slider({canvasX: 580, canvasY:400, canvasLength:400, sliderLength:10, maxValue:5, showAxis: true})
     const tySlider = new Slider({canvasX: 650, canvasY:400, canvasLength:400, sliderLength:10, maxValue:5, showAxis: true})
-    const adder = new TargetAdder({grid:gridLeft, solutionFun: solutionFun, coverBarPrecision:2})
+    const adder = new TargetAdder({grid:gridLeft, solutionFun: solutionFun, coverBarPrecision:barStep, barMax:barMax})
     const funTracer = new FunctionTracer({grid:gridLeft})
 
     if (version == 'fitDdx'){

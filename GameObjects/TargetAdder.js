@@ -11,9 +11,10 @@ export class TargetAdder{
         solutionPrecision = 0.1,
         solutionFun,
         coverBarPrecision = 1,
+        barMax,
         targetColor = Color.magenta,
     }){
-        Object.assign(this, {grid, xPrecision, yPrecision, solutionFun, coverBarPrecision, targetColor, solutionPrecision})
+        Object.assign(this, {grid, xPrecision, yPrecision, solutionFun, coverBarPrecision, targetColor, solutionPrecision, barMax})
         this.targets = []
         this.active = true
         this.overGrid = false
@@ -22,9 +23,16 @@ export class TargetAdder{
         this.targetGY = 0
         this.targetGX = 0
         this.targetSize = 15
+
+        console.log('hello!',barMax)
+        if (barMax == null){
+            this.barMax = this.grid.gridXMax
+        }
+        this.barMin = this.grid.gridXMin
+        this.barWidth = this.barMax - this.barMin
         
         this.coveredIntervals = []
-        for (let i = 0; i < this.grid.gridWidth / this.coverBarPrecision; i++){
+        for (let i = 0; i < this.barWidth / this.coverBarPrecision; i++){
             this.coveredIntervals.push(false)
         }
 
@@ -64,10 +72,11 @@ export class TargetAdder{
             ctx.fillText(str, x,y)
         }
 
+        // Draw bar
         for (let i = 0; i < this.coveredIntervals.length; i++){
             Color.setColor(ctx, this.coveredIntervals[i] ? Color.blue : Color.magenta)
             const y = this.grid.originY - 50
-            const intervalLength = this.grid.canvasWidth / this.coveredIntervals.length
+            const intervalLength = (this.grid.gridToCanvasX(this.barMax)-this.grid.gridToCanvasX(this.barMin)) / this.coveredIntervals.length
             Shapes.Line(ctx, this.grid.originX+i*intervalLength, y, this.grid.originX+(i+1)*intervalLength, y, 10, 
                             i == 0 || i == this.coveredIntervals.length - 1 ? 'rounded' : 'none')
         }
