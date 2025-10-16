@@ -313,7 +313,7 @@ function populationLevel (gameState, {
 
 
 
-    var initialPop = 2
+    var initialPop = 1
     const petri = new PetriDish ({originX: 300, originY:450})
     const birthSlider = new Slider({canvasX:1100,canvasY:200,canvasLength:200,
         sliderLength:4, maxValue:4, vertical:false, increment:0.1, startValue:2})
