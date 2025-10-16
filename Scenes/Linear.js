@@ -308,9 +308,6 @@ export function loadScene(gameState, sceneName, message = {}){
             }
             break
 
-        case "lab":
-            Experiment.experimentMenu(gameState, {experimentData: experimentData, ruleFunString:'ax+b', ruleDdxString:'a'})
-            break
         
         case "trial":
             if (sceneNameSplit[2] == 'rule') {

@@ -506,7 +506,7 @@ function newRNGPuzzle (gameState){
     gss.strikes = 0
     var puzzleMastery = gss.navPuzzleMastery
 
-    const DEBUG = true
+    const DEBUG = false
     if (DEBUG){
         puzzleMastery = {
             'linear':0,
