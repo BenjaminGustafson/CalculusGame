@@ -527,7 +527,7 @@ function turtlePuzzle(gameState, {facingRight=true,solutionFun, ...options}){
     measurementPuzzle(gameState, {measureObject:turtle,solutionFun:solutionFun, ...options})
 }
 
-function measurementPuzzle(gameState, {
+export function measurementPuzzle(gameState, {
     version,
     nextScenes = [], 
     solutionFun,
@@ -535,6 +535,7 @@ function measurementPuzzle(gameState, {
     syDdxMax, syDdxLen, tyDdxMax, tyDdxLen,
     measureObject,
     ddxSliderSpacing,
+    tMax=10,
     barMax=12,
     barStep=2,
 }){
@@ -593,7 +594,6 @@ function measurementPuzzle(gameState, {
 
     const tSlider = new Slider({canvasX:1100,canvasY:150,canvasLength:450,
         sliderLength:10, maxValue:10, vertical:false, increment:1})
-    const timeLabel = new TextBox({originX:1100,originY:550, font:'26px monospace'})
     const playPauseButton = new Button({originX:1000,originY:120,width:50,height:50,
         onclick: function(){
             if (time >= maxTime){
@@ -619,7 +619,7 @@ function measurementPuzzle(gameState, {
 
     var step = 0
 
-    gameState.objects = [backButton, nextButton, gridLeft, errorText, bgImage, tSlider, timeLabel, measureObject, playPauseButton, adder]
+    gameState.objects = [backButton, nextButton, gridLeft, errorText, bgImage, tSlider, measureObject, playPauseButton, adder]
     gameState.update = () => {
         if (step == 0 && adder.solved){
             step = 1
@@ -690,7 +690,6 @@ function measurementPuzzle(gameState, {
             playing = false
             playPauseButton.label = '⏮'
         }
-        timeLabel.content = "t = " + time.toFixed(1)
         measureObject.time = time
     }
 

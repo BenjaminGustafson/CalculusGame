@@ -4,6 +4,7 @@ import * as Scene from '../Scene.js'
 import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
 import * as Experiment from './Experiment.js'
+import { measurementPuzzle } from './Linear.js'
 
 /**
  * 
@@ -183,42 +184,61 @@ export function loadScene(gameState, sceneName, message = {}){
                     drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.5"],targetYs:[-1.5,-2,-1.5,0]})
                     break
                 case '5':
-                    quadDiscLevel(gameState, {numSliders:4, nextScenes:["quadratic.puzzle.2"], ddx: x=>x, tracerStart:2})
+                    quadDiscLevel(gameState, {numSliders:4, nextScenes:["quadratic.puzzle.6"], ddx: x=>x, tracerStart:2})
                     break
                 case '6':
-                    quadDiscLevel(gameState, {numSliders:8, nextScenes:["quadratic.puzzle.3"], ddx: x=>x, tracerStart:2})
+                    quadDiscLevel(gameState, {numSliders:8, nextScenes:["quadratic.puzzle.7"], ddx: x=>x, tracerStart:2})
                     break
                 case '7':
-                    quadDiscLevel(gameState, {numSliders:20, withMathBlock:true, nextScenes:["quadratic.puzzle.4"], ddx: x=>x, tracerStart:2})
+                    quadDiscLevel(gameState, {numSliders:20, withMathBlock:true, nextScenes:["quadratic.puzzle.8"], ddx: x=>x, tracerStart:2})
                     break
                 case '8':
-                    quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10, withMathBlock:true, nextScenes:["quadratic.dialogue.1"]})
+                    quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10, withMathBlock:true, nextScenes:["quadratic.puzzle.9"]})
                     break
                 case '9':
-                    quadDiscLevel(gameState, {numSliders:8, nextScenes:["quadratic.puzzle.6"], ddx: x=> -x, tracerStart:-1})
+                    quadDiscLevel(gameState, {numSliders:8, nextScenes:["quadratic.puzzle.10"], ddx: x=> -x, tracerStart:-1})
                     break
                 case '10':
                     quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
-                        withMathBlock:true, nextScenes:["quadratic.puzzle.7"], ddx: x=> -x, tracerStart:-1})
+                        withMathBlock:true, nextScenes:["quadratic.puzzle.11"], ddx: x=> -x, tracerStart:-1})
                     break
                 case '11':
                     quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
-                        withMathBlock:true, nextScenes:["quadratic.puzzle.8"], ddx: x=> -0.5*x, tracerStart:0})
+                        withMathBlock:true, nextScenes:["quadratic.puzzle.12"], ddx: x=> -0.5*x, tracerStart:0})
                     break
                 case '12':
                     quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
-                        withMathBlock:true, nextScenes:["quadratic.dialogue.2"], func: x=>0.1*x*x})
+                        withMathBlock:true, nextScenes:["quadratic.puzzle.13"], func: x=>0.1*x*x})
                     break
                 case '13':
                     quadMathBlockTutorial(gameState, {
                         targetVals: [0.5,0,0.5,2], 
-                        nextScenes: ["quadratic.puzzle.10"],
+                        nextScenes: ["quadratic.puzzle.14"],
                     })
                     break
                 case '14':
                     quadMathBlockTutorial(gameState, {
                         targetVals: [1,2,1,-2], 
-                        nextScenes: ["quadratic.dialogue.3"],
+                        nextScenes: ["quadratic.puzzle.15"],
+                    })
+                    break
+                case '15':
+                    applePuzzle(gameState, {
+                        nextScenes: ["quadratic.puzzle.15"],
+                        solutionFun: x=> -x*x+10,
+                        solutionDdx:x=>-2*x,
+                        solutionFunString:"-t^2+10",
+                        solutionDdxString:"-2t",
+                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
+                        syDdxMax: 2,
+                        syDdxLen: 4,
+                        tyDdxMax: 2,
+                        tyDdxLen: 4,
+                        tMax:5,
+                        numMeasurement:5,
+                        ddxSliderSpacing:0.5,
+                        ddxMax: 0, ddxMin:-10,
+                        funMax: 10, funMin:0, 
                     })
                     break
             }
@@ -423,366 +443,48 @@ function quadDiscLevel (gameState, {
 }
 
 
-function quadExperimentTrial(gameState, {
-    solutionFun, solutionDdx,
-    solutionFunString,
-    solutionDdxString,
-    syFunMax, syFunLen, tyFunMax, tyFunLen,
-    syDdxMax, syDdxLen, tyDdxMax, tyDdxLen,
-    numMeasurement,
-    ddxSliderSpacing,
-    tMax, ddxMax, ddxMin,
-    funMax= 10, funMin=0, 
-}){
 
-    const gss = gameState.stored
-
-    // Back button
-    const backButton = new Button({originX:50, originY:50, width:50, height:50,
-        onclick:(() => loadScene(gameState,gss.planet + ".lab")), label:"↑"})
-
-    // Grid
-    const gridLeft = new Grid({canvasX:100, canvasY:400, canvasWidth:400, canvasHeight:400, 
-        gridXMin:0, gridXMax:tMax, gridYMin:funMin, gridYMax:funMax, labels:true})
-
-    const gridRight = new Grid({canvasX:580, canvasY:400, canvasWidth:400, canvasHeight:400, 
-        gridXMin:0, gridXMax:tMax, gridYMin:ddxMin, gridYMax:ddxMax, labels:true})
-
-    const sySlider = new Slider({canvasX: 580, canvasY:400, canvasLength:400, sliderLength:10, maxValue:5, showAxis: true})
-    const tySlider = new Slider({canvasX: 650, canvasY:400, canvasLength:400, sliderLength:10, maxValue:5, showAxis: true})
-    const adder = new TargetAdder({grid:gridLeft, precision:1, solutionFun:solutionFun})
-    const funTracer = new FunctionTracer({grid:gridLeft})
-
-    const blocks = [ new MathBlock({type:MathBlock.CONSTANT}), new MathBlock({type:MathBlock.VARIABLE, token:'t'}),
-        new MathBlock({type:MathBlock.POWER, token:'2'}),
-    ]
-    // for (let b of gss.mathBlocksUnlocked){
-    //     blocks.push(new MathBlock({type: b.type, token: b.token}))
-    // }
-    const mngr = new MathBlockManager({
-        blocks:blocks, toolBarX:750, toolBarY:400,
-        translateYSlider:tySlider, scaleYSlider:sySlider, blockSize:26,
-        blockFields: [
-            new MathBlockField({minX:100, minY:200, maxX:500, maxY:300}),
-        ],
-        funTracers: [funTracer],
-    })
-
-    // Experiment
-    const bgImage = {
+function applePuzzle(gameState, {solutionFun, ...options}){
+    const turtle = {
+        maxDist:400,
+        originX:1100,
+        originY:700,
+        time:0,
         update: function(ctx){
-            //const image = document.getElementById("quad_img")
-            Color.setColor(ctx,Color.darkBlack)
-            const x = 1000
-            const y = 200
-            const w = 600
-            const h = 700
-            Shapes.Rectangle({ctx:ctx, originX:x, originY:y, width:w, height:h, inset:true})
-            //ctx.drawImage(image, 0,0, 1600*600/900,900, x+10, y+10, w-20, h-20)
-        }
-    }
-
-    // TURTLE
-    var time = 0
-    var playing = true
-    var startTime = Date.now()
-    var startValue = 0
-    const maxDist = 500
-    const apple = {
-        originX:1300,
-        originY:800,
-        update: function(ctx){
-            const y = this.originY - (Math.max(0,solutionFun(time)) * maxDist / 10)
+            // Turtle
+            const y = this.originY - (Math.max(0,solutionFun(this.time)) * this.maxDist / 10)
             ctx.font = "50px monospace"
             ctx.textAlign = 'center'
-            ctx.fillText("🍎", this.originX, y)
-        }
-    }
+            ctx.fillText("🍎", this.originX+50, y)
 
-
-    // TIME CONTROLS
-    const tSlider = new Slider({canvasX:1100,canvasY:150,canvasLength:450,
-        sliderLength:tMax, maxValue:tMax, vertical:false, increment:0.1})
-    const timeLabel = new TextBox({originX:1000,originY:80, font:'26px monospace'})
-    const playPauseButton = new Button({originX:1000,originY:120,width:50,height:50,
-        onclick: function(){
-            if (time >= tMax){
-                playing = true
-                time = 0
-                startTime = Date.now()
-                startValue = 0
-                tSlider.setValue(0)
-            }else{
-                if (playing){
-                    playing = false
-                }else{
-                    startTime = Date.now()
-                    startValue = time
-                    playing = true
-                }
-            } 
-        },
-        label:"⏸", lineWidth:5
-    }) 
-
-    const numberLine = {
-        update: function(ctx){
-            const originX = 1070 
-            const originY = apple.originY
-            const length = maxDist
+            // Number line
             const numTicks = 10
             const lineWidth = 5
             const tickLength = 10
             Color.setColor(ctx, Color.white)
-            Shapes.RoundedLine(ctx, originX, originY, originX, originY - length, lineWidth)
+            Shapes.RoundedLine(ctx, this.originX, this.originY, this.originX, this.originY - this.maxDist, lineWidth)
 
             ctx.font = '24px monospace'
             ctx.textAlign = 'left'
             ctx.textBaseline = 'top'
-            ctx.fillText('p(t) = ' + Math.max(0,solutionFun(time)).toFixed(1), 1050, 220)
+            ctx.fillText('p(t) = ' + Math.max(0,solutionFun(this.time)).toFixed(1), 1250, 220)
+            ctx.fillText('t = ' + this.time.toFixed(1), 1050, 220)
             
             ctx.font = '20px monospace'
             for (let i = 0; i < numTicks + 1; i++) {
-                const tickY = originY - length / numTicks * i
+                const tickY = this.originY - this.maxDist / numTicks * i
                 ctx.textBaseline = 'middle'
                 ctx.textAlign = 'right'
-                ctx.fillText(i, originX-30, tickY)
-                Shapes.RoundedLine(ctx, originX - tickLength, tickY, originX + tickLength, tickY, lineWidth)
+                ctx.fillText(i, this.originX-30, tickY)
+                Shapes.RoundedLine(ctx, this.originX - tickLength, tickY, this.originX + tickLength, tickY, lineWidth)
             }
+
+            
         }
     }
 
-    const sliders = []
-    const spacing = ddxSliderSpacing
-    for (let i = gridRight.gridXMin; i < gridRight.gridXMax; i+=spacing) {
-        sliders.push(new Slider({grid:gridRight, gridPos:i,increment:0.1,circleRadius:15}))
-    }
-    const tracer = new IntegralTracer({grid: gridLeft, originGridY: solutionFun(0), 
-        input:{type:'sliders', sliders:sliders}, targets:adder.targets})
-
-    const ddxTargets = []
-
-
-
-    const text1 = {
-        update: function(ctx){
-            Color.setColor(ctx,Color.white)
-            ctx.font = '20px monospace'
-            ctx.textAlign = 'start'
-            ctx.textBaseline = 'top'
-            ctx.fillText('Step 1: Measure the apple\'s position over time.', 150,50)
-            ctx.fillText("Click on the graph to add measurements.", 150,80)
-            ctx.fillText(`Make at least ${numMeasurement} measurements, and then click continue.`, 150,110)
-            ctx.translate(25,700)
-            ctx.rotate(-Math.PI/2)
-            ctx.fillText("Position p(t)", 0,0)
-            ctx.resetTransform()
-            ctx.fillText("Time t", 250, 850)
-        }
-    }
-
-    const mDdxText = {
-        update: function(ctx){
-            Color.setColor(ctx,Color.white)
-            ctx.font = '20px monospace'
-            ctx.textAlign = 'start'
-            ctx.textBaseline = 'top'
-            ctx.fillText('Step 2: Compute the turle\'s velocity, v(t).', 150,50)
-            ctx.fillText("Use the sliders to set the velocity.", 150,80)
-            ctx.translate(25,700)
-            ctx.rotate(-Math.PI/2)
-            ctx.fillText("Position p(t)", 0,0)
-            ctx.resetTransform()
-            ctx.fillText("Time t", 250, 850)
-            ctx.fillText("p(t) = ", 20,200)
-        }
-    }
-
-    const text2 = {
-        update: function(ctx){
-            Color.setColor(ctx,Color.white)
-            ctx.font = '20px monospace'
-            ctx.textAlign = 'start'
-            ctx.textBaseline = 'top'
-            ctx.fillText('Step 3: Guess the apple\'s position function, p(t).', 150,50)
-            ctx.fillText("Use the blocks to set the function.", 150,80)
-            ctx.fillText("Click continue when you think you have it.", 150,110)
-            ctx.translate(25,700)
-            ctx.rotate(-Math.PI/2)
-            ctx.fillText("Position p(t)", 0,0)
-            ctx.resetTransform()
-            ctx.fillText("Time t", 250, 850)
-            ctx.fillText("p(t) = ", 20,200)
-        }
-    }
-
-    const text3 = {
-        update: function(ctx){
-            Color.setColor(ctx,Color.white)
-            ctx.font = '20px monospace'
-            ctx.textAlign = 'start'
-            ctx.textBaseline = 'top'
-            ctx.fillText('Step 4: Guess the apple\'s velocity function, v(t).', 150,50)
-            ctx.fillText("Use the blocks to set the function.", 150,80)
-            ctx.fillText("Click continue when you think you have it.", 150,110)
-            ctx.translate(25,700)
-            ctx.rotate(-Math.PI/2)
-            ctx.fillText("Velocity v(t)", 0,0)
-            ctx.resetTransform()
-            ctx.fillText("Time t", 250, 850)
-            ctx.fillText("v(t) = ", 20,200)
-            ctx.fillText("p(t) = "+solutionFunString, 600,200)
-        }
-    }
-
-    const text4 = {
-        update: function(ctx){
-            Color.setColor(ctx,Color.white)
-            ctx.font = '20px monospace'
-            ctx.textAlign = 'start'
-            ctx.textBaseline = 'top'
-            ctx.fillText('Experiment complete!', 150,50)
-            //ctx.fillText("", 150,80)
-            ctx.translate(25,700)
-            ctx.rotate(-Math.PI/2)
-            ctx.fillText("Velocity v(t)", 0,0)
-            ctx.resetTransform()
-            ctx.fillText("Time t", 250, 850)
-            ctx.font = '30px monospace'
-            ctx.fillText("v(t) = " + solutionDdxString, 70,320)
-            ctx.fillText("p(t) = "+solutionFunString, 600,200)
-        }
-    }
-
-    const smallGrid = new Grid({canvasX:600, canvasY:250, canvasWidth:100, canvasHeight:100, 
-        gridXMin:0, gridXMax:10, gridYMin:0, gridYMax:10, labels:false, arrows:false, lineWidthMax: 1})
-
-    const smallTracer = new FunctionTracer({grid:smallGrid, lineWidth:4})
-    
-    function checkTargets(){
-        var numCorrect = 0
-        for (let i = 0; i < adder.targets.length; i++){
-            const target = adder.targets[i]
-            const gx = gridLeft.canvasToGridX(target.x)
-            const gy = gridLeft.canvasToGridY(target.y)
-            if (Math.abs(solutionFun(gx) - gy) < 0.3){
-                numCorrect++
-            }else{
-                target.unhitColor = Color.gray
-            }
-        }
-        return numCorrect
-    }
-
-
-    function checkFunctionsEqual(fun1, fun2){
-        for (let x = 0; x <= 10; x++){
-            if (Math.abs(fun1(x) - fun2(x)) > 0.00001){
-                return {res:false, x:x}
-            }
-        }
-    
-        for (let x = 0; x < 10; x+= 0.1){
-            if (Math.abs(fun1(x) - fun2(x)) > 0.00001){
-                return {res:false, x:x}
-            }
-        }
-        return {res:true}
-    }
-
-    const errorText = new TextBox({originX:950, originY:160, align: 'right'})
-
-    var step = 'measureF'
-    const minCorrectTargets = numMeasurement
-    const SKIP_CHECKS = false // debug option
-    const continueButton = new Button({originX:840, originY:50, width:100, height:60, fontSize:16,
-        onclick:((audio) => {
-            if (step == 'measureF'){
-                const numCorrect = checkTargets()
-                if (numCorrect >= minCorrectTargets || SKIP_CHECKS){
-                    adder.targets = adder.targets.filter(t => t.unhitColor == Color.magenta)
-                    gameState.objects = mainObjs.concat(meaureDdxObjs).concat(adder.targets)
-                    funTracer.targets = adder.targets
-                    tracer.targets = adder.targets
-                    errorText.content = ''
-                    step = 'measureDdx'
-                    audio.play('confirmation_001')
-                }else{
-                    errorText.content = numCorrect + '/' + minCorrectTargets + ' correct measurements'
-                }
-            }else if (step == 'measureDdx'){
-                if (tracer.solved || SKIP_CHECKS){
-                    sySlider.setSize(syFunMax, syFunLen)
-                    tySlider.setSize(tyFunMax, tyFunLen)
-
-                    gameState.objects = mainObjs.concat(fitFObjs).concat(adder.targets)
-                    step = 'fitF'
-                }
-            }else if (step == 'fitF'){
-                const check = checkFunctionsEqual(solutionFun, funTracer.fun)
-                if (check.res || SKIP_CHECKS){
-                    audio.play('confirmation_001')
-                    sySlider.setSize(syDdxMax, syDdxLen)
-                    tySlider.setSize(tyDdxMax, tyDdxLen)
-                    gridLeft.setYBounds(ddxMin,ddxMax)
-                    for (let i = gridRight.gridXMin; i < gridRight.gridXMax; i+=spacing) {
-                        ddxTargets.push(new Target({grid: gridLeft, gridX:i,
-                            gridY:solutionDdx(i), size:20}))
-                    }
-                    smallTracer.fun = solutionFun
-                    funTracer.targets = ddxTargets
-                    mngr.reset()
-                    errorText.content = ''
-                    step = 'fitDdx'
-                    gameState.objects = mainObjs.concat(fitDdxObjs).concat(ddxTargets)
-                }else{
-                    errorText.content = 'p(' + check.x + ') should be ' + solutionFun(check.x).toFixed(2) + ' not ' + funTracer.fun(check.x).toFixed(2)
-                }
-            }else if (step == 'fitDdx'){
-                const check = checkFunctionsEqual(solutionDdx, funTracer.fun)
-                if (check.res || SKIP_CHECKS){
-                    audio.play('confirmation_001')
-                    funTracer.fun = solutionDdx
-                    errorText.content = ''
-                    step = 'solved'
-                    gameState.objects = mainObjs.concat(solvedObjs)
-                    gameState.stored.completedScenes[gameState.stored.sceneName] = true
-                }else{
-                    errorText.content = 'v(' + check.x + ') should be ' + solutionDdx(check.x).toFixed(2) + ' not ' + funTracer.fun(check.x).toFixed(2)
-                }
-            }else if (step == 'solved'){ // SOLVED
-                loadScene(gameState,gss.planet + '.lab')
-            }
-        }),
-         label:"Continue"})
-
-    const mainObjs = [backButton, gridLeft, continueButton, errorText, bgImage, tSlider, timeLabel, apple, numberLine, playPauseButton,]
-    const measureFObjs = [text1, adder, ]
-    const meaureDdxObjs = [mDdxText, gridRight, tracer].concat(sliders)
-    const fitFObjs = [sySlider, tySlider, text2, funTracer, mngr]
-    const fitDdxObjs = [sySlider, tySlider, text3, funTracer, smallGrid, smallTracer, mngr]
-    const solvedObjs = [text4, funTracer, smallGrid, smallTracer]
-    gameState.objects = mainObjs.concat(measureFObjs)
-    gameState.update = () => {
-        tSlider.active = !playing
-        if (playing){
-            time = (Date.now() - startTime)/1000 + startValue // time in secs to 1 decimal
-            tSlider.setValue(time)
-            playPauseButton.label =  '⏸'
-        }else{
-            playPauseButton.label =  '⏵'
-            time = tSlider.value
-        }
-        if (time >= tMax){
-            time = tMax
-            playing = false
-            playPauseButton.label = '⏮'
-        }
-        timeLabel.content = "t = " + time.toFixed(1)
-    }
-
+    measurementPuzzle(gameState, {measureObject:turtle,solutionFun:solutionFun, ...options})
 }
-
 
 
 function quadMathBlockTutorial(gameState, {
