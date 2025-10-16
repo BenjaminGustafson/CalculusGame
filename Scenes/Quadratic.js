@@ -1,5 +1,5 @@
 import {Color, Shapes} from '../util/index.js'
-import {TileMap, Grid, FunctionTracer, Button, ImageObject, IntegralTracer, MathBlock, MathBlockManager, MathBlockField, Slider, Target, TargetAdder, TextBox, DialogueBox} from '../GameObjects/index.js'
+import {TileMap, Grid, FunctionTracer, Button, ImageObject, IntegralTracer, MathBlock, MathBlockManager, MathBlockField, Slider, Target, TargetAdder, TextBox, DialogueBox, DrawFunction} from '../GameObjects/index.js'
 import * as Scene from '../Scene.js'
 import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
@@ -23,40 +23,53 @@ const tileMap = new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOf
 // [x,y,  dx,dy] where dx dy is the direction to face when stopped at node
 // SW 0,1 NW -1,0 NE 0,-1 SE 1,0
 const nodes = {
-    'planetMap': [14,8,  0,1],
-    'quadratic.puzzle.1': [13,8,  0,-1],
-    'quadratic.puzzle.2': [11,8, 0,-1],
-    'quadratic.puzzle.3': [7,1, -1,0],
-    'quadratic.puzzle.4': [7,-2, -1,0],
-    'quadratic.dialogue.1': [7,-3, -1,0],
-    'quadratic.puzzle.5': [10,-3, 0,-1],
-    'quadratic.puzzle.6': [13,1, -1,0],
-    'quadratic.puzzle.7': [16,3, 0,-1],
-    'quadratic.puzzle.8': [18,4, 0,-1],
-    'quadratic.dialogue.2': [22,1, -1,0],
-    'quadratic.puzzle.9': [22,0, -1,0],
-    'quadratic.puzzle.10': [17,-4, -1,0],
-    'quadratic.dialogue.3': [16,-6, 0,-1],
-    'quadratic.lab': [14,-6, 0,-1],
+    'planetMap':        [5,1, 0,-1],
+    'quadratic.puzzle.1': [6,1, 0,-1],
+    'quadratic.puzzle.2': [7,1, 0,-1],
+    'quadratic.puzzle.3': [8,1, 0,-1],
+    'quadratic.puzzle.4': [9,1, 0,-1],
+    'quadratic.puzzle.5': [10,1, 0,-1],
+    'quadratic.puzzle.6': [11,1, 0,-1],
+    'quadratic.puzzle.7': [12,1, 0,-1],
+    'quadratic.puzzle.8': [13,1, 0,-1],
+    'quadratic.puzzle.9': [14,1, 0,-1],
+    'quadratic.puzzle.10':[15,1, 0,-1],
+    'quadratic.puzzle.11': [15, 3, 0,-1],
+    'quadratic.puzzle.12': [14, 3, 0,-1],
+    'quadratic.puzzle.13': [13, 3, 0,-1],
+    'quadratic.puzzle.14': [12, 3, 0,-1],
+    'quadratic.puzzle.15': [11,3, 0,-1],
+    'quadratic.puzzle.16': [10,3, 0,-1],
+    'quadratic.puzzle.17': [9,3, 0,-1],
+    'quadratic.puzzle.18': [8,3, 0,-1],
+    'quadratic.puzzle.19': [7,3, 0,-1],
+    'quadratic.puzzle.20': [6,3, 0,-1],
 }
 
 const paths = 
 [
     {start: 'planetMap', end: 'quadratic.puzzle.1'},
     {start: 'quadratic.puzzle.1', end: 'quadratic.puzzle.2', steps: [] },
-    {start: 'quadratic.puzzle.2', end: 'quadratic.puzzle.3', steps: [[10,8],[10,7],[9,7],[9,2],[7,2]] },
+    {start: 'quadratic.puzzle.2', end: 'quadratic.puzzle.3', steps: [] },
     {start: 'quadratic.puzzle.3', end: 'quadratic.puzzle.4', steps: [] },
-    {start: 'quadratic.puzzle.4', end:  'quadratic.dialogue.1', steps: [] },
-    {start: 'quadratic.dialogue.1', end:  'quadratic.puzzle.5', steps: [] },
-    {start: 'quadratic.puzzle.5', end: 'quadratic.puzzle.6', steps: [[12,-3],[12,-1],[13,-1]] },
-    {start: 'quadratic.puzzle.6', end: 'quadratic.puzzle.7', steps: [[13,3],[14,3],[14,4],[16,4]] },
-    {start: 'quadratic.puzzle.7', end: 'quadratic.puzzle.8', steps: [[17,3],[17,4]] },
-    {start: 'quadratic.puzzle.8', end: 'quadratic.dialogue.2', steps: [[22,4]] },
-    {start: 'quadratic.dialogue.2', end: 'quadratic.puzzle.9', steps: [] },
-    {start: 'quadratic.puzzle.9', end: 'quadratic.puzzle.10', steps: [[22,-2],[21,-2],[21,-3],[17,-3]] },
-    {start: 'quadratic.puzzle.10', end: 'quadratic.dialogue.3', steps: [[17,-5],[16,-5]]},
-    {start: 'quadratic.dialogue.3', end: 'quadratic.lab', steps: [] },
+    {start: 'quadratic.puzzle.4', end:  'quadratic.puzzle.5', steps: [] },
+    {start: 'quadratic.puzzle.5', end: 'quadratic.puzzle.6', steps: [] },
+    {start: 'quadratic.puzzle.6', end: 'quadratic.puzzle.7', steps: [] },
+    {start: 'quadratic.puzzle.7', end: 'quadratic.puzzle.8', steps: [] },
+    {start: 'quadratic.puzzle.8', end: 'quadratic.puzzle.9', steps: [] },
+    {start: 'quadratic.puzzle.9', end: 'quadratic.puzzle.10', steps: [] },
+    {start: 'quadratic.puzzle.10', end: 'quadratic.puzzle.11', steps: []},
+    {start: 'quadratic.puzzle.11', end: 'quadratic.puzzle.12', steps: [] },
+    {start: 'quadratic.puzzle.12', end: 'quadratic.puzzle.13', steps: [] },
+    {start: 'quadratic.puzzle.13', end: 'quadratic.puzzle.14', steps: [] },
+    {start: 'quadratic.puzzle.14', end: 'quadratic.puzzle.15', steps: [] },
+    {start: 'quadratic.puzzle.15', end: 'quadratic.puzzle.16', steps: [] },
+    {start: 'quadratic.puzzle.16', end: 'quadratic.puzzle.17', steps: [] },
+    {start: 'quadratic.puzzle.17', end: 'quadratic.puzzle.18', steps: [] },
+    {start: 'quadratic.puzzle.18', end: 'quadratic.puzzle.19', steps: [] },
+    {start: 'quadratic.puzzle.19', end: 'quadratic.puzzle.20', steps: [] },
 ]
+
 
 
 const experimentData =  {
@@ -158,39 +171,51 @@ export function loadScene(gameState, sceneName, message = {}){
         case "puzzle": 
             switch(sceneNameSplit[2]){
                 case '1':
-                    quadDiscLevel(gameState, {numSliders:4, nextScenes:["quadratic.puzzle.2"], ddx: x=>x, tracerStart:2})
+                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.2"],targetYs:[0.5,1,1.5,2]})
                     break
                 case '2':
-                    quadDiscLevel(gameState, {numSliders:8, nextScenes:["quadratic.puzzle.3"], ddx: x=>x, tracerStart:2})
+                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.3"],targetYs:[0.5,1,0.5,0]})
                     break
                 case '3':
-                    quadDiscLevel(gameState, {numSliders:20, withMathBlock:true, nextScenes:["quadratic.puzzle.4"], ddx: x=>x, tracerStart:2})
+                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.4"],targetYs:[1,0,1,0]})
                     break
                 case '4':
-                    quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10, withMathBlock:true, nextScenes:["quadratic.dialogue.1"]})
+                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.5"],targetYs:[-1.5,-2,-1.5,0]})
                     break
                 case '5':
-                    quadDiscLevel(gameState, {numSliders:8, nextScenes:["quadratic.puzzle.6"], ddx: x=> -x, tracerStart:-1})
+                    quadDiscLevel(gameState, {numSliders:4, nextScenes:["quadratic.puzzle.2"], ddx: x=>x, tracerStart:2})
                     break
                 case '6':
+                    quadDiscLevel(gameState, {numSliders:8, nextScenes:["quadratic.puzzle.3"], ddx: x=>x, tracerStart:2})
+                    break
+                case '7':
+                    quadDiscLevel(gameState, {numSliders:20, withMathBlock:true, nextScenes:["quadratic.puzzle.4"], ddx: x=>x, tracerStart:2})
+                    break
+                case '8':
+                    quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10, withMathBlock:true, nextScenes:["quadratic.dialogue.1"]})
+                    break
+                case '9':
+                    quadDiscLevel(gameState, {numSliders:8, nextScenes:["quadratic.puzzle.6"], ddx: x=> -x, tracerStart:-1})
+                    break
+                case '10':
                     quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
                         withMathBlock:true, nextScenes:["quadratic.puzzle.7"], ddx: x=> -x, tracerStart:-1})
                     break
-                case '7':
+                case '11':
                     quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
                         withMathBlock:true, nextScenes:["quadratic.puzzle.8"], ddx: x=> -0.5*x, tracerStart:0})
                     break
-                case '8':
+                case '12':
                     quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
                         withMathBlock:true, nextScenes:["quadratic.dialogue.2"], func: x=>0.1*x*x})
                     break
-                case '9':
+                case '13':
                     quadMathBlockTutorial(gameState, {
                         targetVals: [0.5,0,0.5,2], 
                         nextScenes: ["quadratic.puzzle.10"],
                     })
                     break
-                case '10':
+                case '14':
                     quadMathBlockTutorial(gameState, {
                         targetVals: [1,2,1,-2], 
                         nextScenes: ["quadratic.dialogue.3"],
@@ -256,6 +281,47 @@ export function loadScene(gameState, sceneName, message = {}){
     }
 }
 
+
+function drawFunctionLevel (gameState, {
+    tracerStart=1,
+    targetSize = 30, sliderSize = 15,
+    nextScenes = [],
+    gridSize = 2,
+    targetYs = [],
+}){
+    const gss = gameState.stored
+    const backButton = Planet.backButton(gameState)
+    const nextButton = Planet.nextButton(gameState, nextScenes)
+
+    console.log('DRAW FUNCTION LEVEL')
+
+    const gridLeft = new Grid({canvasX: 300, canvasY:350, canvasWidth:400, canvasHeight:400, 
+        gridXMin:-gridSize, gridYMin:-gridSize, gridXMax:gridSize, gridYMax:gridSize, labels:false, arrows:true})
+    const gridRight = new Grid({canvasX: 900, canvasY:350, canvasWidth:400, canvasHeight:400, 
+        gridXMin:-gridSize, gridYMin:-gridSize, gridXMax:gridSize, gridYMax:gridSize, labels:false, arrows:true})
+    
+    const drawFunction = new DrawFunction ({grid: gridRight})
+
+
+    const numTargets = targetYs.length
+    const spacing = gridLeft.gridWidth / numTargets
+    var targets = []
+    for (let i = 0; i < numTargets; i++) {
+        const x = gridLeft.gridXMin+(i+1)*spacing
+        targets.push(new Target({grid: gridLeft, gridX:x, gridY:targetYs[i], size:targetSize}))
+    }
+    
+    
+    const tracer = new IntegralTracer({grid: gridLeft, input:{type:'drawFunction', drawFunction:drawFunction}, targets:targets,
+    })
+    
+
+    gameState.objects = [gridLeft, gridRight, backButton, nextButton, drawFunction, tracer].concat(targets)    
+
+    Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+    Planet.unlockScenes(nextScenes, gss)
+}
+
 function quadraticPlanet(gameState,message={}){
     Planet.planetScene(gameState, {
         planetName:'quadratic',
@@ -264,8 +330,8 @@ function quadraticPlanet(gameState,message={}){
         tileMap:tileMap,
         playerNodes:nodes,
         playerPaths:paths,
-        bgImg: 'riverPlanetBg',
-        fgImg: 'riverPlanetFg',
+        bgImg: 'placeholderBg',
+        fgImg: 'placeholderFg',
         message
     })
 }

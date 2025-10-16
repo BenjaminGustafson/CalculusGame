@@ -34,13 +34,6 @@ const nodes = {
     'linear.puzzle.20': [6,3, 0,-1],
 }
 
-const alienDialogue = [
-    "⯘Ⳃⱙⰺⳡ ⰺⳝ⯨⯃⯎ ⱤⳆⰸ⯃ ⳙ⯹ⱡ ⯷ⳞⳤⱭⰶ.",
-    "ⳏⳐⰷ⯁Ⱨⰴ ⯢ⱋⳒⰳⳙ ⯚⯜⯍ ⳙⰿⱆ ⳨⯟ⳑ⳪⳰ ⰴⱢⳈⳡ ⱍ⳧Ⳑⰿ.",
-    "ⳟ⯔ ⳓ⯥ⱄⰳ ⳉⳂⳙ⯎ ⱤⳆⰸ⯃ Ɀⰳⱅⰸⳝ ⯢ⳔⳂⳚ ⱇⱏⰴⳂ ⰳⳤⱑ⯅ⰴ!"
-]
-
-
 const paths = 
 [
     {start: 'planetMap', end: 'linear.puzzle.1'},
@@ -65,64 +58,20 @@ const paths =
     {start: 'linear.puzzle.19', end: 'linear.puzzle.20', steps: [] },
 ]
 
-
-const experimentData =  {
-    '1':{
-        solutionFun: x=>0.5*x,
-        solutionDdx:x=>0.5,
-        solutionFunString:"0.5t",
-        solutionDdxString:"0.5",
-        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-        syDdxMax: 2,
-        syDdxLen: 4,
-        tyDdxMax: 2,
-        tyDdxLen: 4,
-        numMeasurement:5,
-        ddxSliderSpacing:2,
-    },
-    '2': {
-        solutionFun: x=>5-0.5*x,
-        solutionDdx: x=>-0.5,
-        solutionFunString:"-0.5t + 5",
-        solutionDdxString:"-0.5",
-        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-        syDdxMax: 2,
-        syDdxLen: 4,
-        tyDdxMax: 2,
-        tyDdxLen: 4,
-        numMeasurement:5,
-        ddxSliderSpacing:2,
-    },
-    '3':{
-        solutionFun: x=>1+1.5*x,
-        solutionDdx: x=>1.5,
-        solutionFunString:"1.5t + 1",
-        solutionDdxString:"1.5",
-        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-        syDdxMax: 2,
-        syDdxLen: 4,
-        tyDdxMax: 2,
-        tyDdxLen: 4,
-        numMeasurement:4,
-        ddxSliderSpacing:2,
-    },
-    '4':{
-        solutionFun: x=>2*x,
-        solutionDdx: x=>2,
-        solutionFunString:"2 t",
-        solutionDdxString:"2",
-        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-        syDdxMax: 2,
-        syDdxLen: 4,
-        tyDdxMax: 2,
-        tyDdxLen: 4,
-        numMeasurement:5,
-        ddxSliderSpacing:1,
-    },
-    '5':{
-        
-    }
+function linearPlanet(gameState, message = {}){
+    planetScene(gameState, {
+        planetName:'linear',
+        shipX:20, shipY: 450,
+        labX: 70, labY:-150,
+        tileMap:tileMap,
+        playerNodes:nodes,
+        playerPaths:paths,
+        bgImg: 'placeholderBg',
+        fgImg: 'placeholderFg',
+        message
+    })
 }
+
 
 export function loadScene(gameState, sceneName, message = {}){
     gameState.stored.planet = 'linear'
@@ -387,19 +336,6 @@ export function loadScene(gameState, sceneName, message = {}){
     }
 }
 
-function linearPlanet(gameState, message = {}){
-    planetScene(gameState, {
-        planetName:'linear',
-        shipX:20, shipY: 450,
-        labX: 70, labY:-150,
-        tileMap:tileMap,
-        playerNodes:nodes,
-        playerPaths:paths,
-        bgImg: 'placeholderBg',
-        fgImg: 'placeholderFg',
-        message
-    })
-}
 
 
 // A 1x1 puzzle
@@ -545,8 +481,6 @@ function mathBlockTutorials(gameState, {
     Planet.winCon(gameState, ()=>functionTracer.solved, nextButton)
     unlockScenes(nextScenes, gss)
 }
-
-
 
 export function turtlePuzzle(gameState, {
     version,
