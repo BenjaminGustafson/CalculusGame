@@ -482,16 +482,58 @@ function mathBlockTutorials(gameState, {
     unlockScenes(nextScenes, gss)
 }
 
-export function turtlePuzzle(gameState, {
+function turtlePuzzle(gameState, {facingRight=true,solutionFun, ...options}){
+    const turtle = {
+        length:400,
+        originX:1100,
+        originY:700,
+        time:0,
+        maxTime:10,
+        update: function(ctx){
+            // Turtle
+            const width = 100
+            Color.setColor(ctx,Color.green)
+            const x = this.originX - width + (solutionFun(this.time) * this.length/this.maxTime)
+            ctx.font = "100px monospace"
+            ctx.translate(x,this.originY)
+            if (facingRight) ctx.scale(-1,1)
+            ctx.textAlign = facingRight ? 'right' : 'left'
+            ctx.fillText("🐢", 0, 0)
+            ctx.resetTransform()
+
+            // Number line
+            const numTicks = 10
+            const lineWidth = 5
+            const tickLength = 10
+            Color.setColor(ctx, Color.white)
+            Shapes.RoundedLine(ctx, this.originX, this.originY, this.originX + this.length, this.originY, lineWidth)
+
+            ctx.font = '26px monospace'
+            ctx.textAlign = 'left'
+            ctx.textBaseline = 'top'
+            ctx.fillText('p(t) = ' + solutionFun(this.time).toFixed(1), this.originX, this.originY -120)
+            
+            ctx.font = '20px monospace'
+            for (let i = 0; i < numTicks + 1; i++) {
+                const tickX = this.originX + this.length / numTicks * i
+                ctx.fillText(i, tickX, this.originY + tickLength + 5)
+                Shapes.RoundedLine(ctx, tickX, this.originY - tickLength, tickX, this.originY + tickLength, lineWidth)
+            }
+
+            
+        }
+    }
+
+    measurementPuzzle(gameState, {measureObject:turtle,solutionFun:solutionFun, ...options})
+}
+
+function measurementPuzzle(gameState, {
     version,
     nextScenes = [], 
-    solutionFun, solutionDdx,
-    solutionFunString,
-    solutionDdxString,
+    solutionFun,
     syFunMax, syFunLen, tyFunMax, tyFunLen,
     syDdxMax, syDdxLen, tyDdxMax, tyDdxLen,
-    numMeasurement,
-    facingRight = true,
+    measureObject,
     ddxSliderSpacing,
     barMax=12,
     barStep=2,
@@ -500,7 +542,7 @@ export function turtlePuzzle(gameState, {
     const backButton = Planet.backButton(gameState)
     const nextButton = Planet.nextButton(gameState, nextScenes)
 
-    // Grid
+    // Grids
     const gridSize = version == 'fitDdx' ? 350 : 400
     const gridLeft = new Grid({canvasX:50, canvasY:400, canvasWidth:gridSize, canvasHeight:gridSize, 
         gridXMin:0, gridXMax:10, gridYMin:0, gridYMax:10, labels:true, xAxisLabel:'Time t', yAxisLabel:'Position p(t)'})
@@ -525,8 +567,9 @@ export function turtlePuzzle(gameState, {
         new MathBlock({type:MathBlock.VARIABLE, token:'t'})
     ]
 
+  
 
-    // Turtle background
+    // Measurement background (black rectangle)
     const bgImage = {
         update: function(ctx){
             //const image = document.getElementById("quad_img")
@@ -540,49 +583,14 @@ export function turtlePuzzle(gameState, {
         }
     }
 
-    // TURTLE
+
+    // TIME CONTROLS
     const maxTime = 10
     var time = 0
     var playing = true
     var startTime = Date.now()
     var startValue = 0
-    const maxDist = 400
-    const turtle = {
-        originX:1100,
-        originY:700,
-        update: function(ctx){
-            const width = 100
-            Color.setColor(ctx,Color.green)
-            const x = this.originX - width + (solutionFun(time) * maxDist/maxTime)
-            ctx.font = "100px monospace"
-            ctx.translate(x,this.originY)
-            if (facingRight) ctx.scale(-1,1)
-            ctx.textAlign = facingRight ? 'right' : 'left'
-            ctx.fillText("🐢", 0, 0)
-            ctx.resetTransform()
-        }
-    }
 
-    const fakeTurtle = {
-        update: function (ctx){
-            // const width = 80
-            // var x = 0
-            // if (step == 2){
-            //     x = turtle.originX - width + (funTracer.fun(time) * maxDist/maxTime)
-            // }else if (step >= 3){
-            //     x = turtle.originX - width + (solutionFun(time) * maxDist/maxTime)
-            //     Color.setColor(ctx, Color.red)
-            //     const dx = funTracer.fun(time)* maxDist/maxTime
-            //     if (dx != 0){
-            //         Shapes.Line(ctx, x+width-5, 500+width/2, x+width-5+dx, 500+width/2, 5, "arrow", 5,true)
-            //     }
-            // }
-            // Color.setColor(ctx,Color.green)
-            // Shapes.Rectangle({ctx:ctx, originX:x, originY:500, width:width,height:width, inset:true})
-        }
-    }
-
-    // TIME CONTROLS
     const tSlider = new Slider({canvasX:1100,canvasY:150,canvasLength:450,
         sliderLength:10, maxValue:10, vertical:false, increment:1})
     const timeLabel = new TextBox({originX:1100,originY:550, font:'26px monospace'})
@@ -607,60 +615,28 @@ export function turtlePuzzle(gameState, {
         label:"⏸", lineWidth:5
     }) 
 
-    const numberLine = {
-        update: function(ctx){
-            const originX = turtle.originX 
-            const originY = turtle.originY+20
-            const length = maxDist
-            const numTicks = 10
-            const lineWidth = 5
-            const tickLength = 10
-            Color.setColor(ctx, Color.white)
-            Shapes.RoundedLine(ctx, originX, originY, originX + length, originY, lineWidth)
-
-            ctx.font = '26px monospace'
-            ctx.textAlign = 'left'
-            ctx.textBaseline = 'top'
-            ctx.fillText('p(t) = ' + solutionFun(time).toFixed(1), turtle.originX, turtle.originY -120)
-            
-            ctx.font = '20px monospace'
-            for (let i = 0; i < numTicks + 1; i++) {
-                const tickX = originX + length / numTicks * i
-                ctx.fillText(i, tickX, originY + tickLength + 5)
-                Shapes.RoundedLine(ctx, tickX, originY - tickLength, tickX, originY + tickLength, lineWidth)
-            }
-        }
-    }
-
-    const sliders = []
-    const spacing = ddxSliderSpacing
-    for (let i = gridRight.gridXMin; i < gridRight.gridXMax; i+=spacing) {
-        sliders.push(new Slider({grid:gridRight, gridPos:i,increment:0.1,circleRadius:15}))
-    }
-    const tracer = new IntegralTracer({grid: gridLeft, originGridY: solutionFun(0), 
-        input: {type:'sliders', sliders:sliders}, targets:adder.targets})
-
-
-
     const errorText = new TextBox({originX:950, originY:160, align: 'right'})
 
     var step = 0
 
-    const mainObjs = [backButton, nextButton, gridLeft, errorText, bgImage, tSlider, timeLabel, turtle, numberLine, playPauseButton,]
-    const measureFObjs = [adder, ]
-    const meaureDdxObjs = [ gridRight, tracer].concat(sliders)
-    gameState.objects = mainObjs.concat(measureFObjs)
+    gameState.objects = [backButton, nextButton, gridLeft, errorText, bgImage, tSlider, timeLabel, measureObject, playPauseButton, adder]
     gameState.update = () => {
         if (step == 0 && adder.solved){
             step = 1
             switch (version){
-                case 'sliders':
-                    gameState.objects = gameState.objects.concat(meaureDdxObjs)
-                    Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+                case 'sliders':{
+                    const sliders = []
+                    const spacing = ddxSliderSpacing
+                    for (let i = gridRight.gridXMin; i < gridRight.gridXMax; i+=spacing) {
+                        sliders.push(new Slider({grid:gridRight, gridPos:i,increment:0.1,circleRadius:15}))
+                    }
+                    const tracer = new IntegralTracer({grid: gridLeft, originGridY: solutionFun(0), 
+                        input: {type:'sliders', sliders:sliders}, targets:adder.targets})
+                        gameState.objects = gameState.objects.concat([ gridRight, tracer,...sliders])
+                        Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+                }
                 break
                 case 'fitF':{
-
-                    
                     const field =  new MathBlockField({minX:version == 'fitDdx' ? 450 : 50, minY:200, maxX: version == 'fitDdx' ? 800 : 450, maxY:300})
                     
                     const mngr = new MathBlockManager({
@@ -673,7 +649,7 @@ export function turtlePuzzle(gameState, {
                     tySlider.setSize(tyFunMax, tyFunLen)
                     funTracer.targets = adder.targets
                     
-                    gameState.objects = mainObjs.concat([sySlider, tySlider, funTracer, fakeTurtle, mngr]).concat(adder.targets)
+                    gameState.objects = gameState.objects.concat([sySlider, tySlider, funTracer, mngr]).concat(adder.targets)
                     Planet.winCon(gameState, ()=>funTracer.solved, nextButton)
                 }
                 break
@@ -694,7 +670,7 @@ export function turtlePuzzle(gameState, {
     
                     sySlider.setSize(syDdxMax, syDdxLen)
                     tySlider.setSize(tyDdxMax, tyDdxLen)
-                    gameState.objects = mainObjs.concat([sySlider, tySlider, gridRight, blockTracer, fakeTurtle, mngr, ddxTracer]).concat(adder.targets)
+                    gameState.objects = gameState.objects.concat([sySlider, tySlider, gridRight, blockTracer, mngr, ddxTracer]).concat(adder.targets)
                     Planet.winCon(gameState, ()=>blockTracer.solved, nextButton)
                 }
                 break
@@ -715,19 +691,9 @@ export function turtlePuzzle(gameState, {
             playPauseButton.label = '⏮'
         }
         timeLabel.content = "t = " + time.toFixed(1)
+        measureObject.time = time
     }
 
-    // Planet.winCon(gameState, ()=>{
-    //     switch(version){
-    //         case 'sliders':
-    //             return tracer.solved
-            
-    //         case 'fitF':
-    //             return funTracer.solved
-    //         case 'fitDdx':
-    //             return false
-    //     }
-    // }, nextButton)
     unlockScenes(nextScenes, gss)
 }
 
