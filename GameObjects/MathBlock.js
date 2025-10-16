@@ -107,6 +107,8 @@ export class MathBlock {
         this.formatType = "inline"
         this.content = []
 
+        this.toFunctionStored = null
+        this.functionChanged = false
     }
 
     static rehydrate(block) {
@@ -281,7 +283,6 @@ export class MathBlock {
         const ty =  Number(this.translateY.toFixed(6))
         const sy =  Number(this.scaleY.toFixed(6))
 
-
         this.prefix = ""
         this.suffix = ""
         if (sy != 1){
@@ -450,4 +451,19 @@ export class MathBlock {
         }
     }
 
+    toString(){
+        var str = ""
+        this.content.forEach(obj =>{
+            if (obj.type == 'string'){
+                str += obj.string
+            }else if (obj.type == 'child'){
+                const child = this.children[obj.childIndex]
+                if (child != null)
+                    str += child.toString()
+                else
+                    str += '[]'
+            }
+        })
+        return str
+    }
 }

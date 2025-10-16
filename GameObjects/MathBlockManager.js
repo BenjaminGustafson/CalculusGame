@@ -70,6 +70,7 @@ export class MathBlockManager {
                 originY:numSlider.canvasY+numSlider.canvasLength + iconSize/2, width: iconSize/2, height:iconSize})
                 
         }
+
     }
 
     createToolbar(blocks, originX, originY){
@@ -266,6 +267,7 @@ export class MathBlockManager {
 
 
     update(ctx, audioManager, mouse){
+
         // Handle mouse logic
         this.mouseInput(mouse, audioManager)
 
@@ -326,6 +328,9 @@ export class MathBlockField {
         this.baseColor = Color.black
         this.hoverColor = Color.gray
         this.isHovered = false
+        this.functionString = null
+        this.newFunction = false
+        this.outputFunctionStored = null 
     }
 
     update(ctx, audioManager, mouse){
@@ -333,7 +338,12 @@ export class MathBlockField {
         Shapes.Rectangle({ctx:ctx,originX:this.minX,originY:this.minY,width:this.width,height:this.height,recessed:true})
         this.isHovered = false
         if (this.rootBlock == null){
-            
+            if (this.functionString != ''){
+                this.functionString = ''
+                this.newFunction = true
+            }else {
+                this.newFunction = false
+            }
         }else{
             ctx.save()
             ctx.beginPath()
@@ -341,7 +351,15 @@ export class MathBlockField {
             ctx.clip()
             this.rootBlock.update(ctx, audioManager, mouse)
             ctx.restore()
+            const newString = this.rootBlock.toString()
+            if (newString != this.functionString){
+                this.functionString = newString
+                this.newFunction = true
+            }else {
+                this.newFunction = false
+            }
         }
+        //console.log(this.newFunction)
     }
 
 

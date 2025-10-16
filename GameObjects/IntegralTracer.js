@@ -78,9 +78,10 @@ export class IntegralTracer extends FunctionTracer{
                     return 0
                 }
                 resetCondition = () => {
-                    return !blockField.rootBlock || !blockField.rootBlock.toFunction()
+                  //  console.log('resetCondition', blockField.newFunction)
+                    return blockField.newFunction// || !blockField.rootBlock || !blockField.rootBlock.toFunction()
                 }
-                autoStart = false
+                //autoStart = false
                 break 
             case 'tracer':
                 const tracer = input.tracer

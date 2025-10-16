@@ -34,7 +34,7 @@ export class FunctionTracer {
             pixelsPerSec, targets, lineWidth, precision, 
             unsolvedColor, solvedColor, audioChannel,
             animated, resetCondition, autoStart, 
-            inputFunction, numLabel
+            inputFunction, numLabel,
         })
 
         this.originCanvasX = this.grid.gridToCanvasX(this.originGridX)
@@ -217,6 +217,7 @@ export class FunctionTracer {
 
         if (!this.animated){
             var solved = true
+            if (this.targets.length == 0) solved = false
             this.targets.forEach(t => {
                 if (!t.hit){
                     solved = false

@@ -27,7 +27,6 @@ import { loadScene, CANVAS_HEIGHT } from '../Scene.js'
  * 
  * 
  * 
- * 
  */
 export function navScene(gameState) {
     const gss = gameState.stored
@@ -79,7 +78,7 @@ export function navScene(gameState) {
     })
     const funRight = new FunctionTracer({grid:gridRight, lineWidth:5, xStep:0.1})
 
-    const funLeft = new FunctionTracer({grid:gridLeft, fun:fun, lineWidth:5, xStep:0.1, color:Color.magenta})
+    const funLeft = new FunctionTracer({grid:gridLeft, inputFun:fun, lineWidth:5, xStep:0.1, color:Color.magenta})
 
     const mathBlocks = [
         new MathBlock({type:MathBlock.CONSTANT}),
@@ -118,9 +117,8 @@ export function navScene(gameState) {
         }
     }
 
-
-    const tracer = new IntegralTracer({grid: gridLeft, blockField: blockField,
-         targets:targets, originGridY: fun(gridLeft.gridXMin), pixelsPerSec:100, autoCalculate:false,
+    const tracer = new IntegralTracer({grid: gridLeft, input:{type:'mathBlock',  blockField: blockField},
+         targets:targets, originGridY: fun(gridLeft.gridXMin), pixelsPerSec:100, autoStart:false,
         precision:0.0001})
 
     const shipIcon = document.getElementById("shipicon_img");

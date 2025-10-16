@@ -8,11 +8,12 @@ export class TargetAdder{
         grid,
         xPrecision = 1, 
         yPrecision = 1,
+        solutionPrecision = 0.1,
         solutionFun,
         coverBarPrecision = 1,
         targetColor = Color.magenta,
     }){
-        Object.assign(this, {grid, xPrecision, yPrecision, solutionFun, coverBarPrecision, targetColor})
+        Object.assign(this, {grid, xPrecision, yPrecision, solutionFun, coverBarPrecision, targetColor, solutionPrecision})
         this.targets = []
         this.active = true
         this.overGrid = false
@@ -110,7 +111,7 @@ export class TargetAdder{
                 this.clickedOn = false
                 const newTargets = this.targets.filter(t => !(t.x == this.targetX && t.y == this.targetY))
                 if (newTargets.length == this.targets.length){
-                    if (this.solutionFun == null || Math.abs(this.solutionFun(this.targetGX) - this.targetGY) < this.yPrecision * 10){
+                    if (this.solutionFun == null || Math.abs(this.solutionFun(this.targetGX) - this.targetGY) < this.solutionPrecision){
                         var gy = this.targetGY
                         if (this.solutionFun != null)
                             gy = Number((Math.round(this.solutionFun(this.targetGX)/this.yPrecision)*this.yPrecision).toFixed(6))
