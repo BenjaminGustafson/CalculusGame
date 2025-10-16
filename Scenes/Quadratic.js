@@ -91,68 +91,16 @@ const experimentData =  {
         funMax: 10, funMin:0, 
     },
     '2': {
-        solutionFun: x=> -2*x*x+10,
-        solutionDdx:x=>-4*x,
-        solutionFunString:"-2t^2+10",
-        solutionDdxString:"-4t",
-        syFunMax: 5, syFunLen: 10, tyFunMax: 10, tyFunLen: 10,
-        syDdxMax: 5,
-        syDdxLen: 10,
-        tyDdxMax: 0,
-        tyDdxLen: 10,
-        tMax:5,
-        numMeasurement:5,
-        ddxSliderSpacing:0.5,
-        ddxMax: 0, ddxMin:-10,
-        funMax: 10, funMin:0, 
+        
     },
     '3':{
-        solutionFun: x=> -0.5*x*x+8,
-        solutionDdx:x=>-x,
-        solutionFunString:"-0.5t^2+5",
-        solutionDdxString:"-t",
-        syFunMax: 5, syFunLen: 10, tyFunMax: 10, tyFunLen: 10,
-        syDdxMax: 5,
-        syDdxLen: 10,
-        tyDdxMax: 0,
-        tyDdxLen: 10,
-        tMax:5,
-        numMeasurement:5,
-        ddxSliderSpacing:0.5,
-        ddxMax: 0, ddxMin:-10,
-        funMax: 10, funMin:0, 
+        
     },
     '4':{
-        solutionFun: x=> -5*x*x+10,
-        solutionDdx:x=>-10*x,
-        solutionFunString:"-5t^2+10",
-        solutionDdxString:"-10t",
-        syFunMax: 5, syFunLen: 10, tyFunMax: 10, tyFunLen: 10,
-        syDdxMax: 0,
-        syDdxLen: 10,
-        tyDdxMax: 0,
-        tyDdxLen: 10,
-        tMax:5,
-        numMeasurement:5,
-        ddxSliderSpacing:0.5,
-        ddxMax: 0, ddxMin:-20,
-        funMax: 10, funMin:0, 
+        
     },
     '5':{
-        solutionFun: x=> x*x,
-        solutionDdx:x=> 2*x,
-        solutionFunString:"t^2",
-        solutionDdxString:"2 t",
-        syFunMax: 5, syFunLen: 10, tyFunMax: 10, tyFunLen: 10,
-        syDdxMax: 5,
-        syDdxLen: 10,
-        tyDdxMax: 5,
-        tyDdxLen: 10,
-        tMax:5,
-        numMeasurement:5,
-        ddxSliderSpacing:0.5,
-        ddxMax: 10, ddxMin:0,
-        funMax: 10, funMin:0, 
+        
     }
 }
 
@@ -224,20 +172,118 @@ export function loadScene(gameState, sceneName, message = {}){
                     break
                 case '15':
                     applePuzzle(gameState, {
-                        nextScenes: ["quadratic.puzzle.15"],
-                        solutionFun: x=> -x*x+10,
-                        solutionDdx:x=>-2*x,
-                        solutionFunString:"-t^2+10",
+                        version:'sliders',
+                        nextScenes: ["quadratic.puzzle.16"],
+                        solutionFun: x=> -x*x+9,
+                        solutionDdx:x=> -2*x,
+                        solutionFunString:"-t^2+9",
                         solutionDdxString:"-2t",
                         syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
                         syDdxMax: 2,
                         syDdxLen: 4,
                         tyDdxMax: 2,
                         tyDdxLen: 4,
-                        tMax:5,
+                        tMax:3,
+                        barMax:4,
+                        barStep:1,
+                        numMeasurement:5,
+                        ddxSliderSpacing:1,
+                        ddxMax: 0, ddxMin:-10,
+                        funMax: 10, funMin:0,
+                    })
+                    break
+                case '16':
+                    applePuzzle(gameState, {
+                        version:'fitF',
+                        nextScenes: ["quadratic.puzzle.17"],
+                        solutionFun: x=> -2*x*x+10,
+                        solutionDdx:x=>-4*x,
+                        solutionFunString:"-2t^2+10",
+                        solutionDdxString:"-4t",
+                        syFunMax: 5, syFunLen: 10, tyFunMax: 10, tyFunLen: 10,
+                        syDdxMax: 5,
+                        syDdxLen: 10,
+                        tyDdxMax: 0,
+                        tyDdxLen: 10,
+                        tMax:3,
+                        tStep:0.5,
+                        barMax:2.5,
+                        barStep:0.5,
+                        adderXPrecision:0.5,
+                        adderYPrecision:0.5,
                         numMeasurement:5,
                         ddxSliderSpacing:0.5,
                         ddxMax: 0, ddxMin:-10,
+                        funMax: 10, funMin:0, 
+                    })
+                    break
+                case '17':
+                    applePuzzle(gameState, {
+                        version:'fitF',
+                        nextScenes: ["quadratic.puzzle.18"],
+                        solutionFun: x=> -0.5*x*x+8,
+                        solutionDdx:x=>-x,
+                        solutionFunString:"-0.5t^2+5",
+                        solutionDdxString:"-t",
+                        syFunMax: 5, syFunLen: 10, tyFunMax: 10, tyFunLen: 10,
+                        syDdxMax: 5,
+                        syDdxLen: 10,
+                        tyDdxMax: 0,
+                        tyDdxLen: 10,
+                        tMax:4,
+                        barMax:5,
+                        barStep:1,
+                        adderYPrecision:0.5,
+                        numMeasurement:5,
+                        ddxSliderSpacing:0.5,
+                        ddxMax: 0, ddxMin:-10,
+                        funMax: 10, funMin:0, 
+                    })
+                    break
+                case '18':
+                    applePuzzle(gameState, {
+                        version:'fitDdx',
+                        nextScenes: ["quadratic.puzzle.19"],
+                        solutionFun: x=> -4*x*x+10,
+                        solutionDdx:x=>-10*x,
+                        solutionFunString:"-4t^2+10",
+                        solutionDdxString:"-10t",
+                        syFunMax: 5, syFunLen: 10, tyFunMax: 10, tyFunLen: 10,
+                        syDdxMax: 0,
+                        syDdxLen: 10,
+                        tyDdxMax: 0,
+                        tyDdxLen: 10,
+                        tMax:2,
+                        tStep:0.5,
+                        barMax:2,
+                        barStep:0.5,
+                        adderYPrecision:1,
+                        adderXPrecision:0.5,
+                        numMeasurement:5,
+                        ddxSliderSpacing:0.5,
+                        ddxMax: 0, ddxMin:-20,
+                        funMax: 10, funMin:0, 
+                    })
+                    break
+                case '19':
+                    applePuzzle(gameState, {
+                        version:'fitDdx',
+                        nextScenes: ["quadratic.puzzle.20"],
+                        solutionFun: x=> x*x,
+                        solutionDdx:x=> 2*x,
+                        solutionFunString:"t^2",
+                        solutionDdxString:"2 t",
+                        syFunMax: 5, syFunLen: 10, tyFunMax: 10, tyFunLen: 10,
+                        syDdxMax: 5,
+                        syDdxLen: 10,
+                        tyDdxMax: 5,
+                        tyDdxLen: 10,
+                        tMax:5,
+                        barMax:4,
+                        barStep:1,
+                        numMeasurement:5,
+                        ddxSliderSpacing:0.5,
+                        ddxMax: 10, ddxMin:0,
                         funMax: 10, funMin:0, 
                     })
                     break
@@ -445,16 +491,22 @@ function quadDiscLevel (gameState, {
 
 
 function applePuzzle(gameState, {solutionFun, ...options}){
+    const blocks = [
+        new MathBlock({type:MathBlock.CONSTANT, token:'0'}),
+        new MathBlock({type:MathBlock.VARIABLE, token:'t'}),
+        new MathBlock({type:MathBlock.POWER, token:'2'})
+    ]
     const turtle = {
-        maxDist:400,
+        maxDist:500,
         originX:1100,
-        originY:700,
+        originY:800,
         time:0,
         update: function(ctx){
             // Turtle
             const y = this.originY - (Math.max(0,solutionFun(this.time)) * this.maxDist / 10)
             ctx.font = "50px monospace"
             ctx.textAlign = 'center'
+            ctx.textBaseline = 'middle'
             ctx.fillText("🍎", this.originX+50, y)
 
             // Number line
@@ -483,7 +535,8 @@ function applePuzzle(gameState, {solutionFun, ...options}){
         }
     }
 
-    measurementPuzzle(gameState, {measureObject:turtle,solutionFun:solutionFun, ...options})
+    measurementPuzzle(gameState, {measureObject:turtle,
+        blocks:blocks,solutionFun:solutionFun, ...options})
 }
 
 

@@ -482,22 +482,22 @@ function mathBlockTutorials(gameState, {
     unlockScenes(nextScenes, gss)
 }
 
-function turtlePuzzle(gameState, {facingRight=true,solutionFun, ...options}){
+function turtlePuzzle(gameState, {facingRight=true,solutionFun,tMax=10, ...options}){
     const turtle = {
         length:400,
         originX:1100,
         originY:700,
         time:0,
-        maxTime:10,
         update: function(ctx){
             // Turtle
             const width = 100
             Color.setColor(ctx,Color.green)
-            const x = this.originX - width + (solutionFun(this.time) * this.length/this.maxTime)
+            const x = this.originX - width + (solutionFun(this.time) * this.length/tMax)
             ctx.font = "100px monospace"
             ctx.translate(x,this.originY)
             if (facingRight) ctx.scale(-1,1)
             ctx.textAlign = facingRight ? 'right' : 'left'
+            ctx.textBaseline = 'bottom'
             ctx.fillText("🐢", 0, 0)
             ctx.resetTransform()
 
@@ -524,7 +524,14 @@ function turtlePuzzle(gameState, {facingRight=true,solutionFun, ...options}){
         }
     }
 
-    measurementPuzzle(gameState, {measureObject:turtle,solutionFun:solutionFun, ...options})
+    const blocks = [
+        new MathBlock({type:MathBlock.CONSTANT, token:'0'}),
+        new MathBlock({type:MathBlock.VARIABLE, token:'t'}),
+    ]
+    measurementPuzzle(gameState, {
+        measureObject:turtle,solutionFun:solutionFun,tMax:tMax,
+        blocks:blocks,
+         ...options})
 }
 
 export function measurementPuzzle(gameState, {
@@ -533,11 +540,15 @@ export function measurementPuzzle(gameState, {
     solutionFun,
     syFunMax, syFunLen, tyFunMax, tyFunLen,
     syDdxMax, syDdxLen, tyDdxMax, tyDdxLen,
+    ddxMax=2, ddxMin=-2,
+    funMax=10, funMin=0,
     measureObject,
     ddxSliderSpacing,
-    tMax=10,
+    tMax=10, tStep=1,
     barMax=12,
+    adderXPrecision=1,adderYPrecision=1,
     barStep=2,
+    blocks
 }){
     const gss = gameState.stored
     const backButton = Planet.backButton(gameState)
@@ -546,14 +557,14 @@ export function measurementPuzzle(gameState, {
     // Grids
     const gridSize = version == 'fitDdx' ? 350 : 400
     const gridLeft = new Grid({canvasX:50, canvasY:400, canvasWidth:gridSize, canvasHeight:gridSize, 
-        gridXMin:0, gridXMax:10, gridYMin:0, gridYMax:10, labels:true, xAxisLabel:'Time t', yAxisLabel:'Position p(t)'})
+        gridXMin:0, gridXMax:tMax, gridYMin:funMin, gridYMax:funMax, labels:true, xAxisLabel:'Time t', yAxisLabel:'Position p(t)', autoCellSize:true})
 
     const gridRight = new Grid({canvasX: version == 'fitDdx' ? 450 : 580, canvasY:400, canvasWidth:gridSize, canvasHeight:gridSize, 
-        gridXMin:0, gridXMax:10, gridYMin:-2, gridYMax:2, labels:true, yAxisLabel: 'Velocity v(t)'})
+        gridXMin:0, gridXMax:tMax, gridYMin:ddxMin, gridYMax:ddxMax, labels:true, yAxisLabel: 'Velocity v(t)', autoCellSize:true})
 
     const sySlider = new Slider({canvasX: 580, canvasY:400, canvasLength:400, sliderLength:10, maxValue:5, showAxis: true})
     const tySlider = new Slider({canvasX: 650, canvasY:400, canvasLength:400, sliderLength:10, maxValue:5, showAxis: true})
-    const adder = new TargetAdder({grid:gridLeft, solutionFun: solutionFun, coverBarPrecision:barStep, barMax:barMax})
+    const adder = new TargetAdder({grid:gridLeft, solutionFun: solutionFun, coverBarPrecision:barStep, barMax:barMax, xPrecision:adderXPrecision, yPrecision:adderYPrecision})
     const funTracer = new FunctionTracer({grid:gridLeft})
 
     if (version == 'fitDdx'){
@@ -563,12 +574,6 @@ export function measurementPuzzle(gameState, {
         tySlider.canvasLength = 350
     }
 
-    const blocks = [
-        new MathBlock({type:MathBlock.CONSTANT, token:'0'}),
-        new MathBlock({type:MathBlock.VARIABLE, token:'t'})
-    ]
-
-  
 
     // Measurement background (black rectangle)
     const bgImage = {
@@ -586,17 +591,16 @@ export function measurementPuzzle(gameState, {
 
 
     // TIME CONTROLS
-    const maxTime = 10
     var time = 0
     var playing = true
     var startTime = Date.now()
     var startValue = 0
 
     const tSlider = new Slider({canvasX:1100,canvasY:150,canvasLength:450,
-        sliderLength:10, maxValue:10, vertical:false, increment:1})
+        sliderLength:tMax, maxValue:tMax, vertical:false, increment:tStep})
     const playPauseButton = new Button({originX:1000,originY:120,width:50,height:50,
         onclick: function(){
-            if (time >= maxTime){
+            if (time >= tMax){
                 playing = true
                 time = 0
                 startTime = Date.now()
@@ -679,14 +683,14 @@ export function measurementPuzzle(gameState, {
         tSlider.active = !playing
         if (playing){
             time = (Date.now() - startTime)/1000 + startValue // time in secs to 1 decimal
-            tSlider.moveToValue(time)
+            tSlider.setValue(time)
             playPauseButton.label =  '⏸'
         }else{
             playPauseButton.label =  '⏵'
             time = tSlider.value
         }
-        if (time >= maxTime){
-            time = maxTime
+        if (time >= tMax){
+            time = tMax
             playing = false
             playPauseButton.label = '⏮'
         }
