@@ -3,7 +3,7 @@ import { Color } from "../util/index.js"
 const computerSETrans = document.getElementById('computerSETrans')
 const computerSWTrans = document.getElementById('computerSWTrans')
 
-export class PuzzleComputer {
+export class PuzzleComputer extends GameObject{
 
     constructor({color = Color.black, dir = 'SE', x, y, text='1'}){
         Object.assign(this, {color, x, y, dir,text})

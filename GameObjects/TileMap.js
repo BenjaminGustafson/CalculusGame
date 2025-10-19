@@ -1,4 +1,4 @@
-export class TileMap {
+export class TileMap extends GameObject{
 
 
     /**

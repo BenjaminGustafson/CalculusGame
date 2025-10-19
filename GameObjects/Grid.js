@@ -10,7 +10,7 @@ import {Color, Shapes} from '../util/index.js'
  * 
  * Depends on Shapes.js, Color.js
  */
-export class Grid{
+export class Grid extends GameObject{
 
     /**
      * Grid constructor

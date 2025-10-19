@@ -1,7 +1,7 @@
 import {Color, Shapes} from '../util/index.js'
 import { Target } from './Target.js'
 
-export class TargetAdder{
+export class TargetAdder extends GameObject{
 
 
     constructor({

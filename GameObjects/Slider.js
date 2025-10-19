@@ -5,7 +5,7 @@ import {Color, Shapes} from '../util/index.js'
  * Drawn as a line with tick marks and a circle that can be dragged along the line.
  * 
  */
-export class Slider{
+export class Slider extends GameObject{
 
     /**
      * 

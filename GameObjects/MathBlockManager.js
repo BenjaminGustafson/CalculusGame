@@ -8,7 +8,7 @@ import { ImageObject } from './ImageObject.js'
  * can attach to.
  * 
  */
-export class MathBlockManager {
+export class MathBlockManager extends GameObject{
 
     /**
      * The current highlighted block (or null).
@@ -314,7 +314,7 @@ export class MathBlockManager {
 
 }
 
-export class MathBlockField {
+export class MathBlockField extends GameObject{
 
     constructor({
         minX, minY, maxX, maxY

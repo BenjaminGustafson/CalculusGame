@@ -3,7 +3,7 @@ import {Color, Shapes} from '../util/index.js'
  * 
  */
 
-export class FunctionTracer {
+export class FunctionTracer extends GameObject{
 
     static STOPPED_AT_BEGINNING = 'STOPPED_AT_BEGINNING'
     static TRACING = 'TRACING'

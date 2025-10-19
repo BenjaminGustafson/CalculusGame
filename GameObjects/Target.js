@@ -2,7 +2,7 @@ import {Color, Shapes} from '../util/index.js'
 /**
  * A square target that can be hit by tracers.
  */
-export class Target{
+export class Target extends GameObject{
 
 
     constructor({

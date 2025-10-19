@@ -4,7 +4,7 @@ import {Color} from '../util/index.js'
  * 
  * See https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_text
  */
-export class TextBox{
+export class TextBox extends GameObject{
 
     constructor({
         originX,originY,

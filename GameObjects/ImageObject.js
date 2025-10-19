@@ -51,7 +51,7 @@ function createGlowSprite(sourceImage, {glowColor='rgba(255,0,255,0.9)', blurRad
     return blurCanvas
 }
 
-export class ImageObject{
+export class ImageObject extends GameObject{
 
     constructor({originX,originY,width,height,id,isGlow=false}){
         this.originX = originX

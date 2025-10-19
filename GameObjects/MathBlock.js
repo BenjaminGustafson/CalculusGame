@@ -10,7 +10,7 @@ import {Color, Shapes} from '../util/index.js'
  */
 
 
-export class MathBlock {
+export class MathBlock extends GameObject{
 
     static VARIABLE = 0 // m x +b
     static POWER = 1    // m []^2 +b
