@@ -14,10 +14,28 @@ import { MathBlock } from './GameObjects/MathBlock.js'
  * between sessions goes in gameState.stored. The gameState.stored
  * object is saved to local storage. 
  * 
- *  A scene is an object with 
- *  - a list of game objects
+ *  A Scene is an object with 
+ *  - a list of GameObjects
  *  - an update function
  * 
+ * GameObject list:
+ * GameObjects must be added to the array such that they are increasing 
+ * in z-value so that the highest z is drawn last.
+ * Why not use a priority queue? 
+ * We do not expect to be inserting objects frequently enough or in large enough number to inhibit performance.
+ * We expect the number of objects to be less 100, where insertion sort is typically fastest.
+ * We expect most objects to have z-value 0, which also helps with insertion efficiency.
+ * 
+ * GameObjects are allowed to modify the mouse input, to allow them to change the cursor.
+ * There is currently no gaurd against GameObjects modifying other input values.
+ * Highest z-value objects end up having priority of the cursor. I do not consider this an issue.
+ * 
+ * The audio manager is unaffected by the order in which objects call it. If multiple objects call 
+ * for the same sound that is already handled by internal limits in the audio manager.
+ * 
+ * Scene update function:
+ * The scene update function is a place to put logic that doesn't 
+ * naturally fit in any individual GameObject's update function.
  * 
  */
 
@@ -35,8 +53,9 @@ function setup() {
     // Load audio
     const audioManager = new AudioManager();
     const audioPaths = ["click_001.ogg", "click4.ogg", // slider
-        "drop_002.ogg","confirmation_001.ogg",
-         "glass_002.ogg", "switch1.ogg","switch9.ogg","switch6.ogg", "switch13.ogg", 'click_003.ogg', 'click2.ogg',
+        "drop_002.ogg", // target hit
+        "confirmation_001.ogg", // solved
+        "glass_002.ogg", "switch1.ogg","switch9.ogg","switch6.ogg", "switch13.ogg", 'click_003.ogg', 'click2.ogg',
         'click3.ogg',
         'drop_003.ogg', 'drop_001.ogg', //target adder
         'error_008.ogg','bong_001.ogg', // dialogue
@@ -45,7 +64,7 @@ function setup() {
 
     Promise.all(
         audioPaths.map(path => {
-            const name = path.split(".")[0]; // e.g., "click_001"
+            const name = path.split(".")[0]; // drop file extension
             return audioManager.load(name, "audio/" + path)
         })
     ).then(() => {
@@ -161,8 +180,6 @@ function setup() {
         mouse.up = true
      })
     
-
-
     document.addEventListener('keyup', function (event) {
         keysPressed[event.key] = false
     });
@@ -173,6 +190,7 @@ function setup() {
             gameState.keyPressed(event.key)
         }
         keysPressed[event.key] = true
+
         if (build == "dev") {
             switch (event.key) {
                 case 'm':
@@ -182,7 +200,7 @@ function setup() {
         }
     });
 
-    // ----------------- Scene changer text field ---------------------
+    // ----------------- Development tools (push ` to show/hide) ---------------------
     if (build == 'dev'){
         // Container to toggle
         const ui = document.createElement("div");
@@ -224,12 +242,12 @@ function setup() {
         clearBtn.style.top  = "10px";
         clearBtn.style.width  = "80px";
 
-        const completeAllBtn = document.createElement("button");
-        completeAllBtn.innerText = "Complete all";
-        completeAllBtn.style.position = "absolute";
-        completeAllBtn.style.left = "10px";
-        completeAllBtn.style.top  = "65px";
-        completeAllBtn.style.width  = "100px";
+        const unlockAllBtn = document.createElement("button");
+        unlockAllBtn.innerText = "Unlock all";
+        unlockAllBtn.style.position = "absolute";
+        unlockAllBtn.style.left = "10px";
+        unlockAllBtn.style.top  = "65px";
+        unlockAllBtn.style.width  = "100px";
 
         const plusBtn = document.createElement("button");
         ui.appendChild(plusBtn);
@@ -307,19 +325,15 @@ function setup() {
 
         
 
-        completeAllBtn.addEventListener("click", () => {
+        unlockAllBtn.addEventListener("click", () => {
             if (!gameState.stored) return;
             if (!gameState.stored.completedScenes) gameState.stored.completedScenes = {};
-            for (const k of Object.keys(gameState.stored.completedScenes)) {
-                gameState.stored.completedScenes[k] = "complete";
-            }
-            for (const k of ['linear.lab.rule', 'linear.lab']) {
-                gameState.stored.completedScenes[k] = "in progress";
-            }
-            for (let i = 1; i <= 10; i ++){
-                gameState.stored.completedScenes['linear.puzzle.' + i] = "in progress"
-                gameState.stored.completedScenes['linear.dialogue.' + i] = "in progress"
-                gameState.stored.completedScenes['linear.trial.' + i] = "in progress"
+
+            for (let i = 1; i <= 20; i ++){
+                const planet = gameState.stored.planet
+                gameState.stored.completedScenes[planet+'.puzzle.' + i] = "in progress"
+                gameState.stored.completedScenes[planet+'.dialogue.' + i] = "in progress"
+                gameState.stored.completedScenes[planet+'.trial.' + i] = "in progress"
             }
             updateStoredDisplay();
         });
@@ -348,7 +362,7 @@ function setup() {
         ui.appendChild(label);
         ui.appendChild(input);
         ui.appendChild(clearBtn);
-        ui.appendChild(completeAllBtn);
+        ui.appendChild(unlockAllBtn);
         ui.appendChild(compLabel);
         ui.appendChild(compInput);
         ui.appendChild(storedDisplay);
@@ -394,14 +408,15 @@ function setup() {
             frameCount = 0
         }
 
+        // Call the scene update function
         gameState.update(audioManager)
 
+        // Get rendering context
         var ctx = canvas.getContext('2d');
 
         // Draw background
         Color.setColor(ctx, Color.black)
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-
 
         // Reset cursor before objects update
         mouse.cursor = 'default'
@@ -409,7 +424,7 @@ function setup() {
         // Mouse to pass to inactive objects
         const defaultMouse = {x:-1, y:-1, down:false, held:false, up: false, moved: false, cursor: 'default'}
 
-        // Draw all GameObjects
+        // Update all GameObjects
         for (let i = 0; i < gameState.objects.length; i++) {
             const obj = gameState.objects[i]
             if (!obj.hidden){
