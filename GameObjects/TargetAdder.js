@@ -1,5 +1,7 @@
 import {Color, Shapes} from '../util/index.js'
 import { Target } from './Target.js'
+import { GameObject } from "./GameObject.js"
+
 
 export class TargetAdder extends GameObject{
 
@@ -14,6 +16,7 @@ export class TargetAdder extends GameObject{
         barMax,
         targetColor = Color.magenta,
     }){
+        super()
         Object.assign(this, {grid, xPrecision, yPrecision, solutionFun, coverBarPrecision, targetColor, solutionPrecision, barMax})
         this.targets = []
         this.active = true

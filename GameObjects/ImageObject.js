@@ -1,4 +1,5 @@
 
+import { GameObject } from "./GameObject.js"
 
 
 
@@ -54,6 +55,7 @@ function createGlowSprite(sourceImage, {glowColor='rgba(255,0,255,0.9)', blurRad
 export class ImageObject extends GameObject{
 
     constructor({originX,originY,width,height,id,isGlow=false}){
+        super()
         this.originX = originX
         this.originY = originY
         if (isGlow){

@@ -263,3 +263,34 @@ export function winCon(gameState, condition, nextButton){
         }
     }
 }
+
+export function standardBlocks(planet){
+    const blocks = [
+        new MathBlock({type:MathBlock.CONSTANT}),
+        new MathBlock({type:MathBlock.VARIABLE, token:'x'}),
+        new MathBlock({type:MathBlock.POWER, token:'2'}),
+        new MathBlock({type:MathBlock.POWER, token:'3'}),
+        new MathBlock({type:MathBlock.EXPONENT, token:'e'}),
+        new MathBlock({type:MathBlock.FUNCTION, token:'sin'}),
+        new MathBlock({type:MathBlock.FUNCTION, token:'cos'}),
+        new MathBlock({type:MathBlock.BIN_OP, token:'+'}),
+        new MathBlock({type:MathBlock.BIN_OP, token:'*'}),
+    ]
+    switch (planet.toLowerCase()){
+        case 'linear':
+            return blocks.slice(0,1)
+        case 'quadratic':
+            return blocks.slice(0,2)
+        case 'power':
+            return blocks.slice(0,3)
+        case 'exponential':
+            return blocks.slice(0,4)
+        case 'sine':
+            return blocks.slice(0,6)
+        case 'sum':
+            return blocks.slice(0,7)
+        case 'product':
+            return blocks.slice(0,8)
+    }
+    
+}

@@ -511,7 +511,7 @@ function newRNGPuzzle (gameState){
         puzzleMastery = {
             'linear':0,
             'quadratic':0,
-            'cubic':0,
+            'power':0,
             'exponential':0,
             'sine':0,
             'sum':0,
@@ -575,7 +575,7 @@ function newRNGPuzzle (gameState){
             mathBlockFun.children[0] = new MathBlock({type:MathBlock.VARIABLE,token: 'x'})
             break
         }
-        case "cubic":{
+        case "power":{
             // m x^3 + b -> 3 m x
             const m = Math.floor((Math.random()*3.2-1.6)*10)/10
             const b = Math.floor((Math.random()*10-5)*10)/10

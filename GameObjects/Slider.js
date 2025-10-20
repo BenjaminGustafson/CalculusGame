@@ -1,4 +1,6 @@
 import {Color, Shapes} from '../util/index.js'
+import { GameObject } from "./GameObject.js"
+
 /**
  * A slider UI element.
  * 
@@ -33,6 +35,7 @@ export class Slider extends GameObject{
         valueLabel = true,
         name='',
     }){
+        super()
         Object.assign(this, {
             canvasLength, sliderLength, minValue, maxValue, startValue, increment, circleRadius,
             vertical, showLines, showAxis, circleColor, lineWidth, gridPos, valueLabel, tickLength, name

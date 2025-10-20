@@ -1,4 +1,6 @@
 import {Color, Shapes} from '../util/index.js'
+import { GameObject } from "./GameObject.js"
+
 /**
  * 
  */
@@ -29,6 +31,7 @@ export class FunctionTracer extends GameObject{
         audioChannel = 0, // if using multiple tracers, use different audio channels so sounds can play simultaneously
         numLabel = true,
     }){
+        super()
         Object.assign(this, {
             grid, originGridX, originGridY,
             pixelsPerSec, targets, lineWidth, precision, 

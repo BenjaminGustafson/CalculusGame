@@ -1,4 +1,6 @@
 import {Color} from '../util/index.js'
+import { GameObject } from "./GameObject.js"
+
 /**
  * A GameObject to simplify drawing text.
  * 
@@ -15,6 +17,7 @@ export class TextBox extends GameObject{
         baseline='alphabetic',
         updateContent, 
     }){
+        super()
         Object.assign(this, {
             originX, originY, content, font, color, align, baseline, updateContent
         })

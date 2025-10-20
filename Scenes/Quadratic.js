@@ -5,6 +5,7 @@ import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
 import * as Experiment from './Experiment.js'
 import { measurementPuzzle } from './Linear.js'
+import { drawFunctionLevel } from './Shared.js'
 
 /**
  * 
@@ -352,46 +353,6 @@ export function loadScene(gameState, sceneName, message = {}){
 }
 
 
-function drawFunctionLevel (gameState, {
-    tracerStart=1,
-    targetSize = 30, sliderSize = 15,
-    nextScenes = [],
-    gridSize = 2,
-    targetYs = [],
-}){
-    const gss = gameState.stored
-    const backButton = Planet.backButton(gameState)
-    const nextButton = Planet.nextButton(gameState, nextScenes)
-
-    console.log('DRAW FUNCTION LEVEL')
-
-    const gridLeft = new Grid({canvasX: 300, canvasY:350, canvasWidth:400, canvasHeight:400, 
-        gridXMin:-gridSize, gridYMin:-gridSize, gridXMax:gridSize, gridYMax:gridSize, labels:false, arrows:true})
-    const gridRight = new Grid({canvasX: 900, canvasY:350, canvasWidth:400, canvasHeight:400, 
-        gridXMin:-gridSize, gridYMin:-gridSize, gridXMax:gridSize, gridYMax:gridSize, labels:false, arrows:true})
-    
-    const drawFunction = new DrawFunction ({grid: gridRight})
-
-
-    const numTargets = targetYs.length
-    const spacing = gridLeft.gridWidth / numTargets
-    var targets = []
-    for (let i = 0; i < numTargets; i++) {
-        const x = gridLeft.gridXMin+(i+1)*spacing
-        targets.push(new Target({grid: gridLeft, gridX:x, gridY:targetYs[i], size:targetSize}))
-    }
-    
-    
-    const tracer = new IntegralTracer({grid: gridLeft, input:{type:'drawFunction', drawFunction:drawFunction}, targets:targets,
-    })
-    
-
-    gameState.objects = [gridLeft, gridRight, backButton, nextButton, drawFunction, tracer].concat(targets)    
-
-    Planet.winCon(gameState, ()=>tracer.solved, nextButton)
-    Planet.unlockScenes(nextScenes, gss)
-}
-
 function quadraticPlanet(gameState,message={}){
     Planet.planetScene(gameState, {
         planetName:'quadratic',
@@ -432,12 +393,6 @@ function quadDiscLevel (gameState, {
             increment: withMathBlock ? 0.05 : 0.1,circleRadius:sliderSize}))
     }
     
-    // var targets = []
-    // for (let i = 0; i < numSliders; i++) {
-    //     const x = gridLeft.gridXMin+(i+1)*spacing
-    //     targets.push(new Target({grid: gridLeft, gridX:x, gridY:func(x), size:targetSize}))
-    // }
-
     var targets = []
     if (func != null)
         tracerStart = func(gridLeft.gridXMin)
@@ -481,7 +436,6 @@ function quadDiscLevel (gameState, {
                 if (fun != null){
                     for (let i = 0; i < numSliders; i++){
                         sliders[i].moveToValue(fun(sliders[i].gridPos))
-                        //sliders[i].setValue(fun(sliders[i].gridPos))
                     }
                 }
             }
@@ -491,8 +445,6 @@ function quadDiscLevel (gameState, {
     Planet.winCon(gameState, ()=>tracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
-
-
 
 function applePuzzle(gameState, {solutionFun, ...options}){
     const blocks = [

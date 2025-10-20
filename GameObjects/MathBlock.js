@@ -1,4 +1,5 @@
 import {Color, Shapes} from '../util/index.js'
+import { GameObject } from "./GameObject.js"
 
 /**
  * 
@@ -67,6 +68,7 @@ export class MathBlock extends GameObject{
         originX = -100, originY = -100,
         baseSize = 26,
     }){
+        super()
         // originX, _y is where the block is spawned. x,y is where it currently is
         Object.assign(this, {type, token, originX, originY, baseSize})
         this.x = originX

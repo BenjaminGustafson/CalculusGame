@@ -1,4 +1,6 @@
 import {Color, Shapes} from '../util/index.js'
+import { GameObject } from "./GameObject.js"
+
 /**
  * 
  * A Grid is a GameObject that draws a grid to the canvas.
@@ -46,6 +48,7 @@ export class Grid extends GameObject{
         lineWidthMin = 1,
         xAxisLabel= "", yAxisLabel = "",
     }){
+        super()
         Object.assign(this, {
             canvasX, canvasY,
             canvasWidth, canvasHeight,

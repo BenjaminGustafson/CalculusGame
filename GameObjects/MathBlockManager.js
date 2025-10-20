@@ -1,6 +1,8 @@
 import {Color, Shapes} from '../util/index.js'
 import { MathBlock } from './MathBlock.js'
 import { ImageObject } from './ImageObject.js'
+import { GameObject } from "./GameObject.js"
+
 /**
  * 
  * The manager handles how mathblocks attach to each other.
@@ -50,6 +52,7 @@ export class MathBlockManager extends GameObject{
         toolBarY = 100,
         blockSize = 40,
     }){
+        super()
         Object.assign(this,{
             blocks, translateYSlider, scaleYSlider, blockFields, toolBarX,
             toolBarY, blockSize, funTracers, numSlider

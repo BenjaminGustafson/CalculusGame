@@ -4,6 +4,7 @@ import * as Scene from '../Scene.js'
 import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
 import * as Experiment from './Experiment.js'
+import { sliderLevel, mathBlockTutorial, drawLevel} from './Shared.js'
 
 const tileMap = new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0})
 
@@ -21,16 +22,16 @@ const nodes = {
     'power.puzzle.8': [13,1, 0,-1],
     'power.puzzle.9': [14,1, 0,-1],
     'power.puzzle.10':[15,1, 0,-1],
-    'power.puzzle.11': [6, 3, 0,-1],
-    'power.puzzle.12': [7, 3, 0,-1],
-    'power.puzzle.13': [8, 3, 0,-1],
-    'power.puzzle.14': [9, 3, 0,-1],
-    'power.puzzle.15': [10,3, 0,-1],
-    'power.puzzle.16': [11,3, 0,-1],
-    'power.puzzle.17': [12,3, 0,-1],
-    'power.puzzle.18': [13,3, 0,-1],
-    'power.puzzle.19': [14,3, 0,-1],
-    'power.puzzle.20': [15,3, 0,-1],
+    'power.puzzle.11': [15, 3, 0,-1],
+    'power.puzzle.12': [14, 3, 0,-1],
+    'power.puzzle.13': [13, 3, 0,-1],
+    'power.puzzle.14': [12, 3, 0,-1],
+    'power.puzzle.15': [11,3, 0,-1],
+    'power.puzzle.16': [10,3, 0,-1],
+    'power.puzzle.17': [9,3, 0,-1],
+    'power.puzzle.18': [8,3, 0,-1],
+    'power.puzzle.19': [7,3, 0,-1],
+    'power.puzzle.20': [6,3, 0,-1],
 }
 
 const paths = 
@@ -70,6 +71,12 @@ export function loadScene(gameState, sceneName, message = {}){
         return
     }
 
+    const blocks = [
+        new MathBlock({type:MathBlock.CONSTANT}),
+        new MathBlock({type: MathBlock.VARIABLE, token:'x'}),
+        new MathBlock({type: MathBlock.POWER, token:'2'}),
+        new MathBlock({type: MathBlock.POWER, token:'3'})
+    ]
     // Sub-scenes
     switch(sceneNameSplit[1]){
         case "puzzle": 
@@ -79,40 +86,88 @@ export function loadScene(gameState, sceneName, message = {}){
                          nextScenes:["power.puzzle.2"]})
                     break
                 case '2':
-                    powerLevel(gameState, {numSliders:4, sliderSize:15, gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:2,
-                        targetFun: x => x*x*x/6, nextScenes:["power.puzzle.3"]})
+                    powerLevel(gameState, {numSliders:20, sliderSize:10, targetSize:15,gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:-2,
+                        withMathBlock:true,
+                        nextScenes:["power.puzzle.3"]})
                     break
                 case '3':
-                    powerLevel(gameState, {numSliders:8, sliderSize:15, gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:2,
+                    powerLevel(gameState, {numSliders:4, sliderSize:15, gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:2,
                         targetFun: x => x*x*x/6, nextScenes:["power.puzzle.4"]})
                     break
                 case '4':
-                    powerLevel(gameState, {numSliders:8, sliderSize:15, gridYMin:-12, gridYMax:12,gridXMin:-2,gridXMax:2,tracerMiddleStart:-8,
-                        increment:0.2,
-                        targetFun: x => x*x*x*x/4, nextScenes:["power.puzzle.5"]})
+                    powerLevel(gameState, {numSliders:400, sliderSize:5, targetSize:10,gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:2,
+                        withMathBlock:true,targetFun: x => x*x*x/6, increment:0.05,
+                        nextScenes:["power.puzzle.4"]})
                     break
-
                 case '5':
-                    powerLevel(gameState, {numSliders:200, sliderSize:5, targetSize:15, gridYMin:-3, gridYMax:3,gridXMin:-2,gridXMax:2,tracerMiddleStart:-2,
-                        increment:0.1,
-                        targetFun: x => -x*x*x/6, nextScenes:["power.puzzle.6"],
-                        withPowerBlock:false,
-                    withMathBlock:true})
+                    
+                    mathBlockTutorial(gameState, {
+                        numTargets:20, targetFun: x=>x*x*x,blocks:blocks,
+                        nextScenes:['power.puzzle.6']
+                    })
+                    
                     break
                 case '6':
-                    powerLevel(gameState, {numSliders:20, sliderSize:15, gridYMin:-10, gridYMax:10,gridXMin:-2,gridXMax:2,tracerMiddleStart:-16/3,
-                        increment:0.2,
-                        targetFun: x => x*x*x*x/6, nextScenes:["power.puzzle.7"],
-                    withMathBlock:true})
+                    mathBlockTutorial(gameState, {
+                        numTargets:20, targetFun: x=>-x*x*x,blocks:blocks,
+                        nextScenes:['power.puzzle.7']
+                    })
                     break
                 case '7':
-                    powerLevel(gameState, {numSliders:20, sliderSize:15, gridYMin:-8, gridYMax:8,gridXMin:-2,gridXMax:2,tracerMiddleStart:16/3,
-                        increment:0.2,
-                        targetFun: x => -x*x*x*x/6, nextScenes:["power.puzzle.8"],
-                    withMathBlock:true})
+                    mathBlockTutorial(gameState, {
+                        numTargets:20, targetFun: x=>-x*x*x*0.2+0.5,blocks:blocks,
+                        nextScenes:['power.puzzle.8']
+                    })
+                    break
+                case '8':
+                    sliderLevel(gameState, {
+                        numSliders: 8,
+                        targetFun: x => x*x*x/6,
+                        tracerStart: -8/6,
+                        targetSize:20,
+                        sliderSize:15,
+                        nextScenes: ['power.puzzle.9'],
+                    })
+                    break
+                case '9':
+                    drawLevel(gameState, {
+                        targetFun: x => x*x*x/6,
+                        numTargets: 8,
+                        tracerStart: -8/6,
+                        targetSize: 20,
+                        nextScenes:  ['power.puzzle.10'],
+                    })
+                    break
+                case '10':
+                    drawLevel(gameState, {
+                        targetFun: x => -x*x*x/6,
+                        numTargets: 8,
+                        tracerStart: 8/6,
+                        targetSize: 20,
+                        nextScenes:  ['power.puzzle.10'],
+                    })
+                    break
+                case '11':
+                    break
+                case '12':
+                    break
+                case '13':
+                    break
+                case '14':
+                    break
+                case '15':
+                    break
+                case '16':
+                    break
+                case '17':
+                    break
+                case '18':
+                    break
+                case '19':
+                    break
+                case '20':
                     break
 
-                
             }
         break
 
@@ -159,7 +214,7 @@ function powerPlanet(gameState,message){
     })
 }
 
-
+// TODO: re-organize this to be part of the standard level
 function powerLevel (gameState, {
     numSliders,
     withMathBlock = false,
@@ -174,7 +229,7 @@ function powerLevel (gameState, {
     increment=0.1,
     oneSlider = false,
     nSliderMin=0,nSliderMax=5,nSliderIncrement=1,
-    withPowerBlock = true,
+    withCube = false,
     targetFun = x => x*x/2
 }){
     const gss = gameState.stored
@@ -182,11 +237,11 @@ function powerLevel (gameState, {
     const nextButton = Planet.nextButton(gameState, nextScenes)
 
     // Grids
-    const gridLeft = new Grid({canvasX:50, canvasY:350, canvasWidth:400, canvasHeight:400, 
+    const gridLeft = new Grid({canvasX:50, canvasY:400, canvasWidth:400, canvasHeight:400, 
         gridXMin:gridXMin, gridYMin:gridYMin, gridXMax:gridXMax, gridYMax:gridYMax, labels:true, arrows:false, autoCellSize: true})
-    const gridMiddle = new Grid({canvasX: 500, canvasY:350, canvasWidth:400, canvasHeight:400, 
+    const gridMiddle = new Grid({canvasX: 500, canvasY:400, canvasWidth:400, canvasHeight:400, 
         gridXMin:gridXMin, gridYMin:gridYMin, gridXMax:gridXMax, gridYMax:gridYMax, labels:true, arrows:false, autoCellSize: true})
-    const gridRight = new Grid({canvasX:950, canvasY:350, canvasWidth:400, canvasHeight:400, 
+    const gridRight = new Grid({canvasX:950, canvasY:400, canvasWidth:400, canvasHeight:400, 
         gridXMin:gridXMin, gridYMin:gridYMin, gridXMax:gridXMax, gridYMax:gridYMax, labels:true, arrows:false, autoCellSize: true})
     
 
@@ -220,9 +275,11 @@ function powerLevel (gameState, {
     
     // Mathblocks
     const blocks = [
+        new MathBlock({type:MathBlock.CONSTANT, token:"0"}),
         new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
+        new MathBlock({type:MathBlock.POWER, token:"2"}),
     ]
-    if (withPowerBlock) blocks.push(new MathBlock({type:MathBlock.POWER, token:'n'}))
+    if (withCube) blocks.push(new MathBlock({type:MathBlock.POWER, token:'3'}))
 
     gameState.objects = [gridLeft, gridMiddle, gridRight, tracerLeft,
         tracerMiddle, backButton, nextButton].concat(targets).concat(sliders)
@@ -233,9 +290,9 @@ function powerLevel (gameState, {
 
         sliders.forEach(s => s.clickable = false)
 
-        const sySlider = new Slider({canvasX: 1400, canvasY: 350, maxValue:2, sliderLength:4, startValue: 1, showAxis:true})
-        const tySlider = new Slider({canvasX: 1480, canvasY: 350, maxValue:2, sliderLength:4, showAxis:true})
-        const nSlider = new Slider({canvasX: 1560, canvasY: 350, maxValue:nSliderMax, sliderLength:nSliderMax-nSliderMin,
+        const sySlider = new Slider({canvasX: 1400, canvasY: 400, maxValue:2, sliderLength:4, startValue: 1, showAxis:true})
+        const tySlider = new Slider({canvasX: 1480, canvasY: 400, maxValue:2, sliderLength:4, showAxis:true})
+        const nSlider = new Slider({canvasX: 1560, canvasY: 400, maxValue:nSliderMax, sliderLength:nSliderMax-nSliderMin,
              increment:nSliderIncrement, showAxis:true})
         const mbField = new MathBlockField({minX:950, minY:100, maxX:1350, maxY:300, outputSliders:sliders})
         if (oneSlider){
@@ -243,12 +300,12 @@ function powerLevel (gameState, {
             tySlider.hidden = true
             nSlider.canvasX = 1450
         }
-        const mbm = new MathBlockManager({blocks : blocks, toolBarX: 1400, toolBarY:150, outputType:"sliders",
-            scaleYSlider: sySlider, translateYSlider:tySlider, numSlider:nSlider,
+        const mbm = new MathBlockManager({blocks : blocks, toolBarX: 1400, toolBarY:100, outputType:"sliders",
+            scaleYSlider: sySlider, translateYSlider:tySlider, blockSize:30,
             blockFields: [ mbField ],
 
         })
-        gameState.objects = gameState.objects.concat([mbm, sySlider, tySlider, nSlider])
+        gameState.objects = gameState.objects.concat([mbm, sySlider, tySlider])
         
         const update = gameState.update
         gameState.update = ()=>{

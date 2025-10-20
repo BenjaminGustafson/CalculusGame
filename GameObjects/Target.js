@@ -1,4 +1,6 @@
 import {Color, Shapes} from '../util/index.js'
+import { GameObject } from "./GameObject.js"
+
 /**
  * A square target that can be hit by tracers.
  */
@@ -11,6 +13,7 @@ export class Target extends GameObject{
         size=15, 
         unhitColor = Color.magenta,
     }){
+        super()
         Object.assign(this, {unhitColor})
         this.grid = grid
         this.size = size

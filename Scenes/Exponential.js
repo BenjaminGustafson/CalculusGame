@@ -102,7 +102,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     exponentialLevel(gameState, {numSliders:16, nextScenes:["exponential.puzzle.6"], withMathBlock:true,
                         gridXMax:4,gridYMax:40,
                         lastTarget:38,
-                        sliderSize: 10, targetSize:15, increment: 0.2,
+                        sliderSize: 10, targetSize:9, increment: 0.2,
                         oneSlider:true,
                     })
                     break
@@ -110,7 +110,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     exponentialLevel(gameState, {numSliders:200, nextScenes:["exponential.puzzle.7"], withMathBlock:true,
                         gridXMax:4,gridYMax:60,
                         lastTarget:53,
-                        sliderSize: 5, targetSize:10, increment: 0.1,
+                        sliderSize: 5, targetSize:3, increment: 0.1,
                         oneSlider:true,
                     })
                     break

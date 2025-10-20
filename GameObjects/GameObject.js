@@ -26,9 +26,19 @@ export class GameObject {
     ) { throw new Error("update() must be implemented");  }
 
 
-    insert(list, z){
+    insert(list, z=0){
+        console.log('insert', list, z)
         this.z = z
-        
+        for (let i = list.length-1; i>=0; i--){
+            console.log(i, list[i])
+            if (list[i].z < this.z){
+                list[i+1] = this
+                return
+            }else{
+                list[i+1] = list [i]
+            }
+        }
+        list[0] = this;
     }
 }
 
@@ -37,11 +47,12 @@ export class GameObject {
 /**
  * GameObjects might be grouped together for convinience.
  */
-export class GameObjectGroup {
+export class GameObjectGroup extends GameObject{
     constructor(objects){
+        super()
         this.objects = objects
     }
     update(ctx, audio, mouse){
-        this.objects.foreach(obj => obj.update(ctx, audio, mouse))
+        this.objects.forEach(obj => obj.update(ctx, audio, mouse))
     }
 }
