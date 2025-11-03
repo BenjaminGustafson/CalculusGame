@@ -4,21 +4,30 @@ import {Grid, MathBlock, MathBlockField, MathBlockManager, Slider, Target, Targe
     DrawFunction
 } from "../GameObjects/index.js"
 import * as Planet from "./Planet.js"
+import {Color, Shapes} from '../util/index.js'
+
 
 
 /**
  * Shared functions for building levels.
  */
-
-export function targetsFromYs({targetYs, grid, targetSize}){
+export function targetsFromYs(gameState, {targetYs, grid, targetOpts}){
     const numTargets = targetYs.length
     const spacing = grid.gridWidth / numTargets
     var targets = []
     for (let i = 0; i < numTargets; i++) {
         const x = grid.gridXMin+(i+1)*spacing
-        targets.push(new Target({grid: grid, gridX:x, gridY:targetYs[i], size:targetSize}))
+        targets.push(new Target({grid: grid, gridX:x, gridY:targetYs[i], ...targetOpts}))
     }
+    const targetGroup = new GameObjectGroup(targets)
+    targetGroup.insert(gameState.objects, 2)
+    return targetGroup
 }
+
+export function buildTargetsFromYs({targetYs, targetOpts}){
+    return (gameState, grid) => targetsFromYs(gameState, {targetYs: targetYs, grid:grid, targetOpts: targetOpts})
+}
+
 
 export function targetsFromFun(gameState, {fun, grid, numTargets, targetSize}){
     var targets = []
@@ -49,18 +58,46 @@ export function targetsFromDdx(gameState, {ddx, grid, numTargets, targetSize, st
     return targetGroup
 }
 
-export function sliderSetup(gameState, {numSliders, grid, sliderSize}){
+export function sliderSetup(gameState, {numSliders, grid, sliderOpts}){
     var sliders = []
     const spacing = grid.gridWidth/numSliders
     for (let i = 0; i < numSliders; i++){
         sliders.push(new Slider({grid:grid,
             gridPos:grid.gridXMin + i * spacing,
             increment: 0.1,
-            circleRadius:sliderSize}))
+            ...sliderOpts}))
     }
     const sliderGroup = new GameObjectGroup(sliders)
-    sliderGroup.insert(gameState.objects, 1)
+    sliderGroup.insert(gameState.objects, 2)
     return sliderGroup
+}
+
+function addToUpdate(gameState, funToAdd){
+    const oldUpdate = gameState.update
+    gameState.update = () => {
+        oldUpdate()
+        funToAdd()
+    }
+}
+
+export function sliderLinesSetup(gameState, {sliders, grid, lineWidth=5}){
+    var sliderLines = []
+    const spacing = grid.canvasWidth/sliders.length
+    for (let i = 0; i < sliders.length; i++){
+        const slider = sliders[i]
+        const line = {
+            canvasY: slider.circlePos,
+            update: function (ctx){
+                this.canvasY = slider.circlePos
+                Color.setColor(ctx, slider.circleColor)
+                Shapes.Line(ctx, slider.canvasX, this.canvasY, slider.canvasX+spacing, this.canvasY, lineWidth, 'rounded')
+            }
+        }
+        sliderLines.push(line)
+    }
+    const lineGroup = new GameObjectGroup(sliderLines)
+    lineGroup.insert(gameState.objects, 1)
+    return lineGroup
 }
 
 export function gridSetup({numGrids, gridParams, leftMargin=0, rightMargin=0, topMargin=150, bottomMargin=0,
@@ -109,34 +146,34 @@ export function levelNavigation(gameState, {
     const nextButton = Planet.nextButton(gameState, nextScenes)
     nextButton.insert(gameState.objects, 0)
 
-    Planet.winCon(gameState, ()=>winCon, nextButton)
+    Planet.winCon(gameState, winCon, nextButton)
     Planet.unlockScenes(nextScenes, gameState.stored)
 }
 
-export function sliderLevel(gameState, {
-    targetFun,
+export function sliderFunLevel(gameState, {
     numSliders,
-    tracerStart,
-    sliderSize,
-    targetSize,
+    targetFun,
+    tracerOpts,
+    sliderOpts,
+    targetOpts,
     nextScenes,
 }){
     const grids = twoGridSetup(gameState)
     const tracer = new IntegralTracer({
         grid: grids.left,
-        originGridY:tracerStart,
-        input:{type:'sliders', 
+        input: {type:'sliders', 
             sliders: sliderSetup(gameState, {
                 numSliders:numSliders,
                 grid:grids.right,
-                sliderSize:sliderSize}).objects
-            },
+                sliderOpts:sliderOpts}).objects
+        },
         targets: targetsFromFun(gameState, {
             fun: targetFun,
             grid:grids.left,
             numTargets: numSliders,
-            targetSize:targetSize,
+            targetOpts:targetOpts,
         }).objects,
+        tracerOpts:tracerOpts,
     })
     tracer.insert(gameState.objects,1)
     levelNavigation(gameState, {
@@ -146,6 +183,40 @@ export function sliderLevel(gameState, {
 }
 
 
+/**
+ * 
+ * We want to allow defining targets in multiple ways, like with the functions
+ * targetsFromFun, targetsFromDdx, and targetsFromYs. So we take in a function 
+ * that builds the targets given a grid.
+ * 
+ */
+export function sliderLevel(gameState, {
+    numSliders,
+    targetBuilder,
+    tracerOpts,
+    sliderOpts,
+    nextScenes,
+}){
+    const grids = twoGridSetup(gameState)
+    const sliders = sliderSetup(gameState, {
+        numSliders:numSliders,
+        grid:grids.right,
+        sliderOpts:sliderOpts}).objects
+    sliderLinesSetup(gameState, {sliders: sliders, grid:grids.right})
+    const tracer = new IntegralTracer({
+        grid: grids.left,
+        input: {type:'sliders',
+            sliders: sliders
+        },
+        targets: targetBuilder(gameState, grids.left).objects,
+        ...tracerOpts,
+    })
+    tracer.insert(gameState.objects,1)
+    levelNavigation(gameState, {
+        winCon: () => tracer.solved,
+        nextScenes: nextScenes,
+    })
+}
 
 export function mathBlockLevel(gameState, {
     targetFun,
@@ -155,22 +226,27 @@ export function mathBlockLevel(gameState, {
     nextScenes,
 }){
     const grids = twoGridSetup(gameState)
+    grids.left.canvasX -= 200
+    grids.right.canvasX -= 200
     const sySlider = new Slider({canvasX: 1200, canvasY: 350, maxValue:2, sliderLength:4, startValue: 1, showAxis:true})
+    sySlider.insert(gameState.objects, 0)
     const tySlider = new Slider({canvasX: 1300, canvasY: 350, maxValue:2, sliderLength:4, showAxis:true})
-    const mbField = new MathBlockField({minX:700, minY:100, maxX:1100, maxY:300, outputSliders:sliders})
-    const mbm = new MathBlockManager({blocks : blocks, toolBarX: 1400, toolBarY:150, outputType:"sliders",
+    tySlider.insert(gameState.objects, 0)
+    const mbField = new MathBlockField({minX:700, minY:100, maxX:1100, maxY:300})
+    const funTracer = new FunctionTracer({grid:grids.right})
+    funTracer.insert(gameState.objects, 1)
+    const mbm = new MathBlockManager({blocks : blocks,
+        toolBarX: 1400, toolBarY:150,
         scaleYSlider: sySlider, translateYSlider:tySlider,
         blockFields: [ mbField ],
-
+        funTracers: [ funTracer ],
     })
+    mbm.insert(gameState.objects, 10)
     const tracer = new IntegralTracer({
         grid: grids.left,
         originGridY:tracerStart,
-        input:{type:'sliders', 
-            sliders: sliderSetup(gameState, {
-                numSliders:numSliders,
-                grid:grids.right,
-                sliderSize:sliderSize}).objects
+        input:{type:'mathBlock', 
+            blockField:mbField,
             },
         targets: targetsFromFun(gameState, {
             fun: targetFun,

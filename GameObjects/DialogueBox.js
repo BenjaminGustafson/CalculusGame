@@ -5,26 +5,30 @@ import { Color, Shapes } from "../util/index.js";
 
 export class DialogueBox extends GameObject{
 
-    constructor({portraitId,
-        text = [], 
+    constructor({portraitIds,
+        text = [], // [{speaker:'', string: ''}]
         onComplete = () => {}
      }){
         super()
-        Object.assign(this, {portraitId, text, onComplete})
+        Object.assign(this, {portraitIds, text, onComplete})
 
         this.msPerLetter = 50
         this.stopped = true
-        this.textIndex = -1
+        this.textIndex = -1 // text[textIndex]
         this.time = 0
-        this.portraitImage = new ImageObject({originX:0, originY:550, width:300,height:300, id:portraitId})
-        this.lineIndex = 0
+        this.portraitImages = {}
+        for (let i = 0; i < portraitIds.length; i++){
+            this.portraitImages[portraitIds[i]] = new ImageObject({originX:0, originY:550, width:300,height:300, id:portraitIds[i]})
+        }
+        this.lineIndex = 0 // lines[textIndex][lineIndex]
         this.letterIndex = 0
 
-        this.lines = []
+        this.lines = [] // [['text 0, line 0', 'line 1'], ...]
 
+        // Split text into lines 
         for (let i = 0; i < text.length; i++){
-            var textLines = []
-            const words = text[i].split(' ')
+            var textLines = [] // ['text i, line 0', ...]
+            const words = text[i].string.split(' ')
             var charCount = 0
             var lineNum = 0
             var line = ''
@@ -106,7 +110,7 @@ export class DialogueBox extends GameObject{
             this.time = 0
         }
 
-        this.portraitImage.update(ctx,audioManager,mouse)
+        this.portraitImages[this.text[this.textIndex].portraitId].update(ctx,audioManager,mouse)
 
         mouse.cursor = 'pointer'
     }
