@@ -5,6 +5,7 @@ import { GameObject } from '../GameObjects/GameObject.js'
 import { unlockScenes, planetScene, dialogueScene } from './Planet.js'
 import * as Experiment from './Experiment.js'
 import * as Planet from './Planet.js'
+import { buildTargetsFromYs, sliderLevel } from './Shared.js'
 
 const tileMap = new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0})
 
@@ -32,6 +33,7 @@ const nodes = {
     'linear.puzzle.18': [8,3, 0,-1],
     'linear.puzzle.19': [7,3, 0,-1],
     'linear.puzzle.20': [6,3, 0,-1],
+    'linear.dialogue.1': [9,0, 0,-1],
 }
 
 const paths = 
@@ -56,6 +58,8 @@ const paths =
     {start: 'linear.puzzle.17', end: 'linear.puzzle.18', steps: [] },
     {start: 'linear.puzzle.18', end: 'linear.puzzle.19', steps: [] },
     {start: 'linear.puzzle.19', end: 'linear.puzzle.20', steps: [] },
+    {start: 'linear.puzzle.4', end: 'linear.dialogue.1', steps: [] },
+    
 ]
 
 function linearPlanet(gameState, message = {}){
@@ -98,7 +102,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     simpleDiscLevel(gameState, {targetVals:[0, 1, 1, 2],  nextScenes:["linear.puzzle.4"]})
                     break
                 case '4':
-                    simpleDiscLevel(gameState, {targetVals:[1, 0, -1, 0], nextScenes:["linear.puzzle.5"]})
+                    simpleDiscLevel(gameState, {targetVals:[1, 0, -1, 0],  nextScenes:["linear.puzzle.5"]})
                     break
                 case '5':
                     simpleDiscLevel(gameState, {targetVals:[0.5, 1, 0.5, 1.5], nextScenes:["linear.puzzle.6"]})
@@ -107,7 +111,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     simpleDiscLevel(gameState, {targetVals:[2, 1.5, -0.5, -2], nextScenes:["linear.puzzle.7"]})
                     break
                 case '7':
-                    simpleDiscLevel(gameState, {targetVals:[1, 0.5, -0.1, -0.8, -0.4, 0.6, 0.2, 0.4], nextScenes:["linear.puzzle.8"]})
+                    simpleDiscLevel(gameState, {targetVals:[1, 0.5, 1, 0, -0.5, -1, -0.5, 0], nextScenes:["linear.puzzle.8"]})
                     break
                 case '8':
                     simpleDiscLevel(gameState, {targetVals:[0.25, 0.5, 0.75, 1, 1.25, 1, 0.75, 0.5,
@@ -273,12 +277,7 @@ export function loadScene(gameState, sceneName, message = {}){
             linearPlanet(gameState)
             switch(sceneNameSplit[2]){
                 case '1':
-                    dialogueScene(gameState, {nextScenes:["linear.puzzle.5"], text: [
-                        'Hi there.',    
-                        'I\'m trying to figure out how these computers work.', 
-                        'It seems like value of graph on the right becomes the slope of the graph on the left.',
-                        'Or something like that.',
-                    ]})
+                    dialogueScene(gameState, {nextScenes:["linear.puzzle.5"],  filePath:'./dialogue/linear1.txt'})
                 break
                 case '2':
                     dialogueScene(gameState, {exitTo:"linear", nextScenes:["linear.puzzle.9"], text: [
@@ -399,34 +398,15 @@ function linearPuzzle2 (gameState, {nextScenes}){
 function simpleDiscLevel(gameState, {
     targetVals, tracerStart = 0,
     targetSize = 20, sliderSize = 15,
-    exitTo = 'linear',
     nextScenes
 }) {
-    const gss = gameState.stored
-    const backButton = Planet.backButton(gameState)
-    const nextButton = Planet.nextButton(gameState, nextScenes)
-
-    const gridLeft = new Grid({canvasX:300, canvasY:250, canvasWidth:400, canvasHeight:400, 
-        gridXMin:-2, gridYMin:-2, gridXMax:2, gridYMax:2, labels:false, arrows:true})
-    const gridRight = new Grid({canvasX:900, canvasY:250, canvasWidth:400, canvasHeight:400, 
-        gridXMin:-2, gridYMin:-2, gridXMax:2, gridYMax:2, labels:false, arrows:true})
-    
-    const spacing = gridLeft.gridWidth/targetVals.length
-    var sliders = []
-    for (let i = gridRight.gridXMin; i < gridRight.gridXMax; i+=spacing) {
-        sliders.push(new Slider({grid:gridRight, gridPos:i,increment:0.1,circleRadius:sliderSize, valueLabel:false}))
-    }
-    
-    var targets = []
-    for (let i = 0; i < targetVals.length; i++) {
-        targets.push(new Target({grid: gridLeft, gridX:gridLeft.gridXMin+(i+1)*spacing, gridY:targetVals[i], size:targetSize}))
-    }
-    
-    const tracer = new IntegralTracer({grid: gridLeft, input: {type:'sliders', sliders:sliders}, targets:targets, gridY:tracerStart, numLabel:false})
-    
-    gameState.objects = [gridLeft, gridRight, tracer, backButton, nextButton].concat(targets).concat(sliders)
-    Planet.winCon(gameState, ()=>tracer.solved, nextButton)
-    unlockScenes(nextScenes, gss)
+    sliderLevel(gameState, {
+        numSliders: targetVals.length,
+        targetBuilder: buildTargetsFromYs({targetYs:targetVals, targetOpts:{size:targetSize}}),
+        tracerOpts:{numLabel:false, originGridY:tracerStart},
+        sliderOpts:{circleRadius:sliderSize,valueLabel:false},
+        nextScenes:nextScenes
+    })
 }
 
 function mathBlockTutorials(gameState, {

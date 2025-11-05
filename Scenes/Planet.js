@@ -170,27 +170,62 @@ export function planetScene(gameState, {
  * @param {*} gameState 
  * @param {*} param1 
  */
-export function dialogueScene(gameState, {nextScenes = [], portraitId = 'glorpPortrait', text = "", onComplete=  ()=>{}}){
+export function dialogueScene(gameState, {nextScenes = [], filePath, onComplete=()=>{}}){
     const gss = gameState.stored
     gameState.objects.forEach(obj => obj.noInput = true)
 
     const exitButton = new Button( {originX:50, originY:50, width:50, height:50, 
         onclick: () => Scene.loadScene(gameState, exitTo), label:"↑"} )
 
-    const dialogueBox = new DialogueBox({
-        portraitId:portraitId,
-        text: text,
-        onComplete: function(){
-            gss.completedScenes[gameState.stored.sceneName] = 'complete'
-            Scene.loadScene(gameState, gss.planet)
-            onComplete(gameState)
-        }
-    })
+    // Read data from file
+
     
-    gameState.objects = gameState.objects.concat([
-        dialogueBox,
-        exitButton
-    ])
+    fetch(filePath)
+        .then(r => r.text())
+        .then(content => {
+            const data = content.split('\n');
+            let ids = {};
+            let readingText = false;
+            const text = [];
+
+            for (const line of data) {
+                const trimmed = line.trim();
+                if (!trimmed) continue;
+                if (trimmed === 'IDS') continue;
+                if (trimmed === 'TEXT') {
+                    readingText = true;
+                    continue;
+                }
+                if (trimmed === 'END') break
+
+                if (!readingText) {
+                    const [speaker, id] = trimmed.split(':').map(s => s.trim());
+                    ids[speaker] = id;
+                } else {
+                    const [speaker, string] = trimmed.split(':').map(s => s.trim());
+                    text.push({ portraitId: ids[speaker], string });
+                }
+            }
+
+            const portraitIds = Object.values(ids);
+            console.log(portraitIds, text);
+
+            const dialogueBox = new DialogueBox({
+                portraitIds:portraitIds,
+                text: text,
+                onComplete: function(){
+                    gss.completedScenes[gameState.stored.sceneName] = 'complete'
+                    Scene.loadScene(gameState, gss.planet)
+                    onComplete(gameState)
+                }
+            })
+            
+            gameState.objects = gameState.objects.concat([
+                dialogueBox,
+                exitButton
+            ])
+        });
+    
     unlockScenes(nextScenes, gss)
 }
 

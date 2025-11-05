@@ -322,6 +322,7 @@ export class MathBlockField extends GameObject{
     constructor({
         minX, minY, maxX, maxY
     }){
+        super()
         Object.assign(this, {
             minX, minY, maxX, maxY
         })
