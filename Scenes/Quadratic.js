@@ -356,12 +356,11 @@ export function loadScene(gameState, sceneName, message = {}){
 function quadraticPlanet(gameState,message={}){
     Planet.planetScene(gameState, {
         planetName:'quadratic',
-        shipX:20, shipY: 450,
-        labX: 1150, labY:-150, labDir:'SW',
+        shipX:10, shipY: -200,
         tileMap:tileMap,
         playerNodes:nodes,
         playerPaths:paths,
-        bgImg: 'placeholderBg',
+        bgImg: 'quadPlanetBg',
         fgImg: 'placeholderFg',
         message
     })
