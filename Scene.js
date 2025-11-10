@@ -121,8 +121,8 @@ function journal(gameState){
             ctx.font = "40px monospace"
             ctx.textBaseline = 'alphabetic'
             ctx.textAlign = 'left'
-            ctx.fillText(`Linear:`,800,300)
-            ctx.fillText(`f(x) = ax+b => f'(x) = a`,800,350)
+            ctx.fillText(`Linear:`,200,150)
+            ctx.fillText(`f(x) = ax+b => f'(x) = a`,200,200)
         } 
     }
     const exitButton = new GameObjects.Button({originX:1525, originY:25, width: 50, height:50, label:'X',

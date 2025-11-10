@@ -65,12 +65,11 @@ const paths =
 function linearPlanet(gameState, message = {}){
     planetScene(gameState, {
         planetName:'linear',
-        shipX:20, shipY: 450,
-        labX: 70, labY:-150,
+        shipX:10, shipY: -200,
         tileMap:tileMap,
         playerNodes:nodes,
         playerPaths:paths,
-        bgImg: 'placeholderBg',
+        bgImg: 'linearPlanetBg',
         fgImg: 'placeholderFg',
         message
     })
