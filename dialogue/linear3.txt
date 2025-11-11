@@ -1,0 +1,10 @@
+IDS
+A: glorpPortrait
+P: astronautBPortrait
+TEXT
+P: What were those last few puzzles about?
+A: They were just showing you how to graph functions like f(x) = c and f(x) = ax+b.
+A: Did you figure out what the two sliders do to the linear function?
+P: One of them controls the slope of the line and the controls the y-intercept.
+A: Yep. If the function is f(x) = ax+b, then the left slider controls a and the right controls b.
+END

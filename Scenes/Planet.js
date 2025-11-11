@@ -175,7 +175,7 @@ export function dialogueScene(gameState, {nextScenes = [], filePath, onComplete=
     gameState.objects.forEach(obj => obj.noInput = true)
 
     const exitButton = new Button( {originX:50, originY:50, width:50, height:50, 
-        onclick: () => Scene.loadScene(gameState, exitTo), label:"↑"} )
+        onclick: () => Scene.loadScene(gameState, gss.planet), label:"↑"} )
 
     // Read data from file
 
@@ -208,7 +208,6 @@ export function dialogueScene(gameState, {nextScenes = [], filePath, onComplete=
             }
 
             const portraitIds = Object.values(ids);
-            console.log(portraitIds, text);
 
             const dialogueBox = new DialogueBox({
                 portraitIds:portraitIds,

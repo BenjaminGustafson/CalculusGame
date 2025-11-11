@@ -17,23 +17,26 @@ const nodes = {
     'linear.puzzle.2': [7,1, 0,-1],
     'linear.puzzle.3': [8,1, 0,-1],
     'linear.puzzle.4': [9,1, 0,-1],
-    'linear.puzzle.5': [10,1, 0,-1],
-    'linear.puzzle.6': [11,1, 0,-1],
-    'linear.puzzle.7': [12,1, 0,-1],
-    'linear.puzzle.8': [13,1, 0,-1],
-    'linear.puzzle.9': [14,1, 0,-1],
-    'linear.puzzle.10':[15,1, 0,-1],
-    'linear.puzzle.11': [15, 3, 0,-1],
-    'linear.puzzle.12': [14, 3, 0,-1],
-    'linear.puzzle.13': [13, 3, 0,-1],
-    'linear.puzzle.14': [12, 3, 0,-1],
-    'linear.puzzle.15': [11,3, 0,-1],
-    'linear.puzzle.16': [10,3, 0,-1],
-    'linear.puzzle.17': [9,3, 0,-1],
-    'linear.puzzle.18': [8,3, 0,-1],
-    'linear.puzzle.19': [7,3, 0,-1],
-    'linear.puzzle.20': [6,3, 0,-1],
-    'linear.dialogue.1': [9,0, 0,-1],
+    'linear.dialogue.1': [10,1, 0,-1],
+    'linear.puzzle.5': [11,1, 0,-1],
+    'linear.puzzle.6': [12,1, 0,-1],
+    'linear.puzzle.7': [13,1, 0,-1],
+    'linear.dialogue.2': [14,1, 0,-1],
+    'linear.puzzle.8': [15,1, 0,-1],
+    'linear.puzzle.9': [16,1, 0,-1],
+    'linear.puzzle.10':[17,1, 0,-1],
+    'linear.puzzle.11': [17, 4, 0,-1],
+    'linear.puzzle.12': [16, 4, 0,-1],
+    'linear.dialogue.3': [15,4, 0,-1],
+    'linear.puzzle.13': [14, 4, 0,-1],
+    'linear.puzzle.14': [13, 4, 0,-1],
+    'linear.puzzle.15': [12, 4, 0,-1],
+    'linear.puzzle.16': [11, 4, 0,-1],
+    'linear.puzzle.17': [10,  4, 0,-1],
+    'linear.puzzle.18': [9,  4, 0,-1],
+    'linear.puzzle.19': [8,  4, 0,-1],
+    'linear.dialogue.4': [7,4, 0,-1],
+    'linear.puzzle.20': [6,  4, 0,-1],
 }
 
 const paths = 
@@ -42,23 +45,28 @@ const paths =
     {start: 'linear.puzzle.1', end: 'linear.puzzle.2', steps: [] },
     {start: 'linear.puzzle.2', end: 'linear.puzzle.3', steps: [] },
     {start: 'linear.puzzle.3', end: 'linear.puzzle.4', steps: [] },
-    {start: 'linear.puzzle.4', end:  'linear.puzzle.5', steps: [] },
+    //{start: 'linear.puzzle.4', end:  'linear.puzzle.5', steps: [] },
+    {start: 'linear.puzzle.4', end: 'linear.dialogue.1', steps: [] },
+    {start: 'linear.dialogue.1', end: 'linear.puzzle.5', steps: [] },
     {start: 'linear.puzzle.5', end: 'linear.puzzle.6', steps: [] },
     {start: 'linear.puzzle.6', end: 'linear.puzzle.7', steps: [] },
-    {start: 'linear.puzzle.7', end: 'linear.puzzle.8', steps: [] },
+    {start: 'linear.puzzle.7', end: 'linear.dialogue.2', steps: [] },
+    {start: 'linear.dialogue.2', end: 'linear.puzzle.8', steps: [] },
     {start: 'linear.puzzle.8', end: 'linear.puzzle.9', steps: [] },
     {start: 'linear.puzzle.9', end: 'linear.puzzle.10', steps: [] },
     {start: 'linear.puzzle.10', end: 'linear.puzzle.11', steps: []},
     {start: 'linear.puzzle.11', end: 'linear.puzzle.12', steps: [] },
-    {start: 'linear.puzzle.12', end: 'linear.puzzle.13', steps: [] },
+    {start: 'linear.puzzle.12', end: 'linear.dialogue.3', steps: [] },
+    {start: 'linear.dialogue.3', end: 'linear.puzzle.13', steps: [] },
     {start: 'linear.puzzle.13', end: 'linear.puzzle.14', steps: [] },
     {start: 'linear.puzzle.14', end: 'linear.puzzle.15', steps: [] },
     {start: 'linear.puzzle.15', end: 'linear.puzzle.16', steps: [] },
     {start: 'linear.puzzle.16', end: 'linear.puzzle.17', steps: [] },
     {start: 'linear.puzzle.17', end: 'linear.puzzle.18', steps: [] },
     {start: 'linear.puzzle.18', end: 'linear.puzzle.19', steps: [] },
-    {start: 'linear.puzzle.19', end: 'linear.puzzle.20', steps: [] },
-    {start: 'linear.puzzle.4', end: 'linear.dialogue.1', steps: [] },
+    {start: 'linear.puzzle.19', end: 'linear.dialogue.4', steps: [] },
+    {start: 'linear.dialogue.4', end: 'linear.puzzle.20', steps: [] },
+    
     
 ]
 
@@ -101,7 +109,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     simpleDiscLevel(gameState, {targetVals:[0, 1, 1, 2],  nextScenes:["linear.puzzle.4"]})
                     break
                 case '4':
-                    simpleDiscLevel(gameState, {targetVals:[1, 0, -1, 0],  nextScenes:["linear.puzzle.5"]})
+                    simpleDiscLevel(gameState, {targetVals:[1, 0, -1, 0],  nextScenes:["linear.dialogue.1", "linear.puzzle.5"]})
                     break
                 case '5':
                     simpleDiscLevel(gameState, {targetVals:[0.5, 1, 0.5, 1.5], nextScenes:["linear.puzzle.6"]})
@@ -110,7 +118,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     simpleDiscLevel(gameState, {targetVals:[2, 1.5, -0.5, -2], nextScenes:["linear.puzzle.7"]})
                     break
                 case '7':
-                    simpleDiscLevel(gameState, {targetVals:[1, 0.5, 1, 0, -0.5, -1, -0.5, 0], nextScenes:["linear.puzzle.8"]})
+                    simpleDiscLevel(gameState, {targetVals:[1, 0.5, 1, 0, -0.5, -1, -0.5, 0], nextScenes:["linear.dialogue.2","linear.puzzle.8"]})
                     break
                 case '8':
                     simpleDiscLevel(gameState, {targetVals:[0.25, 0.5, 0.75, 1, 1.25, 1, 0.75, 0.5,
@@ -127,7 +135,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     mathBlockTutorials(gameState, {targetVals:[1.5,1,0.5,0,-0.5,-1,-1.5,-2], withLinear:true, nextScenes:["linear.puzzle.12"]})
                     break
                 case '12':
-                    mathBlockTutorials(gameState, {targetVals:[0.25,0.5,0.75,1,1.25,1.5,1.75,2], withLinear:true, nextScenes:["linear.puzzle.13"]})
+                    mathBlockTutorials(gameState, {targetVals:[0.25,0.5,0.75,1,1.25,1.5,1.75,2], withLinear:true, nextScenes:["linear.dialogue.3","linear.puzzle.13"]})
                     break
                 case '13':
                     turtlePuzzle(gameState, {
@@ -178,41 +186,6 @@ export function loadScene(gameState, sceneName, message = {}){
                 case '15':
                     turtlePuzzle(gameState, {
                         nextScenes:["linear.puzzle.16"],
-                        version:'fitF',
-                        solutionFun: x=>0.5*x,
-                        solutionDdx:x=>0.5,
-                        solutionFunString:"0.5t",
-                        solutionDdxString:"0.5",
-                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-                        syDdxMax: 2,
-                        syDdxLen: 4,
-                        tyDdxMax: 2,
-                        tyDdxLen: 4,
-                        numMeasurement:5,
-                        ddxSliderSpacing:2,
-                    })
-                    break
-                case '16':
-                    turtlePuzzle(gameState, {
-                        nextScenes:["linear.puzzle.17"],
-                        version:'fitF',
-                        solutionFun: x=>1+1.5*x,
-                        solutionDdx: x=>1.5,
-                        solutionFunString:"1.5t + 1",
-                        solutionDdxString:"1.5",
-                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-                        syDdxMax: 2,
-                        syDdxLen: 4,
-                        tyDdxMax: 2,
-                        tyDdxLen: 4,
-                        numMeasurement:4,
-                        ddxSliderSpacing:2,
-                        barMax: 8,
-                    })
-                    break
-                case '17':
-                    turtlePuzzle(gameState, {
-                        nextScenes:["linear.puzzle.18"],
                         version:'fitDdx',
                         solutionFun: x=>0.5*x,
                         solutionDdx:x=>0.5,
@@ -225,6 +198,43 @@ export function loadScene(gameState, sceneName, message = {}){
                         tyDdxLen: 4,
                         numMeasurement:5,
                         ddxSliderSpacing:2,
+                        
+                    })
+                    break
+                case '16':
+                    turtlePuzzle(gameState, {
+                        nextScenes:["linear.puzzle.17"],
+                        version:'fitDdx',
+                        solutionFun: x=>0.5*x+2,
+                        solutionDdx:x=>0.5,
+                        solutionFunString:"0.5t+2",
+                        solutionDdxString:"0.5",
+                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
+                        syDdxMax: 2,
+                        syDdxLen: 4,
+                        tyDdxMax: 2,
+                        tyDdxLen: 4,
+                        numMeasurement:4,
+                        ddxSliderSpacing:2,
+                        barMax: 10,
+                    })
+                    break
+                case '17':
+                    turtlePuzzle(gameState, {
+                        nextScenes:["linear.puzzle.18"],
+                        version:'fitDdx',
+                        solutionFun: x=>1+1.5*x,
+                        solutionDdx: x=>1.5,
+                        solutionFunString:"1.5t + 1",
+                        solutionDdxString:"1.5",
+                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
+                        syDdxMax: 2,
+                        syDdxLen: 4,
+                        tyDdxMax: 2,
+                        tyDdxLen: 4,
+                        numMeasurement:4,
+                        ddxSliderSpacing:2,
+                        barMax: 8,
                     })
                     break
                 case '18':
@@ -248,7 +258,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     break
                 case '19':
                     turtlePuzzle(gameState, {
-                        nextScenes:["linear.puzzle.20"],
+                        nextScenes:["linear.dialogue.4","linear.puzzle.20"],
                         version:'fitDdx',
                         solutionFun: x=>10-x,
                         solutionDdx: x=>-1,
@@ -291,29 +301,13 @@ export function loadScene(gameState, sceneName, message = {}){
                     dialogueScene(gameState, {nextScenes:["linear.puzzle.5"],  filePath:'./dialogue/linear1.txt'})
                 break
                 case '2':
-                    dialogueScene(gameState, {exitTo:"linear", nextScenes:["linear.puzzle.9"], text: [
-                        'These next puzzles are a little different.',
-                        'You\'ll need one of these...',
-                    ],
-                    onComplete:(gameState)=>{
-                        Planet.unlockPopup(gameState, {itemImage:'constantBlock', topText: 'You got a Number Block!', bottomText:''})
-                    }})
+                    dialogueScene(gameState, {nextScenes:[""],  filePath:'./dialogue/linear2.txt'})
                 break
                 case '3':
-                    dialogueScene(gameState, {exitTo:"linear", nextScenes:["linear.puzzle.11"], text: [
-                        'That building up ahead is the lab.',
-                        'You\'ll need to go in there if you want to travel to the next planet.',
-                        'But first, take this...'
-                    ],
-                    onComplete:(gameState)=>{
-                        Planet.unlockPopup(gameState, {itemImage:'linearBlock', topText: 'You got a Variable Block!', bottomText:''})
-                    }})
+                    dialogueScene(gameState, {nextScenes:[""],  filePath:'./dialogue/linear3.txt'})
                 break
                 case '4':
-                    dialogueScene(gameState, {exitTo:"linear", nextScenes:["linear.lab"], text: [  
-                        'You should go into the lab and run a few trials.',
-                        'When you think you\'ve found a pattern you can guess the rule.',
-                    ]})
+                    dialogueScene(gameState, {nextScenes:[""],  filePath:'./dialogue/linear4.txt'})
                 break
             }
             break
@@ -588,26 +582,17 @@ export function measurementPuzzle(gameState, {
 
     // Grids
     const gridSize = version == 'fitDdx' ? 350 : 400
-    const gridLeft = new Grid({canvasX:80, canvasY:400, canvasWidth:gridSize, canvasHeight:gridSize, 
-        gridXMin:0, gridXMax:tMax, gridYMin:funMin, gridYMax:funMax, labels:true, xAxisLabel:'Time t', yAxisLabel:'Position p(t)', autoCellSize:true})
+    const gridLeft = new Grid({canvasX:40, canvasY:400, canvasWidth:gridSize, canvasHeight:gridSize, 
+        gridXMin:0, gridXMax:tMax, gridYMin:funMin, gridYMax:funMax, labels:true, xAxisLabel:'Time t', gridTitle:'Position p(t)', autoCellSize:true})
 
-    const gridRight = new Grid({canvasX: version == 'fitDdx' ? 450 : 580, canvasY:400, canvasWidth:gridSize, canvasHeight:gridSize, 
-        gridXMin:0, gridXMax:tMax, gridYMin:ddxMin, gridYMax:ddxMax, labels:true, yAxisLabel: 'Velocity v(t)', autoCellSize:true})
+    const gridRight = new Grid({canvasX: version == 'fitDdx' ? 450 : 570, canvasY:400, canvasWidth:gridSize, canvasHeight:gridSize, 
+        gridXMin:0, gridXMax:tMax, gridYMin:ddxMin, gridYMax:ddxMax, labels:true,xAxisLabel:'Time t', gridTitle: 'Velocity v(t)', autoCellSize:true})
 
-    const sySlider = new Slider({canvasX: 580, canvasY:400, canvasLength:400, sliderLength:10, maxValue:5, showAxis: true})
-    const tySlider = new Slider({canvasX: 650, canvasY:400, canvasLength:400, sliderLength:10, maxValue:5, showAxis: true})
+    const sySlider = new Slider({canvasX: 840, canvasY:400, canvasLength:350, sliderLength:10, maxValue:5, showAxis: true})
+    const tySlider = new Slider({canvasX: 880, canvasY:400, canvasLength:350, sliderLength:10, maxValue:5, showAxis: true})
     const adder = new TargetAdder({grid:gridLeft, solutionFun: solutionFun, coverBarPrecision:barStep, barMax:barMax, xPrecision:adderXPrecision, yPrecision:adderYPrecision})
-    const funTracer = new FunctionTracer({grid:gridLeft})
     
-
-    if (version == 'fitDdx'){
-        sySlider.canvasX = 840
-        tySlider.canvasX = 880
-        sySlider.canvasLength = 350
-        tySlider.canvasLength = 350
-    }
-
-
+    
     // Measurement background (black rectangle)
     const bgImage = {
         update: function(ctx){
@@ -656,12 +641,26 @@ export function measurementPuzzle(gameState, {
 
     var step = 0
 
+    const field =  new MathBlockField({minX:50, minY:200, maxX: 450, maxY:300})
+    const funTracer = new FunctionTracer({grid:gridLeft, 
+        inputFunction: x => field.outputFunction()(x),
+        animated:true, autoStart:true,
+        resetCondition: () => field.newFunction,
+    })
+    const mngr = new MathBlockManager({
+        blocks:blocks, toolBarX:920, toolBarY:400,
+        translateYSlider:tySlider, scaleYSlider:sySlider, blockSize:26,
+        blockFields: [field],
+        funTracers: [],
+    })
+
     gameState.objects = [backButton, nextButton, gridLeft, errorText, bgImage, tSlider, measureObject, playPauseButton, adder]
+    var delay = 50
     gameState.update = () => {
         if (step == 0 && adder.solved){
             step = 1
-            switch (version){
-                case 'sliders':{
+            adder.showBar =false
+            if (version == 'sliders'){
                     const sliders = []
                     const spacing = ddxSliderSpacing
                     for (let i = gridRight.gridXMin; i < gridRight.gridXMax; i+=spacing) {
@@ -671,47 +670,45 @@ export function measurementPuzzle(gameState, {
                         input: {type:'sliders', sliders:sliders}, targets:adder.targets})
                         gameState.objects = gameState.objects.concat([ gridRight, tracer,...sliders])
                         Planet.winCon(gameState, ()=>tracer.solved, nextButton)
-                }
-                break
-                case 'fitF':{
-                    const field =  new MathBlockField({minX:version == 'fitDdx' ? 450 : 50, minY:200, maxX: version == 'fitDdx' ? 800 : 450, maxY:300})
-                    
-                    const mngr = new MathBlockManager({
-                        blocks:blocks, toolBarX:750, toolBarY:400,
-                        translateYSlider:tySlider, scaleYSlider:sySlider, blockSize:26,
-                        blockFields: [field],
-                        funTracers: [funTracer],
-                    })
-                    sySlider.setSize(syFunMax, syFunLen)
-                    tySlider.setSize(tyFunMax, tyFunLen)
-                    funTracer.targets = adder.targets
-                    
-                    gameState.objects = gameState.objects.concat([sySlider, funTracer, tySlider, mngr]).concat(adder.targets)
-                    Planet.winCon(gameState, ()=>funTracer.solved, nextButton)
-                }
-                break
-                case 'fitDdx':{
-
-                    const blockField =  new MathBlockField({minX:version == 'fitDdx' ? 450 : 50, minY:200, maxX: version == 'fitDdx' ? 800 : 450, maxY:300})
-                    const ddxTracer = new FunctionTracer({grid:gridRight})
-                    
-                    const mngr = new MathBlockManager({
-                        blocks:blocks, toolBarX:920, toolBarY:400,
-                        translateYSlider:tySlider, scaleYSlider:sySlider, blockSize:26,
-                        blockFields: [blockField],
-                        funTracers: [ddxTracer],
-                    })
-                    
-                    const blockTracer = new IntegralTracer({grid: gridLeft, originGridY: solutionFun(0), 
-                        input: {type:'mathBlock', blockField:blockField}, targets:adder.targets, autoStart: true})
-    
-                    sySlider.setSize(syDdxMax, syDdxLen)
-                    tySlider.setSize(tyDdxMax, tyDdxLen)
-                    gameState.objects = gameState.objects.concat([sySlider, tySlider, gridRight, blockTracer, mngr, ddxTracer]).concat(adder.targets)
-                    Planet.winCon(gameState, ()=>blockTracer.solved, nextButton)
-                }
-                break
+            }else{
+                
+                sySlider.setSize(syFunMax, syFunLen)
+                tySlider.setSize(tyFunMax, tyFunLen)
+                funTracer.targets = adder.targets
+                gameState.objects = gameState.objects.concat([sySlider, funTracer, tySlider, mngr]).concat(adder.targets)
             }
+        }else if (step == 1 && funTracer.solved){
+            step = 2
+            mngr.highlighted.isHighlighted = false
+            mngr.highlighted = null
+        }else if (step == 2 && delay > 0){
+            delay --
+        } else if (step == 2){
+            step = 3
+            const blockField =  new MathBlockField({minX:450, minY:200, maxX: 800, maxY:300})
+            const ddxTracer = new FunctionTracer({grid:gridRight})
+            
+            // const mngr = new MathBlockManager({
+            //     blocks:blocks, toolBarX:920, toolBarY:400,
+            //     translateYSlider:tySlider, scaleYSlider:sySlider, blockSize:26,
+            //     blockFields: [blockField],
+            //     funTracers: [ddxTracer],
+            // })
+
+            mngr.blockFields = [blockField]
+            mngr.funTracers = [ddxTracer]
+            
+            funTracer.targets = []
+            funTracer.solvedColor = Color.magenta
+
+            const blockTracer = new IntegralTracer({grid: gridLeft, originGridY: solutionFun(0), 
+                input: {type:'mathBlock', blockField:blockField}, targets:adder.targets, autoStart: true})
+
+
+            sySlider.setSize(syDdxMax, syDdxLen)
+            tySlider.setSize(tyDdxMax, tyDdxLen)
+            gameState.objects = gameState.objects.concat([gridRight, blockTracer, ddxTracer, field.rootBlock]).concat(adder.targets)
+            Planet.winCon(gameState, ()=>blockTracer.solved, nextButton)
         }
         tSlider.active = !playing
         if (playing){

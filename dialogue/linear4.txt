@@ -1,0 +1,11 @@
+IDS
+A: glorpPortrait
+P: astronautBPortrait
+TEXT
+P: So what does this mean? The slope of position is velocity?
+A: Yes, velocity is just the change in position over time.
+A: In fact, velocity is the derivative of position.
+P: Derivative?
+A: Don't worry about it for now.
+A: You just know that the derivative of f(x) is written f'(x). 
+END

@@ -1,0 +1,8 @@
+IDS
+A: glorpPortrait
+P: astronautBPortrait
+TEXT
+A: Here's a couple of tips for the algebra blocks.
+A: The block that is colored green is the one that the sliders currently affect.
+A: Each block is contained in invisible parentheses. For example, (-x)^2 and -x^2 are not the same function.
+END

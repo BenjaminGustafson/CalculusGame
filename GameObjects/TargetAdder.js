@@ -16,10 +16,11 @@ export class TargetAdder extends GameObject{
         barMax,
         targetColor = Color.magenta,
         removable = false,
+        showBar = true,
     }){
         super()
         Object.assign(this, {grid, xPrecision, yPrecision, solutionFun, coverBarPrecision,
-            targetColor, solutionPrecision, barMax, removable,
+            targetColor, solutionPrecision, barMax, removable, showBar,
         })
         this.targets = []
         this.active = true
@@ -79,12 +80,14 @@ export class TargetAdder extends GameObject{
         }
 
         // Draw bar
-        for (let i = 0; i < this.coveredIntervals.length; i++){
-            Color.setColor(ctx, this.coveredIntervals[i] ? Color.blue : Color.magenta)
-            const y = this.grid.originY - 50
-            const intervalLength = (this.grid.gridToCanvasX(this.barMax)-this.grid.gridToCanvasX(this.barMin)) / this.coveredIntervals.length
-            Shapes.Line(ctx, this.grid.originX+i*intervalLength, y, this.grid.originX+(i+1)*intervalLength, y, 10, 
-                            i == 0 || i == this.coveredIntervals.length - 1 ? 'rounded' : 'none')
+        if (this.showBar){
+            for (let i = 0; i < this.coveredIntervals.length; i++){
+                Color.setColor(ctx, this.coveredIntervals[i] ? Color.blue : Color.magenta)
+                const y = this.grid.originY - 50
+                const intervalLength = (this.grid.gridToCanvasX(this.barMax)-this.grid.gridToCanvasX(this.barMin)) / this.coveredIntervals.length
+                Shapes.Line(ctx, this.grid.originX+i*intervalLength, y, this.grid.originX+(i+1)*intervalLength, y, 10, 
+                i == 0 || i == this.coveredIntervals.length - 1 ? 'rounded' : 'none')
+            }
         }
 
     }

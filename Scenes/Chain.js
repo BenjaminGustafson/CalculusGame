@@ -102,6 +102,7 @@ export function loadScene(gameState, sceneName, message = {}){
                         tMin:0, tMax:10, yMin:-1, yMax:1,  xMin:-1, xMax:1,
                         nextScenes:['chain.puzzle.2']})
                 break
+                // After this one you should have a puzzle where you have to fit to (sin(x))^3
                 case '2':
                     compositeFunctionTargetAdder(gameState, {innerFun: x=> x*x, outerFun: x=>Math.pow(Math.E,x),
                         tMin:-2, tMax:2, yMin:0, yMax:60,  xMin:0, xMax:4,
