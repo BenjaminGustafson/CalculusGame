@@ -17,23 +17,26 @@ const nodes = {
     'linear.puzzle.2': [7,1, 0,-1],
     'linear.puzzle.3': [8,1, 0,-1],
     'linear.puzzle.4': [9,1, 0,-1],
-    'linear.puzzle.5': [10,1, 0,-1],
-    'linear.puzzle.6': [11,1, 0,-1],
-    'linear.puzzle.7': [12,1, 0,-1],
-    'linear.puzzle.8': [13,1, 0,-1],
-    'linear.puzzle.9': [14,1, 0,-1],
-    'linear.puzzle.10':[15,1, 0,-1],
-    'linear.puzzle.11': [15, 3, 0,-1],
-    'linear.puzzle.12': [14, 3, 0,-1],
-    'linear.puzzle.13': [13, 3, 0,-1],
-    'linear.puzzle.14': [12, 3, 0,-1],
-    'linear.puzzle.15': [11,3, 0,-1],
-    'linear.puzzle.16': [10,3, 0,-1],
-    'linear.puzzle.17': [9,3, 0,-1],
-    'linear.puzzle.18': [8,3, 0,-1],
-    'linear.puzzle.19': [7,3, 0,-1],
-    'linear.puzzle.20': [6,3, 0,-1],
-    'linear.dialogue.1': [9,0, 0,-1],
+    'linear.dialogue.1': [10,1, 0,-1],
+    'linear.puzzle.5': [11,1, 0,-1],
+    'linear.puzzle.6': [12,1, 0,-1],
+    'linear.puzzle.7': [13,1, 0,-1],
+    'linear.dialogue.2': [14,1, 0,-1],
+    'linear.puzzle.8': [15,1, 0,-1],
+    'linear.puzzle.9': [16,1, 0,-1],
+    'linear.puzzle.10':[17,1, 0,-1],
+    'linear.puzzle.11': [17, 4, 0,-1],
+    'linear.puzzle.12': [16, 4, 0,-1],
+    'linear.dialogue.3': [15,4, 0,-1],
+    'linear.puzzle.13': [14, 4, 0,-1],
+    'linear.puzzle.14': [13, 4, 0,-1],
+    'linear.puzzle.15': [12, 4, 0,-1],
+    'linear.puzzle.16': [11, 4, 0,-1],
+    'linear.puzzle.17': [10,  4, 0,-1],
+    'linear.puzzle.18': [9,  4, 0,-1],
+    'linear.puzzle.19': [8,  4, 0,-1],
+    'linear.dialogue.4': [7,4, 0,-1],
+    'linear.puzzle.20': [6,  4, 0,-1],
 }
 
 const paths = 
@@ -42,23 +45,28 @@ const paths =
     {start: 'linear.puzzle.1', end: 'linear.puzzle.2', steps: [] },
     {start: 'linear.puzzle.2', end: 'linear.puzzle.3', steps: [] },
     {start: 'linear.puzzle.3', end: 'linear.puzzle.4', steps: [] },
-    {start: 'linear.puzzle.4', end:  'linear.puzzle.5', steps: [] },
+    //{start: 'linear.puzzle.4', end:  'linear.puzzle.5', steps: [] },
+    {start: 'linear.puzzle.4', end: 'linear.dialogue.1', steps: [] },
+    {start: 'linear.dialogue.1', end: 'linear.puzzle.5', steps: [] },
     {start: 'linear.puzzle.5', end: 'linear.puzzle.6', steps: [] },
     {start: 'linear.puzzle.6', end: 'linear.puzzle.7', steps: [] },
-    {start: 'linear.puzzle.7', end: 'linear.puzzle.8', steps: [] },
+    {start: 'linear.puzzle.7', end: 'linear.dialogue.2', steps: [] },
+    {start: 'linear.dialogue.2', end: 'linear.puzzle.8', steps: [] },
     {start: 'linear.puzzle.8', end: 'linear.puzzle.9', steps: [] },
     {start: 'linear.puzzle.9', end: 'linear.puzzle.10', steps: [] },
     {start: 'linear.puzzle.10', end: 'linear.puzzle.11', steps: []},
     {start: 'linear.puzzle.11', end: 'linear.puzzle.12', steps: [] },
-    {start: 'linear.puzzle.12', end: 'linear.puzzle.13', steps: [] },
+    {start: 'linear.puzzle.12', end: 'linear.dialogue.3', steps: [] },
+    {start: 'linear.dialogue.3', end: 'linear.puzzle.13', steps: [] },
     {start: 'linear.puzzle.13', end: 'linear.puzzle.14', steps: [] },
     {start: 'linear.puzzle.14', end: 'linear.puzzle.15', steps: [] },
     {start: 'linear.puzzle.15', end: 'linear.puzzle.16', steps: [] },
     {start: 'linear.puzzle.16', end: 'linear.puzzle.17', steps: [] },
     {start: 'linear.puzzle.17', end: 'linear.puzzle.18', steps: [] },
     {start: 'linear.puzzle.18', end: 'linear.puzzle.19', steps: [] },
-    {start: 'linear.puzzle.19', end: 'linear.puzzle.20', steps: [] },
-    {start: 'linear.puzzle.4', end: 'linear.dialogue.1', steps: [] },
+    {start: 'linear.puzzle.19', end: 'linear.dialogue.4', steps: [] },
+    {start: 'linear.dialogue.4', end: 'linear.puzzle.20', steps: [] },
+    
     
 ]
 
@@ -291,29 +299,13 @@ export function loadScene(gameState, sceneName, message = {}){
                     dialogueScene(gameState, {nextScenes:["linear.puzzle.5"],  filePath:'./dialogue/linear1.txt'})
                 break
                 case '2':
-                    dialogueScene(gameState, {exitTo:"linear", nextScenes:["linear.puzzle.9"], text: [
-                        'These next puzzles are a little different.',
-                        'You\'ll need one of these...',
-                    ],
-                    onComplete:(gameState)=>{
-                        Planet.unlockPopup(gameState, {itemImage:'constantBlock', topText: 'You got a Number Block!', bottomText:''})
-                    }})
+                    dialogueScene(gameState, {nextScenes:[""],  filePath:'./dialogue/linear2.txt'})
                 break
                 case '3':
-                    dialogueScene(gameState, {exitTo:"linear", nextScenes:["linear.puzzle.11"], text: [
-                        'That building up ahead is the lab.',
-                        'You\'ll need to go in there if you want to travel to the next planet.',
-                        'But first, take this...'
-                    ],
-                    onComplete:(gameState)=>{
-                        Planet.unlockPopup(gameState, {itemImage:'linearBlock', topText: 'You got a Variable Block!', bottomText:''})
-                    }})
+                    dialogueScene(gameState, {nextScenes:[""],  filePath:'./dialogue/linear3.txt'})
                 break
                 case '4':
-                    dialogueScene(gameState, {exitTo:"linear", nextScenes:["linear.lab"], text: [  
-                        'You should go into the lab and run a few trials.',
-                        'When you think you\'ve found a pattern you can guess the rule.',
-                    ]})
+                    dialogueScene(gameState, {nextScenes:[""],  filePath:'./dialogue/linear4.txt'})
                 break
             }
             break

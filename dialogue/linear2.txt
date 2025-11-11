@@ -9,6 +9,6 @@ P: Aha! So the sliders are setting the slope of the line.
 A: How do you figure?
 P: Well slope is the change in y divided by change in x.
 A: Sure. Rise over run.
-P: So if the slope is 1, then going 1/2 a unit along the x-axis means we only go up 1/2 a unit on the y.
+P: So if the slope is 1, then going 1/2 unit along the x-axis means we only go up 1/2 unit on the y.
 END
 P: Another way to look at it is if you set all of the sliders in the grid unit to be the same it does the same thing as if there was only one slider.

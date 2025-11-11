@@ -3,8 +3,9 @@ A: glorpPortrait
 P: astronautBPortrait
 TEXT
 P: So what does this mean? The slope of position is velocity?
-A: 
-A: Did you figure out what the two sliders do to the linear function?
-P: The one on the left controls the slope of the line and the one on the right controls the y-intercept.
-A: Yep. If the function is f(x) = ax+b, then one of the sliders controls a and the other controls b.
+A: Yes, velocity is just the change in position over time.
+A: In fact, velocity is the derivative of position.
+P: Derivative?
+A: Don't worry about it for now.
+A: You just know that the derivative of f(x) is written f'(x). 
 END

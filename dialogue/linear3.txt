@@ -3,7 +3,7 @@ A: glorpPortrait
 P: astronautBPortrait
 TEXT
 P: What were those last few puzzles about?
-A: They were just showing you how to graph a constant function, f(x) = c, and linear function, f(x) = ax+b.
+A: They were just showing you how to graph functions like f(x) = c and f(x) = ax+b.
 A: Did you figure out what the two sliders do to the linear function?
 P: The one on the left controls the slope of the line and the one on the right controls the y-intercept.
 A: Yep. If the function is f(x) = ax+b, then one of the sliders controls a and the other controls b.
