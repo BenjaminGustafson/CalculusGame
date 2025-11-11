@@ -118,7 +118,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     simpleDiscLevel(gameState, {targetVals:[2, 1.5, -0.5, -2], nextScenes:["linear.puzzle.7"]})
                     break
                 case '7':
-                    simpleDiscLevel(gameState, {targetVals:[1, 0.5, 1, 0, -0.5, -1, -0.5, 0], nextScenes:["linear.puzzle.8"]})
+                    simpleDiscLevel(gameState, {targetVals:[1, 0.5, 1, 0, -0.5, -1, -0.5, 0], nextScenes:["linear.dialogue.2","linear.puzzle.8"]})
                     break
                 case '8':
                     simpleDiscLevel(gameState, {targetVals:[0.25, 0.5, 0.75, 1, 1.25, 1, 0.75, 0.5,
@@ -591,7 +591,7 @@ export function measurementPuzzle(gameState, {
     const sySlider = new Slider({canvasX: 840, canvasY:400, canvasLength:350, sliderLength:10, maxValue:5, showAxis: true})
     const tySlider = new Slider({canvasX: 880, canvasY:400, canvasLength:350, sliderLength:10, maxValue:5, showAxis: true})
     const adder = new TargetAdder({grid:gridLeft, solutionFun: solutionFun, coverBarPrecision:barStep, barMax:barMax, xPrecision:adderXPrecision, yPrecision:adderYPrecision})
-    const funTracer = new FunctionTracer({grid:gridLeft})
+    
     
     // Measurement background (black rectangle)
     const bgImage = {
@@ -642,14 +642,20 @@ export function measurementPuzzle(gameState, {
     var step = 0
 
     const field =  new MathBlockField({minX:50, minY:200, maxX: 450, maxY:300})
+    const funTracer = new FunctionTracer({grid:gridLeft, 
+        inputFunction: x => field.outputFunction()(x),
+        animated:true, autoStart:true,
+        resetCondition: () => field.newFunction,
+    })
     const mngr = new MathBlockManager({
         blocks:blocks, toolBarX:920, toolBarY:400,
         translateYSlider:tySlider, scaleYSlider:sySlider, blockSize:26,
         blockFields: [field],
-        funTracers: [funTracer],
+        funTracers: [],
     })
 
     gameState.objects = [backButton, nextButton, gridLeft, errorText, bgImage, tSlider, measureObject, playPauseButton, adder]
+    var delay = 50
     gameState.update = () => {
         if (step == 0 && adder.solved){
             step = 1
@@ -671,8 +677,14 @@ export function measurementPuzzle(gameState, {
                 funTracer.targets = adder.targets
                 gameState.objects = gameState.objects.concat([sySlider, funTracer, tySlider, mngr]).concat(adder.targets)
             }
-        }else if (step == 1 && funTracer.solved){ // TODO fix this 
+        }else if (step == 1 && funTracer.solved){
             step = 2
+            mngr.highlighted.isHighlighted = false
+            mngr.highlighted = null
+        }else if (step == 2 && delay > 0){
+            delay --
+        } else if (step == 2){
+            step = 3
             const blockField =  new MathBlockField({minX:450, minY:200, maxX: 800, maxY:300})
             const ddxTracer = new FunctionTracer({grid:gridRight})
             
@@ -685,11 +697,9 @@ export function measurementPuzzle(gameState, {
 
             mngr.blockFields = [blockField]
             mngr.funTracers = [ddxTracer]
-            mngr.highlighted.isHighlighted = false
-            mngr.highlighted = null
-
+            
             funTracer.targets = []
-            funTracer.unsolvedColor = Color.magenta
+            funTracer.solvedColor = Color.magenta
 
             const blockTracer = new IntegralTracer({grid: gridLeft, originGridY: solutionFun(0), 
                 input: {type:'mathBlock', blockField:blockField}, targets:adder.targets, autoStart: true})
