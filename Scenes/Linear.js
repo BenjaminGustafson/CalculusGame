@@ -117,7 +117,8 @@ export function loadScene(gameState, sceneName, message = {}){
                         0.25, 0, 0.5, 1, 0.5, 0, 0.5, 1],  targetSize:15,  sliderSize:12, nextScenes:["linear.puzzle.9"]})
                     break
                 case '9':
-                    mathBlockTutorials(gameState, {targetVals:[1,1,1,1,1,1,1,1], nextScenes:["linear.puzzle.10"]})
+                    mathBlockTutorials(gameState, {targetVals:[1,1,1,1,1,1,1,1], nextScenes:["linear.puzzle.10"], withUITip:true})
+
                     break
                 case '10':
                     mathBlockTutorials(gameState, {targetVals:[-1.5,-1.5,-1.5,-1.5,-1.5,-1.5,-1.5,-1.5], nextScenes:["linear.puzzle.11"]})
@@ -144,6 +145,17 @@ export function loadScene(gameState, sceneName, message = {}){
                         numMeasurement:5,
                         ddxSliderSpacing:2,
                     })
+                    const uiTip = {
+                        update: function(ctx){
+                            Color.setColor(ctx, Color.lightGray)
+                            ctx.font = '20px monospace'
+                            ctx.textAlign = 'left'
+                            ctx.textBaseline = 'bottom'
+                            ctx.fillText('Measure the turtle\'s postion over time.',75,260)
+                            ctx.fillText('Click on the graph to add measurements.',75,300)
+                        }
+                    }
+                    gameState.objects.push(uiTip)
                     break
                 case '14':
                     turtlePuzzle(gameState, {
@@ -352,11 +364,22 @@ function linearPuzzle1 (gameState, {nextScenes}){
 
     const backButton = Planet.backButton(gameState)
     const nextButton = Planet.nextButton(gameState, nextScenes)
+
+    const uiTip = {
+        update: function(ctx){
+            Color.setColor(ctx, Color.lightGray)
+            ctx.font = '20px monospace'
+            ctx.textAlign = 'left'
+            ctx.textBaseline = 'bottom'
+            Shapes.Line(ctx, 850,520,850,430,5,'arrow',10,true)
+            ctx.fillText('Click and drag',820,590)
+        }
+    }
     
     Planet.unlockScenes(nextScenes, gss)
 
     // Objects and update
-    gameState.objects = [gridLeft, gridRight, slider, target, tracer, backButton, nextButton]
+    gameState.objects = [gridLeft, gridRight, slider, target, tracer, backButton, nextButton, uiTip]
     Planet.winCon(gameState, ()=>tracer.solved, nextButton)
 }
 
@@ -364,17 +387,17 @@ function linearPuzzle1 (gameState, {nextScenes}){
 function linearPuzzle2 (gameState, {nextScenes}){
     const gss = gameState.stored
     const gridLeft = new Grid({canvasX:560, canvasY:430, canvasWidth:200, canvasHeight:200, 
-        gridXMin:-1, gridYMin:0, gridXMax:1, gridYMax:2, labels:false, arrows:false})
+        gridXMin:-1, gridYMin:-1, gridXMax:1, gridYMax:1, labels:false, arrows:true})
     //const gridLeft = new Grid(560, 430, 200, 200, 2, 2, 5)
     const gridRight = new Grid({canvasX:900, canvasY:430, canvasWidth:200, canvasHeight:200, 
-        gridXMin:-1, gridYMin:-1, gridXMax:1, gridYMax:1, labels:false, arrows:false})
+        gridXMin:-1, gridYMin:-1, gridXMax:1, gridYMax:1, labels:false, arrows:true})
     const sliders = [
         new Slider({grid:gridRight, gridPos:-1, valueLabel:false}),
         new Slider({grid:gridRight, gridPos:0, valueLabel:false}),
     ]
     const targets = [
         new Target({grid: gridLeft, gridX:0, gridY:1, size:20}),
-        new Target({grid: gridLeft, gridX:1, gridY:2, size:20})
+        new Target({grid: gridLeft, gridX:1, gridY:0, size:20})
     ]
     const tracer =  new IntegralTracer({grid: gridLeft, input: {type:'sliders', sliders:sliders}, targets:targets, numLabel:false})
 
@@ -412,6 +435,7 @@ function mathBlockTutorials(gameState, {
     targetVals, tracerStart = 0,
     targetSize = 20, sliderSize = 15,
     nextScenes, withLinear = false,
+    withUITip = false,
 }) {
     const gss = gameState.stored
     const backButton = Planet.backButton(gameState)
@@ -443,6 +467,26 @@ function mathBlockTutorials(gameState, {
         funTracers: [functionTracer],
     })
 
+    const uiTip = {
+        update: function(ctx){
+            if (!withUITip) return
+            Color.setColor(ctx, Color.lightGray)
+            Shapes.Line(ctx, 1130,180,1030,180,5,'arrow',10,true)
+            ctx.font = '20px monospace'
+            ctx.textAlign = 'left'
+            ctx.textBaseline = 'bottom'
+            ctx.fillText('drag and drop',1030,120)
+            
+            if (mbField.rootBlock != null){
+                Shapes.Line(ctx, 1250,550,1250,450,5,'arrow',10,true)
+                ctx.font = '20px monospace'
+                ctx.textAlign = 'left'
+                ctx.textBaseline = 'bottom'
+                ctx.fillText('click and drag',1270,500)
+            }
+        }
+    }
+
     if (!withLinear){
         sySlider.hidden = true
         mbm.scaleIcon.hidden = true
@@ -453,7 +497,7 @@ function mathBlockTutorials(gameState, {
         functionTracer.solvable = !sySlider.grabbed && !tySlider.grabbed
     }
 
-    gameState.objects = [grid, functionTracer, backButton, nextButton, mbm, sySlider, tySlider].concat(targets)
+    gameState.objects = [grid, functionTracer, backButton, nextButton, mbm, sySlider, tySlider, uiTip].concat(targets)
     Planet.winCon(gameState, ()=>functionTracer.solved, nextButton)
     unlockScenes(nextScenes, gss)
 }
@@ -487,6 +531,7 @@ function turtlePuzzle(gameState, {facingRight=true,solutionFun,tMax=10, ...optio
             ctx.font = '26px monospace'
             ctx.textAlign = 'left'
             ctx.textBaseline = 'top'
+            ctx.fillText('t = ' + this.time.toFixed(1), this.originX, this.originY - 160)
             ctx.fillText('p(t) = ' + solutionFun(this.time).toFixed(1), this.originX, this.originY -120)
             
             ctx.font = '20px monospace'
