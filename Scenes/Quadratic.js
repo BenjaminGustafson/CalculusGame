@@ -120,14 +120,26 @@ export function loadScene(gameState, sceneName, message = {}){
     switch(sceneNameSplit[1]){
         case "puzzle": 
             switch(sceneNameSplit[2]){
-                case '1':
+                case '1':{
+
                     drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.2"],targetYs:[0.5,1,1.5,2]})
+                    const uiTip = {
+                        update: function(ctx){
+                            Color.setColor(ctx, Color.lightGray)
+                            ctx.font = '20px monospace'
+                            ctx.textAlign = 'left'
+                            ctx.textBaseline = 'bottom'
+                            ctx.fillText('Click and drag to draw.',900,320)
+                        }
+                    }
+                    gameState.objects.push(uiTip)
+                }
                     break
                 case '2':
                     drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.3"],targetYs:[0.5,1,0.5,0]})
                     break
                 case '3':
-                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.4"],targetYs:[0.8,1,0.8,0]})
+                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.4"],targetYs:[-0.1,-0.3,-0.8,-1.3]})
                     break
                 case '4':
                     drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.5"],targetYs:[-1.5,-2,-1.5,0]})
@@ -195,7 +207,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     break
                 case '16':
                     applePuzzle(gameState, {
-                        version:'fitF',
+                        version:'fitDdx',
                         nextScenes: ["quadratic.puzzle.17"],
                         solutionFun: x=> -2*x*x+10,
                         solutionDdx:x=>-4*x,
@@ -220,7 +232,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     break
                 case '17':
                     applePuzzle(gameState, {
-                        version:'fitF',
+                        version:'fitDdx',
                         nextScenes: ["quadratic.puzzle.18"],
                         solutionFun: x=> -0.5*x*x+8,
                         solutionDdx:x=>-x,
