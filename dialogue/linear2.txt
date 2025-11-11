@@ -1,0 +1,14 @@
+IDS
+A: glorpPortrait
+P: astronautBPortrait
+TEXT
+P: That last puzzle was different.
+P: It was like line only moved by half as much as before. 
+A: But there were twice as many sliders. So each slider only covers half of a grid unit.
+P: Aha! So the sliders are setting the slope of the line.
+A: How do you figure?
+P: Well slope is the change in y divided by change in x.
+A: Sure. Rise over run.
+P: So if the slope is 1, then going 1/2 a unit along the x-axis means we only go up 1/2 a unit on the y.
+END
+P: Another way to look at it is if you set all of the sliders in the grid unit to be the same it does the same thing as if there was only one slider.

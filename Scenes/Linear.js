@@ -101,7 +101,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     simpleDiscLevel(gameState, {targetVals:[0, 1, 1, 2],  nextScenes:["linear.puzzle.4"]})
                     break
                 case '4':
-                    simpleDiscLevel(gameState, {targetVals:[1, 0, -1, 0],  nextScenes:["linear.puzzle.5"]})
+                    simpleDiscLevel(gameState, {targetVals:[1, 0, -1, 0],  nextScenes:["linear.dialogue.1", "linear.puzzle.5"]})
                     break
                 case '5':
                     simpleDiscLevel(gameState, {targetVals:[0.5, 1, 0.5, 1.5], nextScenes:["linear.puzzle.6"]})

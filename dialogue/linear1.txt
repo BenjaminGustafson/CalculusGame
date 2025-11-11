@@ -8,8 +8,8 @@ A: Have you figured out how these puzzles work?
 P: Kind of. When you move of the red sliders up, the red line goes up.
 A: And if you move it down?
 P: The line goes down.
-A: Hmm. So can you just set the sliders to match the purple squares?
-P: No, the slider doesn't set where the line ends up. It sets the slope. 
+A: Hmm. So can you just set the sliders to match the square targets?
+P: No, the slider doesn't set where the line ends up. It sets how much the line changes.
 END
 
 A: Exactly. If you need a review on what slope is, try puzzles A-D.

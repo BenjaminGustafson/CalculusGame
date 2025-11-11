@@ -127,7 +127,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.3"],targetYs:[0.5,1,0.5,0]})
                     break
                 case '3':
-                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.4"],targetYs:[1,0,1,0]})
+                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.4"],targetYs:[0.8,1,0.8,0]})
                     break
                 case '4':
                     drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.5"],targetYs:[-1.5,-2,-1.5,0]})
