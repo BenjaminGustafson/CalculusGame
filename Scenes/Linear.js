@@ -135,7 +135,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     mathBlockTutorials(gameState, {targetVals:[1.5,1,0.5,0,-0.5,-1,-1.5,-2], withLinear:true, nextScenes:["linear.puzzle.12"]})
                     break
                 case '12':
-                    mathBlockTutorials(gameState, {targetVals:[0.25,0.5,0.75,1,1.25,1.5,1.75,2], withLinear:true, nextScenes:["linear.puzzle.13"]})
+                    mathBlockTutorials(gameState, {targetVals:[0.25,0.5,0.75,1,1.25,1.5,1.75,2], withLinear:true, nextScenes:["linear.dialogue.3","linear.puzzle.13"]})
                     break
                 case '13':
                     turtlePuzzle(gameState, {
@@ -186,41 +186,6 @@ export function loadScene(gameState, sceneName, message = {}){
                 case '15':
                     turtlePuzzle(gameState, {
                         nextScenes:["linear.puzzle.16"],
-                        version:'fitF',
-                        solutionFun: x=>0.5*x,
-                        solutionDdx:x=>0.5,
-                        solutionFunString:"0.5t",
-                        solutionDdxString:"0.5",
-                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-                        syDdxMax: 2,
-                        syDdxLen: 4,
-                        tyDdxMax: 2,
-                        tyDdxLen: 4,
-                        numMeasurement:5,
-                        ddxSliderSpacing:2,
-                    })
-                    break
-                case '16':
-                    turtlePuzzle(gameState, {
-                        nextScenes:["linear.puzzle.17"],
-                        version:'fitF',
-                        solutionFun: x=>1+1.5*x,
-                        solutionDdx: x=>1.5,
-                        solutionFunString:"1.5t + 1",
-                        solutionDdxString:"1.5",
-                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-                        syDdxMax: 2,
-                        syDdxLen: 4,
-                        tyDdxMax: 2,
-                        tyDdxLen: 4,
-                        numMeasurement:4,
-                        ddxSliderSpacing:2,
-                        barMax: 8,
-                    })
-                    break
-                case '17':
-                    turtlePuzzle(gameState, {
-                        nextScenes:["linear.puzzle.18"],
                         version:'fitDdx',
                         solutionFun: x=>0.5*x,
                         solutionDdx:x=>0.5,
@@ -233,6 +198,43 @@ export function loadScene(gameState, sceneName, message = {}){
                         tyDdxLen: 4,
                         numMeasurement:5,
                         ddxSliderSpacing:2,
+                        
+                    })
+                    break
+                case '16':
+                    turtlePuzzle(gameState, {
+                        nextScenes:["linear.puzzle.17"],
+                        version:'fitDdx',
+                        solutionFun: x=>0.5*x+2,
+                        solutionDdx:x=>0.5,
+                        solutionFunString:"0.5t+2",
+                        solutionDdxString:"0.5",
+                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
+                        syDdxMax: 2,
+                        syDdxLen: 4,
+                        tyDdxMax: 2,
+                        tyDdxLen: 4,
+                        numMeasurement:4,
+                        ddxSliderSpacing:2,
+                        barMax: 10,
+                    })
+                    break
+                case '17':
+                    turtlePuzzle(gameState, {
+                        nextScenes:["linear.puzzle.18"],
+                        version:'fitDdx',
+                        solutionFun: x=>1+1.5*x,
+                        solutionDdx: x=>1.5,
+                        solutionFunString:"1.5t + 1",
+                        solutionDdxString:"1.5",
+                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
+                        syDdxMax: 2,
+                        syDdxLen: 4,
+                        tyDdxMax: 2,
+                        tyDdxLen: 4,
+                        numMeasurement:4,
+                        ddxSliderSpacing:2,
+                        barMax: 8,
                     })
                     break
                 case '18':
@@ -256,7 +258,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     break
                 case '19':
                     turtlePuzzle(gameState, {
-                        nextScenes:["linear.puzzle.20"],
+                        nextScenes:["linear.dialogue.4","linear.puzzle.20"],
                         version:'fitDdx',
                         solutionFun: x=>10-x,
                         solutionDdx: x=>-1,
@@ -580,26 +582,17 @@ export function measurementPuzzle(gameState, {
 
     // Grids
     const gridSize = version == 'fitDdx' ? 350 : 400
-    const gridLeft = new Grid({canvasX:80, canvasY:400, canvasWidth:gridSize, canvasHeight:gridSize, 
-        gridXMin:0, gridXMax:tMax, gridYMin:funMin, gridYMax:funMax, labels:true, xAxisLabel:'Time t', yAxisLabel:'Position p(t)', autoCellSize:true})
+    const gridLeft = new Grid({canvasX:40, canvasY:400, canvasWidth:gridSize, canvasHeight:gridSize, 
+        gridXMin:0, gridXMax:tMax, gridYMin:funMin, gridYMax:funMax, labels:true, xAxisLabel:'Time t', gridTitle:'Position p(t)', autoCellSize:true})
 
-    const gridRight = new Grid({canvasX: version == 'fitDdx' ? 450 : 580, canvasY:400, canvasWidth:gridSize, canvasHeight:gridSize, 
-        gridXMin:0, gridXMax:tMax, gridYMin:ddxMin, gridYMax:ddxMax, labels:true, yAxisLabel: 'Velocity v(t)', autoCellSize:true})
+    const gridRight = new Grid({canvasX: version == 'fitDdx' ? 450 : 570, canvasY:400, canvasWidth:gridSize, canvasHeight:gridSize, 
+        gridXMin:0, gridXMax:tMax, gridYMin:ddxMin, gridYMax:ddxMax, labels:true,xAxisLabel:'Time t', gridTitle: 'Velocity v(t)', autoCellSize:true})
 
-    const sySlider = new Slider({canvasX: 580, canvasY:400, canvasLength:400, sliderLength:10, maxValue:5, showAxis: true})
-    const tySlider = new Slider({canvasX: 650, canvasY:400, canvasLength:400, sliderLength:10, maxValue:5, showAxis: true})
+    const sySlider = new Slider({canvasX: 840, canvasY:400, canvasLength:350, sliderLength:10, maxValue:5, showAxis: true})
+    const tySlider = new Slider({canvasX: 880, canvasY:400, canvasLength:350, sliderLength:10, maxValue:5, showAxis: true})
     const adder = new TargetAdder({grid:gridLeft, solutionFun: solutionFun, coverBarPrecision:barStep, barMax:barMax, xPrecision:adderXPrecision, yPrecision:adderYPrecision})
     const funTracer = new FunctionTracer({grid:gridLeft})
     
-
-    if (version == 'fitDdx'){
-        sySlider.canvasX = 840
-        tySlider.canvasX = 880
-        sySlider.canvasLength = 350
-        tySlider.canvasLength = 350
-    }
-
-
     // Measurement background (black rectangle)
     const bgImage = {
         update: function(ctx){
@@ -648,12 +641,20 @@ export function measurementPuzzle(gameState, {
 
     var step = 0
 
+    const field =  new MathBlockField({minX:50, minY:200, maxX: 450, maxY:300})
+    const mngr = new MathBlockManager({
+        blocks:blocks, toolBarX:920, toolBarY:400,
+        translateYSlider:tySlider, scaleYSlider:sySlider, blockSize:26,
+        blockFields: [field],
+        funTracers: [funTracer],
+    })
+
     gameState.objects = [backButton, nextButton, gridLeft, errorText, bgImage, tSlider, measureObject, playPauseButton, adder]
     gameState.update = () => {
         if (step == 0 && adder.solved){
             step = 1
-            switch (version){
-                case 'sliders':{
+            adder.showBar =false
+            if (version == 'sliders'){
                     const sliders = []
                     const spacing = ddxSliderSpacing
                     for (let i = gridRight.gridXMin; i < gridRight.gridXMax; i+=spacing) {
@@ -663,47 +664,41 @@ export function measurementPuzzle(gameState, {
                         input: {type:'sliders', sliders:sliders}, targets:adder.targets})
                         gameState.objects = gameState.objects.concat([ gridRight, tracer,...sliders])
                         Planet.winCon(gameState, ()=>tracer.solved, nextButton)
-                }
-                break
-                case 'fitF':{
-                    const field =  new MathBlockField({minX:version == 'fitDdx' ? 450 : 50, minY:200, maxX: version == 'fitDdx' ? 800 : 450, maxY:300})
-                    
-                    const mngr = new MathBlockManager({
-                        blocks:blocks, toolBarX:750, toolBarY:400,
-                        translateYSlider:tySlider, scaleYSlider:sySlider, blockSize:26,
-                        blockFields: [field],
-                        funTracers: [funTracer],
-                    })
-                    sySlider.setSize(syFunMax, syFunLen)
-                    tySlider.setSize(tyFunMax, tyFunLen)
-                    funTracer.targets = adder.targets
-                    
-                    gameState.objects = gameState.objects.concat([sySlider, funTracer, tySlider, mngr]).concat(adder.targets)
-                    Planet.winCon(gameState, ()=>funTracer.solved, nextButton)
-                }
-                break
-                case 'fitDdx':{
-
-                    const blockField =  new MathBlockField({minX:version == 'fitDdx' ? 450 : 50, minY:200, maxX: version == 'fitDdx' ? 800 : 450, maxY:300})
-                    const ddxTracer = new FunctionTracer({grid:gridRight})
-                    
-                    const mngr = new MathBlockManager({
-                        blocks:blocks, toolBarX:920, toolBarY:400,
-                        translateYSlider:tySlider, scaleYSlider:sySlider, blockSize:26,
-                        blockFields: [blockField],
-                        funTracers: [ddxTracer],
-                    })
-                    
-                    const blockTracer = new IntegralTracer({grid: gridLeft, originGridY: solutionFun(0), 
-                        input: {type:'mathBlock', blockField:blockField}, targets:adder.targets, autoStart: true})
-    
-                    sySlider.setSize(syDdxMax, syDdxLen)
-                    tySlider.setSize(tyDdxMax, tyDdxLen)
-                    gameState.objects = gameState.objects.concat([sySlider, tySlider, gridRight, blockTracer, mngr, ddxTracer]).concat(adder.targets)
-                    Planet.winCon(gameState, ()=>blockTracer.solved, nextButton)
-                }
-                break
+            }else{
+                
+                sySlider.setSize(syFunMax, syFunLen)
+                tySlider.setSize(tyFunMax, tyFunLen)
+                funTracer.targets = adder.targets
+                gameState.objects = gameState.objects.concat([sySlider, funTracer, tySlider, mngr]).concat(adder.targets)
             }
+        }else if (step == 1 && funTracer.solved){ // TODO fix this 
+            step = 2
+            const blockField =  new MathBlockField({minX:450, minY:200, maxX: 800, maxY:300})
+            const ddxTracer = new FunctionTracer({grid:gridRight})
+            
+            // const mngr = new MathBlockManager({
+            //     blocks:blocks, toolBarX:920, toolBarY:400,
+            //     translateYSlider:tySlider, scaleYSlider:sySlider, blockSize:26,
+            //     blockFields: [blockField],
+            //     funTracers: [ddxTracer],
+            // })
+
+            mngr.blockFields = [blockField]
+            mngr.funTracers = [ddxTracer]
+            mngr.highlighted.isHighlighted = false
+            mngr.highlighted = null
+
+            funTracer.targets = []
+            funTracer.unsolvedColor = Color.magenta
+
+            const blockTracer = new IntegralTracer({grid: gridLeft, originGridY: solutionFun(0), 
+                input: {type:'mathBlock', blockField:blockField}, targets:adder.targets, autoStart: true})
+
+
+            sySlider.setSize(syDdxMax, syDdxLen)
+            tySlider.setSize(tyDdxMax, tyDdxLen)
+            gameState.objects = gameState.objects.concat([gridRight, blockTracer, ddxTracer, field.rootBlock]).concat(adder.targets)
+            Planet.winCon(gameState, ()=>blockTracer.solved, nextButton)
         }
         tSlider.active = !playing
         if (playing){

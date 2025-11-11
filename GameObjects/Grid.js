@@ -46,7 +46,7 @@ export class Grid extends GameObject{
         lineWidthMax = 4,
         majorLinesX = 1, majorLinesY = 1,
         lineWidthMin = 1,
-        xAxisLabel= "", yAxisLabel = "",
+        xAxisLabel= "", yAxisLabel = "", gridTitle="",
     }){
         super()
         Object.assign(this, {
@@ -57,7 +57,7 @@ export class Grid extends GameObject{
             labels, arrows,
             lineWidthMax, lineWidthMin,
             majorLinesX, majorLinesY,
-            xAxisLabel, yAxisLabel,
+            xAxisLabel, yAxisLabel, gridTitle,
         });
         // The location of the x-axis (horizontal axis), starting from 0 at the top of the grid
         this.xAxis = gridYMax
@@ -282,6 +282,7 @@ export class Grid extends GameObject{
             i++
         }
 
+        ctx.fillText(this.gridTitle, this.canvasWidth/2, -30)
         ctx.fillText(this.xAxisLabel, this.canvasWidth/2, this.canvasHeight+50)
         ctx.rotate(-Math.PI/2)
         ctx.fillText(this.yAxisLabel, -this.canvasHeight/2, -80)

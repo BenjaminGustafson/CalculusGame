@@ -208,7 +208,6 @@ export function dialogueScene(gameState, {nextScenes = [], filePath, onComplete=
             }
 
             const portraitIds = Object.values(ids);
-            console.log(portraitIds, text);
 
             const dialogueBox = new DialogueBox({
                 portraitIds:portraitIds,
