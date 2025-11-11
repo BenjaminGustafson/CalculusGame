@@ -378,9 +378,9 @@ export class MathBlockField extends GameObject{
         return inBounds
     }
 
-    outputFunction(){
+    outputFunction(constants={}){
         if (this.rootBlock == null) return x => 0
-        const fun = this.rootBlock.toFunction()
+        const fun = this.rootBlock.toFunction(constants)
         if (fun == null) return x => 0
         return fun
     }
