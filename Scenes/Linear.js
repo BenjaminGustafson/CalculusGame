@@ -386,10 +386,10 @@ function linearPuzzle1 (gameState, {nextScenes}){
 // A 2x2 puzzle
 function linearPuzzle2 (gameState, {nextScenes}){
     const gss = gameState.stored
-    const gridLeft = new Grid({canvasX:560, canvasY:430, canvasWidth:200, canvasHeight:200, 
+    const gridLeft = new Grid({canvasX:460, canvasY:430, canvasWidth:200, canvasHeight:200, 
         gridXMin:-1, gridYMin:-1, gridXMax:1, gridYMax:1, labels:false, arrows:true})
     //const gridLeft = new Grid(560, 430, 200, 200, 2, 2, 5)
-    const gridRight = new Grid({canvasX:900, canvasY:430, canvasWidth:200, canvasHeight:200, 
+    const gridRight = new Grid({canvasX:1000, canvasY:430, canvasWidth:200, canvasHeight:200, 
         gridXMin:-1, gridYMin:-1, gridXMax:1, gridYMax:1, labels:false, arrows:true})
     const sliders = [
         new Slider({grid:gridRight, gridPos:-1, valueLabel:false}),
@@ -400,11 +400,22 @@ function linearPuzzle2 (gameState, {nextScenes}){
         new Target({grid: gridLeft, gridX:1, gridY:0, size:20})
     ]
     const tracer =  new IntegralTracer({grid: gridLeft, input: {type:'sliders', sliders:sliders}, targets:targets, numLabel:false})
+    const uiTip = {
+        update: function(ctx){
+            Color.setColor(ctx, Color.lightGray)
+            ctx.font = '20px monospace'
+            ctx.textAlign = 'right'
+            ctx.textBaseline = 'middle'
+            Shapes.Line(ctx, 950,510,950,440,5,'arrow',10, true)
+            Shapes.Line(ctx, 950,550,950,620,5,'arrow',10, true)
+            ctx.fillText('Click and drag',930,530)
+        }
+    }
 
     const backButton = Planet.backButton(gameState)
     const nextButton = Planet.nextButton(gameState, nextScenes)
         
-    gameState.objects = [gridLeft, gridRight, tracer, backButton, nextButton].concat(sliders).concat(targets)
+    gameState.objects = [gridLeft, gridRight, tracer, backButton, nextButton, uiTip].concat(sliders).concat(targets)
     Planet.winCon(gameState, ()=>tracer.solved, nextButton)
     unlockScenes(nextScenes, gss)
 }
