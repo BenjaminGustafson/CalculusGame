@@ -15,9 +15,12 @@ export class TargetAdder extends GameObject{
         coverBarPrecision = 1,
         barMax,
         targetColor = Color.magenta,
+        removable = false,
     }){
         super()
-        Object.assign(this, {grid, xPrecision, yPrecision, solutionFun, coverBarPrecision, targetColor, solutionPrecision, barMax})
+        Object.assign(this, {grid, xPrecision, yPrecision, solutionFun, coverBarPrecision,
+            targetColor, solutionPrecision, barMax, removable,
+        })
         this.targets = []
         this.active = true
         this.overGrid = false
@@ -146,7 +149,9 @@ export class TargetAdder extends GameObject{
 
                 }else{
                     audioManager.play('drop_001')
-                    this.targets = newTargets
+                    if (this.removable){
+                        this.targets = newTargets
+                    }
                 }
             }
         }        
