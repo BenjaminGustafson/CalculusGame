@@ -132,10 +132,10 @@ export function loadScene(gameState, sceneName, message = {}){
                     turtlePuzzle(gameState, {
                         nextScenes:["linear.puzzle.14"],
                         version:'sliders',
-                        solutionFun: x=>0.5*x,
-                        solutionDdx:x=>0.5,
-                        solutionFunString:"0.5t",
-                        solutionDdxString:"0.5",
+                        solutionFun: x=>x,
+                        solutionDdx:x=>1,
+                        solutionFunString:"t",
+                        solutionDdxString:"1",
                         syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
                         syDdxMax: 2,
                         syDdxLen: 4,
@@ -532,7 +532,7 @@ export function measurementPuzzle(gameState, {
 
     // Grids
     const gridSize = version == 'fitDdx' ? 350 : 400
-    const gridLeft = new Grid({canvasX:50, canvasY:400, canvasWidth:gridSize, canvasHeight:gridSize, 
+    const gridLeft = new Grid({canvasX:80, canvasY:400, canvasWidth:gridSize, canvasHeight:gridSize, 
         gridXMin:0, gridXMax:tMax, gridYMin:funMin, gridYMax:funMax, labels:true, xAxisLabel:'Time t', yAxisLabel:'Position p(t)', autoCellSize:true})
 
     const gridRight = new Grid({canvasX: version == 'fitDdx' ? 450 : 580, canvasY:400, canvasWidth:gridSize, canvasHeight:gridSize, 
@@ -542,6 +542,7 @@ export function measurementPuzzle(gameState, {
     const tySlider = new Slider({canvasX: 650, canvasY:400, canvasLength:400, sliderLength:10, maxValue:5, showAxis: true})
     const adder = new TargetAdder({grid:gridLeft, solutionFun: solutionFun, coverBarPrecision:barStep, barMax:barMax, xPrecision:adderXPrecision, yPrecision:adderYPrecision})
     const funTracer = new FunctionTracer({grid:gridLeft})
+    funTracer.insert(gameState.objects, 1)
 
     if (version == 'fitDdx'){
         sySlider.canvasX = 840
@@ -629,7 +630,7 @@ export function measurementPuzzle(gameState, {
                     tySlider.setSize(tyFunMax, tyFunLen)
                     funTracer.targets = adder.targets
                     
-                    gameState.objects = gameState.objects.concat([sySlider, tySlider, funTracer, mngr]).concat(adder.targets)
+                    gameState.objects = gameState.objects.concat([sySlider, tySlider, mngr]).concat(adder.targets)
                     Planet.winCon(gameState, ()=>funTracer.solved, nextButton)
                 }
                 break
