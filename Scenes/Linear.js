@@ -542,7 +542,7 @@ export function measurementPuzzle(gameState, {
     const tySlider = new Slider({canvasX: 650, canvasY:400, canvasLength:400, sliderLength:10, maxValue:5, showAxis: true})
     const adder = new TargetAdder({grid:gridLeft, solutionFun: solutionFun, coverBarPrecision:barStep, barMax:barMax, xPrecision:adderXPrecision, yPrecision:adderYPrecision})
     const funTracer = new FunctionTracer({grid:gridLeft})
-    funTracer.insert(gameState.objects, 1)
+    
 
     if (version == 'fitDdx'){
         sySlider.canvasX = 840
@@ -630,7 +630,7 @@ export function measurementPuzzle(gameState, {
                     tySlider.setSize(tyFunMax, tyFunLen)
                     funTracer.targets = adder.targets
                     
-                    gameState.objects = gameState.objects.concat([sySlider, tySlider, mngr]).concat(adder.targets)
+                    gameState.objects = gameState.objects.concat([sySlider, funTracer, tySlider, mngr]).concat(adder.targets)
                     Planet.winCon(gameState, ()=>funTracer.solved, nextButton)
                 }
                 break
