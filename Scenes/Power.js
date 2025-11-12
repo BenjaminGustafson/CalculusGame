@@ -97,10 +97,9 @@ export function loadScene(gameState, sceneName, message = {}){
                 case '4':
                     powerLevel(gameState, {numSliders:400, sliderSize:5, targetSize:10,gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:2,
                         withMathBlock:true,targetFun: x => x*x*x/6, increment:0.05,
-                        nextScenes:["power.puzzle.4"]})
+                        nextScenes:["power.puzzle.5"]})
                     break
                 case '5':
-                    
                     mathBlockTutorial(gameState, {
                         numTargets:20, targetFun: x=>x*x*x,blocks:blocks,
                         nextScenes:['power.puzzle.6']
@@ -202,8 +201,7 @@ function powerPlanet(gameState,message){
     console.log('Quadratic function')
     Planet.planetScene(gameState, {
         planetName:'power',
-        shipX:20, shipY: 450,
-        labX: 1150, labY:-150, labDir:'SW',
+        shipX:10, shipY: -200,
         tileMap:tileMap,
         playerNodes:nodes,
         playerPaths:paths,

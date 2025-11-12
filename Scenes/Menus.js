@@ -148,20 +148,19 @@ export function planetMap (gameState){
     // Planet Buttons
     const planetPositions = {
         'linear':[100,400],
-        'quadratic':[300,500],
-        'cubic':[400,200],
-        'exponential':[600,300],
-        'sine':[600,600],
-        'power':[800,400],
-        'sum':[1000,400],
-        'product':[1200,400],
-        'chain':[1400,400]
+        'quadratic':[300,400],
+        'exponential':[500,400],
+        'power':[700,400],
+        'sine':[900,400],
+        'sum':[1100,400],
+        'product':[1300,400],
+        'chain':[1500,400]
     }
     
     const planetButtons = {}
     for (let planet in planetPositions){
         planetButtons[planet] = new Button( {
-            originX: planetPositions[planet][0], originY: planetPositions[planet][1],
+            originX: planetPositions[planet][0]-(planet.length*15+30)/2, originY: planetPositions[planet][1],
             width: planet.length*15+30, height:50,
             onclick: () => {travelTo(planet)},
             label: planet.charAt(0).toUpperCase() + planet.slice(1),
@@ -174,11 +173,11 @@ export function planetMap (gameState){
             case 'visited':
             case 'unvisited':
                 break
+            default:
             case 'locked':
                 planetButtons[planet].active = false
                 break
-            default:
-                planetButtons[planet].hidden = true
+                //planetButtons[planet].hidden = true
                 break
         }
     }
