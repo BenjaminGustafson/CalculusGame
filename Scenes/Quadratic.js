@@ -122,7 +122,7 @@ export function loadScene(gameState, sceneName, message = {}){
             switch(sceneNameSplit[2]){
                 case '1':{
 
-                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.2"],targetYs:[0.5,1,1.5,2]})
+                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.2"],targetYs:[1], targetSize:50})
                     const uiTip = {
                         update: function(ctx){
                             Color.setColor(ctx, Color.lightGray)
@@ -136,13 +136,13 @@ export function loadScene(gameState, sceneName, message = {}){
                 }
                     break
                 case '2':
-                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.3"],targetYs:[0.5,1,0.5,0]})
+                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.3"],targetYs:[-1,0],targetSize:50})
                     break
                 case '3':
-                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.4"],targetYs:[-0.1,-0.3,-0.8,-1.3]})
+                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.4"],targetYs:[0.5,1,1.5,2],targetSize:40})
                     break
                 case '4':
-                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.5"],targetYs:[-1.5,-2,-1.5,0]})
+                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.5"],targetYs:[-1.5,-2,-1.5,0],targetSize:40})
                     break
                 case '5':
                     quadDiscLevel(gameState, {numSliders:4, nextScenes:["quadratic.puzzle.6"], ddx: x=>x, tracerStart:2})
@@ -318,6 +318,8 @@ export function loadScene(gameState, sceneName, message = {}){
                     ]
                     Experiment.ruleGuess(gameState, {planetUnlock:'exponential', targetBlock:targetBlock, blocks: blocks,
                         correctDdx:(x,a,b) => 2 * a * x,
+                        initA:0.1,
+                        initB:-5,
                     })
                 }
                 break
