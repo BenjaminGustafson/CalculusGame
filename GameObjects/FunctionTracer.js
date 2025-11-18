@@ -163,6 +163,11 @@ export class FunctionTracer extends GameObject{
             Shapes.Line(ctx,x-1, prevCy, x, cy, this.lineWidth)
 
             // Draw label
+            ctx.lineWidth = this.lineWidth * 4
+            ctx.beginPath()
+            ctx.moveTo(x-1, prevCy)
+            ctx.lineTo(x, cy)
+            ctx.closePath()
             if (this.numLabel && ctx.isPointInStroke(mouse.x, mouse.y)){
                 Shapes.Circle({ctx:ctx, centerX:x, centerY:cy, radius: this.lineWidth*1.5})
                 ctx.save()
