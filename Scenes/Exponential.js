@@ -115,7 +115,15 @@ export function loadScene(gameState, sceneName, message = {}){
                     })
                     break
                 case '7':
-                    populationLevel(gameState, {nextScenes:["exponential.puzzle.8"]
+                    populationLevel(gameState, {nextScenes:["exponential.puzzle.8"], targetX:3.5, targetY:1000,
+                    })
+                    break
+                case '8':
+                    populationLevel(gameState, {nextScenes:["exponential.puzzle.9"], targetX:5, targetY:400,
+                    })
+                    break
+                case '9':
+                    populationLevel(gameState, {nextScenes:["exponential.puzzle.10"], targetX:1.7, targetY:1000,
                     })
                     break
                
@@ -305,30 +313,32 @@ function exponentialLevel (gameState, {
 }
 
 function populationLevel (gameState, {
-    nextScenes, tMax=10
+    nextScenes, tMax=5, targetX, targetY,
 }){
     const gss = gameState.stored
     const backButton = Planet.backButton(gameState)
     const nextButton = Planet.nextButton(gameState, nextScenes)
 
-
-
     var initialPop = 1
     const petri = new PetriDish ({originX: 300, originY:450})
     const birthSlider = new Slider({canvasX:1100,canvasY:200,canvasLength:200,
-        sliderLength:4, maxValue:4, vertical:false, increment:0.1, startValue:2})
+        sliderLength:4, maxValue:4, vertical:false, increment:0.1, startValue:1})
 
     function popFunction (t) {
-        return initialPop * Math.pow(1+birthSlider.value, t)
+        return initialPop * Math.pow(Math.E, birthSlider.value*t)
     }
     const grid = new Grid({canvasX: 850, canvasY: 350, gridXMin:0, gridXMax:tMax, gridYMin:0, gridYMax:1000,
         autoCellSize:true, labels:true, arrows:false})
 
+    const target = new Target({grid:grid, gridX:targetX, gridY:targetY, size:30})
+
     const tracer = new FunctionTracer({grid:grid, inputFunction: x => popFunction(x), 
-        resetCondition: ()=> birthSlider.grabbed})
+        resetCondition: ()=> birthSlider.grabbed,
+        targets: [target],
+    })
 
     var time = 0
-    var playing = true
+    var playing = false
     var startTime = Date.now()
     var startValue = 0
     const tSlider = new Slider({canvasX:1100,canvasY:150,canvasLength:450,
@@ -356,9 +366,8 @@ function populationLevel (gameState, {
     }) 
 
 
-
     gameState.update = () => {
-        petri.population = Math.min(1000,popFunction(time))
+        petri.population = Math.min(1000,Math.floor(popFunction(time)))
         tracer.pixelIndex = Math.floor(time/tMax * grid.canvasWidth)
 
         tSlider.active = !playing
@@ -380,8 +389,8 @@ function populationLevel (gameState, {
 
 
     gameState.objects = [backButton, nextButton, petri, playPauseButton, tSlider, timeLabel,  birthSlider,
-         grid, tracer]
-    Planet.winCon(gameState, ()=>false, nextButton)
+         grid, tracer, target]
+    Planet.winCon(gameState, ()=>tracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
     
 }
@@ -397,6 +406,7 @@ class PetriDish extends GameObject{
             cellRadius,
             dishRadius,})
         this.population = 100
+        this.prevPop = this.population
     }
 
     hash01(i){
@@ -408,8 +418,13 @@ class PetriDish extends GameObject{
     }
 
 
-    update(ctx, audio,mouse){
-
+    update(ctx, audio, mouse){
+        if (this.prevPop != this.population){
+            if (this.prevPop < this.population){
+                audio.play('drop_001',{pitch:Math.random()*2})
+            }
+            this.prevPop = this.population
+        }
         Color.setColor(ctx,Color.white)
         Shapes.Circle({ctx:ctx, centerX:this.originX, centerY:this.originY, radius:this.dishRadius, shadow:true})
 
