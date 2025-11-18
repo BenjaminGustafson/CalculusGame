@@ -3,26 +3,25 @@ import {Grid, FunctionTracer, Button, ImageObject, IntegralTracer, MathBlock, Ma
 import { loadScene } from '../Scene.js'
 import * as Planet from './Planet.js'
 
-export function ruleGuess(gameState, {planetUnlock, blocks, targetBlock, correctDdx}){
+export function ruleGuess(gameState, {planetUnlock, blocks, targetBlock, correctDdx, initA=1, initB=0}){
     const gss = gameState.stored
     var state = 'no attempt' // 'incorrect' 'correct' 'solved'
     const backButton = Planet.backButton(gameState)
     const nextButton = Planet.nextButton(gameState, ['planetMap'])
     
-    
-
     const gridLeft = new Grid({canvasX:80, canvasY:450, canvasWidth:350, canvasHeight:350, 
         gridXMin:-10, gridXMax:10, gridYMin:-10, gridYMax:10, labels:true, xAxisLabel:'x', yAxisLabel:'f(x)', autoCellSize:true})
 
     const gridRight = new Grid({canvasX: 700, canvasY:450, canvasWidth:350, canvasHeight:350, 
         gridXMin:-10, gridXMax:10, gridYMin:-10, gridYMax:10, labels:true, xAxisLabel:'x', yAxisLabel: 'f\'(x)', autoCellSize:true})
 
-    const aSlider = new Slider({canvasX: 100, canvasY: 320, canvasLength:350, maxValue:5, sliderLength:10, startValue: 1, showAxis:true, vertical:false})
+    const aSlider = new Slider({canvasX: 100, canvasY: 320, canvasLength:350, maxValue:5, sliderLength:10, startValue: initA, showAxis:true, vertical:false})
     const aLabel = new TextBox({content: 'a',originX: 80, originY: 320, font:'25px monospace', align:'right', baseline:'middle'})
-    const bSlider = new Slider({canvasX: 100, canvasY: 380, canvasLength:350, maxValue:5, sliderLength:10, startValue: 0, showAxis:true, vertical:false})
+    const bSlider = new Slider({canvasX: 100, canvasY: 380, canvasLength:350, maxValue:5, sliderLength:10, startValue: initB, showAxis:true, vertical:false})
     const bLabel = new TextBox({content: 'b',originX: 80, originY: 380, font:'25px monospace', align:'right', baseline:'middle'})
 
     const funTracer = new FunctionTracer({grid:gridLeft, unsolvedColor:Color.magenta})
+
     const ddxTracer = new FunctionTracer({grid:gridRight})
     
     const sySlider = new Slider({canvasX: 1250, canvasY: 150, maxValue:5, sliderLength:10, startValue: 1, showAxis:true})
@@ -35,7 +34,6 @@ export function ruleGuess(gameState, {planetUnlock, blocks, targetBlock, correct
     const intTracer = new IntegralTracer({grid:gridLeft, input:{
         inputFunction: (x) => {
             if (mbField.rootBlock){
-                // Slight inneficiency here, since we build the function for every call. 
                 const fun = mbField.rootBlock.toFunction({a:aSlider.value, b:bSlider.value})
                 if (fun != null){
                     return fun(x)
@@ -44,10 +42,11 @@ export function ruleGuess(gameState, {planetUnlock, blocks, targetBlock, correct
                 return 0
         },
         resetCondition : () => {
-                    return mbField.newFunction
+                    return mbField.newFunction || aSlider.valueChanging || bSlider.valueChanging
                 },
         },
-        animated:false
+        animated:true,
+        autoStart:true,
     })
 
     const checkResult = new TextBox({originX: 700, originY: 160, font:'25px monospace', align:'left', baseline:'top'})
@@ -99,7 +98,7 @@ export function ruleGuess(gameState, {planetUnlock, blocks, targetBlock, correct
         checkButton, checkResult,
         gridLeft, gridRight,
         aLabel, bLabel, aSlider, bSlider,
-        funTracer, ddxTracer
+        funTracer, ddxTracer, intTracer,
     ]
 
     gameState.update = (audio) => {
@@ -107,7 +106,9 @@ export function ruleGuess(gameState, {planetUnlock, blocks, targetBlock, correct
             Planet.unlockPopup(gameState, {itemImage:'shipSide', topText:`You solved the ${capFirst(gss.planet)} Rule!`, bottomText:`You can now travel to ${capFirst(planetUnlock)} Planet.`})
             state = 'solved'
         }
-        funTracer.setInputFunction(targetBlock.toFunction({a:aSlider.value, b:bSlider.value}))
+        const targetFun = targetBlock.toFunction({a:aSlider.value, b:bSlider.value})
+        funTracer.setInputFunction(targetFun)
+        intTracer.originGridY = targetFun(-10)
         ddxTracer.setInputFunction(mbField.outputFunction({a:aSlider.value, b:bSlider.value}))
         //aLabel.content = 'a='+aSlider.value.toFixed(1)
     }

@@ -206,6 +206,7 @@ export class Slider extends GameObject{
             this.mouseInput(audioManager, mouse)
         }
 
+        this.valueChanging = this.mouseValue != this.value
         if (this.mouseValue != this.value){
             const dir = (this.mouseValue > this.value ? 1 : -1)
             this.setValueInternal(this.value + dir*this.increment)
