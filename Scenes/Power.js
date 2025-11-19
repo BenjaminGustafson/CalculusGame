@@ -145,11 +145,30 @@ export function loadScene(gameState, sceneName, message = {}){
                         blocks: Planet.standardBlocks('power'),
                     })
                     break
-                case '12':
+                case '12':{
+                    const numSliders = 8
+                    const startY = 2
+                    Puzzles.sliderLevel(gameState, {
+                        numSliders: numSliders,
+                        targetBuilder: Puzzles.buildTargetsFromDdx({ddx: x=>x*x*x/4, numTargets:numSliders, targetOpts:{size:20}, startY:startY}),
+                        tracerOpts: {originGridY: startY},
+                        sliderOpts: {size:15},
+                    })
+                }
                     break
                 case '13':
+                    Puzzles.mathBlockLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>x*x*x*x/8, numTargets:100, targetOpts:{size:12}}),
+                        tracerOpts: {originGridY: 2},
+                        blocks: Planet.standardBlocks('power'),
+                    })
                     break
                 case '14':
+                    Puzzles.mathBlockLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>-x*x*x*x/4+2, numTargets:100, targetOpts:{size:12}}),
+                        tracerOpts: {originGridY: -2},
+                        blocks: Planet.standardBlocks('power'),
+                    })
                     break
                 case '15':
                     break
