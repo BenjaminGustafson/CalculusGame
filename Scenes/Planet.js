@@ -179,14 +179,15 @@ export function levelNavigation(gameState, {
 }){
     if (nextScenes == null){
         nextScenes = defaultNextScenes(gameState)
+        console.log('default', nextScenes)
     }
-    const backButton = Planet.backButton(gameState)
-    backButton.insert(gameState.objects, 0)
-    const nextButton = Planet.nextButton(gameState, nextScenes)
-    nextButton.insert(gameState.objects, 0)
+    const backB = backButton(gameState)
+    backB.insert(gameState.objects, 0)
+    const nextB = nextButton(gameState, nextScenes)
+    nextB.insert(gameState.objects, 0)
 
-    Planet.winCon(gameState, winCon, nextButton)
-    Planet.unlockScenes(nextScenes, gameState.stored)
+    addWinCon(gameState, winCon, nextB)
+    unlockScenes(nextScenes, gameState.stored)
 }
 
 /**
@@ -224,11 +225,11 @@ function defaultNextScenes(gameState){
     const parts = gameState.stored.sceneName.split('.')
     const last = parts[parts.length - 1]
     const n = parseInt(last.replace(/\D+/g, ''), 10)
-    parts[parts.length - 1] = `n${n + 1}`
+    parts[parts.length - 1] = `${n + 1}`
     return [parts.join('.')]
 }
 
-export function winCon(gameState, condition, nextButton){
+export function addWinCon(gameState, condition, nextButton){
     const oldUpdate = gameState.update
     gameState.update = () => {
         oldUpdate()

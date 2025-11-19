@@ -4,7 +4,7 @@ import * as Scene from '../Scene.js'
 import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
 import * as Experiment from './Experiment.js'
-import { sliderLevel, mathBlockTutorial, drawLevel, buildTargetsFromFun} from './Puzzles.js'
+import * as Puzzles from './Puzzles.js'
 
 const tileMap = new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0})
 
@@ -100,29 +100,29 @@ export function loadScene(gameState, sceneName, message = {}){
                         nextScenes:["power.puzzle.5"]})
                     break
                 case '5':
-                    mathBlockTutorial(gameState, {
+                    Puzzles.mathBlockTutorial(gameState, {
                         numTargets:20, targetFun: x=>x*x*x,blocks:blocks,
-                        nextScenes:['power.puzzle.6']
                     })
                     
                     break
                 case '6':
-                    mathBlockTutorial(gameState, {
+                    Puzzles.mathBlockTutorial(gameState, {
                         numTargets:20, targetFun: x=>-x*x*x,blocks:blocks,
                         nextScenes:['power.puzzle.7']
                     })
                     break
                 case '7':
-                    mathBlockTutorial(gameState, {
+                    Puzzles.mathBlockTutorial(gameState, {
                         numTargets:20, targetFun: x=>-x*x*x*0.2+0.5,blocks:blocks,
-                        nextScenes:['power.puzzle.8']
                     })
                     break
                 case '8':
-                    sliderLevel(gameState, {
-                        numSliders: 8,
-                        targetBuilder: buildTargetsFromFun({fun: x=>x*x*x/6, numTargets:8, targetOpts:{size:20}}),
-                        tracerOpts: {tracerStart: -8/6},
+                    const numSliders = 4
+                    const startY = -8/6
+                    Puzzles.sliderLevel(gameState, {
+                        numSliders: numSliders,
+                        targetBuilder: Puzzles.buildTargetsFromDdx({ddx: x=>x*x/2, numTargets:numSliders, targetOpts:{size:20}, startY:startY}),
+                        tracerOpts: {originGridY: startY},
                         sliderOpts: {size:15},
                     })
                     break

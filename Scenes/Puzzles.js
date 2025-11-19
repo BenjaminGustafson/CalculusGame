@@ -65,7 +65,7 @@ export function buildTargetsFromFun({fun, numTargets, targetOpts}){
  * Given a derivative function, create a GameObject group of targets
  * so that slider values matching the derivative function hit the targets
  */
-export function targetsFromDdx(gameState, {ddx, grid, numTargets, targetSize, startY=0}){
+export function targetsFromDdx(gameState, {ddx, grid, numTargets, targetOpts, startY=0}){
     var targets = []
     var y = startY
     const spacing = grid.gridWidth/numTargets
@@ -74,11 +74,18 @@ export function targetsFromDdx(gameState, {ddx, grid, numTargets, targetSize, st
         y += ddx(x-spacing)*spacing
         console.log(x,y)
         if (grid.isInBoundsGridY(y))
-            targets.push(new Target({grid: grid, gridX:x, gridY:y, size:targetSize}))
+            targets.push(new Target({grid: grid, gridX:x, gridY:y, targetOpts}))
     }
     const targetGroup = new GameObjectGroup(targets)
     targetGroup.insert(gameState.objects, 2)
     return targetGroup
+}
+
+/**
+ * Builder version of targetsFromDdx
+ */
+export function buildTargetsFromDdx({ddx, numTargets, targetOpts, startY}){
+    return (gameState, grid) => targetsFromDdx(gameState, {ddx: ddx, grid:grid, numTargets:numTargets, targetOpts: targetOpts, startY:startY})
 }
 
 /**
@@ -236,6 +243,7 @@ export function sliderLevel(gameState, {
         ...tracerOpts,
     })
     tracer.insert(gameState.objects,1)
+    console.log('slider level', nextScenes)
     Planet.levelNavigation(gameState, {
         winCon: () => tracer.solved,
         nextScenes: nextScenes,
@@ -361,32 +369,25 @@ export function drawLevel(gameState, {
 
 
 export function mathBlockTutorial(gameState, {
-    targetSize = 20,
     numTargets,
+    targetOpts,
     targetFun,
     blocks,
     nextScenes,
     gridXMin=-2, gridYMin=-2, gridXMax=2, gridYMax=2,
 }) {
-    const gss = gameState.stored
-    const backButton = Planet.backButton(gameState)
-    const nextButton = Planet.nextButton(gameState, nextScenes)
-
+    
     const grid = new Grid({canvasX:600, canvasY:350, canvasWidth:400, canvasHeight:400, 
         gridXMin:gridXMin, gridYMin:gridYMin, gridXMax:gridXMax, gridYMax:gridYMax, labels:false, arrows:true})
+    grid.insert(gameState.objects,0)
 
     const spacing = grid.gridWidth/numTargets
-
-    var targets = []
-    for (let i = 0; i < numTargets; i++) {
-        const x = grid.gridXMin+(i+1)*spacing
-        if (targetFun(x) <= gridYMax && targetFun(x) >= gridYMin)
-            targets.push(new Target({grid: grid, gridX:x, gridY:targetFun(x), size:targetSize}))
-    }
-     
-    const functionTracer = new FunctionTracer({grid: grid, targets: targets, solvable:true})
-
     
+    const targets = targetsFromFun(gameState, {fun: targetFun, grid:grid, numTargets:numTargets, targetOpts:targetOpts})
+
+    const functionTracer = new FunctionTracer({grid: grid, targets: targets.objects, solvable:true})
+    functionTracer.insert(gameState.objects, 1)
+
     const sySlider = new Slider({canvasX: 1200, canvasY: 350, maxValue:2, sliderLength:4, startValue: 1, showAxis:true})
     const tySlider = new Slider({canvasX: 1300, canvasY: 350, maxValue:2, sliderLength:4, showAxis:true})
 
@@ -396,12 +397,12 @@ export function mathBlockTutorial(gameState, {
         blockFields: [ mbField ],
         funTracers: [functionTracer],
     })
+    const mathBlockObjs = new GameObjectGroup([sySlider,tySlider,mbField])
+    mathBlockObjs.insert(gameState.objects, 0)
+    mbm.insert(gameState.objects, 1)
 
-    gameState.update = ()=>{
-
-    }
-
-    gameState.objects = [grid, functionTracer, backButton, nextButton, mbm, sySlider, tySlider].concat(targets)
-    Planet.winCon(gameState, ()=>functionTracer.solved, nextButton)
-    Planet.unlockScenes(nextScenes, gss)
+    Planet.levelNavigation(gameState, {
+        winCon: () => functionTracer.solved,
+        nextScenes: nextScenes,
+    })
 }
