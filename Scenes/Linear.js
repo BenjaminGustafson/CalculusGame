@@ -5,7 +5,7 @@ import { GameObject } from '../GameObjects/GameObject.js'
 import { unlockScenes, planetScene, dialogueScene } from './Planet.js'
 import * as Experiment from './Experiment.js'
 import * as Planet from './Planet.js'
-import { buildTargetsFromYs, sliderLevel } from './Shared.js'
+import { buildTargetsFromYs, sliderLevel } from './Puzzles.js'
 
 const tileMap = new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0})
 

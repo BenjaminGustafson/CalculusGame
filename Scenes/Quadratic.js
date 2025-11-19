@@ -5,7 +5,7 @@ import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
 import * as Experiment from './Experiment.js'
 import { measurementPuzzle } from './Linear.js'
-import { drawFunctionLevel } from './Shared.js'
+import { drawFunctionLevel } from './Puzzles.js'
 
 /**
  * 

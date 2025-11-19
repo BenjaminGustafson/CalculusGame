@@ -4,7 +4,7 @@ import * as Scene from '../Scene.js'
 import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
 import * as Experiment from './Experiment.js'
-import { sliderLevel, mathBlockTutorial, drawLevel} from './Shared.js'
+import { sliderLevel, mathBlockTutorial, drawLevel, buildTargetsFromFun} from './Puzzles.js'
 
 const tileMap = new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0})
 
@@ -82,8 +82,8 @@ export function loadScene(gameState, sceneName, message = {}){
         case "puzzle": 
             switch(sceneNameSplit[2]){
                 case '1':
-                    powerLevel(gameState, {numSliders:4, sliderSize:15, gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:-2,
-                         nextScenes:["power.puzzle.2"]})
+                    powerLevel(gameState, {numSliders:4, sliderSize:15,
+                         gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:-2,nextScenes:["power.puzzle.2"]})
                     break
                 case '2':
                     powerLevel(gameState, {numSliders:20, sliderSize:10, targetSize:15,gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:-2,
@@ -91,7 +91,7 @@ export function loadScene(gameState, sceneName, message = {}){
                         nextScenes:["power.puzzle.3"]})
                     break
                 case '3':
-                    powerLevel(gameState, {numSliders:4, sliderSize:15, gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:2,
+                    powerLevel(gameState, {numSliders:3, sliderSize:15, gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:2,
                         targetFun: x => x*x*x/6, nextScenes:["power.puzzle.4"]})
                     break
                 case '4':
@@ -121,11 +121,9 @@ export function loadScene(gameState, sceneName, message = {}){
                 case '8':
                     sliderLevel(gameState, {
                         numSliders: 8,
-                        targetFun: x => x*x*x/6,
-                        tracerStart: -8/6,
-                        targetSize:20,
-                        sliderSize:15,
-                        nextScenes: ['power.puzzle.9'],
+                        targetBuilder: buildTargetsFromFun({fun: x=>x*x*x/6, numTargets:8, targetOpts:{size:20}}),
+                        tracerOpts: {tracerStart: -8/6},
+                        sliderOpts: {size:15},
                     })
                     break
                 case '9':

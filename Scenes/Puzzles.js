@@ -7,9 +7,14 @@ import * as Planet from "./Planet.js"
 import {Color, Shapes} from '../util/index.js'
 
 
-
 /**
  * Shared functions for building levels.
+ */
+
+
+/**
+ * Given an array of y values, create a GameObject group of targets
+ * Also takes a grid to put the targets on
  */
 export function targetsFromYs(gameState, {targetYs, grid, targetOpts}){
     const numTargets = targetYs.length
@@ -24,24 +29,42 @@ export function targetsFromYs(gameState, {targetYs, grid, targetOpts}){
     return targetGroup
 }
 
+/**
+ * Builder version of targetsFromYs
+ * Allows target creation to be specified without grid
+ */
 export function buildTargetsFromYs({targetYs, targetOpts}){
     return (gameState, grid) => targetsFromYs(gameState, {targetYs: targetYs, grid:grid, targetOpts: targetOpts})
 }
 
-
-export function targetsFromFun(gameState, {fun, grid, numTargets, targetSize}){
+/**
+ * Given a function, create a GameObject group of targets 
+ * whose value is the function value 
+ */
+export function targetsFromFun(gameState, {fun, grid, numTargets, targetOpts}){
     var targets = []
     for (let i = 0; i < numTargets; i++) {
         const x = grid.gridXMin+(i+1)*(grid.gridWidth/numTargets)
         const y = fun(x)
         if (grid.isInBoundsGridY(y))
-            targets.push(new Target({grid: grid, gridX:x, gridY:y, size:targetSize}))
+            targets.push(new Target({grid: grid, gridX:x, gridY:y, ...targetOpts}))
     }
     const targetGroup = new GameObjectGroup(targets)
     targetGroup.insert(gameState.objects, 2)
     return targetGroup
 }
 
+/**
+ * Builder version of targetsFromFun
+ */
+export function buildTargetsFromFun({fun, numTargets, targetOpts}){
+    return (gameState, grid) => targetsFromFun(gameState, {fun: fun, grid:grid, numTargets:numTargets, targetOpts: targetOpts})
+}
+
+/**
+ * Given a derivative function, create a GameObject group of targets
+ * so that slider values matching the derivative function hit the targets
+ */
 export function targetsFromDdx(gameState, {ddx, grid, numTargets, targetSize, startY=0}){
     var targets = []
     var y = startY
@@ -58,7 +81,14 @@ export function targetsFromDdx(gameState, {ddx, grid, numTargets, targetSize, st
     return targetGroup
 }
 
-export function sliderSetup(gameState, {numSliders, grid, sliderOpts}){
+/**
+ * Evenly spaces sliders on a grid
+ */
+export function sliderSetup(gameState, {
+    numSliders, // number of sliders
+    grid, // the grid to put the sliders on
+    sliderOpts, // parameters to be passed to slider constructor
+}){
     var sliders = []
     const spacing = grid.gridWidth/numSliders
     for (let i = 0; i < numSliders; i++){
@@ -80,6 +110,9 @@ function addToUpdate(gameState, funToAdd){
     }
 }
 
+/**
+ * Put constant lines after sliders
+ */
 export function sliderLinesSetup(gameState, {sliders, grid, lineWidth=5}){
     var sliderLines = []
     const spacing = grid.canvasWidth/sliders.length
@@ -100,6 +133,9 @@ export function sliderLinesSetup(gameState, {sliders, grid, lineWidth=5}){
     return lineGroup
 }
 
+/**
+ * 
+ */
 export function gridSetup({numGrids, gridParams, leftMargin=0, rightMargin=0, topMargin=150, bottomMargin=0,
     gridWidth=400, gridSpacing=50}){
     var grids = []
@@ -137,18 +173,6 @@ export function twoGridSetup(gameState, {
 }
 
 
-export function levelNavigation(gameState, {
-    winCon,
-    nextScenes,
-}){
-    const backButton = Planet.backButton(gameState)
-    backButton.insert(gameState.objects, 0)
-    const nextButton = Planet.nextButton(gameState, nextScenes)
-    nextButton.insert(gameState.objects, 0)
-
-    Planet.winCon(gameState, winCon, nextButton)
-    Planet.unlockScenes(nextScenes, gameState.stored)
-}
 
 export function sliderFunLevel(gameState, {
     numSliders,
@@ -191,7 +215,7 @@ export function sliderFunLevel(gameState, {
  * 
  */
 export function sliderLevel(gameState, {
-    numSliders,
+    numSliders, 
     targetBuilder,
     tracerOpts,
     sliderOpts,
@@ -212,7 +236,7 @@ export function sliderLevel(gameState, {
         ...tracerOpts,
     })
     tracer.insert(gameState.objects,1)
-    levelNavigation(gameState, {
+    Planet.levelNavigation(gameState, {
         winCon: () => tracer.solved,
         nextScenes: nextScenes,
     })
