@@ -286,7 +286,7 @@ export function loadScene(gameState, sceneName, message = {}){
                             new MathBlock({type:MathBlock.VARIABLE, token:"b"}),
                             new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
                         ]
-                        Experiment.ruleGuess(gameState, {planetUnlock:'quadratic', targetBlock:targetBlock, blocks: blocks,
+                        Puzzles.ruleGuess(gameState, {planetUnlock:'quadratic', targetBlock:targetBlock, blocks: blocks,
                             correctDdx:(x,a,b) => a,
                         })
                     }
@@ -708,7 +708,7 @@ export function measurementPuzzle(gameState, {
             sySlider.setSize(syDdxMax, syDdxLen)
             tySlider.setSize(tyDdxMax, tyDdxLen)
             gameState.objects = gameState.objects.concat([gridRight, blockTracer, ddxTracer, field.rootBlock]).concat(adder.targets)
-            Planet.winCon(gameState, ()=>blockTracer.solved, nextButton)
+            Planet.addWinCon(gameState, ()=>blockTracer.solved, nextButton)
         }
         tSlider.active = !playing
         if (playing){
