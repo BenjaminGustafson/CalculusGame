@@ -200,7 +200,7 @@ function drawFunctionLevel (gameState, {
 
     gameState.objects = [gridLeft, gridRight, backButton, nextButton, drawFunction, tracer].concat(targets)    
 
-    //Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+    //Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
 
@@ -300,7 +300,7 @@ function exponentialLevel (gameState, {
         }
     }
 
-    Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
 
@@ -381,7 +381,7 @@ function populationLevel (gameState, {
 
     gameState.objects = [backButton, nextButton, petri, playPauseButton, tSlider, timeLabel,  birthSlider,
          grid, tracer]
-    Planet.winCon(gameState, ()=>false, nextButton)
+    Planet.addWinCon(gameState, ()=>false, nextButton)
     Planet.unlockScenes(nextScenes, gss)
     
 }

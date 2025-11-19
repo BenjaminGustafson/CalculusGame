@@ -455,7 +455,7 @@ function quadDiscLevel (gameState, {
         }
     }
 
-    Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
 
@@ -550,7 +550,7 @@ function quadMathBlockTutorial(gameState, {
     }
 
     gameState.objects = [grid, functionTracer, backButton, nextButton, mbm, sySlider, tySlider].concat(targets)
-    Planet.winCon(gameState, ()=>functionTracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>functionTracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
 

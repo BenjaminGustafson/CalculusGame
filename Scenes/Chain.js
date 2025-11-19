@@ -279,7 +279,7 @@ function chainPlanet(gameState,message){
 //         intTracer.targets = adder.targets
 //     }
     
-//     Planet.winCon(gameState, ()=> false, nextButton)
+//     Planet.addWinCon(gameState, ()=> false, nextButton)
 //     Planet.unlockScenes(nextScenes, gss)
 // }
 
@@ -402,7 +402,7 @@ function compositeFunctionTargetAdder(gameState, {nextScenes=[], innerFun, outer
         yLabel.content = "y = " + outerFun(innerFun(time)).toFixed(2)
     }
     
-    Planet.winCon(gameState, ()=> adder.solved, nextButton)
+    Planet.addWinCon(gameState, ()=> adder.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
 
@@ -552,6 +552,6 @@ function compositeFunctionMathBlock(gameState, {nextScenes=[], innerFun, outerFu
         yLabel.content = "y = " + outerFun(innerFun(time)).toFixed(2)
     }
     
-    Planet.winCon(gameState, ()=> adder.solved, nextButton)
+    Planet.addWinCon(gameState, ()=> adder.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }

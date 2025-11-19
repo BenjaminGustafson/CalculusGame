@@ -503,7 +503,7 @@ function mathBlockTutorials(gameState, {
     }
 
     gameState.objects = [grid, functionTracer, backButton, nextButton, mbm, sySlider, tySlider, uiTip].concat(targets)
-    Planet.winCon(gameState, ()=>functionTracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>functionTracer.solved, nextButton)
     unlockScenes(nextScenes, gss)
 }
 
@@ -669,7 +669,7 @@ export function measurementPuzzle(gameState, {
                     const tracer = new IntegralTracer({grid: gridLeft, originGridY: solutionFun(0), 
                         input: {type:'sliders', sliders:sliders}, targets:adder.targets})
                         gameState.objects = gameState.objects.concat([ gridRight, tracer,...sliders])
-                        Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+                        Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
             }else{
                 
                 sySlider.setSize(syFunMax, syFunLen)
