@@ -170,7 +170,24 @@ export function loadScene(gameState, sceneName, message = {}){
                         blocks: Planet.standardBlocks('power'),
                     })
                     break
-                case '15':
+                case '15':{
+                    const targetBlock = new MathBlock({type: MathBlock.BIN_OP, token:"^", originX: 200, originY: 200})
+                    targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
+                    targetBlock.setChild(1, new MathBlock({type: MathBlock.VARIABLE, token:"n"})) 
+                    const blocks = [
+                        new MathBlock({type:MathBlock.CONSTANT}),
+                        new MathBlock({type:MathBlock.VARIABLE, token:"n"}),
+                        new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
+                        new MathBlock({type:MathBlock.POWER, token:'2'}),
+                        new MathBlock({type:MathBlock.POWER, token:'3'}),
+                        new MathBlock({type:MathBlock.BIN_OP, token:'+'}),
+                        new MathBlock({type:MathBlock.BIN_OP, token:'*'}),
+                        new MathBlock({type:MathBlock.BIN_OP, token:'^'}),
+                    ]
+                    Puzzles.ruleGuess(gameState, {planetUnlock:'quadratic', targetBlock:targetBlock, blocks: blocks,
+                        correctDdx:(x,n) => n*Math.pow(x,n-1),
+                    })
+                }
                     break
                 case '16':
                     break
@@ -181,6 +198,7 @@ export function loadScene(gameState, sceneName, message = {}){
                 case '19':
                     break
                 case '20':
+                    
                     break
 
             }
