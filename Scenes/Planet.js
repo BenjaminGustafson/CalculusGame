@@ -265,15 +265,15 @@ export function standardBlocks(planet){
         case 'quadratic':
             return blocks.slice(0,2)
         case 'power':
-            return blocks.slice(0,3)
-        case 'exponential':
             return blocks.slice(0,4)
+        case 'exponential':
+            return blocks.slice(0,5)
         case 'sine':
-            return blocks.slice(0,6)
-        case 'sum':
             return blocks.slice(0,7)
-        case 'product':
+        case 'sum':
             return blocks.slice(0,8)
+        case 'product':
+            return blocks.slice(0,9)
     }
     
 }

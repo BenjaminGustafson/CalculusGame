@@ -117,8 +117,8 @@ export function loadScene(gameState, sceneName, message = {}){
                     })
                     break
                 case '8':
-                    const numSliders = 4
-                    const startY = -8/6
+                    const numSliders = 8
+                    const startY = -2
                     Puzzles.sliderLevel(gameState, {
                         numSliders: numSliders,
                         targetBuilder: Puzzles.buildTargetsFromDdx({ddx: x=>x*x/2, numTargets:numSliders, targetOpts:{size:20}, startY:startY}),
@@ -127,24 +127,23 @@ export function loadScene(gameState, sceneName, message = {}){
                     })
                     break
                 case '9':
-                    drawLevel(gameState, {
-                        targetFun: x => x*x*x/6,
-                        numTargets: 8,
+                    Puzzles.drawFunctionLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>x*x*x/6, numTargets:8, targetOpts:{size:30}}),
                         tracerStart: -8/6,
-                        targetSize: 20,
-                        nextScenes:  ['power.puzzle.10'],
                     })
                     break
                 case '10':
-                    drawLevel(gameState, {
-                        targetFun: x => -x*x*x/6,
-                        numTargets: 8,
+                    Puzzles.drawFunctionLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>-x*x*x/6, numTargets:8, targetOpts:{size:30}}),
                         tracerStart: 8/6,
-                        targetSize: 20,
-                        nextScenes:  ['power.puzzle.10'],
                     })
                     break
                 case '11':
+                    Puzzles.mathBlockLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>x*x*x/6, numTargets:8, targetOpts:{size:30}}),
+                        tracerOpts: {originGridY: -8/6},
+                        blocks: Planet.standardBlocks('power'),
+                    })
                     break
                 case '12':
                     break
@@ -318,7 +317,7 @@ function powerLevel (gameState, {
         }
     }
 
-    Planet.winCon(gameState, ()=>tracerLeft.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>tracerLeft.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
 

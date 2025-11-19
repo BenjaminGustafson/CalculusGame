@@ -374,7 +374,7 @@ function linearPuzzle1 (gameState, {nextScenes}){
 
     // Objects and update
     gameState.objects = [gridLeft, gridRight, slider, target, tracer, backButton, nextButton, uiTip]
-    Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
 }
 
 // A 2x2 puzzle
@@ -410,7 +410,7 @@ function linearPuzzle2 (gameState, {nextScenes}){
     const nextButton = Planet.nextButton(gameState, nextScenes)
         
     gameState.objects = [gridLeft, gridRight, tracer, backButton, nextButton, uiTip].concat(sliders).concat(targets)
-    Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
     unlockScenes(nextScenes, gss)
 }
 
