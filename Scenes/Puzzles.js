@@ -294,14 +294,16 @@ export function mathBlockLevel(gameState, {
     tracerOpts,
     nextScenes,
     blocks,
+    gridOpts,
+    sliderOpts = {maxValue:2, sliderLength:4, startValue: 1},
 }){
-    const grids = twoGridSetup(gameState)
+    const grids = twoGridSetup(gameState, {gridOpts: gridOpts})
     grids.left.canvasX -= 200
     grids.right.canvasX -= 200
 
-    const sySlider = new Slider({canvasX: 1200, canvasY: 350, maxValue:2, sliderLength:4, startValue: 1, showAxis:true})
+    const sySlider = new Slider({canvasX: 1200, canvasY: 350, ...sliderOpts})
     sySlider.insert(gameState.objects, 0)
-    const tySlider = new Slider({canvasX: 1300, canvasY: 350, maxValue:2, sliderLength:4, showAxis:true})
+    const tySlider = new Slider({canvasX: 1300, canvasY: 350, ...sliderOpts})
     tySlider.insert(gameState.objects, 0)
     const mbField = new MathBlockField({minX:700, minY:100, maxX:1100, maxY:300})
 

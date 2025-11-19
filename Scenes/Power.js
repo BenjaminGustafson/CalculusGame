@@ -170,39 +170,82 @@ export function loadScene(gameState, sceneName, message = {}){
                         blocks: Planet.standardBlocks('power'),
                     })
                     break
-                case '15':{
-                    const targetBlock = new MathBlock({type: MathBlock.BIN_OP, token:"^", originX: 200, originY: 200})
-                    targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
-                    targetBlock.setChild(1, new MathBlock({type: MathBlock.VARIABLE, token:"n"})) 
-                    const blocks = [
-                        new MathBlock({type:MathBlock.CONSTANT}),
-                        new MathBlock({type:MathBlock.VARIABLE, token:"n"}),
-                        new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
-                        new MathBlock({type:MathBlock.POWER, token:'2'}),
-                        new MathBlock({type:MathBlock.POWER, token:'3'}),
-                        new MathBlock({type:MathBlock.BIN_OP, token:'+'}),
-                        new MathBlock({type:MathBlock.BIN_OP, token:'*'}),
-                        new MathBlock({type:MathBlock.BIN_OP, token:'^'}),
-                    ]
-                    Puzzles.ruleGuess(gameState, {planetUnlock:'quadratic', targetBlock:targetBlock, blocks: blocks,
-                        correctDdx:(x,n) => n*Math.pow(x,n-1),
-                    })
-                }
+                case '15':
+                    {
+                        const targetBlock = new MathBlock({type:MathBlock.POWER, token:'4',originX: 100, originY: 250,})
+                        targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
+                        targetBlock.insert(gameState.objects, 1)
+
+                        Puzzles.mathBlockLevel(gameState, {
+                            targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:100, targetOpts:{size:12}}),
+                            tracerOpts: {originGridY: targetBlock.toFunction()(-2)},
+                            blocks: Planet.standardBlocks('power'),
+                            sliderOpts: {maxValue:10, sliderLength:20, startValue: 1, showAxis:true, increment:1},
+                            //gridOpts: {gridXMin:-4, gridYMin:-4,gridXMax:4, gridYMax:4,},
+                        })
+                    }
                     break
                 case '16':
-                    break
+                     {
+                        const targetBlock = new MathBlock({type:MathBlock.POWER, token:'5',originX: 100, originY: 250,})
+                        targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
+                        targetBlock.insert(gameState.objects, 1)
+
+                        Puzzles.mathBlockLevel(gameState, {
+                            targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:200, targetOpts:{size:12}}),
+                            tracerOpts: {originGridY: targetBlock.toFunction()(-2)},
+                            blocks: Planet.standardBlocks('power').concat([new MathBlock({type:MathBlock.POWER, token:'4'})]),
+                            sliderOpts: {maxValue:10, sliderLength:20, startValue: 1, showAxis:true, increment:1},
+                            //gridOpts: {gridXMin:-4 , gridYMin:-4,gridXMax:4, gridYMax:4,},
+                        })
+                    }
+                        break
                 case '17':
+                    {
+                        const targetBlock = new MathBlock({type:MathBlock.POWER, token:'6',originX: 100, originY: 250,})
+                        targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
+                        targetBlock.insert(gameState.objects, 1)
+
+                        Puzzles.mathBlockLevel(gameState, {
+                            targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:200, targetOpts:{size:12}}),
+                            tracerOpts: {originGridY: 64.1},
+                            blocks: Planet.standardBlocks('power').concat([
+                                new MathBlock({type:MathBlock.POWER, token:'4'}),
+                                new MathBlock({type:MathBlock.POWER, token:'5'})
+                            ]),
+                            sliderOpts: {maxValue:10, sliderLength:20, startValue: 1, showAxis:true, increment:1},
+                            //gridOpts: {gridXMin:-4 , gridYMin:-4,gridXMax:4, gridYMax:4,},
+                        })
+                    }
                     break
                 case '18':
                     break
                 case '19':
                     break
                 case '20':
-                    
                     break
 
             }
         break
+        
+        // Old rule guess code
+        // const targetBlock = new MathBlock({type: MathBlock.BIN_OP, token:"^", originX: 200, originY: 200})
+        // targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
+        // targetBlock.setChild(1, new MathBlock({type: MathBlock.VARIABLE, token:"n"})) 
+        // const blocks = [
+        //     new MathBlock({type:MathBlock.CONSTANT}),
+        //     new MathBlock({type:MathBlock.VARIABLE, token:"n"}),
+        //     new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
+        //     new MathBlock({type:MathBlock.POWER, token:'2'}),
+        //     new MathBlock({type:MathBlock.POWER, token:'3'}),
+        //     new MathBlock({type:MathBlock.BIN_OP, token:'+'}),
+        //     new MathBlock({type:MathBlock.BIN_OP, token:'*'}),
+        //     new MathBlock({type:MathBlock.BIN_OP, token:'^'}),
+        // ]
+        // Puzzles.ruleGuess(gameState, {planetUnlock:'quadratic', targetBlock:targetBlock, blocks: blocks,
+        //     correctDdx:(x,n) => n*Math.pow(x,n-1),
+        // })
+    
 
         case 'dialogue':
             powerPlanet(gameState)
