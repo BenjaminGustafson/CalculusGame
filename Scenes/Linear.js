@@ -5,7 +5,8 @@ import { GameObject } from '../GameObjects/GameObject.js'
 import { unlockScenes, planetScene, dialogueScene } from './Planet.js'
 import * as Experiment from './Experiment.js'
 import * as Planet from './Planet.js'
-import { buildTargetsFromYs, sliderLevel } from './Shared.js'
+import * as Puzzles from './Puzzles.js'
+import { buildTargetsFromYs, sliderLevel } from './Puzzles.js'
 
 const tileMap = new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0})
 
@@ -273,7 +274,8 @@ export function loadScene(gameState, sceneName, message = {}){
                         ddxSliderSpacing:2,
                     })
                     break
-                    case '20':{
+                    case '20':
+                        {
                         const targetBlock = new MathBlock({type: MathBlock.BIN_OP, token:"+", originX: 200, originY: 200})
                         const multBlock = new MathBlock({type: MathBlock.BIN_OP, token:"*"})
                         multBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"a"})) 
@@ -286,7 +288,7 @@ export function loadScene(gameState, sceneName, message = {}){
                             new MathBlock({type:MathBlock.VARIABLE, token:"b"}),
                             new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
                         ]
-                        Experiment.ruleGuess(gameState, {planetUnlock:'quadratic', targetBlock:targetBlock, blocks: blocks,
+                        Puzzles.ruleGuess(gameState, {planetUnlock:'quadratic', targetBlock:targetBlock, blocks: blocks,
                             correctDdx:(x,a,b) => a,
                         })
                     }
@@ -310,29 +312,6 @@ export function loadScene(gameState, sceneName, message = {}){
                     dialogueScene(gameState, {nextScenes:[""],  filePath:'./dialogue/linear4.txt'})
                 break
             }
-            break
-
-        
-        case "trial":
-            if (sceneNameSplit[2] == 'rule') {
-                const targetBlock = new MathBlock({type: MathBlock.BIN_OP, token:"+", originX: 200, originY: 200})
-                const multBlock = new MathBlock({type: MathBlock.BIN_OP, token:"*"})
-                multBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"a"})) 
-                multBlock.setChild(1, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
-                targetBlock.setChild(0, multBlock) 
-                targetBlock.setChild(1, new MathBlock({type: MathBlock.VARIABLE, token:"b"}))
-                const blocks = [
-                    new MathBlock({type:MathBlock.CONSTANT}),
-                    new MathBlock({type:MathBlock.VARIABLE, token:"a"}),
-                    new MathBlock({type:MathBlock.VARIABLE, token:"b"}),
-                    new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
-                ]
-                Experiment.ruleGuess(gameState, {planetUnlock:'quadratic', targetBlock:targetBlock, blocks: blocks,
-                    correctDdx:(x,a,b) => a,
-                })
-            } else {
-                Experiment.experimentTrial(gameState, experimentData[sceneNameSplit[2]])
-            } 
             break
     }
 }
@@ -374,7 +353,7 @@ function linearPuzzle1 (gameState, {nextScenes}){
 
     // Objects and update
     gameState.objects = [gridLeft, gridRight, slider, target, tracer, backButton, nextButton, uiTip]
-    Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
 }
 
 // A 2x2 puzzle
@@ -410,7 +389,7 @@ function linearPuzzle2 (gameState, {nextScenes}){
     const nextButton = Planet.nextButton(gameState, nextScenes)
         
     gameState.objects = [gridLeft, gridRight, tracer, backButton, nextButton, uiTip].concat(sliders).concat(targets)
-    Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
     unlockScenes(nextScenes, gss)
 }
 
@@ -503,7 +482,7 @@ function mathBlockTutorials(gameState, {
     }
 
     gameState.objects = [grid, functionTracer, backButton, nextButton, mbm, sySlider, tySlider, uiTip].concat(targets)
-    Planet.winCon(gameState, ()=>functionTracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>functionTracer.solved, nextButton)
     unlockScenes(nextScenes, gss)
 }
 
@@ -669,7 +648,7 @@ export function measurementPuzzle(gameState, {
                     const tracer = new IntegralTracer({grid: gridLeft, originGridY: solutionFun(0), 
                         input: {type:'sliders', sliders:sliders}, targets:adder.targets})
                         gameState.objects = gameState.objects.concat([ gridRight, tracer,...sliders])
-                        Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+                        Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
             }else{
                 
                 sySlider.setSize(syFunMax, syFunLen)
@@ -708,7 +687,7 @@ export function measurementPuzzle(gameState, {
             sySlider.setSize(syDdxMax, syDdxLen)
             tySlider.setSize(tyDdxMax, tyDdxLen)
             gameState.objects = gameState.objects.concat([gridRight, blockTracer, ddxTracer, field.rootBlock]).concat(adder.targets)
-            Planet.winCon(gameState, ()=>blockTracer.solved, nextButton)
+            Planet.addWinCon(gameState, ()=>blockTracer.solved, nextButton)
         }
         tSlider.active = !playing
         if (playing){

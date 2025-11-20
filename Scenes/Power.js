@@ -4,7 +4,7 @@ import * as Scene from '../Scene.js'
 import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
 import * as Experiment from './Experiment.js'
-import { sliderLevel, mathBlockTutorial, drawLevel} from './Shared.js'
+import * as Puzzles from './Puzzles.js'
 
 const tileMap = new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0})
 
@@ -82,8 +82,8 @@ export function loadScene(gameState, sceneName, message = {}){
         case "puzzle": 
             switch(sceneNameSplit[2]){
                 case '1':
-                    powerLevel(gameState, {numSliders:4, sliderSize:15, gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:-2,
-                         nextScenes:["power.puzzle.2"]})
+                    powerLevel(gameState, {numSliders:4, sliderSize:15,
+                         gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:-2,nextScenes:["power.puzzle.2"]})
                     break
                 case '2':
                     powerLevel(gameState, {numSliders:20, sliderSize:10, targetSize:15,gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:-2,
@@ -91,7 +91,7 @@ export function loadScene(gameState, sceneName, message = {}){
                         nextScenes:["power.puzzle.3"]})
                     break
                 case '3':
-                    powerLevel(gameState, {numSliders:4, sliderSize:15, gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:2,
+                    powerLevel(gameState, {numSliders:3, sliderSize:15, gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:2,
                         targetFun: x => x*x*x/6, nextScenes:["power.puzzle.4"]})
                     break
                 case '4':
@@ -100,65 +100,123 @@ export function loadScene(gameState, sceneName, message = {}){
                         nextScenes:["power.puzzle.5"]})
                     break
                 case '5':
-                    mathBlockTutorial(gameState, {
+                    Puzzles.mathBlockTutorial(gameState, {
                         numTargets:20, targetFun: x=>x*x*x,blocks:blocks,
-                        nextScenes:['power.puzzle.6']
                     })
                     
                     break
                 case '6':
-                    mathBlockTutorial(gameState, {
+                    Puzzles.mathBlockTutorial(gameState, {
                         numTargets:20, targetFun: x=>-x*x*x,blocks:blocks,
                         nextScenes:['power.puzzle.7']
                     })
                     break
                 case '7':
-                    mathBlockTutorial(gameState, {
+                    Puzzles.mathBlockTutorial(gameState, {
                         numTargets:20, targetFun: x=>-x*x*x*0.2+0.5,blocks:blocks,
-                        nextScenes:['power.puzzle.8']
                     })
                     break
                 case '8':
-                    sliderLevel(gameState, {
-                        numSliders: 8,
-                        targetFun: x => x*x*x/6,
-                        tracerStart: -8/6,
-                        targetSize:20,
-                        sliderSize:15,
-                        nextScenes: ['power.puzzle.9'],
+                    const numSliders = 8
+                    const startY = -2
+                    Puzzles.sliderLevel(gameState, {
+                        numSliders: numSliders,
+                        targetBuilder: Puzzles.buildTargetsFromDdx({ddx: x=>x*x/2, numTargets:numSliders, targetOpts:{size:20}, startY:startY}),
+                        tracerOpts: {originGridY: startY},
+                        sliderOpts: {size:15},
                     })
                     break
                 case '9':
-                    drawLevel(gameState, {
-                        targetFun: x => x*x*x/6,
-                        numTargets: 8,
+                    Puzzles.drawFunctionLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>x*x*x/6, numTargets:8, targetOpts:{size:30}}),
                         tracerStart: -8/6,
-                        targetSize: 20,
-                        nextScenes:  ['power.puzzle.10'],
                     })
                     break
                 case '10':
-                    drawLevel(gameState, {
-                        targetFun: x => -x*x*x/6,
-                        numTargets: 8,
+                    Puzzles.drawFunctionLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>-x*x*x/6, numTargets:8, targetOpts:{size:30}}),
                         tracerStart: 8/6,
-                        targetSize: 20,
-                        nextScenes:  ['power.puzzle.10'],
                     })
                     break
                 case '11':
+                    Puzzles.mathBlockLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>x*x*x/6, numTargets:8, targetOpts:{size:30}}),
+                        tracerOpts: {originGridY: -8/6},
+                        blocks: Planet.standardBlocks('power'),
+                    })
                     break
-                case '12':
+                case '12':{
+                    const numSliders = 8
+                    const startY = 2
+                    Puzzles.sliderLevel(gameState, {
+                        numSliders: numSliders,
+                        targetBuilder: Puzzles.buildTargetsFromDdx({ddx: x=>x*x*x/4, numTargets:numSliders, targetOpts:{size:20}, startY:startY}),
+                        tracerOpts: {originGridY: startY},
+                        sliderOpts: {size:15},
+                    })
+                }
                     break
                 case '13':
+                    Puzzles.mathBlockLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>x*x*x*x/8, numTargets:100, targetOpts:{size:12}}),
+                        tracerOpts: {originGridY: 2},
+                        blocks: Planet.standardBlocks('power'),
+                    })
                     break
                 case '14':
+                    Puzzles.mathBlockLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>-x*x*x*x/4+2, numTargets:100, targetOpts:{size:12}}),
+                        tracerOpts: {originGridY: -2},
+                        blocks: Planet.standardBlocks('power'),
+                    })
                     break
                 case '15':
+                    {
+                        const targetBlock = new MathBlock({type:MathBlock.POWER, token:'4',originX: 100, originY: 250,})
+                        targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
+                        targetBlock.insert(gameState.objects, 1)
+
+                        Puzzles.mathBlockLevel(gameState, {
+                            targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:100, targetOpts:{size:12}}),
+                            tracerOpts: {originGridY: targetBlock.toFunction()(-2)},
+                            blocks: Planet.standardBlocks('power'),
+                            sliderOpts: {maxValue:10, sliderLength:20, startValue: 1, showAxis:true, increment:1},
+                            //gridOpts: {gridXMin:-4, gridYMin:-4,gridXMax:4, gridYMax:4,},
+                        })
+                    }
                     break
                 case '16':
-                    break
+                     {
+                        const targetBlock = new MathBlock({type:MathBlock.POWER, token:'5',originX: 100, originY: 250,})
+                        targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
+                        targetBlock.insert(gameState.objects, 1)
+
+                        Puzzles.mathBlockLevel(gameState, {
+                            targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:200, targetOpts:{size:12}}),
+                            tracerOpts: {originGridY: targetBlock.toFunction()(-2)},
+                            blocks: Planet.standardBlocks('power').concat([new MathBlock({type:MathBlock.POWER, token:'4'})]),
+                            sliderOpts: {maxValue:10, sliderLength:20, startValue: 1, showAxis:true, increment:1},
+                            //gridOpts: {gridXMin:-4 , gridYMin:-4,gridXMax:4, gridYMax:4,},
+                        })
+                    }
+                        break
                 case '17':
+                    {
+                        const targetBlock = new MathBlock({type:MathBlock.POWER, token:'6',originX: 100, originY: 250,})
+                        targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
+                        targetBlock.insert(gameState.objects, 1)
+
+                        Puzzles.mathBlockLevel(gameState, {
+                            targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:200, targetOpts:{size:12}}),
+                            tracerOpts: {originGridY: 64.1},
+                            blocks: Planet.standardBlocks('power').concat([
+                                new MathBlock({type:MathBlock.POWER, token:'4'}),
+                                new MathBlock({type:MathBlock.POWER, token:'5'})
+                            ]),
+                            sliderOpts: {maxValue:10, sliderLength:20, startValue: 1, showAxis:true, increment:1},
+                            //gridOpts: {gridXMin:-4 , gridYMin:-4,gridXMax:4, gridYMax:4,},
+                        })
+                    }
                     break
                 case '18':
                     break
@@ -169,6 +227,25 @@ export function loadScene(gameState, sceneName, message = {}){
 
             }
         break
+        
+        // Old rule guess code
+        // const targetBlock = new MathBlock({type: MathBlock.BIN_OP, token:"^", originX: 200, originY: 200})
+        // targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
+        // targetBlock.setChild(1, new MathBlock({type: MathBlock.VARIABLE, token:"n"})) 
+        // const blocks = [
+        //     new MathBlock({type:MathBlock.CONSTANT}),
+        //     new MathBlock({type:MathBlock.VARIABLE, token:"n"}),
+        //     new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
+        //     new MathBlock({type:MathBlock.POWER, token:'2'}),
+        //     new MathBlock({type:MathBlock.POWER, token:'3'}),
+        //     new MathBlock({type:MathBlock.BIN_OP, token:'+'}),
+        //     new MathBlock({type:MathBlock.BIN_OP, token:'*'}),
+        //     new MathBlock({type:MathBlock.BIN_OP, token:'^'}),
+        // ]
+        // Puzzles.ruleGuess(gameState, {planetUnlock:'quadratic', targetBlock:targetBlock, blocks: blocks,
+        //     correctDdx:(x,n) => n*Math.pow(x,n-1),
+        // })
+    
 
         case 'dialogue':
             powerPlanet(gameState)
@@ -320,7 +397,7 @@ function powerLevel (gameState, {
         }
     }
 
-    Planet.winCon(gameState, ()=>tracerLeft.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>tracerLeft.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
 

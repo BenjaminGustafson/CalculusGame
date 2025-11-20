@@ -257,7 +257,7 @@ function sumMathBlockLevel (gameState, {
         }
     }
 
-    Planet.winCon(gameState, ()=>sumTracer.solved&&f1Tracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>sumTracer.solved&&f1Tracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
 
@@ -327,6 +327,6 @@ function sumSliderLevel (gameState, {
     gameState.update = ()=> {
     }
 
-    Planet.winCon(gameState, ()=>sumTracer.solved&&f1Tracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>sumTracer.solved&&f1Tracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }

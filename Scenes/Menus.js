@@ -149,9 +149,9 @@ export function planetMap (gameState){
     const planetPositions = {
         'linear':[100,400],
         'quadratic':[300,400],
-        'exponential':[500,400],
-        'power':[700,400],
-        'sine':[900,400],
+        'power':[500,400],
+        'exponential':[800,300],
+        'sine':[800,600],
         'sum':[1100,400],
         'product':[1300,400],
         'chain':[1500,400]

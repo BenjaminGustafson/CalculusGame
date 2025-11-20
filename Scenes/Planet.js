@@ -2,6 +2,11 @@ import {Color, Shapes} from '../util/index.js'
 import {PuzzleComputer, Player, Grid, FunctionTracer, Button, ImageObject, IntegralTracer, MathBlock, MathBlockManager, MathBlockField, Slider, Target, TargetAdder, TextBox, DialogueBox} from '../GameObjects/index.js'
 import * as Scene from '../Scene.js'
 
+/**
+ * 
+ * Standard planet setup
+ */
+
 export function planetScene(gameState, {
     planetName,
     puzzleLocations,
@@ -163,6 +168,118 @@ export function planetScene(gameState, {
 
 }
 
+
+
+/**
+ * Standard logic for level navigation 
+ */
+export function levelNavigation(gameState, {
+    winCon, // boolean function for win condition
+    nextScenes, // array of scenes to unlock
+}){
+    if (nextScenes == null){
+        nextScenes = defaultNextScenes(gameState)
+        console.log('default', nextScenes)
+    }
+    const backB = backButton(gameState)
+    backB.insert(gameState.objects, 0)
+    const nextB = nextButton(gameState, nextScenes)
+    nextB.insert(gameState.objects, 0)
+
+    addWinCon(gameState, winCon, nextB)
+    unlockScenes(nextScenes, gameState.stored)
+}
+
+/**
+ *  Planet scene navigation
+ * 
+ */
+export function unlockScenes (scenes, gss){
+    scenes.forEach(p => {
+        if (gss.completedScenes[p] != 'complete') gss.completedScenes[p] = 'in progress'
+    })
+}
+
+export function backButton (gameState){
+    return new Button({originX:50, originY: 50, width:100, height: 100,
+        onclick: ()=>Scene.loadScene(gameState,gameState.stored.planet),
+        label:"↑"
+    })
+}
+
+/**
+ * Create the button to go to the next scene 
+ */
+export function nextButton (gameState, nextScenes){
+    const button = new Button({originX:200, originY: 50, width:100, height: 100,
+        onclick: ()=>Scene.loadScene(gameState, gameState.stored.planet, {goTo:nextScenes[0]}), label:"→"})
+    button.active = false
+    return button
+}
+
+/**
+ * If no next scene specified, go to the next numerically
+ * E.g. If sceneName is linear.puzzle.1, returns ['linear.puzzle.2'] 
+ */
+function defaultNextScenes(gameState){
+    const parts = gameState.stored.sceneName.split('.')
+    const last = parts[parts.length - 1]
+    const n = parseInt(last.replace(/\D+/g, ''), 10)
+    parts[parts.length - 1] = `${n + 1}`
+    return [parts.join('.')]
+}
+
+export function addWinCon(gameState, condition, nextButton){
+    gameState.solved = false
+    const oldUpdate = gameState.update
+    gameState.update = () => {
+        oldUpdate()
+        if (!gameState.solved && condition()){
+            gameState.solved = true
+            gameState.stored.completedScenes[gameState.stored.sceneName] = 'complete'
+            if (nextButton != null){
+                nextButton.active = true
+                nextButton.bgColor = Color.blue
+            }
+        }
+    }
+}
+
+
+
+// --------------------- Other helpers ----------------------------------
+
+export function standardBlocks(planet){
+    const blocks = [
+        new MathBlock({type:MathBlock.CONSTANT}),
+        new MathBlock({type:MathBlock.VARIABLE, token:'x'}),
+        new MathBlock({type:MathBlock.POWER, token:'2'}),
+        new MathBlock({type:MathBlock.POWER, token:'3'}),
+        new MathBlock({type:MathBlock.EXPONENT, token:'e'}),
+        new MathBlock({type:MathBlock.FUNCTION, token:'sin'}),
+        new MathBlock({type:MathBlock.FUNCTION, token:'cos'}),
+        new MathBlock({type:MathBlock.BIN_OP, token:'+'}),
+        new MathBlock({type:MathBlock.BIN_OP, token:'*'}),
+    ]
+    switch (planet.toLowerCase()){
+        case 'linear':
+            return blocks.slice(0,1)
+        case 'quadratic':
+            return blocks.slice(0,2)
+        case 'power':
+            return blocks.slice(0,4)
+        case 'exponential':
+            return blocks.slice(0,5)
+        case 'sine':
+            return blocks.slice(0,7)
+        case 'sum':
+            return blocks.slice(0,8)
+        case 'product':
+            return blocks.slice(0,9)
+    }
+    
+}
+
 /**
  * 
  * Puts a dialogue pop up over the current scene.
@@ -262,69 +379,4 @@ export function unlockPopup(gameState, {itemImage, topText, onComplete = () => {
         }
     }
     gameState.objects.push(popup)
-}
-
-export function unlockScenes (scenes, gss){
-    scenes.forEach(p => {
-        if (gss.completedScenes[p] != 'complete') gss.completedScenes[p] = 'in progress'
-    })
-}
-
-export function backButton (gameState){
-    return new Button({originX:50, originY: 50, width:100, height: 100,
-        onclick: ()=>Scene.loadScene(gameState,gameState.stored.planet),
-        label:"↑"
-    })
-}
-
-export function nextButton (gameState, nextScenes){
-    const button = new Button({originX:200, originY: 50, width:100, height: 100,
-        onclick: ()=>Scene.loadScene(gameState, gameState.stored.planet, {goTo:nextScenes[0]}), label:"→"})
-    button.active = false
-    return button
-}
-
-export function winCon(gameState, condition, nextButton){
-    const oldUpdate = gameState.update
-    gameState.update = () => {
-        oldUpdate()
-        if (condition()){
-            gameState.stored.completedScenes[gameState.stored.sceneName] = 'complete'
-            if (nextButton != null){
-                nextButton.active = true
-                nextButton.bgColor = Color.blue
-            }
-        }
-    }
-}
-
-export function standardBlocks(planet){
-    const blocks = [
-        new MathBlock({type:MathBlock.CONSTANT}),
-        new MathBlock({type:MathBlock.VARIABLE, token:'x'}),
-        new MathBlock({type:MathBlock.POWER, token:'2'}),
-        new MathBlock({type:MathBlock.POWER, token:'3'}),
-        new MathBlock({type:MathBlock.EXPONENT, token:'e'}),
-        new MathBlock({type:MathBlock.FUNCTION, token:'sin'}),
-        new MathBlock({type:MathBlock.FUNCTION, token:'cos'}),
-        new MathBlock({type:MathBlock.BIN_OP, token:'+'}),
-        new MathBlock({type:MathBlock.BIN_OP, token:'*'}),
-    ]
-    switch (planet.toLowerCase()){
-        case 'linear':
-            return blocks.slice(0,1)
-        case 'quadratic':
-            return blocks.slice(0,2)
-        case 'power':
-            return blocks.slice(0,3)
-        case 'exponential':
-            return blocks.slice(0,4)
-        case 'sine':
-            return blocks.slice(0,6)
-        case 'sum':
-            return blocks.slice(0,7)
-        case 'product':
-            return blocks.slice(0,8)
-    }
-    
 }

@@ -5,7 +5,7 @@ import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
 import * as Experiment from './Experiment.js'
 import { measurementPuzzle } from './Linear.js'
-import { drawFunctionLevel } from './Shared.js'
+import * as Puzzles from './Puzzles.js'
 
 /**
  * 
@@ -121,8 +121,8 @@ export function loadScene(gameState, sceneName, message = {}){
         case "puzzle": 
             switch(sceneNameSplit[2]){
                 case '1':{
-
-                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.2"],targetYs:[1], targetSize:50})
+                    Puzzles.drawFunctionLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[1], targetOpts:{size:50}})})
                     const uiTip = {
                         update: function(ctx){
                             Color.setColor(ctx, Color.lightGray)
@@ -136,21 +136,45 @@ export function loadScene(gameState, sceneName, message = {}){
                 }
                     break
                 case '2':
-                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.3"],targetYs:[-1,0],targetSize:50})
+                    Puzzles.drawFunctionLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[-1,0], targetOpts:{size:50}})})
                     break
                 case '3':
-                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.4"],targetYs:[0.5,1,1.5,2],targetSize:40})
+                    Puzzles.drawFunctionLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[0.5,1,1.5,2], targetOpts:{size:40}})})
                     break
                 case '4':
-                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.5"],targetYs:[-1.5,-2,-1.5,0],targetSize:40})
+                    Puzzles.drawFunctionLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[-1.5,-2,-1.5,0], targetOpts:{size:40}})})
                     break
                 case '5':
-                    quadDiscLevel(gameState, {numSliders:4, nextScenes:["quadratic.puzzle.6"], ddx: x=>x, tracerStart:2})
+                    {
+                        const numSliders = 4
+                        const tracerStart = 2
+                        Puzzles.sliderLevel(gameState, {
+                            numSliders:numSliders,
+                            targetBuilder:Puzzles.buildTargetsFromDdx({ddx:x=>x, numTargets: numSliders, startY:tracerStart, targetOpts:{size:20}}),
+                            tracerOpts: {originGridY:tracerStart},
+                        })
+                    }
                     break
                 case '6':
-                    quadDiscLevel(gameState, {numSliders:8, nextScenes:["quadratic.puzzle.7"], ddx: x=>x, tracerStart:2})
+                    Puzzles.sliderLevelFromDdx(gameState, {
+                        ddx: x=>x, 
+                        numSliders: 8,
+                        tracerStart:2,
+                    })
                     break
                 case '7':
+                    {
+                        const numSliders = 20
+                        const tracerStart = 2
+                        Puzzles.sliderLevel(gameState, {
+                            numSliders:numSliders,
+                            targetBuilder:Puzzles.buildTargetsFromDdx({ddx:x=>x, numTargets: numSliders, startY:tracerStart, targetOpts:{size:20}}),
+                            tracerOpts: {originGridY:tracerStart},
+                        })
+                    }
                     quadDiscLevel(gameState, {numSliders:20, withMathBlock:true, nextScenes:["quadratic.puzzle.8"], ddx: x=>x, tracerStart:2})
                     break
                 case '8':
@@ -300,29 +324,44 @@ export function loadScene(gameState, sceneName, message = {}){
                         funMax: 10, funMin:0, 
                     })
                     break
-                case '20':{
-                    const targetBlock = new MathBlock({type: MathBlock.BIN_OP, token:"+", originX: 200, originY: 200})
-                    const multBlock = new MathBlock({type: MathBlock.BIN_OP, token:"*"})
-                    multBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"a"})) 
-                    const squareBlock = new MathBlock({type: MathBlock.POWER, token:'2'})
-                    multBlock.setChild(1, squareBlock)
-                    squareBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
-                    targetBlock.setChild(0, multBlock) 
-                    targetBlock.setChild(1, new MathBlock({type: MathBlock.VARIABLE, token:"b"}))
-                    const blocks = [
-                        new MathBlock({type:MathBlock.CONSTANT}),
-                        new MathBlock({type:MathBlock.VARIABLE, token:"a"}),
-                        new MathBlock({type:MathBlock.VARIABLE, token:"b"}),
-                        new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
-                        new MathBlock({type:MathBlock.BIN_OP, token:"*"}),
-                    ]
-                    Experiment.ruleGuess(gameState, {planetUnlock:'exponential', targetBlock:targetBlock, blocks: blocks,
-                        correctDdx:(x,a,b) => 2 * a * x,
-                        initA:0.1,
-                        initB:-5,
-                    })
-                }
+                case '20':
+                    {
+                        const targetBlock = new MathBlock({type:MathBlock.POWER, token:'2',originX: 100, originY: 250,})
+                        targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
+                        targetBlock.insert(gameState.objects, 1)
+
+                        Puzzles.mathBlockLevel(gameState, {
+                            targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:100, targetOpts:{size:12}}),
+                            blocks: Planet.standardBlocks('quadratic'),
+                            sliderOpts: {maxValue:5, sliderLength:10, startValue: 1, showAxis:true, increment:1},
+                            //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
+                            tracerOpts: {originGridY: targetBlock.toFunction()(-2)},
+                            nextScenes: ["planetMap"],
+                        })
+                    }
                 break
+                // {
+                //     const targetBlock = new MathBlock({type: MathBlock.BIN_OP, token:"+", originX: 200, originY: 200})
+                //     const multBlock = new MathBlock({type: MathBlock.BIN_OP, token:"*"})
+                //     multBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"a"})) 
+                //     const squareBlock = new MathBlock({type: MathBlock.POWER, token:'2'})
+                //     multBlock.setChild(1, squareBlock)
+                //     squareBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
+                //     targetBlock.setChild(0, multBlock) 
+                //     targetBlock.setChild(1, new MathBlock({type: MathBlock.VARIABLE, token:"b"}))
+                //     const blocks = [
+                //         new MathBlock({type:MathBlock.CONSTANT}),
+                //         new MathBlock({type:MathBlock.VARIABLE, token:"a"}),
+                //         new MathBlock({type:MathBlock.VARIABLE, token:"b"}),
+                //         new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
+                //         new MathBlock({type:MathBlock.BIN_OP, token:"*"}),
+                //     ]
+                //     Experiment.ruleGuess(gameState, {planetUnlock:'exponential', targetBlock:targetBlock, blocks: blocks,
+                //         correctDdx:(x,a,b) => 2 * a * x,
+                //         initA:0.1,
+                //         initB:-5,
+                //     })
+                // }
             }
         break
 
@@ -455,7 +494,7 @@ function quadDiscLevel (gameState, {
         }
     }
 
-    Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
 
@@ -550,7 +589,7 @@ function quadMathBlockTutorial(gameState, {
     }
 
     gameState.objects = [grid, functionTracer, backButton, nextButton, mbm, sySlider, tySlider].concat(targets)
-    Planet.winCon(gameState, ()=>functionTracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>functionTracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
 
