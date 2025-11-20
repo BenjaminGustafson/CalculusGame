@@ -1,57 +1,37 @@
+# Calculus Game
 
+A puzzle game that teaches calculus.
 
-The webpage contains only a canvas object. 
-
-The canvas is fixed to a 16:9 ratio. This allows us to use absolute coordinates for drawing things.
-
+![Image showing gameplay](images/quadDemo.png)
 
 ## Main.js
 
-The main app runs from here. It contains the canvas object
+The main app runs from here.
 
+The game runs as a static webpage.
+Graphics are drawn to a single canvas using the Canvas API. 
+The canvas is fixed to a 16:9 ratio.
 
-## Scene.js
+We keep a gameState object that contains a list of GameObjects and stored information.
+In the main loop we update each GameObject.
 
-A scene is a level or a menu. This file contains all of the data
-for the scenes.
+## Scene
+
+A scene is a level or a menu.
+The Scenes.js file handles loading of scenes.
+Scene data is organized by planet.
+E.g. Linear.js contains all of the levels for Linear Planet.
 
 ## Game Objects
 
-Game objects are an abstract class, but there are no abstract classes in 
-javascript. 
-
-Required methods:
-- draw(ctx)
-Optional methods:
-- mouseMove(x,y) checks if the mouse is over the object and returns the grab priority of that object, or -1 if the mouse is not over the object
-- grab(x,y) called if the grab is successful
-- release(x,y) called when the object is grabbed and then released.
+Every object drawn to the screen (e.g. buttons, sliders, sprites, text) is a GameObject.
 
 
-### Tracer.js
+## util
 
-### FunctionTracer.js
+The util folder contains utilities like functions for drawing and color palette.
 
-### ContinuousTracer.js
+## Assets
 
-Why do we have 3 tracer objects?
-
-
-### Grid.js
-
-
-### Slider.js
-
-### Navbutton.js
-
-
-
-## Utilities
-
-### Shapes.js
-
-### SyntaxTree
-
-### Color.js
-
-Defines the color palette.
+Stored in images and audio folder.
+The dialogue folder contains text data for dialogue. 
