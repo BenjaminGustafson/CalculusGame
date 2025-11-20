@@ -264,7 +264,7 @@ function productSliderLevel (gameState, {
     gameState.update = ()=> {
     }
 
-    Planet.winCon(gameState, ()=>prodTracer.solved&&f1Tracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>prodTracer.solved&&f1Tracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
 
@@ -346,7 +346,7 @@ function productRectangleLevel(gameState, {
         rectangle.dt = dxSlider.value
     }
 
-   Planet.winCon(gameState, ()=>false, nextButton)
+   Planet.addWinCon(gameState, ()=>false, nextButton)
    Planet.unlockScenes(nextScenes, gss)
 }
 

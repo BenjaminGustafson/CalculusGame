@@ -444,6 +444,8 @@ export class MathBlock extends GameObject{
                         return x =>  this.translateY + this.scaleY*(this.children[0].toFunction(constants)(x) * this.children[1].toFunction(constants)(x))
                     case "/":
                         return x =>  this.translateY + this.scaleY*(this.children[0].toFunction(constants)(x) / this.children[1].toFunction(constants)(x))
+                    case "^":
+                        return x =>  this.translateY + this.scaleY*(Math.pow(this.children[0].toFunction(constants)(x), this.children[1].toFunction(constants)(x)))
                     default:
                         return null
                 }

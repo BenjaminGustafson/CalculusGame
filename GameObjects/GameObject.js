@@ -27,10 +27,8 @@ export class GameObject {
 
 
     insert(list, z=0){
-        console.log('insert', list, z)
         this.z = z
         for (let i = list.length-1; i>=0; i--){
-            console.log(i, list[i])
             if (list[i].z < this.z){
                 list[i+1] = this
                 return

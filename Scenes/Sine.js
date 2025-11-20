@@ -268,7 +268,7 @@ function sineLevel (gameState, {
         }
     }
 
-    Planet.winCon(gameState, ()=>tracerLeft.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>tracerLeft.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
 
@@ -311,7 +311,7 @@ function springLevel(gameState, {
             spring.massSize = 100 / spring.frequency
         }
     }
-    Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
 

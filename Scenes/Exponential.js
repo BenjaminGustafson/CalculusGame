@@ -208,7 +208,7 @@ function drawFunctionLevel (gameState, {
 
     gameState.objects = [gridLeft, gridRight, backButton, nextButton, drawFunction, tracer].concat(targets)    
 
-    //Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+    //Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
 
@@ -308,7 +308,7 @@ function exponentialLevel (gameState, {
         }
     }
 
-    Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
 }
 
