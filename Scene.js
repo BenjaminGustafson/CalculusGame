@@ -14,7 +14,7 @@ import * as Chain from './Scenes/Chain.js'
 
 export const CANVAS_WIDTH = 1600
 export const CANVAS_HEIGHT = 900
-export const PLANETS = ['linear', 'quadratic']
+export const PLANETS = ['linear', 'quadratic', 'power', 'exponential', 'sine', 'sum', 'product', 'chain']
 
 export function loadSceneWithTransition(gameState, sceneName, {x = 800, y=450, out=false}, message = {}){
     const transitionTime = 1000
@@ -118,11 +118,27 @@ function journal(gameState){
     const journalPopup = {
         update: function(ctx, audio, mouse){
             Color.setColor(ctx, Color.white)
-            ctx.font = "40px monospace"
+            ctx.font = "30px monospace"
             ctx.textBaseline = 'alphabetic'
             ctx.textAlign = 'left'
-            ctx.fillText(`Linear:`,200,150)
-            ctx.fillText(`f(x) = ax+b => f'(x) = a`,200,200)
+            if (gameState.stored.completedScenes['linear.puzzle.20'] == 'complete')
+                ctx.fillText(`Linear: f(x) = ax+b => f'(x) = a`,200,100)
+            if (gameState.stored.completedScenes['quadratic.puzzle.20'] == 'complete')
+                ctx.fillText(`Quadratic: f(x) = x^2 => f'(x) = 2x`,200,150)
+            if (gameState.stored.completedScenes['power.puzzle.20'] == 'complete')
+                ctx.fillText(`Power: f(x) = x^n => f'(x) = n x^(n-1)`,200,200)
+            if (gameState.stored.completedScenes['exponential.puzzle.20'] == 'complete')
+                ctx.fillText(`Exponential: f(x) = e^x => f'(x) = e^x`,200,250)
+            if (gameState.stored.completedScenes['sine.puzzle.20'] == 'complete')
+                ctx.fillText(`Sine: f(x) = sine(x) => f'(x) = cos(x)`,200,250)
+            if (gameState.stored.completedScenes['sine.puzzle.20'] == 'complete')
+                ctx.fillText(`Cosine: f(x) = cos(x) => f'(x) = -sin(x)`,200,250)
+            if (gameState.stored.completedScenes['sum.puzzle.20'] == 'complete')
+                ctx.fillText(`Sum: h(x) = f(x) + g(x) => h'(x) = f'(x) + g'(x)`,200,250)
+            if (gameState.stored.completedScenes['product.puzzle.20'] == 'complete')
+                ctx.fillText(`Product: h(x) = f(x) g(x) => h'(x) = f'(x) g(x) + g'(x) f(x)`,200,250)
+            if (gameState.stored.completedScenes['chain.puzzle.20'] == 'complete')
+                ctx.fillText(`Chain: h(x) = f(g(x)) => h'(x) = f'(g(x)) g'(x)`,200,250)
         } 
     }
     const exitButton = new GameObjects.Button({originX:1525, originY:25, width: 50, height:50, label:'X',
