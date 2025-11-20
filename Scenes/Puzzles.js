@@ -159,13 +159,6 @@ export function gridSetup({numGrids, gridParams, leftMargin=0, rightMargin=0, to
 }
 
 
-
-function mathBlockSliderLevel(gameState, {
-
-}){
-
-}
-
 export function twoGridSetup(gameState, {
     gridOpts,
 }={}){
@@ -186,41 +179,6 @@ export function threeGridSetup(gameState, {
     const gridMiddle = new Grid({canvasX: 900, canvasY:350, ...gridOpts})
     gridMiddle.insert(gameState.objects)
     return {left:gridLeft, right:gridRight, middle:gridMiddle}
-}
-
-
-
-
-export function sliderFunLevel(gameState, {
-    numSliders,
-    targetFun,
-    tracerOpts,
-    sliderOpts,
-    targetOpts,
-    nextScenes,
-}){
-    const grids = twoGridSetup(gameState)
-    const tracer = new IntegralTracer({
-        grid: grids.left,
-        input: {type:'sliders', 
-            sliders: sliderSetup(gameState, {
-                numSliders:numSliders,
-                grid:grids.right,
-                sliderOpts:sliderOpts}).objects
-        },
-        targets: targetsFromFun(gameState, {
-            fun: targetFun,
-            grid:grids.left,
-            numTargets: numSliders,
-            targetOpts:targetOpts,
-        }).objects,
-        tracerOpts:tracerOpts,
-    })
-    tracer.insert(gameState.objects,1)
-    levelNavigation(gameState, {
-        winCon: tracer.solved,
-        nextScenes: nextScenes,
-    })
 }
 
 
@@ -259,6 +217,29 @@ export function sliderLevel(gameState, {
     })
 }
 
+/**
+ * 
+ * Given the desired derivative for the solution, create a slider level 
+ * 
+ */
+export function sliderLevelFromDdx(gameState, {
+    ddx,
+    numSliders,
+    tracerStart,
+}){
+    sliderLevel(gameState, {
+        numSliders:numSliders,
+        targetBuilder: buildTargetsFromDdx({
+            ddx:ddx,
+            numTargets: numSliders,
+            startY:tracerStart,
+            targetOpts:{size:20}
+        }),
+        tracerOpts: {originGridY:tracerStart},
+    })
+}
+
+
 export function tripleGraphSliderLevel(gameState, {
     numSliders, 
     targetBuilder,
@@ -287,23 +268,25 @@ export function tripleGraphSliderLevel(gameState, {
     })
 }
 
-
-
-export function mathBlockLevel(gameState, {
+/**
+ * 
+ * This should somehow use slider level and mathblock level...
+ */
+export function mathBlockSliderLevel(gameState, {
+    numSliders, 
     targetBuilder,
     tracerOpts,
+    mbSliderOpts,
+    sliderOpts,
     nextScenes,
-    blocks,
-    gridOpts,
-    sliderOpts = {maxValue:2, sliderLength:4, startValue: 1},
 }){
-    const grids = twoGridSetup(gameState, {gridOpts: gridOpts})
+    const grids = twoGridSetup(gameState)
     grids.left.canvasX -= 200
     grids.right.canvasX -= 200
 
-    const sySlider = new Slider({canvasX: 1200, canvasY: 350, ...sliderOpts})
+    const sySlider = new Slider({canvasX: 1200, canvasY: 350, ...mbSliderOpts})
     sySlider.insert(gameState.objects, 0)
-    const tySlider = new Slider({canvasX: 1300, canvasY: 350, ...sliderOpts})
+    const tySlider = new Slider({canvasX: 1300, canvasY: 350, ...mbSliderOpts})
     tySlider.insert(gameState.objects, 0)
     const mbField = new MathBlockField({minX:700, minY:100, maxX:1100, maxY:300})
 
@@ -317,6 +300,95 @@ export function mathBlockLevel(gameState, {
         funTracers: [ funTracer ],
     })
     mbm.insert(gameState.objects, 10)
+
+    const sliders = sliderSetup(gameState, {
+        numSliders:numSliders,
+        grid:grids.right,
+        sliderOpts:sliderOpts}).objects
+    sliderLinesSetup(gameState, {sliders: sliders, grid:grids.right})
+    const tracer = new IntegralTracer({
+        grid: grids.left,
+        input: {type:'sliders',
+            sliders: sliders
+        },
+        targets: targetBuilder(gameState, grids.left).objects,
+        ...tracerOpts,
+    })
+    tracer.insert(gameState.objects,1)
+
+    gameState.update = ()=>{
+        if (mbField.rootBlock != null){
+            const fun = mbField.rootBlock.toFunction()
+            if (fun != null){
+                for (let i = 0; i < numSliders; i++){
+                    sliders[i].moveToValue(fun(sliders[i].gridPos))
+                }
+            }
+        }
+    }
+
+    Planet.levelNavigation(gameState, {
+        winCon: () => tracer.solved,
+        nextScenes: nextScenes,
+    })
+}
+
+function mathBlockSetup (gameState, {
+    sliderOpts,
+    blocks,
+    grid,
+}){
+    const {sySlider, tySlider} = mathBlockSlidersSetup(gameState, {sliderOpts:sliderOpts})
+    const mbField = new MathBlockField({minX:700, minY:100, maxX:1100, maxY:300})
+
+    const funTracer = new FunctionTracer({grid:grid})
+    funTracer.insert(gameState.objects, 1)
+    
+    const mbm = new MathBlockManager({blocks : blocks,
+        toolBarX: 1400, toolBarY:150,
+        scaleYSlider: sySlider, translateYSlider:tySlider,
+        blockFields: [ mbField ],
+        funTracers: [ funTracer ],
+    })
+    mbm.insert(gameState.objects, 10)
+
+    return {mbField:mbField, funTracer:funTracer}
+}
+
+/**
+ * Creates the two sliders needed for mathblocks
+ */
+function mathBlockSlidersSetup(gameState, {
+    sliderOpts,
+}){
+    const sySlider = new Slider({canvasX: 1200, canvasY: 350, maxValue:2,
+        sliderLength:4, startValue: 1, ...sliderOpts})
+    sySlider.insert(gameState.objects, 0)
+    const tySlider = new Slider({canvasX: 1300, canvasY: 350, maxValue:2,
+        sliderLength:4, ...sliderOpts})
+    tySlider.insert(gameState.objects, 0)
+    return {sySlider:sySlider, tySlider:tySlider}
+}
+
+/**
+ * Two graphs, set the derivative with mathblocks
+ * to hit targets
+ */
+export function mathBlockLevel(gameState, {
+    targetBuilder,
+    tracerOpts,
+    nextScenes,
+    blocks,
+    gridOpts,
+    sliderOpts = {maxValue:2, sliderLength:4, startValue: 1},
+}){
+    const grids = twoGridSetup(gameState, {gridOpts: gridOpts})
+    grids.left.canvasX -= 200
+    grids.right.canvasX -= 200
+
+    const {sySlider, tySlider, mbField, funTracer} = mathBlockSetup(gameState, {
+        sliderOpts:sliderOpts, blocks:blocks, grid:grids.right,
+    })
     
     const targets = targetBuilder(gameState, grids.left).objects
     const tracer = new IntegralTracer({
@@ -335,6 +407,10 @@ export function mathBlockLevel(gameState, {
     })
 }
 
+/**
+ * 
+ * Standard level with a drawfunction
+ */
 export function drawFunctionLevel(gameState, {
     targetBuilder,
     tracerStart,
@@ -362,8 +438,6 @@ export function drawFunctionLevel(gameState, {
     })
 }
   
-
-
 export function mathBlockTutorial(gameState, {
     numTargets,
     targetOpts,

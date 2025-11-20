@@ -5,7 +5,7 @@ import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
 import * as Experiment from './Experiment.js'
 import { measurementPuzzle } from './Linear.js'
-import { drawFunctionLevel } from './Puzzles.js'
+import * as Puzzles from './Puzzles.js'
 
 /**
  * 
@@ -121,8 +121,8 @@ export function loadScene(gameState, sceneName, message = {}){
         case "puzzle": 
             switch(sceneNameSplit[2]){
                 case '1':{
-
-                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.2"],targetYs:[1], targetSize:50})
+                    Puzzles.drawFunctionLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[1], targetOpts:{size:50}})})
                     const uiTip = {
                         update: function(ctx){
                             Color.setColor(ctx, Color.lightGray)
@@ -136,21 +136,45 @@ export function loadScene(gameState, sceneName, message = {}){
                 }
                     break
                 case '2':
-                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.3"],targetYs:[-1,0],targetSize:50})
+                    Puzzles.drawFunctionLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[-1,0], targetOpts:{size:50}})})
                     break
                 case '3':
-                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.4"],targetYs:[0.5,1,1.5,2],targetSize:40})
+                    Puzzles.drawFunctionLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[0.5,1,1.5,2], targetOpts:{size:40}})})
                     break
                 case '4':
-                    drawFunctionLevel(gameState, {nextScenes:["quadratic.puzzle.5"],targetYs:[-1.5,-2,-1.5,0],targetSize:40})
+                    Puzzles.drawFunctionLevel(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[-1.5,-2,-1.5,0], targetOpts:{size:40}})})
                     break
                 case '5':
-                    quadDiscLevel(gameState, {numSliders:4, nextScenes:["quadratic.puzzle.6"], ddx: x=>x, tracerStart:2})
+                    {
+                        const numSliders = 4
+                        const tracerStart = 2
+                        Puzzles.sliderLevel(gameState, {
+                            numSliders:numSliders,
+                            targetBuilder:Puzzles.buildTargetsFromDdx({ddx:x=>x, numTargets: numSliders, startY:tracerStart, targetOpts:{size:20}}),
+                            tracerOpts: {originGridY:tracerStart},
+                        })
+                    }
                     break
                 case '6':
-                    quadDiscLevel(gameState, {numSliders:8, nextScenes:["quadratic.puzzle.7"], ddx: x=>x, tracerStart:2})
+                    Puzzles.sliderLevelFromDdx(gameState, {
+                        ddx: x=>x, 
+                        numSliders: 8,
+                        tracerStart:2,
+                    })
                     break
                 case '7':
+                    {
+                        const numSliders = 20
+                        const tracerStart = 2
+                        Puzzles.sliderLevel(gameState, {
+                            numSliders:numSliders,
+                            targetBuilder:Puzzles.buildTargetsFromDdx({ddx:x=>x, numTargets: numSliders, startY:tracerStart, targetOpts:{size:20}}),
+                            tracerOpts: {originGridY:tracerStart},
+                        })
+                    }
                     quadDiscLevel(gameState, {numSliders:20, withMathBlock:true, nextScenes:["quadratic.puzzle.8"], ddx: x=>x, tracerStart:2})
                     break
                 case '8':
