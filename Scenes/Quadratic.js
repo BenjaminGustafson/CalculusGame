@@ -324,29 +324,44 @@ export function loadScene(gameState, sceneName, message = {}){
                         funMax: 10, funMin:0, 
                     })
                     break
-                case '20':{
-                    const targetBlock = new MathBlock({type: MathBlock.BIN_OP, token:"+", originX: 200, originY: 200})
-                    const multBlock = new MathBlock({type: MathBlock.BIN_OP, token:"*"})
-                    multBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"a"})) 
-                    const squareBlock = new MathBlock({type: MathBlock.POWER, token:'2'})
-                    multBlock.setChild(1, squareBlock)
-                    squareBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
-                    targetBlock.setChild(0, multBlock) 
-                    targetBlock.setChild(1, new MathBlock({type: MathBlock.VARIABLE, token:"b"}))
-                    const blocks = [
-                        new MathBlock({type:MathBlock.CONSTANT}),
-                        new MathBlock({type:MathBlock.VARIABLE, token:"a"}),
-                        new MathBlock({type:MathBlock.VARIABLE, token:"b"}),
-                        new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
-                        new MathBlock({type:MathBlock.BIN_OP, token:"*"}),
-                    ]
-                    Experiment.ruleGuess(gameState, {planetUnlock:'exponential', targetBlock:targetBlock, blocks: blocks,
-                        correctDdx:(x,a,b) => 2 * a * x,
-                        initA:0.1,
-                        initB:-5,
-                    })
-                }
+                case '20':
+                    {
+                        const targetBlock = new MathBlock({type:MathBlock.POWER, token:'2',originX: 100, originY: 250,})
+                        targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
+                        targetBlock.insert(gameState.objects, 1)
+
+                        Puzzles.mathBlockLevel(gameState, {
+                            targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:100, targetOpts:{size:12}}),
+                            blocks: Planet.standardBlocks('quadratic'),
+                            sliderOpts: {maxValue:5, sliderLength:10, startValue: 1, showAxis:true, increment:1},
+                            //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
+                            tracerOpts: {originGridY: targetBlock.toFunction()(-2)},
+                            nextScenes: ["planetMap"],
+                        })
+                    }
                 break
+                // {
+                //     const targetBlock = new MathBlock({type: MathBlock.BIN_OP, token:"+", originX: 200, originY: 200})
+                //     const multBlock = new MathBlock({type: MathBlock.BIN_OP, token:"*"})
+                //     multBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"a"})) 
+                //     const squareBlock = new MathBlock({type: MathBlock.POWER, token:'2'})
+                //     multBlock.setChild(1, squareBlock)
+                //     squareBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
+                //     targetBlock.setChild(0, multBlock) 
+                //     targetBlock.setChild(1, new MathBlock({type: MathBlock.VARIABLE, token:"b"}))
+                //     const blocks = [
+                //         new MathBlock({type:MathBlock.CONSTANT}),
+                //         new MathBlock({type:MathBlock.VARIABLE, token:"a"}),
+                //         new MathBlock({type:MathBlock.VARIABLE, token:"b"}),
+                //         new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
+                //         new MathBlock({type:MathBlock.BIN_OP, token:"*"}),
+                //     ]
+                //     Experiment.ruleGuess(gameState, {planetUnlock:'exponential', targetBlock:targetBlock, blocks: blocks,
+                //         correctDdx:(x,a,b) => 2 * a * x,
+                //         initA:0.1,
+                //         initB:-5,
+                //     })
+                // }
             }
         break
 

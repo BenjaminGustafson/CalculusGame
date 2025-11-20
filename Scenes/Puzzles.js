@@ -592,6 +592,11 @@ export function ruleGuess(gameState, {planetUnlock, blocks, targetBlock, correct
     Planet.addWinCon(gameState, ()=>state == 'solved', nextButton)
 }
 
+function doOnWin (gameState, {fun}){
+    
+} 
+
+
 function capFirst(str) {
     if (!str) return "";
     return str[0].toUpperCase() + str.slice(1);

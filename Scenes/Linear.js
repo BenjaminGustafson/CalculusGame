@@ -5,6 +5,7 @@ import { GameObject } from '../GameObjects/GameObject.js'
 import { unlockScenes, planetScene, dialogueScene } from './Planet.js'
 import * as Experiment from './Experiment.js'
 import * as Planet from './Planet.js'
+import * as Puzzles from './Puzzles.js'
 import { buildTargetsFromYs, sliderLevel } from './Puzzles.js'
 
 const tileMap = new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0})
@@ -273,7 +274,8 @@ export function loadScene(gameState, sceneName, message = {}){
                         ddxSliderSpacing:2,
                     })
                     break
-                    case '20':{
+                    case '20':
+                        {
                         const targetBlock = new MathBlock({type: MathBlock.BIN_OP, token:"+", originX: 200, originY: 200})
                         const multBlock = new MathBlock({type: MathBlock.BIN_OP, token:"*"})
                         multBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"a"})) 
@@ -310,29 +312,6 @@ export function loadScene(gameState, sceneName, message = {}){
                     dialogueScene(gameState, {nextScenes:[""],  filePath:'./dialogue/linear4.txt'})
                 break
             }
-            break
-
-        
-        case "trial":
-            if (sceneNameSplit[2] == 'rule') {
-                const targetBlock = new MathBlock({type: MathBlock.BIN_OP, token:"+", originX: 200, originY: 200})
-                const multBlock = new MathBlock({type: MathBlock.BIN_OP, token:"*"})
-                multBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"a"})) 
-                multBlock.setChild(1, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
-                targetBlock.setChild(0, multBlock) 
-                targetBlock.setChild(1, new MathBlock({type: MathBlock.VARIABLE, token:"b"}))
-                const blocks = [
-                    new MathBlock({type:MathBlock.CONSTANT}),
-                    new MathBlock({type:MathBlock.VARIABLE, token:"a"}),
-                    new MathBlock({type:MathBlock.VARIABLE, token:"b"}),
-                    new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
-                ]
-                Experiment.ruleGuess(gameState, {planetUnlock:'quadratic', targetBlock:targetBlock, blocks: blocks,
-                    correctDdx:(x,a,b) => a,
-                })
-            } else {
-                Experiment.experimentTrial(gameState, experimentData[sceneNameSplit[2]])
-            } 
             break
     }
 }
