@@ -21,18 +21,16 @@ const nodes = {
     'exponential.puzzle.8': [13,1, 0,-1],
     'exponential.puzzle.9': [14,1, 0,-1],
     'exponential.puzzle.10':[15,1, 0,-1],
-    'exponential.lab':      [16,1, 0,-1],
-    'exponential.puzzle.11': [6, 3, 0,-1],
-    'exponential.puzzle.12': [7, 3, 0,-1],
-    'exponential.puzzle.13': [8, 3, 0,-1],
-    'exponential.puzzle.14': [9, 3, 0,-1],
-    'exponential.puzzle.15': [10,3, 0,-1],
-    'exponential.puzzle.16': [11,3, 0,-1],
-    'exponential.puzzle.17': [12,3, 0,-1],
-    'exponential.puzzle.18': [13,3, 0,-1],
-    'exponential.puzzle.19': [14,3, 0,-1],
-    'exponential.puzzle.20': [15,3, 0,-1],
-    'exponential.puzzle.∞': [15,5, 0,-1],
+    'exponential.puzzle.11': [15, 3, 0,-1],
+    'exponential.puzzle.12': [14, 3, 0,-1],
+    'exponential.puzzle.13': [13, 3, 0,-1],
+    'exponential.puzzle.14': [12, 3, 0,-1],
+    'exponential.puzzle.15': [11,3, 0,-1],
+    'exponential.puzzle.16': [10,3, 0,-1],
+    'exponential.puzzle.17': [9,3, 0,-1],
+    'exponential.puzzle.18': [8,3, 0,-1],
+    'exponential.puzzle.19': [7,3, 0,-1],
+    'exponential.puzzle.20': [6,3, 0,-1],
 }
 
 const paths = 
@@ -161,16 +159,17 @@ function exponentialPlanet(gameState,message){
     console.log('Quadratic function')
     Planet.planetScene(gameState, {
         planetName:'exponential',
-        shipX:20, shipY: 450,
-        labX: 1150, labY:-150, labDir:'SW',
+        shipX:10, shipY: -200,
         tileMap:tileMap,
         playerNodes:nodes,
         playerPaths:paths,
         bgImg: 'placeholderBg',
         fgImg: 'placeholderFg',
-        message,
-        
+        message
     })
+    const capFirst = str => str[0].toUpperCase() + str.slice(1)
+    const planetName = new TextBox({originX: 400, originY: 50, font: '40px monospace', content:capFirst(gameState.stored.planet) + ' Planet'})
+    planetName.insert(gameState.objects,1)
 }
 
 
@@ -499,7 +498,3 @@ class PetriDish extends GameObject{
     }
 }
 
-
-function placeHolderLevel(gameState){
-
-}
