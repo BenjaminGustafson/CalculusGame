@@ -1,0 +1,9 @@
+IDS
+A: glorpPortrait
+P: astronautBPortrait
+TEXT
+A: If f(x) = ax^2 + b, what is f'(x)?
+P: f'(x) = 2ax? 
+A: That's right.
+A: You've reached the end of Quadratic Planet. You can now travel to Power Planet if you head back to the ship.
+END

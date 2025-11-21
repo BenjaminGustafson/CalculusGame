@@ -46,6 +46,7 @@ const nodes = {
     'quadratic.puzzle.18': [8,3, 0,-1],
     'quadratic.puzzle.19': [7,3, 0,-1],
     'quadratic.puzzle.20': [6,3, 0,-1],
+    'quadratic.dialogue.20': [8,5, 0,-1],
 }
 
 const paths = 
@@ -70,40 +71,9 @@ const paths =
     {start: 'quadratic.puzzle.17', end: 'quadratic.puzzle.18', steps: [] },
     {start: 'quadratic.puzzle.18', end: 'quadratic.puzzle.19', steps: [] },
     {start: 'quadratic.puzzle.19', end: 'quadratic.puzzle.20', steps: [] },
+    {start: 'quadratic.puzzle.20', end: 'quadratic.dialogue.20', steps: [[6,5]] },
 ]
 
-
-
-const experimentData =  {
-    '1':{
-        solutionFun: x=> -x*x+10,
-        solutionDdx:x=>-2*x,
-        solutionFunString:"-t^2+10",
-        solutionDdxString:"-2t",
-        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-        syDdxMax: 2,
-        syDdxLen: 4,
-        tyDdxMax: 2,
-        tyDdxLen: 4,
-        tMax:5,
-        numMeasurement:5,
-        ddxSliderSpacing:0.5,
-        ddxMax: 0, ddxMin:-10,
-        funMax: 10, funMin:0, 
-    },
-    '2': {
-        
-    },
-    '3':{
-        
-    },
-    '4':{
-        
-    },
-    '5':{
-        
-    }
-}
 
 export function loadScene(gameState, sceneName, message = {}){
     gameState.stored.planet = 'quadratic'
@@ -388,19 +358,21 @@ export function loadScene(gameState, sceneName, message = {}){
                         'Have you ever noticed that things speed up as they fall?',
                     ]})
                 break
-            }
-            break
+                case '20':
+                    {
+                        const gss = gameState.stored
+                        const planetUnlock = 'power'
+                        // TODO make a planet unlock function
+                        if (gss.planetProgress[planetUnlock] == null || gss.planetProgress[planetUnlock] == 'locked')
+                            gss.planetProgress[[planetUnlock]] = 'unvisited'
+                        
+                        if (gss.navPuzzleMastery[gss.planet] == null){
+                            gss.navPuzzleMastery[gss.planet] = 0
+                        }
+                        Planet.dialogueScene(gameState, {nextScenes:["planetMap"],  filePath:'./dialogue/quadLast.txt'})
+                    }
 
-        case "lab":
-            Experiment.experimentMenu(gameState, {experimentData: experimentData, ruleFunString:'ax^2+b', ruleDdxString:'2ax'})
-            break
-        
-        case "trial":
-            if (sceneNameSplit[2] == 'rule') {
-               
-            } else {
-                quadExperimentTrial(gameState, experimentData[sceneNameSplit[2]])
-            } 
+            }
             break
     }
 }
