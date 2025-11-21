@@ -578,10 +578,12 @@ function newRNGPuzzle (gameState){
             break
         }
         case "power":{
-            // m x^3 + b -> 3 m x
-            const m = Math.floor((Math.random()*3.2-1.6)*10)/10
+            // m x^3 + b -> 3 m x^2
+            // m x^4 + b -> 4 m x^3
+            const n = Math.round(Math.random()+3)
+            const m = Math.floor((Math.random()*10-5)*10/n)/10
             const b = Math.floor((Math.random()*10-5)*10)/10
-            mathBlockFun = new MathBlock({type: MathBlock.POWER, token:'3'})
+            mathBlockFun = new MathBlock({type: MathBlock.POWER, token:n.toString()})
             mathBlockFun.translateY = b
             mathBlockFun.scaleY = m
             mathBlockFun.children[0] = new MathBlock({type:MathBlock.VARIABLE,token: 'x'})
