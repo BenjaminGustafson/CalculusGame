@@ -1,0 +1,16 @@
+IDS
+A: glorpPortrait
+P: astronautBPortrait
+TEXT
+A: Are you starting to see the pattern?
+P: On puzzle 20, I saw that if f(x) = x,         then f'(x) = 1.
+P: On 21, I saw that if f(x) = 2x, then f'(x) = 2.
+P: On 22, I saw that if f(x) = x-1, then f'(x) = 1.
+P: On 23, I saw that if f(x) = 0.5x+1,           then f'(x) = 0.5.
+A: So, in general, if f(x) = ax+b, what is f'(x)? 
+P: Hmm. f(x) = ax+b? Would it be f'(x) = a?
+A: Correct! If you check your journal 🕮, you can find the rule there.
+P: I know that in f(x) = ax + b, a is the slope of the line. Does that mean the derivative is just the slope?
+A: You're on the right track. But not every f(x) is a line...
+A: You've reached the end of Linear Planet. You can now travel to Quadratic Planet if you head back to the ship.
+END

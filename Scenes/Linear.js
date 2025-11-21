@@ -36,8 +36,12 @@ const nodes = {
     'linear.puzzle.17': [10,  4, 0,-1],
     'linear.puzzle.18': [9,  4, 0,-1],
     'linear.puzzle.19': [8,  4, 0,-1],
-    'linear.dialogue.4': [7,4, 0,-1],
-    'linear.puzzle.20': [6,  4, 0,-1],
+    'linear.dialogue.4':[7,  4, 0,-1],
+    'linear.puzzle.20': [8,  7, 0,-1],
+    'linear.puzzle.21': [9,  7, 0,-1],
+    'linear.puzzle.22': [10, 7, 0,-1],
+    'linear.puzzle.23': [11, 7, 0,-1],
+    'linear.dialogue.5':[12, 7, 0,-1],
 }
 
 const paths = 
@@ -66,9 +70,11 @@ const paths =
     {start: 'linear.puzzle.17', end: 'linear.puzzle.18', steps: [] },
     {start: 'linear.puzzle.18', end: 'linear.puzzle.19', steps: [] },
     {start: 'linear.puzzle.19', end: 'linear.dialogue.4', steps: [] },
-    {start: 'linear.dialogue.4', end: 'linear.puzzle.20', steps: [] },
-    
-    
+    {start: 'linear.dialogue.4', end: 'linear.puzzle.20', steps: [[7,7]] },
+    {start: 'linear.puzzle.20', end: 'linear.puzzle.21', steps: [] },
+    {start: 'linear.puzzle.21', end: 'linear.puzzle.22', steps: [] },
+    {start: 'linear.puzzle.22', end: 'linear.puzzle.23', steps: [] },
+    {start: 'linear.puzzle.23', end: 'linear.dialogue.5', steps: [] },
 ]
 
 function linearPlanet(gameState, message = {}){
@@ -275,24 +281,87 @@ export function loadScene(gameState, sceneName, message = {}){
                     })
                     break
                     case '20':
-                        {
-                        const targetBlock = new MathBlock({type: MathBlock.BIN_OP, token:"+", originX: 200, originY: 200})
-                        const multBlock = new MathBlock({type: MathBlock.BIN_OP, token:"*"})
-                        multBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"a"})) 
-                        multBlock.setChild(1, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
-                        targetBlock.setChild(0, multBlock) 
-                        targetBlock.setChild(1, new MathBlock({type: MathBlock.VARIABLE, token:"b"}))
-                        const blocks = [
-                            new MathBlock({type:MathBlock.CONSTANT}),
-                            new MathBlock({type:MathBlock.VARIABLE, token:"a"}),
-                            new MathBlock({type:MathBlock.VARIABLE, token:"b"}),
-                            new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
-                        ]
-                        Puzzles.ruleGuess(gameState, {planetUnlock:'quadratic', targetBlock:targetBlock, blocks: blocks,
-                            correctDdx:(x,a,b) => a,
+                    {
+                        const targetBlock = new MathBlock({type:MathBlock.VARIABLE, token:'x', originX: 200, originY: 250,})
+                        targetBlock.insert(gameState.objects, 1)
+
+                        const fLabel = new TextBox({font:'30px monospace',baseline: 'top', originX: 100, originY: 250, content: 'f(x)='})
+                        const ddxLabel = new TextBox({font:'30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)='})
+                        fLabel.insert(gameState.objects, 0)
+                        ddxLabel.insert(gameState.objects, 0)
+
+                        Puzzles.mathBlockLevel(gameState, {
+                            targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:100, targetOpts:{size:12}}),
+                            blocks: Planet.standardBlocks('quadratic'),
+                            sliderOpts: {maxValue:5, sliderLength:10, startValue: 1, showAxis:true, increment:1},
+                            //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
+                            tracerOpts: {originGridY: targetBlock.toFunction()(-2)},
                         })
                     }
-                        break
+                    break
+                    case '21':
+                    {
+                        const targetBlock = new MathBlock({type:MathBlock.VARIABLE, token:'x', originX: 200, originY: 250,})
+                        targetBlock.scaleY = 2
+                        targetBlock.insert(gameState.objects, 1)
+
+                        const fLabel = new TextBox({font:'30px monospace',baseline: 'top', originX: 100, originY: 250, content: 'f(x)='})
+                        const ddxLabel = new TextBox({font:'30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)='})
+                        fLabel.insert(gameState.objects, 0)
+                        ddxLabel.insert(gameState.objects, 0)
+
+                        Puzzles.mathBlockLevel(gameState, {
+                            targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:100, targetOpts:{size:12}}),
+                            blocks: Planet.standardBlocks('quadratic'),
+                            sliderOpts: {maxValue:5, sliderLength:10, startValue: 1, showAxis:true, increment:1},
+                            //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
+                            tracerOpts: {originGridY: targetBlock.toFunction()(-2)},
+                        })
+                    }
+                    break
+                    case '22':
+                    {
+                        const targetBlock = new MathBlock({type:MathBlock.VARIABLE, token:'x', originX: 200, originY: 250,})
+                        targetBlock.translateY = -1
+                        targetBlock.insert(gameState.objects, 1)
+
+                        const fLabel = new TextBox({font:'30px monospace',baseline: 'top', originX: 100, originY: 250, content: 'f(x)='})
+                        const ddxLabel = new TextBox({font:'30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)='})
+                        fLabel.insert(gameState.objects, 0)
+                        ddxLabel.insert(gameState.objects, 0)
+
+                        Puzzles.mathBlockLevel(gameState, {
+                            targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:100, targetOpts:{size:12}}),
+                            blocks: Planet.standardBlocks('quadratic'),
+                            sliderOpts: {maxValue:5, sliderLength:10, startValue: 1, showAxis:true, increment:1},
+                            //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
+                            tracerOpts: {originGridY: targetBlock.toFunction()(-2)},
+                        })
+                    }
+                    break
+                    case '23':
+                    {
+                        const targetBlock = new MathBlock({type:MathBlock.VARIABLE, token:'x', originX: 200, originY: 250,})
+                        targetBlock.scaleY = 0.5
+                        targetBlock.translateY = 1
+                        targetBlock.insert(gameState.objects, 1)
+
+                        const fLabel = new TextBox({font:'30px monospace',baseline: 'top', originX: 100, originY: 250, content: 'f(x)='})
+                        const ddxLabel = new TextBox({font:'30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)='})
+                        fLabel.insert(gameState.objects, 0)
+                        ddxLabel.insert(gameState.objects, 0)
+
+                        Puzzles.mathBlockLevel(gameState, {
+                            targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:100, targetOpts:{size:12}}),
+                            blocks: Planet.standardBlocks('quadratic'),
+                            sliderOpts: {maxValue:5, sliderLength:10, startValue: 1, showAxis:true, increment:0.5},
+                            //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
+                            tracerOpts: {originGridY: targetBlock.toFunction()(-2)},
+                            nextScenes: ['linear.dialogue.5'],
+                        })
+                    }
+                    break
+
             }
         break
 
@@ -310,6 +379,9 @@ export function loadScene(gameState, sceneName, message = {}){
                 break
                 case '4':
                     dialogueScene(gameState, {nextScenes:[""],  filePath:'./dialogue/linear4.txt'})
+                break
+                case '5':
+                    dialogueScene(gameState, {nextScenes:["planetMap"],  filePath:'./dialogue/linear5.txt'})
                 break
             }
             break
