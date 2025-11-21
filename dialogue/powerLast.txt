@@ -1,0 +1,9 @@
+IDS
+A: glorpPortrait
+P: astronautBPortrait
+TEXT
+A: What is the derivative of x^n?
+P: (n-1) x^n?
+A: Exactly.
+A: You can now travel to Sine Planet or Exponential Planet.
+END

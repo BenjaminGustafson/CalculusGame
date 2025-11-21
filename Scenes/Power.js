@@ -29,9 +29,10 @@ const nodes = {
     'power.puzzle.15': [11,3, 0,-1],
     'power.puzzle.16': [10,3, 0,-1],
     'power.puzzle.17': [9,3, 0,-1],
-    'power.puzzle.18': [8,3, 0,-1],
-    'power.puzzle.19': [7,3, 0,-1],
-    'power.puzzle.20': [6,3, 0,-1],
+    'power.dialogue.20': [8,3, 0,-1],
+    // 'power.puzzle.18': [8,3, 0,-1],
+    // 'power.puzzle.19': [7,3, 0,-1],
+    // 'power.puzzle.20': [6,3, 0,-1],
 }
 
 const paths = 
@@ -54,6 +55,7 @@ const paths =
     {start: 'power.puzzle.15', end: 'power.puzzle.16', steps: [] },
     {start: 'power.puzzle.16', end: 'power.puzzle.17', steps: [] },
     {start: 'power.puzzle.17', end: 'power.puzzle.18', steps: [] },
+    {start: 'power.puzzle.17', end: 'power.dialogue.20', steps: [] },
     {start: 'power.puzzle.18', end: 'power.puzzle.19', steps: [] },
     {start: 'power.puzzle.19', end: 'power.puzzle.20', steps: [] },
 ]
@@ -256,6 +258,27 @@ export function loadScene(gameState, sceneName, message = {}){
                         "ⳏⳐⰷ⯁Ⱨⰴ ⯢ⱋⳒⰳⳙ ⯚⯜⯍ ⳙⰿⱆ ⳨⯟ⳑ⳪⳰ ⰴⱢⳈⳡ ⱍ⳧Ⳑⰿ.",
                         "ⳟ⯔ ⳓ⯥ⱄⰳ ⳉⳂⳙ⯎ ⱤⳆⰸ⯃ Ɀⰳⱅⰸⳝ ⯢ⳔⳂⳚ ⱇⱏⰴⳂ ⰳⳤⱑ⯅ⰴ!"
                     ]})
+                break
+                case '20':
+                    {
+                        const gss = gameState.stored
+                        var planetUnlock = 'sine'
+                        // TODO make a planet unlock function
+                        if (gss.planetProgress[planetUnlock] == null || gss.planetProgress[planetUnlock] == 'locked')
+                            gss.planetProgress[[planetUnlock]] = 'unvisited'
+                        
+                        if (gss.navPuzzleMastery[gss.planet] == null){
+                            gss.navPuzzleMastery[gss.planet] = 0
+                        }
+                        planetUnlock = 'exponential'
+                        if (gss.planetProgress[planetUnlock] == null || gss.planetProgress[planetUnlock] == 'locked')
+                            gss.planetProgress[[planetUnlock]] = 'unvisited'
+                        
+                        if (gss.navPuzzleMastery[gss.planet] == null){
+                            gss.navPuzzleMastery[gss.planet] = 0
+                        }
+                        Planet.dialogueScene(gameState, {nextScenes:["planetMap"],  filePath:'./dialogue/powerLast.txt'})
+                    }
                 break
             }
             break

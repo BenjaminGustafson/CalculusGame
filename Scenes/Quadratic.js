@@ -371,6 +371,7 @@ export function loadScene(gameState, sceneName, message = {}){
                         }
                         Planet.dialogueScene(gameState, {nextScenes:["planetMap"],  filePath:'./dialogue/quadLast.txt'})
                     }
+                break
 
             }
             break
