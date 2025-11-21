@@ -1,6 +1,7 @@
 import {Color, Shapes} from '../util/index.js'
 import {Grid, FunctionTracer, Button, ImageObject, IntegralTracer, MathBlock, MathBlockManager, MathBlockField, Slider, Target, TargetAdder, TextBox} from '../GameObjects/index.js'
 import { loadScene, CANVAS_HEIGHT } from '../Scene.js'
+import * as Planet from './Planet.js'
 
 /**
  * NAVIGATION
@@ -80,18 +81,19 @@ export function navScene(gameState) {
 
     const funLeft = new FunctionTracer({grid:gridLeft, inputFunction:fun, lineWidth:5, xStep:0.1, unsolvedColor:Color.magenta})
 
-    const mathBlocks = [
-        new MathBlock({type:MathBlock.CONSTANT}),
-        new MathBlock({type:MathBlock.VARIABLE, token:'x'}),
-        new MathBlock({type:MathBlock.POWER, token:'2'}),
-        new MathBlock({type:MathBlock.POWER, token:'3'}),
-        new MathBlock({type:MathBlock.EXPONENT}),
-        new MathBlock({type:MathBlock.FUNCTION, token:'sin'}),
-        new MathBlock({type:MathBlock.FUNCTION, token:'cos'}),
-        new MathBlock({type:MathBlock.BIN_OP, token:'+'}),
-        new MathBlock({type:MathBlock.BIN_OP, token:'*'}),
-        new MathBlock({type:MathBlock.BIN_OP, token:'/'}),
-    ]
+    const mathBlocks = Planet.standardBlocks(gameState.stored.planet)
+    // [
+    //     new MathBlock({type:MathBlock.CONSTANT}),
+    //     new MathBlock({type:MathBlock.VARIABLE, token:'x'}),
+    //     new MathBlock({type:MathBlock.POWER, token:'2'}),
+    //     new MathBlock({type:MathBlock.POWER, token:'3'}),
+    //     new MathBlock({type:MathBlock.EXPONENT}),
+    //     new MathBlock({type:MathBlock.FUNCTION, token:'sin'}),
+    //     new MathBlock({type:MathBlock.FUNCTION, token:'cos'}),
+    //     new MathBlock({type:MathBlock.BIN_OP, token:'+'}),
+    //     new MathBlock({type:MathBlock.BIN_OP, token:'*'}),
+    //     new MathBlock({type:MathBlock.BIN_OP, token:'/'}),
+    // ]
     // const mathBlocks = [new MathBlock({type:MathBlock.VARIABLE, token:'x'})]
     // for (let b of gss.mathBlocksUnlocked){
     //     mathBlocks.push(new MathBlock({type: b.type, token: b.token}))

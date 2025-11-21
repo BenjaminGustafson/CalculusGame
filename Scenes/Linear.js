@@ -351,6 +351,8 @@ export function loadScene(gameState, sceneName, message = {}){
                         fLabel.insert(gameState.objects, 0)
                         ddxLabel.insert(gameState.objects, 0)
 
+                        
+
                         Puzzles.mathBlockLevel(gameState, {
                             targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:100, targetOpts:{size:12}}),
                             blocks: Planet.standardBlocks('quadratic'),
@@ -381,7 +383,18 @@ export function loadScene(gameState, sceneName, message = {}){
                     dialogueScene(gameState, {nextScenes:[""],  filePath:'./dialogue/linear4.txt'})
                 break
                 case '5':
-                    dialogueScene(gameState, {nextScenes:["planetMap"],  filePath:'./dialogue/linear5.txt'})
+                    {
+                        const gss = gameState.stored
+                        const planetUnlock = 'quadratic'
+                        // TODO make a planet unlock function
+                        if (gss.planetProgress[planetUnlock] == null || gss.planetProgress[planetUnlock] == 'locked')
+                            gss.planetProgress[[planetUnlock]] = 'unvisited'
+                        
+                        if (gss.navPuzzleMastery[gss.planet] == null){
+                            gss.navPuzzleMastery[gss.planet] = 0
+                        }
+                        dialogueScene(gameState, {nextScenes:["planetMap"],  filePath:'./dialogue/linear5.txt'})
+                    }
                 break
             }
             break

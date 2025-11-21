@@ -121,8 +121,12 @@ function journal(gameState){
             ctx.font = "30px monospace"
             ctx.textBaseline = 'alphabetic'
             ctx.textAlign = 'left'
-            if (gameState.stored.completedScenes['linear.dialogue.5'] != 'locked')
+
+            
+            if (gameState.stored.completedScenes['linear.dialogue.5'])
                 ctx.fillText(`Linear: f(x) = ax+b ⟹ f'(x) = a`,200,100)
+            else 
+                ctx.fillText(`Rules learned will go here.`,200,100)
             if (gameState.stored.completedScenes['quadratic.puzzle.20'] == 'complete')
                 ctx.fillText(`Quadratic: f(x) = x^2 ⟹ f'(x) = 2x`,200,150)
             if (gameState.stored.completedScenes['power.puzzle.20'] == 'complete')
