@@ -3,6 +3,7 @@ import {TileMap, Grid, FunctionTracer, Button, ImageObject, IntegralTracer, Math
 import * as Scene from '../Scene.js'
 import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
+import * as Puzzles from './Puzzles.js'
 import * as Experiment from './Experiment.js'
 
 const tileMap = new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0})
@@ -124,6 +125,27 @@ export function loadScene(gameState, sceneName, message = {}){
                     populationLevel(gameState, {nextScenes:["exponential.puzzle.10"], targetX:1.7, targetY:1000,
                     })
                     break
+                case '10':
+                    Puzzles.
+                    break
+                case '20':
+                    {
+                        const targetBlock = new MathBlock({type:MathBlock.EXPONENT, token:'e',originX: 100, originY: 250,})
+
+                        targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
+                        targetBlock.insert(gameState.objects, 1)
+
+                        Puzzles.mathBlockLevel(gameState, {
+                            targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:100, targetOpts:{size:12}}),
+                            blocks: Planet.standardBlocks('exponential'),
+                            sliderOpts: {maxValue:5, sliderLength:10, showAxis:true, increment:1},
+                            gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
+                            tracerOpts: {originGridY: targetBlock.toFunction()(-5)},
+                            nextScenes: ["planetMap"],
+                        })
+                        Planet.dialogueScene(gameState, {filePath: './'})
+                    }
+                    break
                
             }
         break
@@ -172,44 +194,6 @@ function exponentialPlanet(gameState,message){
     planetName.insert(gameState.objects,1)
 }
 
-
-function drawFunctionLevel (gameState, {
-     tracerStart=1,
-    targetSize = 20, sliderSize = 15,
-    nextScenes = [], 
-}){
-    const gss = gameState.stored
-    const backButton = Planet.backButton(gameState)
-    const nextButton = Planet.nextButton(gameState, nextScenes)
-
-    console.log('DRAW FUNCTION LEVEL')
-
-    const gridLeft = new Grid({canvasX: 300, canvasY:350, canvasWidth:400, canvasHeight:400, 
-        gridXMin:-5, gridYMin:-5, gridXMax:5, gridYMax:5, labels:false, arrows:true})
-    const gridRight = new Grid({canvasX: 900, canvasY:350, canvasWidth:400, canvasHeight:400, 
-        gridXMin:-5, gridYMin:-5, gridXMax:5, gridYMax:5, labels:false, arrows:true})
-    
-    const drawFunction = new DrawFunction ({grid: gridRight})
-
-
-    const numTargets = 10
-    const spacing = gridLeft.gridWidth / numTargets
-    var targets = []
-    for (let i = 0; i < numTargets; i++) {
-        const x = gridLeft.gridXMin+(i)*spacing
-        targets.push(new Target({grid: gridLeft, gridX:x, gridY:0, size:targetSize}))
-    }
-    
-    
-    const tracer = new IntegralTracer({grid: gridLeft, drawFunction:drawFunction, targets:targets,
-    })
-    
-
-    gameState.objects = [gridLeft, gridRight, backButton, nextButton, drawFunction, tracer].concat(targets)    
-
-    //Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
-    Planet.unlockScenes(nextScenes, gss)
-}
 
 function exponentialLevel (gameState, {
     numSliders,
@@ -389,7 +373,7 @@ function populationLevel (gameState, {
 
     gameState.objects = [backButton, nextButton, petri, playPauseButton, tSlider, timeLabel,  birthSlider,
          grid, tracer, target]
-    Planet.winCon(gameState, ()=>tracer.solved, nextButton)
+    Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
     Planet.unlockScenes(nextScenes, gss)
     
 }

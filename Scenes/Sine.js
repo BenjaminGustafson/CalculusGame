@@ -146,16 +146,17 @@ function sinePlanet(gameState,message){
     console.log('Quadratic function')
     Planet.planetScene(gameState, {
         planetName:'sine',
-        shipX:20, shipY: 450,
-        labX: 1150, labY:-150, labDir:'SW',
+        shipX:10, shipY: -200,
         tileMap:tileMap,
         playerNodes:nodes,
         playerPaths:paths,
         bgImg: 'placeholderBg',
         fgImg: 'placeholderFg',
-        message,
-        
+        message
     })
+    const capFirst = str => str[0].toUpperCase() + str.slice(1)
+    const planetName = new TextBox({originX: 400, originY: 50, font: '40px monospace', content:capFirst(gameState.stored.planet) + ' Planet'})
+    planetName.insert(gameState.objects,1)
 }
 
 
