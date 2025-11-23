@@ -289,7 +289,7 @@ function springLevel(gameState, {
     const targets = []
     for (let i = 0; i < numTargets; i++){
         const x = targetGrid.gridXMin+i*targetGrid.gridWidth/numTargets
-        targets.push(new Target({grid: targetGrid, gridX:x, gridY:targetFun(x), size:10}))
+        targets.push(new Target({grid: targetGrid, gridX:x, gridY:targetFun(x), size:15}))
     }
 
     const spring = new SpringMass({originX:700, originY:350})

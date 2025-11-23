@@ -287,7 +287,9 @@ export function standardBlocks(planet){
  * @param {*} gameState 
  * @param {*} param1 
  */
-export function dialogueScene(gameState, {nextScenes = [], filePath, onComplete=()=>{}}){
+export function dialogueScene(gameState, {nextScenes = [], filePath, onComplete=()=>{},
+    noExit = false,
+}){
     const gss = gameState.stored
     gameState.objects.forEach(obj => obj.noInput = true)
 
@@ -338,8 +340,8 @@ export function dialogueScene(gameState, {nextScenes = [], filePath, onComplete=
             
             gameState.objects = gameState.objects.concat([
                 dialogueBox,
-                exitButton
             ])
+            if (!noExit) gameState.objects.push(exitButton)
         });
     
     unlockScenes(nextScenes, gss)
