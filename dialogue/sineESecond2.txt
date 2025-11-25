@@ -1,0 +1,7 @@
+IDS
+A: glorpPortrait
+P: astronautBPortrait
+TEXT
+P: The function whose second derivative is itself is just e^x again.
+A: 
+END

@@ -69,6 +69,7 @@ export function loadScene(gameState, sceneName, message = {}) {
     gameState.stored.prevScene = gameState.stored.sceneName
     gameState.stored.sceneName = sceneName
 
+    gameState.temp = {}
     gameState.objects = []
     gameState.update = () => { }
 

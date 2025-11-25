@@ -230,12 +230,11 @@ function defaultNextScenes(gameState){
 }
 
 export function addWinCon(gameState, condition, nextButton){
-    gameState.solved = false
     const oldUpdate = gameState.update
     gameState.update = () => {
         oldUpdate()
-        if (!gameState.solved && condition()){
-            gameState.solved = true
+        if (!gameState.temp.solved && condition()){
+            gameState.temp.solved = true
             gameState.stored.completedScenes[gameState.stored.sceneName] = 'complete'
             if (nextButton != null){
                 nextButton.active = true

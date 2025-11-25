@@ -160,7 +160,7 @@ export class FunctionTracer extends GameObject{
             }
 
             //Draw line
-            Shapes.Line(ctx,x-1, prevCy, x, cy, this.lineWidth)
+            Shapes.Line(ctx,x-1, prevCy, x, cy, this.lineWidth, 'rounded')
 
             // Draw label
             ctx.lineWidth = this.lineWidth * 4
