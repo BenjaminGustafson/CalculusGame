@@ -16,6 +16,7 @@ export function planetScene(gameState, {
     playerNodes,
     playerPaths,
     bgImg, fgImg,
+    firstScene,
     message
 }){
     const gss = gameState.stored
@@ -30,8 +31,12 @@ export function planetScene(gameState, {
         gss.playerLocation = 'planetMap'
     }
 
-    if (!gss.completedScenes[gss.planet + '.puzzle.1']){
-        gss.completedScenes[gss.planet + '.puzzle.1'] = 'in progress'
+    if (!firstScene){
+        firstScene = gss.planet + '.puzzle.1'
+    }
+
+    if (!gss.completedScenes[firstScene]){
+        gss.completedScenes[firstScene] = 'in progress'
     }
 
     const player = new Player({nodes:playerNodes, paths:playerPaths, currentNode:gss.playerLocation, tileMap:tileMap})     

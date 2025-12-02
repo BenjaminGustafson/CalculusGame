@@ -1,0 +1,9 @@
+IDS
+A: astronautAPortrait
+P: astronautBPortrait
+TEXT
+A: What the sliders are actually doing is setting the slope of the line.
+P: Remind me again what slope is. It's like the steepness of the line?
+A: One way of looking at slope is that it is the distance that the line goes up over one unit across.
+P: So the slope in this puzzle is 1.5.
+END

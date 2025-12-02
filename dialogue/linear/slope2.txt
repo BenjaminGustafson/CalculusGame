@@ -1,0 +1,9 @@
+IDS
+A: astronautAPortrait
+P: astronautBPortrait
+TEXT
+A:  
+P: And how do you know where 0 is? 
+A: Well, the sliders all start at 0. And the grid line for 0 has little arrows on the ends.
+P: I figured as much.
+END

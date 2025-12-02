@@ -726,10 +726,22 @@ export function dialogueOverlay(gameState, {
                 gameState.objects.forEach(obj => obj.noInput = false)
                 //onComplete() scope? maybe better name
                 this.hidden = true
-            }
+            },
+            originY:50,
         })
         dialogueBox.insert(gameState.objects, 100)
         }); // end .then
+}
+
+export function dialogueOnSolve (gameState, {
+    filePath,
+}){
+    addToUpdate(gameState, () => {
+        if (gameState.temp.solved && !gameState.temp.shownDialogue){
+            gameState.temp.shownDialogue = true
+            dialogueOverlay(gameState, {filePath: filePath})
+        }
+    })
 }
 
 function capFirst(str) {
