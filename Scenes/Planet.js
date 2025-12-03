@@ -16,6 +16,7 @@ export function planetScene(gameState, {
     playerNodes,
     playerPaths,
     bgImg, fgImg,
+    firstScene,
     message
 }){
     const gss = gameState.stored
@@ -30,8 +31,12 @@ export function planetScene(gameState, {
         gss.playerLocation = 'planetMap'
     }
 
-    if (!gss.completedScenes[gss.planet + '.puzzle.1']){
-        gss.completedScenes[gss.planet + '.puzzle.1'] = 'in progress'
+    if (!firstScene){
+        firstScene = gss.planet + '.puzzle.1'
+    }
+
+    if (!gss.completedScenes[firstScene]){
+        gss.completedScenes[firstScene] = 'in progress'
     }
 
     const player = new Player({nodes:playerNodes, paths:playerPaths, currentNode:gss.playerLocation, tileMap:tileMap})     
@@ -186,8 +191,8 @@ export function levelNavigation(gameState, {
     const nextB = nextButton(gameState, nextScenes)
     nextB.insert(gameState.objects, 0)
 
-    addWinCon(gameState, winCon, nextB)
-    unlockScenes(nextScenes, gameState.stored)
+    addWinCon(gameState, winCon, nextB, nextScenes)
+    //unlockScenes(nextScenes, gameState.stored)
 }
 
 /**
@@ -229,18 +234,18 @@ function defaultNextScenes(gameState){
     return [parts.join('.')]
 }
 
-export function addWinCon(gameState, condition, nextButton){
-    gameState.solved = false
+export function addWinCon(gameState, condition, nextButton, nextScenes){
     const oldUpdate = gameState.update
     gameState.update = () => {
         oldUpdate()
-        if (!gameState.solved && condition()){
-            gameState.solved = true
+        if (!gameState.temp.solved && condition()){
+            gameState.temp.solved = true
             gameState.stored.completedScenes[gameState.stored.sceneName] = 'complete'
             if (nextButton != null){
                 nextButton.active = true
                 nextButton.bgColor = Color.blue
             }
+            unlockScenes(nextScenes, gameState.stored)
         }
     }
 }
@@ -287,7 +292,9 @@ export function standardBlocks(planet){
  * @param {*} gameState 
  * @param {*} param1 
  */
-export function dialogueScene(gameState, {nextScenes = [], filePath, onComplete=()=>{}}){
+export function dialogueScene(gameState, {nextScenes = [], filePath, onComplete=()=>{},
+    noExit = false,
+}){
     const gss = gameState.stored
     gameState.objects.forEach(obj => obj.noInput = true)
 
@@ -338,8 +345,8 @@ export function dialogueScene(gameState, {nextScenes = [], filePath, onComplete=
             
             gameState.objects = gameState.objects.concat([
                 dialogueBox,
-                exitButton
             ])
+            if (!noExit) gameState.objects.push(exitButton)
         });
     
     unlockScenes(nextScenes, gss)

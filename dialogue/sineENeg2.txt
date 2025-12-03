@@ -1,0 +1,7 @@
+IDS
+A: glorpPortrait
+P: astronautBPortrait
+TEXT
+P: Okay, so the derivative of e^(-x) is -e^(-x). 
+A: Yep. Remember that if we put a negative on the inside of a function like f(-x), it flips the graph horizontally.
+END

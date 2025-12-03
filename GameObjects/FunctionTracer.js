@@ -160,7 +160,7 @@ export class FunctionTracer extends GameObject{
             }
 
             //Draw line
-            Shapes.Line(ctx,x-1, prevCy, x, cy, this.lineWidth)
+            Shapes.Line(ctx,x-1, prevCy, x, cy, this.lineWidth, 'rounded')
 
             // Draw label
             ctx.lineWidth = this.lineWidth * 4
@@ -207,11 +207,12 @@ export class FunctionTracer extends GameObject{
             var cyObj = this.grid.gridToCanvasBoundedY(this.gridYs[0])
             var prevCy = cyObj.y
             var prevOob = cyObj.out
-            for (let i = 1; i <= this.pixelIndex; i++){
+            for (let i = 1; i <= this.pixelIndex+1; i++){
                 const x = this.originCanvasX+i
                 const cyObj = this.grid.gridToCanvasBoundedY(this.gridYs[i])
                 const cy = cyObj.y
-                if (!cyObj.out && (t.lineIntersect(x,prevCy,x+1,cy) || t.pointIntersect(x,prevCy))){
+                // Line width is not accounted for. Intersection is just of middle of line.
+                if (!cyObj.out && ((t.pointIntersect(x-1,prevCy)))){
                     if (!t.hit){
                         audioManager.play('drop_002',{pitch:this.gridYs[i-1]/this.grid.gridHeight*12, channel:this.audioChannel})
                     }

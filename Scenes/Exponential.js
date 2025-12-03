@@ -74,12 +74,12 @@ export function loadScene(gameState, sceneName, message = {}){
         case "puzzle": 
             switch(sceneNameSplit[2]){
                 case '1':
-                    exponentialLevel(gameState, {numSliders:4, nextScenes:["exponential.puzzle.2"], gridXMax:4,gridYMax:16})
+                    // TODO make grids smaller just for this level
+                    exponentialLevel(gameState, {numSliders:1, nextScenes:["exponential.puzzle.2"], gridXMax:1,gridYMax:2})
                     break
                 case '2':
-                    exponentialLevel(gameState, {numSliders:8, nextScenes:["exponential.puzzle.3"],  gridXMax:4,gridYMax:30,
-                        sliderSize: 15, targetSize:16, increment:1}
-                    )
+                    exponentialLevel(gameState, {numSliders:4, nextScenes:["exponential.puzzle.3"], gridXMax:4,gridYMax:16})
+                    
                     break
                 case '3':
                     exponentialLevel(gameState, {numSliders:4, nextScenes:["exponential.puzzle.4"], withMathBlock:true,
@@ -90,6 +90,12 @@ export function loadScene(gameState, sceneName, message = {}){
                     })
                     break
                 case '4':
+                    exponentialLevel(gameState, {numSliders:8, nextScenes:["exponential.puzzle.5"],  gridXMax:4,gridYMax:30,
+                        sliderSize: 15, targetSize:16, increment:1}
+                    )
+                    
+                    break
+                case '5':
                     exponentialLevel(gameState, {numSliders:8, nextScenes:["exponential.puzzle.5"], withMathBlock:true,
                         gridXMax:4,gridYMax:30,
                         lastTarget:27,
@@ -97,19 +103,11 @@ export function loadScene(gameState, sceneName, message = {}){
                         oneSlider:true,
                     })
                     break
-                case '5':
-                    exponentialLevel(gameState, {numSliders:16, nextScenes:["exponential.puzzle.6"], withMathBlock:true,
-                        gridXMax:4,gridYMax:40,
-                        lastTarget:38,
-                        sliderSize: 10, targetSize:9, increment: 0.2,
-                        oneSlider:true,
-                    })
-                    break
                 case '6':
-                    exponentialLevel(gameState, {numSliders:200, nextScenes:["exponential.puzzle.7"], withMathBlock:true,
+                    exponentialLevel(gameState, {numSliders:400, nextScenes:["exponential.puzzle.7"], withMathBlock:true,
                         gridXMax:4,gridYMax:60,
                         lastTarget:53,
-                        sliderSize: 5, targetSize:3, increment: 0.1,
+                        sliderSize: 5, targetSize:6, increment: 0.1,
                         oneSlider:true,
                     })
                     break
@@ -126,8 +124,27 @@ export function loadScene(gameState, sceneName, message = {}){
                     })
                     break
                 case '10':
-                    Puzzles.
+                    eBlockLevel(gameState, {
+
+                    })
                     break
+                case '11':
+                    eBlockLevel(gameState, {
+                        scaleY:2,
+                    })
+                break
+                case '12':
+                    eBlockLevel(gameState, {
+                        scaleY:0.5,
+                        sliderOpts :{maxValue:2, sliderLength:4, showAxis:true, increment:0.5}, 
+                    })
+                break
+                case '13':
+                    eBlockLevel(gameState, {
+                        scaleY:-1,
+                        sliderOpts :{maxValue:2, sliderLength:4, showAxis:true, increment:0.5}, 
+                    })
+                break
                 case '20':
                     {
                         const targetBlock = new MathBlock({type:MathBlock.EXPONENT, token:'e',originX: 100, originY: 250,})
@@ -143,7 +160,7 @@ export function loadScene(gameState, sceneName, message = {}){
                             tracerOpts: {originGridY: targetBlock.toFunction()(-5)},
                             nextScenes: ["planetMap"],
                         })
-                        Planet.dialogueScene(gameState, {filePath: './'})
+                        Planet.dialogueScene(gameState, {filePath: './dialogue/expE.txt', noExit:true})
                     }
                     break
                
@@ -175,6 +192,29 @@ export function loadScene(gameState, sceneName, message = {}){
             } 
             break
     }
+}
+
+function eBlockLevel(gameState, {
+    scaleY = 1,
+    sliderOpts = {maxValue:5, sliderLength:10, showAxis:true, increment:1},
+}){
+    const targetBlock = new MathBlock({type:MathBlock.EXPONENT, token:'e',originX: 200, originY: 250,})
+    targetBlock.scaleY = scaleY
+    targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
+    targetBlock.insert(gameState.objects, 1)
+
+    const fLabel = new TextBox({font:'30px monospace',baseline: 'top', originX: 100, originY: 250, content: 'f(x)='})
+    const ddxLabel = new TextBox({font:'30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)='})
+    fLabel.insert(gameState.objects, 0)
+    ddxLabel.insert(gameState.objects, 0)
+
+    Puzzles.mathBlockLevel(gameState, {
+        targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:100, targetOpts:{size:12}}),
+        blocks: Planet.standardBlocks('exponential'),
+        sliderOpts: sliderOpts,
+        gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
+        tracerOpts: {originGridY: targetBlock.toFunction()(-5)},
+    })
 }
 
 function exponentialPlanet(gameState,message){
@@ -243,7 +283,7 @@ function exponentialLevel (gameState, {
     
     const blocks = [
         new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
-        new MathBlock({type:MathBlock.EXPONENT, token:'n'}),
+        new MathBlock({type:MathBlock.EXPONENT, token:'0'}),
     ]
     // for (let b of gss.mathBlocksUnlocked){
     //     blocks.push(new MathBlock({type: b.type, token: b.token}))
