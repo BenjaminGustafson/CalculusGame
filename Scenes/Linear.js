@@ -174,8 +174,8 @@ export function loadScene(gameState, sceneName, message = {}) {
                             numSliders: 4,
                             sliderOpts: { circleRadius: 15, increment: 0.5}
                         },
-                        targetBuilder: buildTargetsFromYs({ targetYs:  [2, 1.5, -0.5, -2], targetOpts: { size: 20 } }),
-                        tracerOpts: { numLabel: false, originGridY: 0 },
+                        targetBuilder: buildTargetsFromYs({ targetYs:  [0.5, 1, 0.5, 1.5], targetOpts: { size: 20 } }),
+                        tracerOpts: { numLabel: false, originGridY: 1 },
                         nextScenes: ["linear.puzzle.3a"]
                     })
                     Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/nice.txt'})
@@ -300,114 +300,66 @@ export function loadScene(gameState, sceneName, message = {}) {
                     mathBlockTutorials(gameState, { targetVals: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2], withLinear: true, nextScenes: ["linear.puzzle.6a"] })
                     break
                 case '6a':
+                    Puzzles.shipPositionLevel(gameState, {
+                        sliderLevelOpts: {
+                            sliderSetupOpts: {
+                                numSliders: 4,
+                                sliderOpts: { circleRadius: 15, increment: 0.5}
+                            },
+                            targetBuilder: buildTargetsFromYs({ targetYs: [0.5,1,1.5,2],
+                                targetOpts: { size: 20 } }),
+                            nextScenes: ["linear.puzzle.6b"],
+                        }
+                    })
                     
                     break
                 case '6b':
-                    turtlePuzzle(gameState, {
-                        nextScenes: ["linear.puzzle.15"],
-                        version: 'sliders',
-                        facingRight: false,
-                        solutionFun: x => 5 - 0.5 * x,
-                        solutionDdx: x => -0.5,
-                        solutionFunString: "-0.5t + 5",
-                        solutionDdxString: "-0.5",
-                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-                        syDdxMax: 2,
-                        syDdxLen: 4,
-                        tyDdxMax: 2,
-                        tyDdxLen: 4,
-                        numMeasurement: 5,
-                        ddxSliderSpacing: 2,
+                    Puzzles.shipPositionLevel(gameState, {
+                        sliderLevelOpts: {
+                            sliderSetupOpts: {
+                                numSliders: 4,
+                                sliderOpts: { circleRadius: 15, increment: 0.5}
+                            },
+                            targetBuilder: buildTargetsFromYs({ targetYs: [-1,-2,0,2],
+                                targetOpts: { size: 20 } }),
+                            nextScenes: ["linear.puzzle.6c"],
+                        }
                     })
                     break
                 case '6c':
-                    turtlePuzzle(gameState, {
-                        nextScenes: ["linear.puzzle.16"],
-                        version: 'fitDdx',
-                        solutionFun: x => 0.5 * x,
-                        solutionDdx: x => 0.5,
-                        solutionFunString: "0.5t",
-                        solutionDdxString: "0.5",
-                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-                        syDdxMax: 2,
-                        syDdxLen: 4,
-                        tyDdxMax: 2,
-                        tyDdxLen: 4,
-                        numMeasurement: 5,
-                        ddxSliderSpacing: 2,
-
+                    Puzzles.shipPositionLevel(gameState, {
+                        sliderLevelOpts: {
+                            sliderSetupOpts: {
+                                numSliders: 4,
+                                sliderOpts: { circleRadius: 15, increment: 0.5}
+                            },
+                            targetBuilder: buildTargetsFromYs({ targetYs: [1,2,0,-2],
+                                targetOpts: { size: 20 } }),
+                                nextScenes: ["linear.puzzle.6d"],
+                            },
+                        hidePositionTargets:true,
                     })
                     break
                 case '6d':
-                    turtlePuzzle(gameState, {
-                        nextScenes: ["linear.puzzle.17"],
-                        version: 'fitDdx',
-                        solutionFun: x => 0.5 * x + 2,
-                        solutionDdx: x => 0.5,
-                        solutionFunString: "0.5t+2",
-                        solutionDdxString: "0.5",
-                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-                        syDdxMax: 2,
-                        syDdxLen: 4,
-                        tyDdxMax: 2,
-                        tyDdxLen: 4,
-                        numMeasurement: 4,
-                        ddxSliderSpacing: 2,
-                        barMax: 10,
-                    })
-                    break
-                case '10':
-                    turtlePuzzle(gameState, {
-                        nextScenes: ["linear.puzzle.18"],
-                        version: 'fitDdx',
-                        solutionFun: x => 1 + 1.5 * x,
-                        solutionDdx: x => 1.5,
-                        solutionFunString: "1.5t + 1",
-                        solutionDdxString: "1.5",
-                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-                        syDdxMax: 2,
-                        syDdxLen: 4,
-                        tyDdxMax: 2,
-                        tyDdxLen: 4,
-                        numMeasurement: 4,
-                        ddxSliderSpacing: 2,
-                        barMax: 8,
-                    })
-                    break
-                case '18':
-                    turtlePuzzle(gameState, {
-                        nextScenes: ["linear.puzzle.19"],
-                        version: 'fitDdx',
-                        solutionFun: x => 2 * x,
-                        solutionDdx: x => 2,
-                        solutionFunString: "2 t",
-                        solutionDdxString: "2",
-                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-                        syDdxMax: 2,
-                        syDdxLen: 4,
-                        tyDdxMax: 2,
-                        tyDdxLen: 4,
-                        numMeasurement: 5,
-                        ddxSliderSpacing: 1,
-                        barStep: 1,
-                        barMax: 6,
-                    })
-                    break
-                case '19':
-                    turtlePuzzle(gameState, {
-                        nextScenes: ["linear.dialogue.4", "linear.puzzle.20"],
-                        version: 'fitDdx',
-                        solutionFun: x => 10 - x,
-                        solutionDdx: x => -1,
-                        solutionFunString: "-1t + 10",
-                        solutionDdxString: "-1",
-                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-                        syDdxMax: 2,
-                        syDdxLen: 4,
-                        tyDdxMax: 2,
-                        tyDdxLen: 4,
-                        numMeasurement: 5,
-                        ddxSliderSpacing: 2,
+                    Puzzles.shipPositionLevel(gameState, {
+                        sliderLevelOpts: {
+                            // sliderSetupOpts: {
+                            //     numSliders: 4,
+                            //     sliderOpts: { circleRadius: 15, increment: 0.5}
+                            // },
+                            // targetBuilder: buildTargetsFromYs({ targetYs: [2,1.5,1,1],
+                            //     targetOpts: { size: 20 } }),
+                            //
+                            // },
+                            sliderSetupOpts: {
+                                numSliders: 8,
+                                sliderOpts: { circleRadius: 12, increment: 0.5}
+                            },
+                            targetBuilder: buildTargetsFromYs({ targetYs: [0.25, 0.5, 0.75, 1, 0.5, 0, 0.5, 1],
+                                targetOpts: { size: 20 } }),
+                            nextScenes: ["linear.puzzle.7a"],
+                            },
+                        hidePositionTargets:true,
                     })
                     break
                 case '7a':
@@ -447,6 +399,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                             sliderOpts: { maxValue: 5, sliderLength: 10, startValue: 1, showAxis: true, increment: 1 },
                             //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
                             tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
+                            nextScenes: ['linear.puzzle.7c'],
                         })
                     }
                     break
@@ -467,6 +420,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                             sliderOpts: { maxValue: 5, sliderLength: 10, startValue: 1, showAxis: true, increment: 1 },
                             //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
                             tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
+                            nextScenes: ['linear.puzzle.7d'],
                         })
                     }
                     break
@@ -490,7 +444,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                             sliderOpts: { maxValue: 5, sliderLength: 10, startValue: 1, showAxis: true, increment: 0.5 },
                             //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
                             tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
-                            nextScenes: ['linear.dialogue.5'],
+                            nextScenes: ['planetMap'],
                         })
                     }
                     break
@@ -501,7 +455,7 @@ export function loadScene(gameState, sceneName, message = {}) {
         case 'dialogue':
             linearPlanet(gameState)
             switch (sceneNameSplit[2]) {
-                case '5':
+                case '1':
                     {
                         const gss = gameState.stored
                         const planetUnlock = 'quadratic'
