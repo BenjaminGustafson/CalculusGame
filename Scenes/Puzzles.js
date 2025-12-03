@@ -1,7 +1,7 @@
 
 import { GameObjectGroup } from "../GameObjects/GameObject.js"
 import {Grid, MathBlock, MathBlockField, MathBlockManager, Slider, Target, TargetAdder, FunctionTracer, IntegralTracer, 
-    DrawFunction, TextBox, Button, DialogueBox
+    DrawFunction, TextBox, Button, DialogueBox, ShipPosition
 } from "../GameObjects/index.js"
 import * as Planet from "./Planet.js"
 import {Color, Shapes} from '../util/index.js'
@@ -271,6 +271,21 @@ export function sliderLevel(gameState, {
     })
     
     return {gridGroup:gridGroup, sliderGroup:sliderGroup, targetGroup:targetGroup, tracer:tracer}
+}
+
+export function shipPositionLevel(gameState, {
+    sliderLevelOpts,
+
+}){
+    const {gridGroup, sliderGroup, targetGroup, tracer} = sliderLevel(gameState, {
+        gridSetupOpts: {leftMargin: 400},
+        ...sliderLevelOpts,
+    })
+
+    const shipPosition = new ShipPosition({
+        
+    })
+    shipPosition.insert(gameState.objects)
 }
 
 /**
@@ -727,7 +742,7 @@ export function dialogueOverlay(gameState, {
                 //onComplete() scope? maybe better name
                 this.hidden = true
             },
-            originY:50,
+            originY:20,
         })
         dialogueBox.insert(gameState.objects, 100)
         }); // end .then

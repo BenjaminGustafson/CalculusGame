@@ -2,8 +2,7 @@ IDS
 A: astronautAPortrait
 P: astronautBPortrait
 TEXT
-A:  
-P: And how do you know where 0 is? 
-A: Well, the sliders all start at 0. And the grid line for 0 has little arrows on the ends.
-P: I figured as much.
+A: You can calculate slope by taking the change in y divided by the change in x.
+P: The line went up 3 squares and over 2. So the slope is 3/2 = 1.5.
+A: Yep.
 END

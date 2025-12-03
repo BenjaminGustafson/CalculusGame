@@ -1,0 +1,7 @@
+IDS
+A: astronautAPortrait
+P: astronautBPortrait
+TEXT
+A: Nice!
+P: 
+END

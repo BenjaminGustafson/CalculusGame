@@ -1,0 +1,7 @@
+IDS
+A: astronautAPortrait
+P: astronautBPortrait
+TEXT
+P: What was that?
+A: You set the 
+END

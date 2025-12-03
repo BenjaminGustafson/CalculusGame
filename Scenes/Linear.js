@@ -178,6 +178,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                         tracerOpts: { numLabel: false, originGridY: 0 },
                         nextScenes: ["linear.puzzle.3a"]
                     })
+                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/nice.txt'})
                     break
                 case '3a':
                     sliderLevel(gameState, {
@@ -203,6 +204,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                         tracerOpts: { numLabel: false, originGridY: 0 },
                         nextScenes: ["linear.puzzle.3c"]
                     })
+                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope2.txt'})
                     break
                 case '3c':
                     sliderLevel(gameState, {
@@ -215,6 +217,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                         tracerOpts: { numLabel: false, originGridY: 0 },
                         nextScenes: ["linear.puzzle.3d"]
                     })
+                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope3.txt'})
                     break
                 case '3d':
                     sliderLevel(gameState, {
@@ -227,6 +230,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                         tracerOpts: { numLabel: false, originGridY: 0 },
                         nextScenes: ["linear.puzzle.4a"],
                     })
+                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope4.txt'})
                     break
                 case '4a':
                     sliderLevel(gameState, {
@@ -239,6 +243,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                         tracerOpts: { numLabel: false, originGridY: 0 },
                         nextScenes:  ["linear.puzzle.4b", "linear.puzzle.5a"],
                     })
+                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/double.txt'})
                     break
                 case '4b':
                     sliderLevel(gameState, {
@@ -252,6 +257,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                         tracerOpts: { numLabel: false, originGridY: 0 },
                         nextScenes: ["linear.puzzle.4c"],
                     })
+                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/triple.txt'})
                     break
                 case '4c':
                     sliderLevel(gameState, {
@@ -264,7 +270,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                         tracerOpts: { numLabel: false, originGridY: 0 },
                         nextScenes: ["linear.puzzle.4d"],
                     })
-                    //
+                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/quadruple.txt'})
                     break
                 case '4d':
                     sliderLevel(gameState, {
@@ -278,10 +284,11 @@ export function loadScene(gameState, sceneName, message = {}) {
                         tracerOpts: { numLabel: false, originGridY: 0 },
                         nextScenes: ["linear.puzzle.5a"],
                     })
-                    //
+                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/sixteen.txt'})
                     break
                 case '5a':
                     mathBlockTutorials(gameState, { targetVals: [1, 1, 1, 1, 1, 1, 1, 1], nextScenes: ["linear.puzzle.5b"], withUITip: true })
+                    
                     break
                 case '5b':
                     mathBlockTutorials(gameState, { targetVals: [-1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5], nextScenes: ["linear.puzzle.5c"] })
@@ -293,32 +300,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                     mathBlockTutorials(gameState, { targetVals: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2], withLinear: true, nextScenes: ["linear.puzzle.6a"] })
                     break
                 case '6a':
-                    turtlePuzzle(gameState, {
-                        nextScenes: ["linear.puzzle.14"],
-                        version: 'sliders',
-                        solutionFun: x => x,
-                        solutionDdx: x => 1,
-                        solutionFunString: "t",
-                        solutionDdxString: "1",
-                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-                        syDdxMax: 2,
-                        syDdxLen: 4,
-                        tyDdxMax: 2,
-                        tyDdxLen: 4,
-                        numMeasurement: 5,
-                        ddxSliderSpacing: 2,
-                    })
-                    const uiTip = {
-                        update: function (ctx) {
-                            Color.setColor(ctx, Color.lightGray)
-                            ctx.font = '20px monospace'
-                            ctx.textAlign = 'left'
-                            ctx.textBaseline = 'bottom'
-                            ctx.fillText('Measure the turtle\'s postion over time.', 75, 260)
-                            ctx.fillText('Click on the graph to add measurements.', 75, 300)
-                        }
-                    }
-                    gameState.objects.push(uiTip)
+                    
                     break
                 case '6b':
                     turtlePuzzle(gameState, {

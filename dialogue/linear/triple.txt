@@ -1,0 +1,7 @@
+IDS
+A: astronautAPortrait
+P: astronautBPortrait
+TEXT
+P: Okay, now there were 3 sliders per square. So, setting a slider to 1 means we go up by 1/3.
+A: Yes. And setting a slider to -2 means you go down by 2/3.
+END

@@ -1,0 +1,9 @@
+IDS
+A: astronautAPortrait
+P: astronautBPortrait
+TEXT
+A: You made quick work of that!
+P: I think I've figured it out. You just have to calculate the difference between each target and the next.
+A: You'll be flying that ship in no time! Where is it that you want to go?
+P: Nowhere in particular...
+END
