@@ -8,7 +8,7 @@ import * as Planet from './Planet.js'
 import * as Puzzles from './Puzzles.js'
 import { buildTargetsFromYs, sliderLevel } from './Puzzles.js'
 
-const tileMap = new TileMap({ yTileOffset: -3, xTileOffset: -8, xImgOffset: 0, yImgOffset: -32})
+const tileMap = new TileMap({ yTileOffset: -3, xTileOffset: -8, xImgOffset: 0, yImgOffset: 0})
 
 // [x,y,  dx,dy] where dx dy is the direction to face when stopped at node
 // SW 0,1 NW -1,0 NE 0,-1 SE 1,0
@@ -283,7 +283,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                             },
                             targetBuilder: buildTargetsFromYs({ targetYs: [0.5,1,1.5,2],
                                 targetOpts: { size: 20 } }),
-                            nextScenes: ["linear.puzzle.5b"],
+                            nextScenes: ["linear.puzzle.5b","linear.puzzle.5c","linear.puzzle.5d","linear.puzzle.6a"],
                         }
                     })
                     break
@@ -337,7 +337,8 @@ export function loadScene(gameState, sceneName, message = {}) {
                     })
                     break
                 case '6a':
-                    mathBlockTutorials(gameState, { targetVals: [1, 1, 1, 1, 1, 1, 1, 1], nextScenes: ["linear.puzzle.6b"], withUITip: true })
+                    mathBlockTutorials(gameState, { targetVals: [1, 1, 1, 1, 1, 1, 1, 1], 
+                        nextScenes: ["linear.puzzle.6b", "linear.puzzle.7a"], withUITip: true })
                     break
                 case '6b':
                     mathBlockTutorials(gameState, { targetVals: [-1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5], nextScenes: ["linear.puzzle.7a"] })
@@ -358,7 +359,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                             sliderOpts: { showAxis:true, increment: 0.5 },
                             //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
                             tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
-                            nextScenes: ['linear.puzzle.7b'],
+                            nextScenes: ['linear.puzzle.7b', 'linear.puzzle.7c', 'linear.puzzle.7d'],
                         })
                         sySlider.hidden = true
                     }
@@ -457,35 +458,6 @@ export function loadScene(gameState, sceneName, message = {}) {
 }
 
 
-
-/**
- * A 4x4 discrete level with given targets.
- * 
- * @param {*} gameState 
- * @param {*} targetVals The y-values of the targets
- * @param {*} tracerStart y-intercept where the tracer starts from
- * @param {number} targetSize The size of the targets and sliders
- */
-function simpleDiscLevel(gameState, {
-    targetVals,
-    tracerStart = 0,
-    targetSize = 20,
-    sliderSize = 15,
-    sliderIncrement = 0.5,
-    showSliderVals = false,
-    nextScenes
-}) {
-    sliderLevel(gameState, {
-        sliderSetupOpts: {
-            numSliders: targetVals.length,
-            sliderOpts: { circleRadius: sliderSize, valueLabel: showSliderVals, increment: sliderIncrement}
-        },
-        targetBuilder: buildTargetsFromYs({ targetYs: targetVals, targetOpts: { size: targetSize } }),
-        tracerOpts: { numLabel: false, originGridY: tracerStart },
-        nextScenes: nextScenes
-    })
-}
-
 function mathBlockTutorials(gameState, {
     targetVals, tracerStart = 0,
     targetSize = 20, sliderSize = 15,
@@ -556,244 +528,7 @@ function mathBlockTutorials(gameState, {
     }
 
     gameState.objects = [grid, functionTracer, backButton, nextButton, mbm, sySlider, tySlider, uiTip].concat(targets)
-    Planet.addWinCon(gameState, () => functionTracer.solved, nextButton)
-    unlockScenes(nextScenes, gss)
-}
-
-function turtlePuzzle(gameState, { facingRight = true, solutionFun, tMax = 10, ...options }) {
-    const turtle = {
-        length: 400,
-        originX: 1100,
-        originY: 700,
-        time: 0,
-        update: function (ctx) {
-            // Turtle
-            const width = 100
-            Color.setColor(ctx, Color.green)
-            const x = this.originX - width + (solutionFun(this.time) * this.length / tMax)
-            ctx.font = "100px monospace"
-            ctx.translate(x, this.originY)
-            if (facingRight) ctx.scale(-1, 1)
-            ctx.textAlign = facingRight ? 'right' : 'left'
-            ctx.textBaseline = 'bottom'
-            ctx.fillText("🐢", 0, 0)
-            ctx.resetTransform()
-
-            // Number line
-            const numTicks = 10
-            const lineWidth = 5
-            const tickLength = 10
-            Color.setColor(ctx, Color.white)
-            Shapes.RoundedLine(ctx, this.originX, this.originY, this.originX + this.length, this.originY, lineWidth)
-
-            ctx.font = '26px monospace'
-            ctx.textAlign = 'left'
-            ctx.textBaseline = 'top'
-            ctx.fillText('t = ' + this.time.toFixed(1), this.originX, this.originY - 160)
-            ctx.fillText('p(t) = ' + solutionFun(this.time).toFixed(1), this.originX, this.originY - 120)
-
-            ctx.font = '20px monospace'
-            for (let i = 0; i < numTicks + 1; i++) {
-                const tickX = this.originX + this.length / numTicks * i
-                ctx.fillText(i, tickX, this.originY + tickLength + 5)
-                Shapes.RoundedLine(ctx, tickX, this.originY - tickLength, tickX, this.originY + tickLength, lineWidth)
-            }
-
-
-        }
-    }
-
-    const blocks = [
-        new MathBlock({ type: MathBlock.CONSTANT, token: '0' }),
-        new MathBlock({ type: MathBlock.VARIABLE, token: 't' }),
-    ]
-    measurementPuzzle(gameState, {
-        measureObject: turtle, solutionFun: solutionFun, tMax: tMax,
-        blocks: blocks,
-        ...options
-    })
-}
-
-export function measurementPuzzle(gameState, {
-    version,
-    nextScenes = [],
-    solutionFun,
-    syFunMax, syFunLen, tyFunMax, tyFunLen,
-    syDdxMax, syDdxLen, tyDdxMax, tyDdxLen,
-    ddxMax = 2, ddxMin = -2,
-    funMax = 10, funMin = 0,
-    measureObject,
-    ddxSliderSpacing,
-    tMax = 10, tStep = 1,
-    barMax = 12,
-    adderXPrecision = 1, adderYPrecision = 1,
-    barStep = 2,
-    blocks
-}) {
-    const gss = gameState.stored
-    const backButton = Planet.backButton(gameState)
-    const nextButton = Planet.nextButton(gameState, nextScenes)
-
-    // Grids
-    const gridSize = version == 'fitDdx' ? 350 : 400
-    const gridLeft = new Grid({
-        canvasX: 40, canvasY: 400, canvasWidth: gridSize, canvasHeight: gridSize,
-        gridXMin: 0, gridXMax: tMax, gridYMin: funMin, gridYMax: funMax, labels: true, xAxisLabel: 'Time t', gridTitle: 'Position p(t)', autoCellSize: true
-    })
-
-    const gridRight = new Grid({
-        canvasX: version == 'fitDdx' ? 450 : 570, canvasY: 400, canvasWidth: gridSize, canvasHeight: gridSize,
-        gridXMin: 0, gridXMax: tMax, gridYMin: ddxMin, gridYMax: ddxMax, labels: true, xAxisLabel: 'Time t', gridTitle: 'Velocity v(t)', autoCellSize: true
-    })
-
-    const sySlider = new Slider({ canvasX: 840, canvasY: 400, canvasLength: 350, sliderLength: 10, maxValue: 5, showAxis: true })
-    const tySlider = new Slider({ canvasX: 880, canvasY: 400, canvasLength: 350, sliderLength: 10, maxValue: 5, showAxis: true })
-    const adder = new TargetAdder({ grid: gridLeft, solutionFun: solutionFun, coverBarPrecision: barStep, barMax: barMax, xPrecision: adderXPrecision, yPrecision: adderYPrecision })
-
-
-    // Measurement background (black rectangle)
-    const bgImage = {
-        update: function (ctx) {
-            //const image = document.getElementById("quad_img")
-            Color.setColor(ctx, Color.darkBlack)
-            const x = 1000
-            const y = 200
-            const w = 600
-            const h = 700
-            Shapes.Rectangle({ ctx: ctx, originX: x, originY: y, width: w, height: h, inset: true })
-            //ctx.drawImage(image, 0,0, 1600*600/900,900, x+10, y+10, w-20, h-20)
-        }
-    }
-
-
-    // TIME CONTROLS
-    var time = 0
-    var playing = true
-    var startTime = Date.now()
-    var startValue = 0
-
-    const tSlider = new Slider({
-        canvasX: 1100, canvasY: 150, canvasLength: 450,
-        sliderLength: tMax, maxValue: tMax, vertical: false, increment: tStep
-    })
-    const playPauseButton = new Button({
-        originX: 1000, originY: 120, width: 50, height: 50,
-        onclick: function () {
-            if (time >= tMax) {
-                playing = true
-                time = 0
-                startTime = Date.now()
-                startValue = 0
-                tSlider.setValue(0)
-            } else {
-                if (playing) {
-                    playing = false
-                } else {
-                    startTime = Date.now()
-                    startValue = time
-                    playing = true
-                }
-            }
-        },
-        label: "⏸", lineWidth: 5
-    })
-
-    const errorText = new TextBox({ originX: 950, originY: 160, align: 'right' })
-
-    var step = 0
-
-    const field = new MathBlockField({ minX: 50, minY: 200, maxX: 450, maxY: 300 })
-    const funTracer = new FunctionTracer({
-        grid: gridLeft,
-        inputFunction: x => field.outputFunction()(x),
-        animated: true, autoStart: true,
-        resetCondition: () => field.newFunction,
-    })
-    const mngr = new MathBlockManager({
-        blocks: blocks, toolBarX: 920, toolBarY: 400,
-        translateYSlider: tySlider, scaleYSlider: sySlider, blockSize: 26,
-        blockFields: [field],
-        funTracers: [],
-    })
-
-    gameState.objects = [backButton, nextButton, gridLeft, errorText, bgImage, tSlider, measureObject, playPauseButton, adder]
-    var delay = 50
-    gameState.update = () => {
-        if (step == 0 && adder.solved) {
-            step = 1
-            adder.showBar = false
-            if (version == 'sliders') {
-                const sliders = []
-                const spacing = ddxSliderSpacing
-                for (let i = gridRight.gridXMin; i < gridRight.gridXMax; i += spacing) {
-                    sliders.push(new Slider({ grid: gridRight, gridPos: i, increment: 0.1, circleRadius: 15 }))
-                }
-                const tracer = new IntegralTracer({
-                    grid: gridLeft, originGridY: solutionFun(0),
-                    input: { type: 'sliders', sliders: sliders }, targets: adder.targets
-                })
-                gameState.objects = gameState.objects.concat([gridRight, tracer, ...sliders])
-                Planet.addWinCon(gameState, () => tracer.solved, nextButton)
-            } else {
-
-                sySlider.setSize(syFunMax, syFunLen)
-                tySlider.setSize(tyFunMax, tyFunLen)
-                funTracer.targets = adder.targets
-                gameState.objects = gameState.objects.concat([sySlider, funTracer, tySlider, mngr]).concat(adder.targets)
-            }
-        } else if (step == 1 && funTracer.solved) {
-            step = 2
-            mngr.highlighted.isHighlighted = false
-            mngr.highlighted = null
-        } else if (step == 2 && delay > 0) {
-            delay--
-        } else if (step == 2) {
-            step = 3
-            const blockField = new MathBlockField({ minX: 450, minY: 200, maxX: 800, maxY: 300 })
-            const ddxTracer = new FunctionTracer({ grid: gridRight })
-
-            // const mngr = new MathBlockManager({
-            //     blocks:blocks, toolBarX:920, toolBarY:400,
-            //     translateYSlider:tySlider, scaleYSlider:sySlider, blockSize:26,
-            //     blockFields: [blockField],
-            //     funTracers: [ddxTracer],
-            // })
-
-            mngr.blockFields = [blockField]
-            mngr.funTracers = [ddxTracer]
-
-            funTracer.targets = []
-            funTracer.solvedColor = Color.magenta
-
-            const blockTracer = new IntegralTracer({
-                grid: gridLeft, originGridY: solutionFun(0),
-                input: { type: 'mathBlock', blockField: blockField }, targets: adder.targets, autoStart: true
-            })
-
-
-            sySlider.setSize(syDdxMax, syDdxLen)
-            tySlider.setSize(tyDdxMax, tyDdxLen)
-            gameState.objects = gameState.objects.concat([gridRight, blockTracer, ddxTracer, field.rootBlock]).concat(adder.targets)
-            Planet.addWinCon(gameState, () => blockTracer.solved, nextButton)
-        }
-        tSlider.active = !playing
-        if (playing) {
-            time = (Date.now() - startTime) / 1000 + startValue // time in secs to 1 decimal
-            tSlider.setValue(time)
-            playPauseButton.label = '⏸'
-        } else {
-            playPauseButton.label = '⏵'
-            time = tSlider.value
-        }
-        if (time >= tMax) {
-            time = tMax
-            playing = false
-            playPauseButton.label = '⏮'
-        }
-        measureObject.time = time
-    }
-
-    unlockScenes(nextScenes, gss)
+    Planet.addWinCon(gameState, () => functionTracer.solved, nextButton, nextScenes)
 }
 
 

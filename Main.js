@@ -41,7 +41,7 @@ import { MathBlock } from './GameObjects/MathBlock.js'
 
 // Build "dev" for developement
 // "play" release version
-const build = "play"
+const build = "dev"
 
 var keysPressed = {}
 
@@ -87,6 +87,7 @@ function setup() {
         objects: [], // The GameObjects in the current scene
         update: (() => { }), // The update function for the scene
         stored: {}, // The part of the state that is saved. See initStoredState for object contents
+        temp: {}, // Refreshes on scene load
     }
 
     function initStoredState(){
@@ -329,12 +330,10 @@ function setup() {
             if (!gameState.stored) return;
             if (!gameState.stored.completedScenes) gameState.stored.completedScenes = {};
 
-            for (let i = 1; i <= 20; i ++){
-                const planet = gameState.stored.planet
-                gameState.stored.completedScenes[planet+'.puzzle.' + i] = "in progress"
-                gameState.stored.completedScenes[planet+'.dialogue.' + i] = "in progress"
-                gameState.stored.completedScenes[planet+'.trial.' + i] = "in progress"
-            }
+            // for (let i = 1; i <= 20; i ++){
+            //     const planet = gameState.stored.planet
+            //     gameState.stored.completedScenes[planet+'.puzzle.' + i] = "in progress"
+            // }
             updateStoredDisplay();
         });
 
