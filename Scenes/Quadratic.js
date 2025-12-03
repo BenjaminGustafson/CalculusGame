@@ -4,7 +4,6 @@ import * as Scene from '../Scene.js'
 import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
 import * as Experiment from './Experiment.js'
-import { measurementPuzzle } from './Linear.js'
 import * as Puzzles from './Puzzles.js'
 
 /**
