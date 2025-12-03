@@ -191,8 +191,8 @@ export function levelNavigation(gameState, {
     const nextB = nextButton(gameState, nextScenes)
     nextB.insert(gameState.objects, 0)
 
-    addWinCon(gameState, winCon, nextB)
-    unlockScenes(nextScenes, gameState.stored)
+    addWinCon(gameState, winCon, nextB, nextScenes)
+    //unlockScenes(nextScenes, gameState.stored)
 }
 
 /**
@@ -234,7 +234,7 @@ function defaultNextScenes(gameState){
     return [parts.join('.')]
 }
 
-export function addWinCon(gameState, condition, nextButton){
+export function addWinCon(gameState, condition, nextButton, nextScenes){
     const oldUpdate = gameState.update
     gameState.update = () => {
         oldUpdate()
@@ -245,6 +245,7 @@ export function addWinCon(gameState, condition, nextButton){
                 nextButton.active = true
                 nextButton.bgColor = Color.blue
             }
+            unlockScenes(nextScenes, gameState.stored)
         }
     }
 }

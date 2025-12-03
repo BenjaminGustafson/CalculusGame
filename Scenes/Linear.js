@@ -8,46 +8,46 @@ import * as Planet from './Planet.js'
 import * as Puzzles from './Puzzles.js'
 import { buildTargetsFromYs, sliderLevel } from './Puzzles.js'
 
-const tileMap = new TileMap({ yTileOffset: -3, xTileOffset: -7, xImgOffset: 0, yImgOffset: 0 })
+const tileMap = new TileMap({ yTileOffset: -3, xTileOffset: -8, xImgOffset: 0, yImgOffset: -32})
 
 // [x,y,  dx,dy] where dx dy is the direction to face when stopped at node
 // SW 0,1 NW -1,0 NE 0,-1 SE 1,0
 const nodes = {
-    'planetMap': [5, 1, 0, -1],
-    'linear.puzzle.1a': [6, 1, 0, -1],
-    'linear.puzzle.1b': [7, 1, 0, -1],
+    'planetMap': [11, 3, 0, -1],
+    'linear.puzzle.1a': [10, 0, -1, 0],
+    'linear.puzzle.1b': [10, -1, -1, 0],
 
-    'linear.puzzle.2a': [7, 0, 0, -1],
-    'linear.puzzle.2b': [8, 0, 0, -1],
-    'linear.puzzle.2c': [9, 0, 0, -1],
-    'linear.puzzle.2d': [10, 0, 0, -1],
+    'linear.puzzle.2a': [12, -2, -1, 0],
+    'linear.puzzle.2b': [12, -3, -1, 0],
+    'linear.puzzle.2c': [12, -4, -1, 0],
+    'linear.puzzle.2d': [12, -5, -1, 0],
 
-    'linear.puzzle.3a': [10, -1, 0, -1],
-    'linear.puzzle.3b': [11, -1, 0, -1],
+    'linear.puzzle.3a': [13, -5, 0, -1],
+    'linear.puzzle.3b': [14, -5, 0, -1],
 
-    'linear.puzzle.4a': [11, -2, 0, -1],
-    'linear.puzzle.4b': [12, -2, 0, -1],
-    'linear.puzzle.4c': [13, -2, 0, -1],
+    'linear.puzzle.4a': [17, -4, -1, 0],
+    'linear.puzzle.4b': [17, -3, -1, 0],
+    'linear.puzzle.4c': [17, -2, -1, 0],
 
-    'linear.puzzle.5a': [13, -3, 0, -1],
-    'linear.puzzle.5b': [14, -3, 0, -1],
-    'linear.puzzle.5c': [15, -3, 0, -1],
-    'linear.puzzle.5d': [16, -3, 0, -1],
+    'linear.puzzle.5a': [18, 0, 0, -1],
+    'linear.puzzle.5b': [19, 0, 0, -1],
+    'linear.puzzle.5c': [20, 0, 0, -1],
+    'linear.puzzle.5d': [21, 0, 0, -1],
 
-    'linear.puzzle.6a': [16, 0, 0, -1],
-    'linear.puzzle.6b': [15, 0, 0, -1],
+    'linear.puzzle.6a': [21, 2, -1, 0],
+    'linear.puzzle.6b': [21, 3, -1, 0],
 
-    'linear.puzzle.7a': [15, 1, 0, -1],
-    'linear.puzzle.7b': [14, 1, 0, -1],
-    'linear.puzzle.7c': [13, 1, 0, -1],
-    'linear.puzzle.7d': [12, 1, 0, -1],
+    'linear.puzzle.7a': [17, 5, 0, -1],
+    'linear.puzzle.7b': [16, 5, 0, -1],
+    'linear.puzzle.7c': [15, 5, 0, -1],
+    'linear.puzzle.7d': [14, 5, 0, -1],
 }
 
 const paths =
     [
-        { start: 'planetMap', end: 'linear.puzzle.1a' },
+        { start: 'planetMap', end: 'linear.puzzle.1a', steps: [[11,1], [10,1]] },
         { start: 'linear.puzzle.1a', end: 'linear.puzzle.1b', steps: [] },
-        { start: 'linear.puzzle.1b', end: 'linear.puzzle.2a', steps: [] },
+        { start: 'linear.puzzle.1b', end: 'linear.puzzle.2a', steps: [[12,-1]] },
 
         { start: 'linear.puzzle.2a', end: 'linear.puzzle.2b', steps: [] },
         {start: 'linear.puzzle.2b', end:  'linear.puzzle.2c', steps: [] },
@@ -55,11 +55,11 @@ const paths =
         { start: 'linear.puzzle.2d', end: 'linear.puzzle.3a', steps: [] },
 
         { start: 'linear.puzzle.3a', end: 'linear.puzzle.3b', steps: [] },
-        { start: 'linear.puzzle.3b', end: 'linear.puzzle.4a', steps: [] },
+        { start: 'linear.puzzle.3b', end: 'linear.puzzle.4a', steps: [[17,-5]] },
 
         { start: 'linear.puzzle.4a', end: 'linear.puzzle.4b', steps: [] },
         { start: 'linear.puzzle.4b', end: 'linear.puzzle.4c', steps: [] },
-        { start: 'linear.puzzle.4c', end: 'linear.puzzle.5a', steps: [] },
+        { start: 'linear.puzzle.4c', end: 'linear.puzzle.5a', steps: [[17,0]] },
 
         { start: 'linear.puzzle.5a', end: 'linear.puzzle.5b', steps: [] },
         { start: 'linear.puzzle.5b', end: 'linear.puzzle.5c', steps: [] },
@@ -67,23 +67,23 @@ const paths =
         { start: 'linear.puzzle.5d', end: 'linear.puzzle.6a', steps: [] },
 
         { start: 'linear.puzzle.6a', end: 'linear.puzzle.6b', steps: [] },
-        { start: 'linear.puzzle.6b', end: 'linear.puzzle.7a', steps: [] },
+        { start: 'linear.puzzle.6b', end: 'linear.puzzle.7a', steps: [[21,4],[19,4],[19,5]] },
 
         { start: 'linear.puzzle.7a', end: 'linear.puzzle.7b', steps: [] },
         { start: 'linear.puzzle.7b', end: 'linear.puzzle.7c', steps: [] },
         { start: 'linear.puzzle.7c', end: 'linear.puzzle.7d', steps: [] },
-        { start: 'linear.puzzle.7d', end: 'linear.puzzle.8a', steps: [] },
+        { start: 'linear.puzzle.7d', end: 'planetMap', steps:[[13,5],[13,4],[11,4]] },
     ]
 
 function linearPlanet(gameState, message = {}) {
     planetScene(gameState, {
         planetName: 'linear',
-        shipX: 10, shipY: -200,
+        shipX: 100, shipY: 0,
         tileMap: tileMap,
         playerNodes: nodes,
         playerPaths: paths,
         bgImg: 'linearPlanetBg',
-        fgImg: 'placeholderFg',
+        fgImg: 'linearPlanetFg',
         firstScene: 'linear.puzzle.1a',
         message
     })
@@ -105,13 +105,60 @@ export function loadScene(gameState, sceneName, message = {}) {
     switch (sceneNameSplit[1]) {
         case "puzzle":
             switch (sceneNameSplit[2]) {
-                case '1a':
-                    linearPuzzle1(gameState, { nextScenes: ["linear.puzzle.1b"] })
+                case '1a':{
+
+                    //linearPuzzle1(gameState, { nextScenes: ["linear.puzzle.1b"] })
+                    sliderLevel(gameState, {
+                        gridSetupOpts: {spacing:200, topMargin:50,
+                            gridOpts:{gridXMin:0, gridXMax:1, gridYMin:0, gridYMax:1, canvasWidth:100, canvasHeight:100, arrows:false}},
+                        sliderSetupOpts: {
+                            numSliders: 1,
+                            sliderOpts: { circleRadius: 15, increment: 0.1, valueLabel:false}
+                        },
+                        targetBuilder: buildTargetsFromYs({ targetYs:  [1], targetOpts: { size: 20 } }),
+                        tracerOpts: { numLabel: false, originGridY: 0 },
+                        nextScenes: ["linear.puzzle.1b"]
+                    })
+                    const uiTip = {
+                        update: function (ctx) {
+                            Color.setColor(ctx, Color.lightGray)
+                            ctx.font = '20px monospace'
+                            ctx.textAlign = 'left'
+                            ctx.textBaseline = 'bottom'
+                            Shapes.Line(ctx, 850, 520, 850, 430, 5, 'arrow', 10, true)
+                            ctx.fillText('Click and drag', 820, 590)
+                        }
+                    }
+                    gameState.objects.push(uiTip)
                     Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/first.txt'})
+                }
                     break
-                case '1b':
-                    linearPuzzle2(gameState, { nextScenes: ["linear.puzzle.2a"] })
+                case '1b':{
+                    sliderLevel(gameState, {
+                        gridSetupOpts: {spacing:400, topMargin:150,
+                            gridOpts:{gridXMin:0, gridXMax:2, gridYMin:-1, gridYMax:1, canvasWidth:200, canvasHeight:200, arrows:false}},
+                            sliderSetupOpts: {
+                                numSliders: 2,
+                                sliderOpts: { circleRadius: 15, increment: 0.1, valueLabel:false}
+                            },
+                            targetBuilder: buildTargetsFromYs({ targetYs:  [1,0], targetOpts: { size: 20 } }),
+                            tracerOpts: { numLabel: false, originGridY: 0 },
+                            nextScenes: ["linear.puzzle.2a"]
+                        })
+                    const uiTip = {
+                        update: function (ctx) {
+                            Color.setColor(ctx, Color.lightGray)
+                            ctx.font = '20px monospace'
+                            ctx.textAlign = 'right'
+                            ctx.textBaseline = 'middle'
+                            Shapes.Line(ctx, 950, 510, 950, 440, 5, 'arrow', 10, true)
+                            Shapes.Line(ctx, 950, 550, 950, 620, 5, 'arrow', 10, true)
+                            ctx.fillText('Click and drag', 930, 530)
+                        }
+                    }
+                    gameState.objects.push(uiTip)
                     Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/upDown.txt'})
+                }
                     break
                 case '2a':
                     sliderLevel(gameState, {
@@ -121,7 +168,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                         },
                         targetBuilder: buildTargetsFromYs({ targetYs:  [0, 1, 1, 2], targetOpts: { size: 20 } }),
                         tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes: ["linear.puzzle.2b", "linear.puzzle.3a"]
+                        nextScenes: ["linear.puzzle.2b", "linear.puzzle.2c", "linear.puzzle.2d", "linear.puzzle.3a"]
                     })
                     Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/zero.txt'})
                     break
@@ -170,7 +217,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                         },
                         targetBuilder: buildTargetsFromYs({ targetYs: [1.5,3], targetOpts: { size: 20 } }),
                         tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes: ["linear.puzzle.4a"]
+                        nextScenes: ["linear.puzzle.3b", "linear.puzzle.4a"]
                     })
                     Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope2.txt'})
                     break
@@ -196,7 +243,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                         targetBuilder: buildTargetsFromYs({ targetYs: [1, 0.5, 1, 0, -0.5, -1, -0.5, 0],
                             targetOpts: { size: 18 } }),
                         tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes:  ["linear.puzzle.4b", "linear.puzzle.5a"],
+                        nextScenes:  ["linear.puzzle.4b", "linear.puzzle.4c", "linear.puzzle.5a"],
                     })
                     Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/double.txt'})
                     break
@@ -410,86 +457,6 @@ export function loadScene(gameState, sceneName, message = {}) {
 }
 
 
-
-// A 1x1 puzzle
-function linearPuzzle1(gameState, { nextScenes }) {
-    const gss = gameState.stored
-    const gridLeft = new Grid({
-        canvasX: 560, canvasY: 430, canvasWidth: 100, canvasHeight: 100,
-        gridXMin: 0, gridYMin: 0, gridXMax: 1, gridYMax: 1, labels: false, arrows: false
-    })
-
-    const gridRight = new Grid({
-        canvasX: 900, canvasY: 430, canvasWidth: 100, canvasHeight: 100,
-        gridXMin: 0, gridYMin: 0, gridXMax: 1, gridYMax: 1, labels: false, arrows: false
-    })
-
-    const slider = new Slider({ grid: gridRight, gridPos: 0, valueLabel: false })
-
-    const target = new Target({ grid: gridLeft, gridX: 1, gridY: 1, size: 20 })
-    const tracer = new IntegralTracer({ grid: gridLeft, input: { type: 'sliders', sliders: [slider] }, targets: [target], numLabel: false })
-
-    const backButton = Planet.backButton(gameState)
-    const nextButton = Planet.nextButton(gameState, nextScenes)
-
-    const uiTip = {
-        update: function (ctx) {
-            Color.setColor(ctx, Color.lightGray)
-            ctx.font = '20px monospace'
-            ctx.textAlign = 'left'
-            ctx.textBaseline = 'bottom'
-            Shapes.Line(ctx, 850, 520, 850, 430, 5, 'arrow', 10, true)
-            ctx.fillText('Click and drag', 820, 590)
-        }
-    }
-
-    Planet.unlockScenes(nextScenes, gss)
-
-    // Objects and update
-    gameState.objects = [gridLeft, gridRight, slider, target, tracer, backButton, nextButton, uiTip]
-    Planet.addWinCon(gameState, () => tracer.solved, nextButton)
-}
-
-// A 2x2 puzzle
-function linearPuzzle2(gameState, { nextScenes }) {
-    const gss = gameState.stored
-    const gridLeft = new Grid({
-        canvasX: 460, canvasY: 430, canvasWidth: 200, canvasHeight: 200,
-        gridXMin: -1, gridYMin: -1, gridXMax: 1, gridYMax: 1, labels: false, arrows: true
-    })
-    //const gridLeft = new Grid(560, 430, 200, 200, 2, 2, 5)
-    const gridRight = new Grid({
-        canvasX: 1000, canvasY: 430, canvasWidth: 200, canvasHeight: 200,
-        gridXMin: -1, gridYMin: -1, gridXMax: 1, gridYMax: 1, labels: false, arrows: true
-    })
-    const sliders = [
-        new Slider({ grid: gridRight, gridPos: -1, valueLabel: false }),
-        new Slider({ grid: gridRight, gridPos: 0, valueLabel: false }),
-    ]
-    const targets = [
-        new Target({ grid: gridLeft, gridX: 0, gridY: 1, size: 20 }),
-        new Target({ grid: gridLeft, gridX: 1, gridY: 0, size: 20 })
-    ]
-    const tracer = new IntegralTracer({ grid: gridLeft, input: { type: 'sliders', sliders: sliders }, targets: targets, numLabel: false })
-    const uiTip = {
-        update: function (ctx) {
-            Color.setColor(ctx, Color.lightGray)
-            ctx.font = '20px monospace'
-            ctx.textAlign = 'right'
-            ctx.textBaseline = 'middle'
-            Shapes.Line(ctx, 950, 510, 950, 440, 5, 'arrow', 10, true)
-            Shapes.Line(ctx, 950, 550, 950, 620, 5, 'arrow', 10, true)
-            ctx.fillText('Click and drag', 930, 530)
-        }
-    }
-
-    const backButton = Planet.backButton(gameState)
-    const nextButton = Planet.nextButton(gameState, nextScenes)
-
-    gameState.objects = [gridLeft, gridRight, tracer, backButton, nextButton, uiTip].concat(sliders).concat(targets)
-    Planet.addWinCon(gameState, () => tracer.solved, nextButton)
-    unlockScenes(nextScenes, gss)
-}
 
 /**
  * A 4x4 discrete level with given targets.
