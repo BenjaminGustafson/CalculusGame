@@ -1,0 +1,9 @@
+IDS
+A: astronautAPortrait
+P: astronautBPortrait
+TEXT
+P: What happened? When I set the sliders, the line didn't go up as far as I thought it would.
+A: Did you notice that there were twice as many sliders? There are two in every square.
+P: Oh, I see. Each slider only sets the slope for half of a unit.
+END
+A: Yes. If you set the slope to 2 over 1/2 a unit, the line goes up 1.

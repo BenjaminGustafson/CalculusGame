@@ -89,7 +89,7 @@ export class Target extends GameObject{
         }
 
         // TODO: find a more pixel-accurate way to do this...
-        const tolerance = 5
+        const tolerance = 0
         // Allows the center of the line to be off by 
         const t_left = (this.left - x1)/(x2 - x1)
         if (0 <= t_left && t_left <= 1){
@@ -124,5 +124,9 @@ export class Target extends GameObject{
         }
 
         return false
+    }
+
+    strokeIntersect(x1, y1, x2, y2, width){
+
     }
 }

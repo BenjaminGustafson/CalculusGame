@@ -1,0 +1,9 @@
+IDS
+A: glorpPortrait
+P: astronautBPortrait
+TEXT
+P: Okay, now the targets are back to matching the sliders, but there are 3 grids.
+A: So, we are looking for a function whose second derivative is itself. Meaning f''(x) = f(x).
+P: Wait, wouldn't it just be e^x? The derivative of e^x is e^x. So taking the derivative a second time you get e^x.
+A: That's true, but there's also another solution. See if you can find it. 
+END

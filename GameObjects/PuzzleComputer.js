@@ -21,7 +21,7 @@ export class PuzzleComputer extends GameObject{
             ctx.font = '0.7px monospace'
             ctx.textAlign = 'center'
             ctx.textBaseline = 'top'
-            ctx.fillText(this.text,0.5,0)
+            ctx.fillText(this.text.toUpperCase(),0.5,0)
             ctx.restore()
             ctx.drawImage(computerSETrans, this.x, this.y)
             
@@ -34,7 +34,7 @@ export class PuzzleComputer extends GameObject{
             ctx.font = '0.7px monospace'
             ctx.textAlign = 'center'
             ctx.textBaseline = 'top'
-            ctx.fillText(this.text,0.5,0)
+            ctx.fillText(this.text.toUpperCase(),0.5,0)
             ctx.restore()
             ctx.drawImage(computerSWTrans, this.x, this.y)
         }else{

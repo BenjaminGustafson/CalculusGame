@@ -150,8 +150,8 @@ export function planetMap (gameState){
         'linear':[100,400],
         'quadratic':[300,400],
         'power':[500,400],
-        'exponential':[800,300],
-        'sine':[800,600],
+        'exponential':[700,400],
+        'sine':[900,400],
         'sum':[1100,400],
         'product':[1300,400],
         'chain':[1500,400]

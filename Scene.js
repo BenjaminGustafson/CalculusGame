@@ -69,10 +69,13 @@ export function loadScene(gameState, sceneName, message = {}) {
     gameState.stored.prevScene = gameState.stored.sceneName
     gameState.stored.sceneName = sceneName
 
+    gameState.temp = {}
     gameState.objects = []
     gameState.update = () => { }
 
     const sceneNameSplit = sceneName.toLowerCase().split('.')
+
+    var sceneTitle = ''
 
     switch (sceneNameSplit[0]) {
         //------------------------------------------------------------
@@ -90,12 +93,15 @@ export function loadScene(gameState, sceneName, message = {}) {
 
         // Linear Planet (see Linear.js)
         case 'linear': Linear.loadScene(gameState, sceneName, message)
+            sceneTitle = 'Linear Planet'
             break
 
         // Quadratic Planet
         case "quadratic": Quadratic.loadScene(gameState, sceneName, message)
+            sceneTitle = 'Quadratic Planet'
             break
         case "exponential": Exponential.loadScene(gameState, sceneName, message)
+            sceneTitle = 'Exponential Planet'
             break
         case "sine": Sine.loadScene(gameState, sceneName, message)
             break
@@ -110,6 +116,23 @@ export function loadScene(gameState, sceneName, message = {}) {
     }
     if (sceneName != 'mainMenu'){
         journal(gameState)
+        if (sceneNameSplit.length == 3){
+            sceneTitle = capFirst(sceneNameSplit[0]) + ' ' + sceneNameSplit[2].toUpperCase()
+        }
+
+        function capFirst(str) {
+            if (!str) return "";
+            return str[0].toUpperCase() + str.slice(1);
+        }
+        const sceneTitleBox = new GameObjects.TextBox({
+            originX: 800, originY: 50,
+            font:'30px monospace',
+            color:Color.white,
+            align:'center', baseline: 'middle',
+            content: sceneTitle,
+            bgColor: Color.black,
+        })
+        gameState.objects.push(sceneTitleBox)
     }
 }
 
@@ -158,4 +181,6 @@ function journal(gameState){
         }
     })
     gameState.objects.push(journalButton)
+    
 }
+

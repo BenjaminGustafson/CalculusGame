@@ -1,4 +1,4 @@
-import {Color} from '../util/index.js'
+import {Color, Shapes} from '../util/index.js'
 import { GameObject } from "./GameObject.js"
 
 /**
@@ -13,13 +13,14 @@ export class TextBox extends GameObject{
         content="",
         font='20px monospace',
         color=Color.white,
+        bgColor=null,
         align='start',
         baseline='alphabetic',
         updateContent, 
     }){
         super()
         Object.assign(this, {
-            originX, originY, content, font, color, align, baseline, updateContent
+            originX, originY, content, font, color, align, baseline, updateContent, bgColor
         })
     }
 
@@ -27,10 +28,21 @@ export class TextBox extends GameObject{
         if (this.updateContent != null){
             this.content = this.updateContent()
         }
-        Color.setColor(ctx,this.color)
         ctx.font = this.font
         ctx.textAlign = this.align
         ctx.textBaseline = this.baseline
+        if (this.bgColor != null){
+            Color.setColor(ctx,this.bgColor)
+            const textMeasure = ctx.measureText(this.content)
+            Shapes.Rectangle({ ctx: ctx,
+                originX: this.originX - textMeasure.actualBoundingBoxLeft - 10,
+                originY: this.originY - textMeasure.fontBoundingBoxAscent, 
+                width: textMeasure.actualBoundingBoxLeft + textMeasure.actualBoundingBoxRight + 20, 
+                height: textMeasure.fontBoundingBoxAscent + textMeasure.fontBoundingBoxDescent,
+                inset:true,
+            })
+        }
+        Color.setColor(ctx,this.color)
         ctx.fillText(this.content, this.originX, this.originY);
     }
 

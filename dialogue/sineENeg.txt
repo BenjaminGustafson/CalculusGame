@@ -1,0 +1,12 @@
+IDS
+A: glorpPortrait
+P: astronautBPortrait
+TEXT
+P: The targets were moving opposite to the sliders!
+A: Right. The value of the target was set to the negative of the slider.
+P: Why would we do that?
+A: Remember on Exponential Planet we wanted to find a function that's derivative is itself. 
+P: Sure, we wanted f'(x) = f(x).
+A: Now we want to find a function that's derivative is the negative of itself.
+A: Okay, so we want f'(x) = -f(x).
+END

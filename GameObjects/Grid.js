@@ -230,10 +230,18 @@ export class Grid extends GameObject{
             gy = Number((this.gridYMin + i*this.cellSizeY).toFixed(6))
             const cy = this.canvasHeight - this.yScale*i*this.cellSizeY// canvas x (relative)
             var lineWidth = this.lineWidthMax  
-            var endCap = 'none'
+            var endCap = 'rounded'
+            var endCapSize = lineWidth
+            var startX = 0
+            var endX = this.canvasWidth
             const ratio = gy / (this.majorLinesY*this.cellSizeY)
             if (gy == 0){
-                if (this.arrows) endCap = 'arrow'
+                if (this.arrows){
+                    endCap = 'arrow'
+                    // endCapSize *= 1.5
+                    // startX -= 5
+                    // endX += 5
+                } 
                 if (this.labels) ctx.fillText(gy,  - 20, cy)
             } else if (Math.abs(ratio - Math.round(ratio)) < 1e-9){
                 lineWidth = this.lineWidthMax/2 // 0.5*(this.lineWidthMin + this.lineWidthMax)  
@@ -243,10 +251,11 @@ export class Grid extends GameObject{
             }
             Shapes.Line(
                 ctx,
-                0, cy, 
-                this.canvasWidth, cy, 
+                startX, cy,
+                endX, cy, 
                 lineWidth, 
-                endCap
+                endCap,
+                endCapSize
             )
             i++
         }

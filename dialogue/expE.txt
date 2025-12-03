@@ -1,0 +1,24 @@
+IDS
+A: glorpPortrait
+P: astronautBPortrait
+TEXT
+A: Did you notice a pattern in those y-values? 
+P: 1,2,4,8,16... The number doubles each time? 
+A: Yes. It's powers of 2.
+P: Why does that happen?
+A: Well, the line starts at y=1, so you have to set the first slider (at x=0) to be 1.
+A: Then the slope is 1, so at x=1 we are go up to 2. So we have to set the second slider to 2.
+P: Okay. Then the slope is 2, so the line goes up from 2 to 4.
+P: And then the slope is 4, so the line goes from 4 to 8. And so on. It adds itself each time.
+END
+P: Interesting. The targets are moving with the sliders now.
+A: Yes. Each target matches exactly the value of the corresponding slider.
+
+A: Just like we said. Its powers of 2.
+A: 2^0=1, 2^1=2, 2^2=4, 2^3=8, and so on.
+
+P: I didn't recognize the pattern in that one...
+A: That's okay. Now we have sliders every 0.5 on the x. So its not as simple as before.
+A: But the shape is still similar.
+A: Now instead of doubling between each slider, we multiply by 1.5. 
+P: It got a lot higher by x=4. Before we had y=16, and now it was like 28.

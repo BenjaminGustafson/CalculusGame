@@ -7,10 +7,11 @@ export class DialogueBox extends GameObject{
 
     constructor({portraitIds,
         text = [], // [{speaker:'', string: ''}]
-        onComplete = () => {}
+        onComplete = () => {},
+        originY = 600,
      }){
         super()
-        Object.assign(this, {portraitIds, text, onComplete})
+        Object.assign(this, {portraitIds, text, onComplete, originY})
 
         this.msPerLetter = 50
         this.stopped = true
@@ -18,7 +19,7 @@ export class DialogueBox extends GameObject{
         this.time = 0
         this.portraitImages = {}
         for (let i = 0; i < portraitIds.length; i++){
-            this.portraitImages[portraitIds[i]] = new ImageObject({originX:0, originY:550, width:300,height:300, id:portraitIds[i]})
+            this.portraitImages[portraitIds[i]] = new ImageObject({originX:0, originY:this.originY-50, width:300,height:300, id:portraitIds[i]})
         }
         this.lineIndex = 0 // lines[textIndex][lineIndex]
         this.letterIndex = 0
@@ -68,7 +69,7 @@ export class DialogueBox extends GameObject{
 
     update(ctx, audioManager, mouse){
         Color.setFill(ctx,Color.black)
-        Shapes.Rectangle({ctx:ctx, originX: 50, originY: 600, width:1500, height:200, inset: true, shadow:8})
+        Shapes.Rectangle({ctx:ctx, originX: 50, originY: this.originY, width:1500, height:200, inset: true, shadow:8})
         
         Color.setColor(ctx,Color.white)
         //const line = this.lines[this.textIndex][this.lineIndex]
@@ -98,7 +99,7 @@ export class DialogueBox extends GameObject{
         ctx.textBaseline = 'top'
 
         for (let i = 0; i < this.lines[this.textIndex].length; i++){
-            ctx.fillText(this.lines[this.textIndex][i], 300, 650 + i * 50)
+            ctx.fillText(this.lines[this.textIndex][i], 300, this.originY + 40 + i * 50)
         }
         this.stopped = true
         //ctx.fillText(this.lines[this.textIndex][this.lineIndex].substring(0,this.letterIndex), 300, 650 + this.lineIndex * 50)

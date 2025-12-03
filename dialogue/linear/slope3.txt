@@ -1,0 +1,7 @@
+IDS
+A: astronautAPortrait
+P: astronautBPortrait
+TEXT
+P: So a slope of -0.6 means that over 1 unit on the x-axis we went 0.6 units down on the y-axis.
+A: Exactly. Negative slope means going down.
+END
