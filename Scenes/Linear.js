@@ -16,45 +16,31 @@ const nodes = {
     'planetMap': [5, 1, 0, -1],
     'linear.puzzle.1a': [6, 1, 0, -1],
     'linear.puzzle.1b': [7, 1, 0, -1],
+
     'linear.puzzle.2a': [7, 0, 0, -1],
     'linear.puzzle.2b': [8, 0, 0, -1],
     'linear.puzzle.2c': [9, 0, 0, -1],
     'linear.puzzle.2d': [10, 0, 0, -1],
+
     'linear.puzzle.3a': [10, -1, 0, -1],
     'linear.puzzle.3b': [11, -1, 0, -1],
-    'linear.puzzle.3c': [12, -1, 0, -1],
-    'linear.puzzle.3d': [13, -1, 0, -1],
-    'linear.puzzle.4a': [13, -2, 0, -1],
-    'linear.puzzle.4b': [14, -2, 0, -1],
-    'linear.puzzle.4c': [15, -2, 0, -1],
-    'linear.puzzle.4d': [16, -2, 0, -1],
-    'linear.puzzle.5a': [16, -3, 0, -1],
-    'linear.puzzle.5b': [17, -3, 0, -1],
-    'linear.puzzle.5c': [18, -3, 0, -1],
-    'linear.puzzle.5d': [19, -3, 0, -1],
-    'linear.puzzle.6a': [19, 1, 0, -1],
-    'linear.puzzle.6b': [18, 1, 0, -1],
-    'linear.puzzle.6c': [17, 1, 0, -1],
-    'linear.puzzle.6d': [16, 1, 0, -1],
 
-    'linear.puzzle.7a': [16,2, 0, -1],
-    'linear.puzzle.7b': [15,2, 0, -1],
-    'linear.puzzle.7c': [14,2, 0, -1],
-    'linear.puzzle.7d': [13,2, 0, -1],
+    'linear.puzzle.4a': [11, -2, 0, -1],
+    'linear.puzzle.4b': [12, -2, 0, -1],
+    'linear.puzzle.4c': [13, -2, 0, -1],
 
-    // 'linear.puzzle.11': [17, 4, 0, -1],
-    // 'linear.puzzle.12': [16, 4, 0, -1],
-    // 'linear.puzzle.13': [14, 4, 0, -1],
-    // 'linear.puzzle.14': [13, 4, 0, -1],
-    // 'linear.puzzle.15': [12, 4, 0, -1],
-    // 'linear.puzzle.16': [11, 4, 0, -1],
-    // 'linear.puzzle.17': [10, 4, 0, -1],
-    // 'linear.puzzle.18': [9, 4, 0, -1],
-    // 'linear.puzzle.19': [8, 4, 0, -1],
-    // 'linear.puzzle.20': [8, 7, 0, -1],
-    // 'linear.puzzle.21': [9, 7, 0, -1],
-    // 'linear.puzzle.22': [10, 7, 0, -1],
-    // 'linear.puzzle.23': [11, 7, 0, -1],
+    'linear.puzzle.5a': [13, -3, 0, -1],
+    'linear.puzzle.5b': [14, -3, 0, -1],
+    'linear.puzzle.5c': [15, -3, 0, -1],
+    'linear.puzzle.5d': [16, -3, 0, -1],
+
+    'linear.puzzle.6a': [16, 0, 0, -1],
+    'linear.puzzle.6b': [15, 0, 0, -1],
+
+    'linear.puzzle.7a': [15, 1, 0, -1],
+    'linear.puzzle.7b': [14, 1, 0, -1],
+    'linear.puzzle.7c': [13, 1, 0, -1],
+    'linear.puzzle.7d': [12, 1, 0, -1],
 }
 
 const paths =
@@ -69,14 +55,11 @@ const paths =
         { start: 'linear.puzzle.2d', end: 'linear.puzzle.3a', steps: [] },
 
         { start: 'linear.puzzle.3a', end: 'linear.puzzle.3b', steps: [] },
-        { start: 'linear.puzzle.3b', end: 'linear.puzzle.3c', steps: [] },
-        { start: 'linear.puzzle.3c', end: 'linear.puzzle.3d', steps: [] },
-        { start: 'linear.puzzle.3d', end: 'linear.puzzle.4a', steps: [] },
+        { start: 'linear.puzzle.3b', end: 'linear.puzzle.4a', steps: [] },
 
         { start: 'linear.puzzle.4a', end: 'linear.puzzle.4b', steps: [] },
         { start: 'linear.puzzle.4b', end: 'linear.puzzle.4c', steps: [] },
-        { start: 'linear.puzzle.4c', end: 'linear.puzzle.4d', steps: [] },
-        { start: 'linear.puzzle.4d', end: 'linear.puzzle.5a', steps: [] },
+        { start: 'linear.puzzle.4c', end: 'linear.puzzle.5a', steps: [] },
 
         { start: 'linear.puzzle.5a', end: 'linear.puzzle.5b', steps: [] },
         { start: 'linear.puzzle.5b', end: 'linear.puzzle.5c', steps: [] },
@@ -84,9 +67,7 @@ const paths =
         { start: 'linear.puzzle.5d', end: 'linear.puzzle.6a', steps: [] },
 
         { start: 'linear.puzzle.6a', end: 'linear.puzzle.6b', steps: [] },
-        { start: 'linear.puzzle.6b', end: 'linear.puzzle.6c', steps: [] },
-        { start: 'linear.puzzle.6c', end: 'linear.puzzle.6d', steps: [] },
-        { start: 'linear.puzzle.6d', end: 'linear.puzzle.7a', steps: [] },
+        { start: 'linear.puzzle.6b', end: 'linear.puzzle.7a', steps: [] },
 
         { start: 'linear.puzzle.7a', end: 'linear.puzzle.7b', steps: [] },
         { start: 'linear.puzzle.7b', end: 'linear.puzzle.7c', steps: [] },
@@ -150,7 +131,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                             numSliders: 4,
                             sliderOpts: { circleRadius: 15, increment: 1}
                         },
-                        targetBuilder: buildTargetsFromYs({ targetYs:  [2, 0, -1, 0], targetOpts: { size: 20 } }),
+                        targetBuilder: buildTargetsFromYs({ targetYs:  [2, 0, 1, -1], targetOpts: { size: 20 } }),
                         tracerOpts: { numLabel: false, originGridY: 0 },
                         nextScenes: ["linear.puzzle.2c"]
                     })
@@ -182,19 +163,6 @@ export function loadScene(gameState, sceneName, message = {}) {
                     break
                 case '3a':
                     sliderLevel(gameState, {
-                        gridSetupOpts: {gridOpts:{gridXMin:0, gridXMax: 1, gridYMin:-2, gridYMax:2, canvasWidth:100, labels:true}, spacing: 200},
-                        sliderSetupOpts: {
-                            numSliders: 1,
-                            sliderOpts: { circleRadius: 15, increment: 0.5}
-                        },
-                        targetBuilder: buildTargetsFromYs({ targetYs: [1.5], targetOpts: { size: 20 } }),
-                        tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes: ["linear.puzzle.3b", "linear.puzzle.4a"]
-                    })
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope.txt'})
-                    break
-                case '3b':
-                    sliderLevel(gameState, {
                         gridSetupOpts: {gridOpts:{gridXMin:0, gridXMax: 2, gridYMin:0, gridYMax:3, canvasWidth:200,canvasHeight:300, labels:true}, spacing: 200},
                         sliderSetupOpts: {
                             numSliders: 2,
@@ -202,24 +170,11 @@ export function loadScene(gameState, sceneName, message = {}) {
                         },
                         targetBuilder: buildTargetsFromYs({ targetYs: [1.5,3], targetOpts: { size: 20 } }),
                         tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes: ["linear.puzzle.3c"]
+                        nextScenes: ["linear.puzzle.4a"]
                     })
                     Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope2.txt'})
                     break
-                case '3c':
-                    sliderLevel(gameState, {
-                        gridSetupOpts: {gridOpts:{gridXMin:0, gridXMax: 1, gridYMin:-2, gridYMax:2, canvasWidth:100, labels:true}, spacing: 200},
-                        sliderSetupOpts: {
-                            numSliders: 1,
-                            sliderOpts: { circleRadius: 15, increment: 0.2}
-                        },
-                        targetBuilder: buildTargetsFromYs({ targetYs: [-0.6], targetOpts: { size: 20 } }),
-                        tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes: ["linear.puzzle.3d"]
-                    })
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope3.txt'})
-                    break
-                case '3d':
+                case '3b':
                     sliderLevel(gameState, {
                         gridSetupOpts: {gridOpts:{gridXMin:0, gridXMax: 5, gridYMin:-3, gridYMax:0, canvasWidth:500,canvasHeight:300, labels:true}, spacing: 200},
                         sliderSetupOpts: {
@@ -268,38 +223,11 @@ export function loadScene(gameState, sceneName, message = {}) {
                         },
                         targetBuilder: buildTargetsFromYs({ targetYs: [0.125, 0.25, 0.375, 0.5, 0.25, 0, -0.25, -0.5], targetOpts: { size: 20 } }),
                         tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes: ["linear.puzzle.4d"],
+                        nextScenes: ["linear.puzzle.5a"],
                     })
                     Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/quadruple.txt'})
                     break
-                case '4d':
-                    sliderLevel(gameState, {
-                        sliderSetupOpts: {
-                            numSliders: 16,
-                            sliderOpts: { circleRadius: 12, increment: 0.5}
-                        },
-                        targetBuilder: buildTargetsFromYs({ targetYs: [0.25, 0.5, 0.75, 1, 0.75, 0.5, 0.25, 0,
-                            0.5, 1, 0.5, 0, 0.125, 0.25, 0.375, 0.5],
-                            targetOpts: { size: 15 } }),
-                        tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes: ["linear.puzzle.5a"],
-                    })
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/sixteen.txt'})
-                    break
                 case '5a':
-                    mathBlockTutorials(gameState, { targetVals: [1, 1, 1, 1, 1, 1, 1, 1], nextScenes: ["linear.puzzle.5b"], withUITip: true })
-                    
-                    break
-                case '5b':
-                    mathBlockTutorials(gameState, { targetVals: [-1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5], nextScenes: ["linear.puzzle.5c"] })
-                    break
-                case '5c':
-                    mathBlockTutorials(gameState, { targetVals: [1.5, 1, 0.5, 0, -0.5, -1, -1.5, -2], withLinear: true, nextScenes: ["linear.puzzle.5d"] })
-                    break
-                case '5d':
-                    mathBlockTutorials(gameState, { targetVals: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2], withLinear: true, nextScenes: ["linear.puzzle.6a"] })
-                    break
-                case '6a':
                     Puzzles.shipPositionLevel(gameState, {
                         sliderLevelOpts: {
                             sliderSetupOpts: {
@@ -308,12 +236,11 @@ export function loadScene(gameState, sceneName, message = {}) {
                             },
                             targetBuilder: buildTargetsFromYs({ targetYs: [0.5,1,1.5,2],
                                 targetOpts: { size: 20 } }),
-                            nextScenes: ["linear.puzzle.6b"],
+                            nextScenes: ["linear.puzzle.5b"],
                         }
                     })
-                    
                     break
-                case '6b':
+                case '5b':
                     Puzzles.shipPositionLevel(gameState, {
                         sliderLevelOpts: {
                             sliderSetupOpts: {
@@ -322,11 +249,11 @@ export function loadScene(gameState, sceneName, message = {}) {
                             },
                             targetBuilder: buildTargetsFromYs({ targetYs: [-1,-2,0,2],
                                 targetOpts: { size: 20 } }),
-                            nextScenes: ["linear.puzzle.6c"],
+                            nextScenes: ["linear.puzzle.5c"],
                         }
                     })
                     break
-                case '6c':
+                case '5c':
                     Puzzles.shipPositionLevel(gameState, {
                         sliderLevelOpts: {
                             sliderSetupOpts: {
@@ -335,12 +262,12 @@ export function loadScene(gameState, sceneName, message = {}) {
                             },
                             targetBuilder: buildTargetsFromYs({ targetYs: [1,2,0,-2],
                                 targetOpts: { size: 20 } }),
-                                nextScenes: ["linear.puzzle.6d"],
+                                nextScenes: ["linear.puzzle.5d"],
                             },
                         hidePositionTargets:true,
                     })
                     break
-                case '6d':
+                case '5d':
                     Puzzles.shipPositionLevel(gameState, {
                         sliderLevelOpts: {
                             // sliderSetupOpts: {
@@ -357,10 +284,16 @@ export function loadScene(gameState, sceneName, message = {}) {
                             },
                             targetBuilder: buildTargetsFromYs({ targetYs: [0.25, 0.5, 0.75, 1, 0.5, 0, 0.5, 1],
                                 targetOpts: { size: 20 } }),
-                            nextScenes: ["linear.puzzle.7a"],
+                            nextScenes: ["linear.puzzle.6a"],
                             },
                         hidePositionTargets:true,
                     })
+                    break
+                case '6a':
+                    mathBlockTutorials(gameState, { targetVals: [1, 1, 1, 1, 1, 1, 1, 1], nextScenes: ["linear.puzzle.6b"], withUITip: true })
+                    break
+                case '6b':
+                    mathBlockTutorials(gameState, { targetVals: [-1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5], nextScenes: ["linear.puzzle.7a"] })
                     break
                 case '7a':
                     {
@@ -372,14 +305,15 @@ export function loadScene(gameState, sceneName, message = {}) {
                         fLabel.insert(gameState.objects, 0)
                         ddxLabel.insert(gameState.objects, 0)
 
-                        Puzzles.mathBlockLevel(gameState, {
+                        const {sySlider} = Puzzles.mathBlockLevel(gameState, {
                             targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 100, targetOpts: { size: 12 } }),
-                            blocks: Planet.standardBlocks('quadratic'),
-                            sliderOpts: { maxValue: 5, sliderLength: 10, startValue: 1, showAxis: true, increment: 1 },
+                            blocks: Planet.standardBlocks('linear'),
+                            sliderOpts: { showAxis:true, increment: 0.5 },
                             //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
                             tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
                             nextScenes: ['linear.puzzle.7b'],
                         })
+                        sySlider.hidden = true
                     }
                     break
                 case '7b':
@@ -393,14 +327,15 @@ export function loadScene(gameState, sceneName, message = {}) {
                         fLabel.insert(gameState.objects, 0)
                         ddxLabel.insert(gameState.objects, 0)
 
-                        Puzzles.mathBlockLevel(gameState, {
+                        const {sySlider} = Puzzles.mathBlockLevel(gameState, {
                             targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 100, targetOpts: { size: 12 } }),
-                            blocks: Planet.standardBlocks('quadratic'),
-                            sliderOpts: { maxValue: 5, sliderLength: 10, startValue: 1, showAxis: true, increment: 1 },
+                            blocks: Planet.standardBlocks('linear'),
+                            sliderOpts: { showAxis:true, increment: 0.5 },
                             //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
                             tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
                             nextScenes: ['linear.puzzle.7c'],
                         })
+                        sySlider.hidden = true
                     }
                     break
                 case '7c':
@@ -414,14 +349,15 @@ export function loadScene(gameState, sceneName, message = {}) {
                         fLabel.insert(gameState.objects, 0)
                         ddxLabel.insert(gameState.objects, 0)
 
-                        Puzzles.mathBlockLevel(gameState, {
+                        const {sySlider} = Puzzles.mathBlockLevel(gameState, {
                             targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 100, targetOpts: { size: 12 } }),
-                            blocks: Planet.standardBlocks('quadratic'),
-                            sliderOpts: { maxValue: 5, sliderLength: 10, startValue: 1, showAxis: true, increment: 1 },
+                            blocks: Planet.standardBlocks('linear'),
+                            sliderOpts: { showAxis:true, increment: 0.5 },
                             //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
                             tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
                             nextScenes: ['linear.puzzle.7d'],
                         })
+                        sySlider.hidden = true
                     }
                     break
                 case '7d':
@@ -436,16 +372,15 @@ export function loadScene(gameState, sceneName, message = {}) {
                         fLabel.insert(gameState.objects, 0)
                         ddxLabel.insert(gameState.objects, 0)
 
-
-
-                        Puzzles.mathBlockLevel(gameState, {
+                        const {sySlider} = Puzzles.mathBlockLevel(gameState, {
                             targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 100, targetOpts: { size: 12 } }),
-                            blocks: Planet.standardBlocks('quadratic'),
-                            sliderOpts: { maxValue: 5, sliderLength: 10, startValue: 1, showAxis: true, increment: 0.5 },
+                            blocks: Planet.standardBlocks('linear'),
+                            sliderOpts: { showAxis:true, increment: 0.5 },
                             //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
                             tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
                             nextScenes: ['planetMap'],
                         })
+                        sySlider.hidden = true
                     }
                     break
 

@@ -460,7 +460,7 @@ function mathBlockSetup (gameState, {
     })
     mbm.insert(gameState.objects, 10)
 
-    return {mbField:mbField, funTracer:funTracer}
+    return {sySlider: sySlider, tySlider: tySlider, mbField:mbField, funTracer:funTracer}
 }
 
 /**
@@ -515,6 +515,8 @@ export function mathBlockLevel(gameState, {
         winCon: () => tracer.solved,
         nextScenes: nextScenes,
     })
+    console.log(sySlider)
+    return {sySlider:sySlider, tySlider: tySlider, mbField:mbField, funTracer:funTracer, tracer:tracer}
 }
 
 /**
