@@ -14,27 +14,29 @@ export class PuzzleComputer extends GameObject{
     update(ctx,audio,mouse){
         if (this.dir == 'SE'){
             ctx.save()
-            ctx.setTransform(30,-15, 0,18, this.x + 236, this.y + 273)
+            ctx.translate(this.x + 236, this.y + 273);
+            ctx.transform(1, -0.5, 0, 1, 0, 0);
             Color.setColor(ctx, this.color)
-            ctx.fillRect(0,0,1,1)
+            ctx.fillRect(0,0,30,18)
             Color.setColor(ctx, Color.white)
-            ctx.font = '0.7px monospace'
+            ctx.font = '18px monospace'
             ctx.textAlign = 'center'
             ctx.textBaseline = 'top'
-            ctx.fillText(this.text.toUpperCase(),0.5,0)
+            ctx.fillText(this.text.toUpperCase(),15,0)
             ctx.restore()
             ctx.drawImage(computerSETrans, this.x, this.y)
             
         }else if (this.dir == 'SW'){
             ctx.save()
-            ctx.setTransform(30,15, 0,18, this.x + 246, this.y + 258)
+            ctx.translate(this.x + 246, this.y + 258)
+            ctx.transform(1, 0.5, 0, 1, 0, 0);
             Color.setColor(ctx, this.color)
-            ctx.fillRect(0,0,1,1)
+            ctx.fillRect(0,0,30,18)
             Color.setColor(ctx, Color.white)
-            ctx.font = '0.7px monospace'
+            ctx.font = '18px monospace'
             ctx.textAlign = 'center'
             ctx.textBaseline = 'top'
-            ctx.fillText(this.text.toUpperCase(),0.5,0)
+            ctx.fillText(this.text.toUpperCase(),15,0)
             ctx.restore()
             ctx.drawImage(computerSWTrans, this.x, this.y)
         }else{
