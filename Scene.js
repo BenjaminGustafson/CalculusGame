@@ -65,14 +65,25 @@ export function loadSceneWithTransition(gameState, sceneName, {x = 800, y=450, o
  * 
  */
 export function loadScene(gameState, sceneName, message = {}) {
+    gtag("event", "loadScene", {
+        sceneName: sceneName,
+    });
+    if (gameState.temp.startTime){
+        gtag("event", "endScene", {
+            sceneName: gameState.stored.sceneName,
+            timeSpent: Math.round((Date.now() -  gameState.temp.startTime)/1000),
+            solved: gameState.temp.solved, 
+        });
+    }
     gameState.stored.prevScene = gameState.stored.sceneName
     gameState.stored.sceneName = sceneName
-
+    
     gameState.temp = {}
     gameState.objects = []
     gameState.update = () => { }
-
+    
     const sceneNameSplit = sceneName.toLowerCase().split('.')
+    gameState.temp.startTime = Date.now()
 
     var sceneTitle = ''
 
