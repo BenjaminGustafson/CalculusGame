@@ -3,8 +3,9 @@ A: astronautAPortrait
 P: astronautBPortrait
 TEXT
 A: If f(x) = ax+b then what is f'(x)?
-P: I think it's f'(x) = a.
-A: That's right! If you click on the journal 🕮, you can view this rule.
-A: You're ready to fly the ship now. You can head to Quadratic Planet next.
+P: I think f'(x) = a.
+A: That's right! If you click on the journal 🕮, you can view the rules that you learned.
+P: So if f(x) is a line, then f'(x) is the slope of the line. But what if f(x) isn't a line?
+A: Excellent question! But you'll have to go to Quadratic Planet to answer it. You're ready to fly the ship now! 
 END
 P: If f(x) = x then f'(x) = 1. And if f(x) = 0.5 then f'(x) = 0.5.

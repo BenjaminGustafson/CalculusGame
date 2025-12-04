@@ -4,5 +4,5 @@ P: astronautBPortrait
 TEXT
 P: I set all the sliders to -0.6. And -0.6 as a fraction is -3/5.
 P: So a slope of -3/5 means that the line goes down 3 units for every 5 units across.
-A: Exactly. I think you got it.
+A: Perfect!
 END

@@ -2,8 +2,4 @@ IDS
 A: astronautAPortrait
 P: astronautBPortrait
 TEXT
-A: Did you notice that if you set the slider to 0, the line stays flat?
-P: How do you know where 0 is? 
-A: Well, the sliders all start at 0. And the grid line for 0 has little arrows on the ends.
-P: Ah, I figured as much.
 END

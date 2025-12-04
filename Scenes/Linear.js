@@ -350,9 +350,11 @@ export function loadScene(gameState, sceneName, message = {}) {
                 case '6a':
                     mathBlockTutorials(gameState, { targetVals: [1, 1, 1, 1, 1, 1, 1, 1], 
                         nextScenes: ["linear.puzzle.6b", "linear.puzzle.7a"], withUITip: true })
+                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/constantBlock.txt'})
                     break
                 case '6b':
                     mathBlockTutorials(gameState, { targetVals: [-1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5], nextScenes: ["linear.puzzle.7a"] })
+                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/constantBlock2.txt'})
                     break
                 case '7a':
                     {
@@ -402,7 +404,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                 case '7c':
                     {
                         const targetBlock = new MathBlock({ type: MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
-                        targetBlock.translateY = -2
+                        targetBlock.translateY = -3
                         targetBlock.scaleY = -2
                         targetBlock.insert(gameState.objects, 1)
 
@@ -504,7 +506,7 @@ function mathBlockTutorials(gameState, {
     ]
     if (withLinear) blocks.push(new MathBlock({ type: MathBlock.VARIABLE, token: 'x' }))
     const sySlider = new Slider({ canvasX: 1200, canvasY: 350, maxValue: 2, sliderLength: 4, startValue: 1, showAxis: true, valueLabel: false })
-    const tySlider = new Slider({ canvasX: withLinear ? 1300 : 1200, canvasY: 350, maxValue: 2, sliderLength: 4, showAxis: true, valueLabel: false })
+    const tySlider = new Slider({ canvasX: withLinear ? 1300 : 1200, canvasY: 350, maxValue: 2, sliderLength: 4, showAxis: true, valueLabel: false, increment:0.5, })
 
     const mbField = new MathBlockField({ minX: 600, minY: 100, maxX: 1000, maxY: 300 })
     const mbm = new MathBlockManager({

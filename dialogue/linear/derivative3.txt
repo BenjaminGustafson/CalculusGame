@@ -3,7 +3,6 @@ A: astronautAPortrait
 P: astronautBPortrait
 TEXT
 A: Now the function is f(x) = ax + b. It's a line where a is the slope and b is the y-intercept. 
-P: It doesn't seem like the +b affects f'(x). Which makes me think that f'(x) is just the slope.
-A: You're on the right track!
+P: It doesn't seem like f(x) = ax + b was different than if it was f(x) = ax. Maybe the +b doesn't matter? 
 END
 P: If f(x) = x then f'(x) = 1. And if f(x) = 0.5 then f'(x) = 0.5.

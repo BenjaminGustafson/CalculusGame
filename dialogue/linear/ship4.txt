@@ -1,0 +1,7 @@
+IDS
+A: astronautAPortrait
+P: astronautBPortrait
+TEXT
+P: Can I fly the ship now? 
+A: Almost, you'll be ready when you finish puzzle 7D.
+END

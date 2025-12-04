@@ -1,8 +1,0 @@
-IDS
-A: astronautAPortrait
-P: astronautBPortrait
-TEXT
-A: You can calculate slope by taking the change in y divided by the change in x.
-P: The line went up 3 squares and over 2. So the slope is 3/2 = 1.5.
-A: Yep.
-END
