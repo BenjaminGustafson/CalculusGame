@@ -65,11 +65,11 @@ export function loadSceneWithTransition(gameState, sceneName, {x = 800, y=450, o
  * 
  */
 export function loadScene(gameState, sceneName, message = {}) {
-    gtag("event", "loadScene", {
+    gtag("event", "load_scene", {
         sceneName: sceneName,
     });
     if (gameState.temp.startTime){
-        gtag("event", "endScene", {
+        gtag("event", "end_scene", {
             sceneName: gameState.stored.sceneName,
             timeSpent: Math.round((Date.now() -  gameState.temp.startTime)/1000),
             solved: gameState.temp.solved, 
