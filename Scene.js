@@ -65,7 +65,6 @@ export function loadSceneWithTransition(gameState, sceneName, {x = 800, y=450, o
  * 
  */
 export function loadScene(gameState, sceneName, message = {}) {
-    console.log('scene', sceneName, gameState.stored)
     gameState.stored.prevScene = gameState.stored.sceneName
     gameState.stored.sceneName = sceneName
 
@@ -132,7 +131,9 @@ export function loadScene(gameState, sceneName, message = {}) {
             content: sceneTitle,
             bgColor: Color.black,
         })
-        gameState.objects.push(sceneTitleBox)
+        if (sceneTitle !== ''){
+            gameState.objects.push(sceneTitleBox)
+        }
     }
 }
 

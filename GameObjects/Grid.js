@@ -92,17 +92,14 @@ export class Grid extends GameObject{
                 const cell50 = 50/minCellSize*helper(50/minCellSize*x)
                 const cellSize = Math.min(cell10, cell20, cell50)
                 const majorLines = cellSize == cell50 ? 4 : 5
-                console.log('c50', cell50, cellSize, majorLines)
                 return {cellSize: cellSize, majorLines:majorLines}
             }
             const xObj = scaleToCellSize(this.xScale)
             this.cellSizeX = xObj.cellSize
             this.majorLinesX = xObj.majorLines
-            console.log('y')
             const yObj = scaleToCellSize(this.yScale)
             this.cellSizeY = yObj.cellSize
             this.majorLinesY = yObj.majorLines
-            console.log('y', this.yScale, this.cellSizeY, this.majorLinesY)
         }
     }
 

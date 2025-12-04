@@ -2,6 +2,5 @@ IDS
 A: astronautAPortrait
 P: astronautBPortrait
 TEXT
-P: What was that?
-A: You set the 
+A: That 
 END

@@ -1,0 +1,7 @@
+IDS
+A: astronautAPortrait
+P: astronautBPortrait
+TEXT
+P: Velocity is the slope of position?
+A: Yes. Velocity is the change in position over time.
+END

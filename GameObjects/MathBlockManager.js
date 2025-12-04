@@ -291,12 +291,7 @@ export class MathBlockManager extends GameObject{
         // Update fields
         this.blockFields.forEach(field => field.update(ctx, audioManager, mouse))
 
-        // Update blocks in toolbar
-        this.toolBar.forEach(b => b.update(ctx,audioManager,mouse))
-        if (this.grabbed != null){
-            this.grabbed.update(ctx,audioManager,mouse)
-        }
-
+        
         // Update outputs
         for (let i = 0; i < this.funTracers.length; i++){
             this.funTracers[i].setInputFunction(this.blockFields[i].outputFunction())   
@@ -307,6 +302,12 @@ export class MathBlockManager extends GameObject{
         if (!this.translateYSlider.hidden) this.translateIcon.update(ctx)
         if (this.numIcon != null) this.numIcon.update(ctx)
        
+        // Update blocks
+        this.toolBar.forEach(b => b.update(ctx,audioManager,mouse))
+        if (this.grabbed != null){
+            this.grabbed.update(ctx,audioManager,mouse)
+        }
+
     }
 
     reset(){

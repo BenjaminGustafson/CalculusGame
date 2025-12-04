@@ -219,7 +219,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                         tracerOpts: { numLabel: false, originGridY: 0 },
                         nextScenes: ["linear.puzzle.3b", "linear.puzzle.4a"]
                     })
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope2.txt'})
+                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope.txt'})
                     break
                 case '3b':
                     sliderLevel(gameState, {
@@ -286,6 +286,17 @@ export function loadScene(gameState, sceneName, message = {}) {
                             nextScenes: ["linear.puzzle.5b","linear.puzzle.5c","linear.puzzle.5d","linear.puzzle.6a"],
                         }
                     })
+                    const uiTip = {
+                        update: function (ctx) {
+                            Color.setColor(ctx, Color.lightGray)
+                            ctx.font = '20px monospace'
+                            ctx.textAlign = 'right'
+                            ctx.textBaseline = 'middle'
+                            ctx.fillText('Push to start', 275, 225)
+                        }
+                    }
+                    gameState.objects.push(uiTip)
+                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/ship.txt'})
                     break
                 case '5b':
                     Puzzles.shipPositionLevel(gameState, {
@@ -363,11 +374,12 @@ export function loadScene(gameState, sceneName, message = {}) {
                         })
                         sySlider.hidden = true
                     }
+                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative.txt'})
                     break
                 case '7b':
                     {
                         const targetBlock = new MathBlock({ type: MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
-                        targetBlock.scaleY = 2
+                        targetBlock.scaleY = 0.5
                         targetBlock.insert(gameState.objects, 1)
 
                         const fLabel = new TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
@@ -385,11 +397,13 @@ export function loadScene(gameState, sceneName, message = {}) {
                         })
                         sySlider.hidden = true
                     }
+                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative2.txt'})
                     break
                 case '7c':
                     {
                         const targetBlock = new MathBlock({ type: MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
-                        targetBlock.translateY = -1
+                        targetBlock.translateY = -2
+                        targetBlock.scaleY = -2
                         targetBlock.insert(gameState.objects, 1)
 
                         const fLabel = new TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
@@ -407,12 +421,13 @@ export function loadScene(gameState, sceneName, message = {}) {
                         })
                         sySlider.hidden = true
                     }
+                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative3.txt'})
                     break
                 case '7d':
                     {
                         const targetBlock = new MathBlock({ type: MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
-                        targetBlock.scaleY = 0.5
-                        targetBlock.translateY = 1
+                        targetBlock.scaleY = 1.5
+                        targetBlock.translateY = 2
                         targetBlock.insert(gameState.objects, 1)
 
                         const fLabel = new TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
@@ -430,6 +445,8 @@ export function loadScene(gameState, sceneName, message = {}) {
                         })
                         sySlider.hidden = true
                     }
+                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative4.txt'})
+                    Puzzles.planetUnlockOnSolve(gameState, {planetUnlock: 'quadratic'})
                     break
 
             }

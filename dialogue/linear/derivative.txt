@@ -1,0 +1,9 @@
+IDS
+A: astronautAPortrait
+P: astronautBPortrait
+TEXT
+A: The function f'(x) is read as "f-prime of x". 
+P: What does that mean?
+A: I'll let you try to figure that out. See if you can spot the pattern over the next few puzzles.
+END
+

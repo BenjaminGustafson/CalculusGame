@@ -771,6 +771,22 @@ export function dialogueOnSolve (gameState, {
     })
 }
 
+export function planetUnlockOnSolve (gameState, {
+    planetUnlock,
+}) {
+    addToUpdate(gameState, () => {
+        const gss = gameState.stored
+        if (gameState.temp.solved){
+            if (gss.planetProgress[planetUnlock] == null || gss.planetProgress[planetUnlock] == 'locked')
+                gss.planetProgress[[planetUnlock]] = 'unvisited'
+        
+            if (gss.navPuzzleMastery[gss.planet] == null) {
+                gss.navPuzzleMastery[gss.planet] = 0
+            }
+        }
+    })
+}
+
 function capFirst(str) {
     if (!str) return "";
     return str[0].toUpperCase() + str.slice(1);

@@ -1,0 +1,9 @@
+IDS
+A: astronautAPortrait
+P: astronautBPortrait
+TEXT
+A: If f(x) = ax then what will f'(x) be?
+P: Based off of the last two puzzles, I think it will be f'(x) = a.
+A: That's right!
+END
+P: If f(x) = x then f'(x) = 1. And if f(x) = 0.5 then f'(x) = 0.5.
