@@ -114,55 +114,173 @@ export function loadScene(gameState, sceneName, message = {}){
                     break
                 case '4':
                     Puzzles.drawFunctionLevel(gameState, {
-                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[-1.5,-2,-1.5,0], targetOpts:{size:40}})})
+                        tracerStart: 1,
+                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[-0.5,-1,-0.5,1], targetOpts:{size:40}})})
                     break
                 case '5':
                     {
                         const numSliders = 4
                         const tracerStart = 2
                         Puzzles.sliderLevel(gameState, {
-                            numSliders:numSliders,
+                            gridSetupOpts: {topMargin: 100},
+                            sliderSetupOpts:{
+                                numSliders:numSliders,
+                                sliderOpts: {increment: 0.25},
+                            },
                             targetBuilder:Puzzles.buildTargetsFromDdx({ddx:x=>x, numTargets: numSliders, startY:tracerStart, targetOpts:{size:20}}),
                             tracerOpts: {originGridY:tracerStart},
                         })
                     }
                     break
                 case '6':
-                    Puzzles.sliderLevelFromDdx(gameState, {
-                        ddx: x=>x, 
-                        numSliders: 8,
-                        tracerStart:2,
-                    })
-                    break
-                case '7':
                     {
-                        const numSliders = 20
+                        const numSliders = 8
                         const tracerStart = 2
                         Puzzles.sliderLevel(gameState, {
-                            numSliders:numSliders,
+                            gridSetupOpts: {topMargin: 100},
+                            sliderSetupOpts:{
+                                numSliders:numSliders,
+                                sliderOpts: {increment: 0.25},
+                            },
                             targetBuilder:Puzzles.buildTargetsFromDdx({ddx:x=>x, numTargets: numSliders, startY:tracerStart, targetOpts:{size:20}}),
                             tracerOpts: {originGridY:tracerStart},
                         })
                     }
-                    quadDiscLevel(gameState, {numSliders:20, withMathBlock:true, nextScenes:["quadratic.puzzle.8"], ddx: x=>x, tracerStart:2})
+                    break
+                case '7':
+                    {
+                        const numSliders = 16
+                        const tracerStart = 2
+                        const {sliderGroup} = Puzzles.sliderLevel(gameState, {
+                            gridSetupOpts: {topMargin: 200, rightMargin:300},
+                            sliderSetupOpts:{
+                                numSliders:numSliders,
+                                sliderOpts: {increment: 0.25},
+                            },
+                            targetBuilder:Puzzles.buildTargetsFromDdx({ddx:x=>x, numTargets: numSliders, startY:tracerStart, targetOpts:{size:20}}),
+                            tracerOpts: {originGridY:tracerStart},
+                        })
+                        Puzzles.addMathBlocksToSliderLevel(gameState, {
+                            mbSliderOpts: {},
+                            sliders: sliderGroup.objects,
+                            blocks : Planet.standardBlocks('quadratic'),
+                        })
+                    }
+                    //quadDiscLevel(gameState, {numSliders:20, withMathBlock:true, nextScenes:["quadratic.puzzle.8"], ddx: x=>x, tracerStart:2})
                     break
                 case '8':
-                    quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10, withMathBlock:true, nextScenes:["quadratic.puzzle.9"]})
+                    {
+                        const numSliders = 40
+                        const tracerStart = 2
+                        const {sliderGroup} = Puzzles.sliderLevel(gameState, {
+                            gridSetupOpts: {topMargin: 200, rightMargin:300},
+                            sliderSetupOpts:{
+                                numSliders:numSliders,
+                                sliderOpts: {increment: 0.1, circleRadius: 5},
+                            },
+                            targetBuilder:Puzzles.buildTargetsFromDdx({ddx:x=>x, numTargets: numSliders, startY:tracerStart, 
+                                targetOpts:{size:10}}),
+                            tracerOpts: {originGridY:tracerStart},
+                        })
+                        Puzzles.addMathBlocksToSliderLevel(gameState, {
+                            mbSliderOpts: {},
+                            sliders: sliderGroup.objects,
+                            blocks : Planet.standardBlocks('quadratic'),
+                        })
+                    }
+                    //quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10, withMathBlock:true, nextScenes:["quadratic.puzzle.9"]})
                     break
                 case '9':
-                    quadDiscLevel(gameState, {numSliders:8, nextScenes:["quadratic.puzzle.10"], ddx: x=> -x, tracerStart:-1})
+                    {
+                        const numSliders = 8
+                        const tracerStart = -1
+                        Puzzles.sliderLevel(gameState, {
+                            gridSetupOpts: {topMargin: 100},
+                            sliderSetupOpts:{
+                                numSliders:numSliders,
+                                sliderOpts: {increment: 0.25},
+                            },
+                            targetBuilder:Puzzles.buildTargetsFromDdx({ddx:x=>-x, numTargets: numSliders, startY:tracerStart, targetOpts:{size:20}}),
+                            tracerOpts: {originGridY:tracerStart},
+                        })
+                    }
+                    //quadDiscLevel(gameState, {numSliders:8, nextScenes:["quadratic.puzzle.10"], ddx: x=> -x, tracerStart:-1})
                     break
                 case '10':
-                    quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
-                        withMathBlock:true, nextScenes:["quadratic.puzzle.11"], ddx: x=> -x, tracerStart:-1})
+                    {
+                        const numSliders = 40
+                        const tracerStart = -1
+                        const {sliderGroup} = Puzzles.sliderLevel(gameState, {
+                            gridSetupOpts: {topMargin: 200, rightMargin:300},
+                            sliderSetupOpts:{
+                                numSliders:numSliders,
+                                sliderOpts: {increment: 0.1, circleRadius: 5, clickable:true},
+                            },
+                            targetBuilder:Puzzles.buildTargetsFromDdx({
+                                ddx:x=>-x, numTargets: numSliders, startY:tracerStart, 
+                                targetOpts:{size:10}}),
+                            tracerOpts: {originGridY:tracerStart},
+                        })
+                        Puzzles.addMathBlocksToSliderLevel(gameState, {
+                            mbSliderOpts: {},
+                            sliders: sliderGroup.objects,
+                            blocks : Planet.standardBlocks('quadratic'),
+                        })
+                    } 
+                //quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
+                    //    withMathBlock:true, nextScenes:["quadratic.puzzle.11"], ddx: x=> -x, tracerStart:-1})
                     break
                 case '11':
-                    quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
-                        withMathBlock:true, nextScenes:["quadratic.puzzle.12"], ddx: x=> -0.5*x, tracerStart:0})
+                    {
+                        const numSliders = 40
+                        const tracerStart = 0
+                        const {sliderGroup} = Puzzles.sliderLevel(gameState, {
+                            gridSetupOpts: {topMargin: 200, rightMargin:300},
+                            sliderSetupOpts:{
+                                numSliders:numSliders,
+                                sliderOpts: {increment: 0.1, circleRadius: 5, clickable:true},
+                            },
+                            targetBuilder:Puzzles.buildTargetsFromDdx({
+                                ddx:x=>-0.5*x,
+                                numTargets: numSliders,
+                                startY:tracerStart, 
+                                targetOpts:{size:10}}),
+                            tracerOpts: {originGridY:tracerStart},
+                        })
+                        Puzzles.addMathBlocksToSliderLevel(gameState, {
+                            mbSliderOpts: {},
+                            sliders: sliderGroup.objects,
+                            blocks : Planet.standardBlocks('quadratic'),
+                        })
+                    } 
+                    // quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
+                    //     withMathBlock:true, nextScenes:["quadratic.puzzle.12"], ddx: x=> -0.5*x, tracerStart:0})
                     break
                 case '12':
-                    quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
-                        withMathBlock:true, nextScenes:["quadratic.puzzle.13"], func: x=>0.1*x*x})
+                    {
+                        const numSliders = 40
+                        const tracerStart = 0.4
+                        const {sliderGroup} = Puzzles.sliderLevel(gameState, {
+                            gridSetupOpts: {topMargin: 200, rightMargin:300},
+                            sliderSetupOpts:{
+                                numSliders:numSliders,
+                                sliderOpts: {increment: 0.1, circleRadius: 5, clickable:true},
+                            },
+                            targetBuilder:Puzzles.buildTargetsFromDdx({
+                                ddx:x=>0.2*x,
+                                numTargets: numSliders,
+                                startY:tracerStart, 
+                                targetOpts:{size:10}}),
+                            tracerOpts: {originGridY:tracerStart},
+                        })
+                        Puzzles.addMathBlocksToSliderLevel(gameState, {
+                            mbSliderOpts: {},
+                            sliders: sliderGroup.objects,
+                            blocks : Planet.standardBlocks('quadratic'),
+                        })
+                    } 
+                    // quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
+                    //     withMathBlock:true, nextScenes:["quadratic.puzzle.13"], func: x=>0.1*x*x})
                     break
                 case '13':
                     quadMathBlockTutorial(gameState, {

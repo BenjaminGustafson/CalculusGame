@@ -33,12 +33,13 @@ export class Slider extends GameObject{
         lineWidth = 4,
         tickLength = 8,
         valueLabel = true,
+        clickable = true,
         name='',
     }){
         super()
         Object.assign(this, {
             canvasLength, sliderLength, minValue, maxValue, startValue, increment, circleRadius,
-            vertical, showLines, showAxis, circleColor, lineWidth, gridPos, valueLabel, tickLength, name
+            vertical, showLines, showAxis, circleColor, lineWidth, gridPos, valueLabel, tickLength, name, clickable
         })
 
         if (canvasX != null && canvasY != null){
@@ -90,7 +91,6 @@ export class Slider extends GameObject{
 
         // Dynamic vars
         this.active = true
-        this.clickable = true // turn off mouse input while keeping slider active
         this.hidden = false
         this.grabbed = false
         this.grabPos = 0
