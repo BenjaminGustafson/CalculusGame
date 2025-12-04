@@ -117,7 +117,7 @@ export function loadScene(gameState, sceneName, message = {}){
                         tracerStart: 1,
                         targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[-0.5,-1,-0.5,1], targetOpts:{size:40}})})
                     break
-                case '5':
+                case '5': // 2a
                     {
                         const numSliders = 4
                         const tracerStart = 2
@@ -168,7 +168,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     }
                     //quadDiscLevel(gameState, {numSliders:20, withMathBlock:true, nextScenes:["quadratic.puzzle.8"], ddx: x=>x, tracerStart:2})
                     break
-                case '8':
+                case '8': // 2d
                     {
                         const numSliders = 40
                         const tracerStart = 2
@@ -190,7 +190,7 @@ export function loadScene(gameState, sceneName, message = {}){
                     }
                     //quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10, withMathBlock:true, nextScenes:["quadratic.puzzle.9"]})
                     break
-                case '9':
+                case '9': // 3a
                     {
                         const numSliders = 8
                         const tracerStart = -1
@@ -230,7 +230,7 @@ export function loadScene(gameState, sceneName, message = {}){
                 //quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
                     //    withMathBlock:true, nextScenes:["quadratic.puzzle.11"], ddx: x=> -x, tracerStart:-1})
                     break
-                case '11':
+                case '11': // 4a
                     {
                         const numSliders = 40
                         const tracerStart = 0

@@ -551,7 +551,8 @@ export function drawFunctionLevel(gameState, {
 }
   
 export function mathBlockTutorial(gameState, {
-    numTargets,
+    gridSetupOpts,
+    targetBuilder,
     targetOpts,
     targetFun,
     blocks,
@@ -559,15 +560,21 @@ export function mathBlockTutorial(gameState, {
     gridXMin=-2, gridYMin=-2, gridXMax=2, gridYMax=2,
 }) {
     
-    const grid = new Grid({canvasX:600, canvasY:350, canvasWidth:400, canvasHeight:400, 
-        gridXMin:gridXMin, gridYMin:gridYMin, gridXMax:gridXMax, gridYMax:gridYMax, labels:false, arrows:true})
-    grid.insert(gameState.objects,0)
+    const gridGroup = gridSetup(gameState, {
+        numGrids: 1,
+        topMargin: 100,
+        rightMargin: 300,
+        gridOpts: {
 
-    const spacing = grid.gridWidth/numTargets
+        },
+        ...gridSetupOpts,
+    }) 
+    const grid = gridGroup.objects[0]
     
-    const targets = targetsFromFun(gameState, {fun: targetFun, grid:grid, numTargets:numTargets, targetOpts:targetOpts})
+    const targetGroup = targetBuilder(gameState, grid)
+    const targets = targetGroup.objects
 
-    const functionTracer = new FunctionTracer({grid: grid, targets: targets.objects, solvable:true})
+    const functionTracer = new FunctionTracer({grid: grid, targets: targets, solvable:true})
     functionTracer.insert(gameState.objects, 1)
 
     const sySlider = new Slider({canvasX: 1200, canvasY: 350, maxValue:2, sliderLength:4, startValue: 1, showAxis:true})
