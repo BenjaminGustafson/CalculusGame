@@ -7,86 +7,48 @@ import * as Experiment from './Experiment.js'
 import * as Planet from './Planet.js'
 import * as Puzzles from './Puzzles.js'
 import { buildTargetsFromYs, sliderLevel } from './Puzzles.js'
+import * as FileLoading from '../util/FileLoading.js'
 
-const tileMap = new TileMap({ yTileOffset: -3, xTileOffset: -8, xImgOffset: 0, yImgOffset: 0})
-
-// [x,y,  dx,dy] where dx dy is the direction to face when stopped at node
-// SW 0,1 NW -1,0 NE 0,-1 SE 1,0
-const nodes = {
-    'planetMap': [11, 3, 0, -1],
-    'linear.puzzle.1a': [10, 0, -1, 0],
-    'linear.puzzle.1b': [10, -1, -1, 0],
-
-    'linear.puzzle.2a': [12, -2, -1, 0],
-    'linear.puzzle.2b': [12, -3, -1, 0],
-    'linear.puzzle.2c': [12, -4, -1, 0],
-    'linear.puzzle.2d': [12, -5, -1, 0],
-
-    'linear.puzzle.3a': [13, -5, 0, -1],
-    'linear.puzzle.3b': [14, -5, 0, -1],
-
-    'linear.puzzle.4a': [17, -4, -1, 0],
-    'linear.puzzle.4b': [17, -3, -1, 0],
-    'linear.puzzle.4c': [17, -2, -1, 0],
-
-    'linear.puzzle.5a': [18, 0, 0, -1],
-    'linear.puzzle.5b': [19, 0, 0, -1],
-    'linear.puzzle.5c': [20, 0, 0, -1],
-    'linear.puzzle.5d': [21, 0, 0, -1],
-
-    'linear.puzzle.6a': [21, 2, -1, 0],
-    'linear.puzzle.6b': [21, 3, -1, 0],
-
-    'linear.puzzle.7a': [17, 5, 0, -1],
-    'linear.puzzle.7b': [16, 5, 0, -1],
-    'linear.puzzle.7c': [15, 5, 0, -1],
-    'linear.puzzle.7d': [14, 5, 0, -1],
-}
-
-const paths =
-    [
-        { start: 'planetMap', end: 'linear.puzzle.1a', steps: [[11,1], [10,1]] },
-        { start: 'linear.puzzle.1a', end: 'linear.puzzle.1b', steps: [] },
-        { start: 'linear.puzzle.1b', end: 'linear.puzzle.2a', steps: [[12,-1]] },
-
-        { start: 'linear.puzzle.2a', end: 'linear.puzzle.2b', steps: [] },
-        {start: 'linear.puzzle.2b', end:  'linear.puzzle.2c', steps: [] },
-        { start: 'linear.puzzle.2c', end: 'linear.puzzle.2d', steps: [] },
-        { start: 'linear.puzzle.2d', end: 'linear.puzzle.3a', steps: [] },
-
-        { start: 'linear.puzzle.3a', end: 'linear.puzzle.3b', steps: [] },
-        { start: 'linear.puzzle.3b', end: 'linear.puzzle.4a', steps: [[17,-5]] },
-
-        { start: 'linear.puzzle.4a', end: 'linear.puzzle.4b', steps: [] },
-        { start: 'linear.puzzle.4b', end: 'linear.puzzle.4c', steps: [] },
-        { start: 'linear.puzzle.4c', end: 'linear.puzzle.5a', steps: [[17,0]] },
-
-        { start: 'linear.puzzle.5a', end: 'linear.puzzle.5b', steps: [] },
-        { start: 'linear.puzzle.5b', end: 'linear.puzzle.5c', steps: [] },
-        { start: 'linear.puzzle.5c', end: 'linear.puzzle.5d', steps: [] },
-        { start: 'linear.puzzle.5d', end: 'linear.puzzle.6a', steps: [] },
-
-        { start: 'linear.puzzle.6a', end: 'linear.puzzle.6b', steps: [] },
-        { start: 'linear.puzzle.6b', end: 'linear.puzzle.7a', steps: [[21,4],[19,4],[19,5]] },
-
-        { start: 'linear.puzzle.7a', end: 'linear.puzzle.7b', steps: [] },
-        { start: 'linear.puzzle.7b', end: 'linear.puzzle.7c', steps: [] },
-        { start: 'linear.puzzle.7c', end: 'linear.puzzle.7d', steps: [] },
-        { start: 'linear.puzzle.7d', end: 'planetMap', steps:[[13,5],[13,4],[11,4]] },
-    ]
 
 function linearPlanet(gameState, message = {}) {
     planetScene(gameState, {
-        planetName: 'linear',
-        shipX: 100, shipY: 0,
-        tileMap: tileMap,
-        playerNodes: nodes,
-        playerPaths: paths,
+        planetName: 'Linear',
+        tileMap:  new TileMap({ yTileOffset: -3, xTileOffset: -8, xImgOffset: 0, yImgOffset: 0}),
+        pathData: FileLoading.loadJsonFile('/data/linearPlanet.json'),
         bgImg: 'linearPlanetBg',
         fgImg: 'linearPlanetFg',
-        firstScene: 'linear.puzzle.1a',
-        message
     })
+}
+
+/**
+ * Lookup table for scenes
+ */
+const sceneTable = {
+    '1a' : () => {
+        sliderLevel(gameState, {
+            gridSetupOpts: {spacing:200, topMargin:50,
+                gridOpts:{gridXMin:0, gridXMax:1, gridYMin:0, gridYMax:1, canvasWidth:100, canvasHeight:100, arrows:false}},
+            sliderSetupOpts: {
+                numSliders: 1,
+                sliderOpts: { circleRadius: 15, increment: 0.1, valueLabel:false}
+            },
+            targetBuilder: buildTargetsFromYs({ targetYs:  [1], targetOpts: { size: 20 } }),
+            tracerOpts: { numLabel: false, originGridY: 0 },
+            nextScenes: ["linear.puzzle.1b"]
+        })
+        const uiTip = {
+            update: function (ctx) {
+                Color.setColor(ctx, Color.lightGray)
+                ctx.font = '20px monospace'
+                ctx.textAlign = 'left'
+                ctx.textBaseline = 'bottom'
+                Shapes.Line(ctx, 850, 520, 850, 430, 5, 'arrow', 10, true)
+                ctx.fillText('Click and drag', 820, 590)
+            }
+        }
+        gameState.objects.push(uiTip)
+        Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/first.txt'})
+    },
 }
 
 
@@ -106,7 +68,6 @@ export function loadScene(gameState, sceneName, message = {}) {
         case "puzzle":
             switch (sceneNameSplit[2]) {
                 case '1a':{
-
                     //linearPuzzle1(gameState, { nextScenes: ["linear.puzzle.1b"] })
                     sliderLevel(gameState, {
                         gridSetupOpts: {spacing:200, topMargin:50,
@@ -551,29 +512,3 @@ function mathBlockTutorials(gameState, {
 }
 
 
-function checkFunctionsEqual(fun1, fun2) {
-    for (let x = 0; x <= 10; x++) {
-        if (Math.abs(fun1(x) - fun2(x)) > 0.00001) {
-            return { res: false, x: x }
-        }
-    }
-
-    /**
-     * It should be hard to accidentally make a function that
-     * is incorrect but hits integers [0,10].
-     *  We check [0,10] by 0.1 as well just in case.
-     * Integers are done first so that the error output is usually an int.
-     * 
-     * It is possible to fool the checker at any precision,
-     * by doing something like (0.1)^n + correct function.
-     * This is acceptable since it pretty much requires the
-     * player to be fooling the checker on purpose, and so 
-     * should not come up by accident.
-     */
-    for (let x = 0; x < 10; x += 0.1) {
-        if (Math.abs(fun1(x) - fun2(x)) > 0.00001) {
-            return { res: false, x: x }
-        }
-    }
-    return { res: true }
-}
