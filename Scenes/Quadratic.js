@@ -1,18 +1,11 @@
 import {Color, Shapes} from '../util/index.js'
 import {TileMap, Grid, FunctionTracer, Button, ImageObject, IntegralTracer, MathBlock, MathBlockManager, MathBlockField, Slider, Target, TargetAdder, TextBox, DialogueBox, DrawFunction} from '../GameObjects/index.js'
 import * as Scene from '../Scene.js'
+import * as GameObjects from '../GameObjects/index.js'
 import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
 import * as Experiment from './Experiment.js'
 import * as Puzzles from './Puzzles.js'
-
-/**
- * 
- * Dialogue
- * 
- * 
- */
-
 
 
 const tileMap = new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0})
@@ -51,7 +44,7 @@ const paths =
     {start: 'planetMap', end: 'quadratic.puzzle.1a'},
     
     { start: 'quadratic.puzzle.1a', end: 'quadratic.puzzle.1b', steps: [] },
-    { start: 'quadratic.puzzle.1b', end:  'quadratic.puzzle.1c', steps: [] },
+    { start: 'quadratic.puzzle.1b', end: 'quadratic.puzzle.1c', steps: [] },
     { start: 'quadratic.puzzle.1c', end: 'quadratic.puzzle.1d', steps: [] },
     { start: 'quadratic.puzzle.1d', end: 'quadratic.puzzle.2a', steps: [] },
 
@@ -251,7 +244,7 @@ export function loadScene(gameState, sceneName, message = {}){
                             },
                             targetBuilder:Puzzles.buildTargetsFromDdx({ddx:x=>-x, numTargets: numSliders, startY:tracerStart, targetOpts:{size:20}}),
                             tracerOpts: {originGridY:tracerStart},
-                            nextScenes: ['quadratic.puzzle.4b', ],
+                            nextScenes: ['quadratic.puzzle.4b',],
                         })
                     }
                     //quadDiscLevel(gameState, {numSliders:8, nextScenes:["quadratic.puzzle.10"], ddx: x=> -x, tracerStart:-1})
@@ -334,7 +327,11 @@ export function loadScene(gameState, sceneName, message = {}){
                     } 
                     break
                 case '5a':{
-                    
+                    gravityPuzzle(gameState, {
+                        gravity: 2,
+                        initPos: 2,
+                        nextScenes: ["linear.puzzle.5c"],
+                    })
                 }
                     break
 
@@ -358,4 +355,154 @@ function quadraticPlanet(gameState,message={}){
     })
 }
 
+function gravityPuzzle(gameState, {
+    gridSetupOpts,
+    nextScenes,
+    initPos=2, gravity=1,
+}){
+    const gridGroup = Puzzles.gridSetup(gameState, {
+        numGrids: 2,
+        leftMargin: 450, topMargin: 200, 
+        gridOpts:{gridXMin:0, gridXMax:4, xAxisLabel:'Time t'},
+        spacing:50,
+        ...gridSetupOpts,
+    })
+    const grids = gridGroup.objects
+    grids[0].gridTitle = 'Position'
+    grids[1].gridTitle = 'Velocity'
 
+    const targets = Puzzles.targetsFromFun(gameState, {
+        fun: x => initPos - gravity * x*x / 2,
+        grid: grids[0],
+        numTargets: 50,
+        targetOpts: {size: 20},
+    }).objects
+
+    const positionTracer = new FunctionTracer({
+        grid: grids[0], animated:true, 
+        autoStart:false,
+        targets:targets
+    })
+    positionTracer.insert(gameState.objects, 1)
+
+    const velocityTracer = new FunctionTracer({
+        grid: grids[1], animated:true, 
+        autoStart:false,
+    })
+    velocityTracer.insert(gameState.objects, 1)
+
+    const ship = new GravityShip({
+        originX: 125,
+        originY: grids[0].canvasY,
+        positionGrid: grids[0],
+        positionTracer: positionTracer,
+        velocityTracer: velocityTracer,
+    })
+    ship.insert(gameState.objects,1)
+
+    Planet.levelNavigation(gameState, {
+        winCon: () => positionTracer.solved,
+        nextScenes: nextScenes,
+    })
+}
+
+class GravityShip extends GameObject {
+    constructor({
+        originX,
+        originY,
+        positionGrid,
+        positionTracer,
+        velocityTracer,
+    }){
+        super()
+        Object.assign(this, { originX, originY, positionGrid, positionTracer, velocityTracer})
+        
+        const shipScale = 0.6
+        this.shipImage = new GameObjects.ImageObject({
+            originX: this.originX + 20,
+            originY: this.originY,
+            height:55*shipScale,
+            width:200*shipScale, 
+            id : 'shipSide',
+        })
+        // Ground image
+
+        this.gravitySlider = new GameObjects.Slider({
+            canvasX: originX,
+            canvasY: originY - positionGrid.canvasHeight * 0.2, 
+            vertical: false,
+            minValue: 0,
+            maxValue: 5,
+            startValue:1,
+            increment:0.1,
+            name: 'Gravity'
+        })
+
+        const pSliderIncrement = 0.1
+        this.positionSlider = new GameObjects.Slider({
+            canvasX: originX,
+            canvasY: originY, 
+            minValue: positionGrid.gridYMin,
+            maxValue: positionGrid.gridYMax,
+            increment: pSliderIncrement,
+        })
+
+        this.initPos = 0
+
+        this.playPauseButton = new GameObjects.Button({
+            originX: this.originX + this.positionGrid.canvasWidth/2 - 30, 
+            originY: this.originY - positionGrid.canvasHeight * 0.4,
+            width: 50,
+            height: 50,
+            onclick: () => {
+                // Play
+                if (this.positionTracer.state == GameObjects.FunctionTracer.STOPPED_AT_BEGINNING) {
+                    this.positionSlider.clickable = false
+                    this.gravitySlider.clickable = false
+
+                    this.initPos = this.positionSlider.value
+                    this.positionSlider.increment = 0.001
+
+                    this.positionTracer.setInputFunction(x => this.initPos - this.gravitySlider.value * x*x / 2)
+                    this.velocityTracer.setInputFunction(x => - this.gravitySlider.value * x)
+
+                    this.positionTracer.start()
+                    this.velocityTracer.start()
+                } else {
+                    this.positionSlider.clickable = true
+                    this.gravitySlider.clickable = true
+
+                    this.positionSlider.setValue(this.initPos)
+                    this.positionSlider.increment = pSliderIncrement
+
+                    this.positionTracer.reset()
+                    this.velocityTracer.reset()
+                } 
+            },
+            label: "⏵", lineWidth: 5
+        })
+    }
+
+    update(ctx, audio, mouse) {
+        // Ship position
+        this.shipImage.originY = this.positionSlider.circlePos - this.shipImage.height/2
+
+        // Play button
+        if (this.positionTracer.state == GameObjects.FunctionTracer.STOPPED_AT_END) {
+            this.playPauseButton.label = '⏮'
+        }else if (this.positionTracer.state == GameObjects.FunctionTracer.STOPPED_AT_BEGINNING){
+            this.playPauseButton.label = '⏵'
+        } else {
+            this.positionSlider.setValue(this.positionTracer.currentY)
+            this.playPauseButton.label = '⏮'
+        }
+
+
+        this.gravitySlider.update(ctx, audio, mouse)
+        this.positionSlider.update(ctx, audio, mouse)
+        this.shipImage.update(ctx, audio, mouse)
+        this.playPauseButton.update(ctx,audio,mouse)
+    }
+
+
+}
