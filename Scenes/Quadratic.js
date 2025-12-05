@@ -1,22 +1,11 @@
 import {Color, Shapes} from '../util/index.js'
 import {TileMap, Grid, FunctionTracer, Button, ImageObject, IntegralTracer, MathBlock, MathBlockManager, MathBlockField, Slider, Target, TargetAdder, TextBox, DialogueBox, DrawFunction} from '../GameObjects/index.js'
 import * as Scene from '../Scene.js'
+import * as GameObjects from '../GameObjects/index.js'
 import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
 import * as Experiment from './Experiment.js'
 import * as Puzzles from './Puzzles.js'
-
-/**
- * 
- * Dialogue
- * 
- * That curve shape is called a quadratic.
- * 'Quad' means square. Like x^2.
- * Like if I have a square whose sides are x units,
- * 
- * 
- */
-
 
 
 const tileMap = new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0})
@@ -25,52 +14,69 @@ const tileMap = new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOf
 // SW 0,1 NW -1,0 NE 0,-1 SE 1,0
 const nodes = {
     'planetMap':        [5,1, 0,-1],
-    'quadratic.puzzle.1': [6,1, 0,-1],
-    'quadratic.puzzle.2': [7,1, 0,-1],
-    'quadratic.puzzle.3': [8,1, 0,-1],
-    'quadratic.puzzle.4': [9,1, 0,-1],
-    'quadratic.puzzle.5': [10,1, 0,-1],
-    'quadratic.puzzle.6': [11,1, 0,-1],
-    'quadratic.puzzle.7': [12,1, 0,-1],
-    'quadratic.puzzle.8': [13,1, 0,-1],
-    'quadratic.puzzle.9': [14,1, 0,-1],
-    'quadratic.puzzle.10':[15,1, 0,-1],
-    'quadratic.puzzle.11': [15, 3, 0,-1],
-    'quadratic.puzzle.12': [14, 3, 0,-1],
-    'quadratic.puzzle.13': [13, 3, 0,-1],
-    'quadratic.puzzle.14': [12, 3, 0,-1],
-    'quadratic.puzzle.15': [11,3, 0,-1],
-    'quadratic.puzzle.16': [10,3, 0,-1],
-    'quadratic.puzzle.17': [9,3, 0,-1],
-    'quadratic.puzzle.18': [8,3, 0,-1],
-    'quadratic.puzzle.19': [7,3, 0,-1],
-    'quadratic.puzzle.20': [6,3, 0,-1],
-    'quadratic.dialogue.20': [8,5, 0,-1],
+    'quadratic.puzzle.1a': [6,1, 0,-1],
+    'quadratic.puzzle.1b': [7,1, 0,-1],
+    'quadratic.puzzle.1c': [8,1, 0,-1],
+    'quadratic.puzzle.1d': [9,1, 0,-1],
+
+    'quadratic.puzzle.2a': [10,1, 0,-1],
+    'quadratic.puzzle.2b': [11,1, 0,-1],
+    'quadratic.puzzle.2c': [12,1, 0,-1],
+
+    'quadratic.puzzle.3a': [14,1, 0,-1],
+    'quadratic.puzzle.3b': [15,1, 0,-1],
+    'quadratic.puzzle.3c': [16,1, 0,-1],
+    'quadratic.puzzle.3d': [17,1, 0,-1],
+
+    'quadratic.puzzle.4a': [17,3, 0,-1],
+    'quadratic.puzzle.4b': [16,3, 0,-1],
+    'quadratic.puzzle.4c': [15,3, 0,-1],
+    'quadratic.puzzle.4d': [14,3, 0,-1],
+
+    'quadratic.puzzle.5a': [13,3, 0,-1],
+    'quadratic.puzzle.5b': [12,3, 0,-1],
+    'quadratic.puzzle.5c': [11,3, 0,-1],
+    'quadratic.puzzle.5d': [10,3, 0,-1],
+
+    'quadratic.puzzle.6a': [9,3, 0,-1],
+    'quadratic.puzzle.6b': [8,3, 0,-1],
+    'quadratic.puzzle.6c': [7,3, 0,-1],
+    'quadratic.puzzle.6d': [6,3, 0,-1],
 }
 
 const paths = 
 [
-    {start: 'planetMap', end: 'quadratic.puzzle.1'},
-    {start: 'quadratic.puzzle.1', end: 'quadratic.puzzle.2', steps: [] },
-    {start: 'quadratic.puzzle.2', end: 'quadratic.puzzle.3', steps: [] },
-    {start: 'quadratic.puzzle.3', end: 'quadratic.puzzle.4', steps: [] },
-    {start: 'quadratic.puzzle.4', end:  'quadratic.puzzle.5', steps: [] },
-    {start: 'quadratic.puzzle.5', end: 'quadratic.puzzle.6', steps: [] },
-    {start: 'quadratic.puzzle.6', end: 'quadratic.puzzle.7', steps: [] },
-    {start: 'quadratic.puzzle.7', end: 'quadratic.puzzle.8', steps: [] },
-    {start: 'quadratic.puzzle.8', end: 'quadratic.puzzle.9', steps: [] },
-    {start: 'quadratic.puzzle.9', end: 'quadratic.puzzle.10', steps: [] },
-    {start: 'quadratic.puzzle.10', end: 'quadratic.puzzle.11', steps: []},
-    {start: 'quadratic.puzzle.11', end: 'quadratic.puzzle.12', steps: [] },
-    {start: 'quadratic.puzzle.12', end: 'quadratic.puzzle.13', steps: [] },
-    {start: 'quadratic.puzzle.13', end: 'quadratic.puzzle.14', steps: [] },
-    {start: 'quadratic.puzzle.14', end: 'quadratic.puzzle.15', steps: [] },
-    {start: 'quadratic.puzzle.15', end: 'quadratic.puzzle.16', steps: [] },
-    {start: 'quadratic.puzzle.16', end: 'quadratic.puzzle.17', steps: [] },
-    {start: 'quadratic.puzzle.17', end: 'quadratic.puzzle.18', steps: [] },
-    {start: 'quadratic.puzzle.18', end: 'quadratic.puzzle.19', steps: [] },
-    {start: 'quadratic.puzzle.19', end: 'quadratic.puzzle.20', steps: [] },
-    {start: 'quadratic.puzzle.20', end: 'quadratic.dialogue.20', steps: [[6,5]] },
+    {start: 'planetMap', end: 'quadratic.puzzle.1a'},
+    
+    { start: 'quadratic.puzzle.1a', end: 'quadratic.puzzle.1b', steps: [] },
+    { start: 'quadratic.puzzle.1b', end: 'quadratic.puzzle.1c', steps: [] },
+    { start: 'quadratic.puzzle.1c', end: 'quadratic.puzzle.1d', steps: [] },
+    { start: 'quadratic.puzzle.1d', end: 'quadratic.puzzle.2a', steps: [] },
+
+    { start: 'quadratic.puzzle.2a', end: 'quadratic.puzzle.2b', steps: [] },
+    { start: 'quadratic.puzzle.2b', end: 'quadratic.puzzle.2c', steps: [] },
+    { start: 'quadratic.puzzle.2c', end: 'quadratic.puzzle.3a', steps: [] },
+
+    { start: 'quadratic.puzzle.3a', end: 'quadratic.puzzle.3b', steps: [] },
+    { start: 'quadratic.puzzle.3b', end: 'quadratic.puzzle.3c', steps: [] },
+    { start: 'quadratic.puzzle.3c', end: 'quadratic.puzzle.3d', steps: [] },
+    { start: 'quadratic.puzzle.3d', end: 'quadratic.puzzle.4a', steps: [] },
+
+    { start: 'quadratic.puzzle.4a', end: 'quadratic.puzzle.4b', steps: [] },
+    { start: 'quadratic.puzzle.4b', end: 'quadratic.puzzle.4c', steps: [] },
+    { start: 'quadratic.puzzle.4c', end: 'quadratic.puzzle.4d', steps: [] },
+    { start: 'quadratic.puzzle.4d', end: 'quadratic.puzzle.5a', steps: [] },
+    
+    { start: 'quadratic.puzzle.5a', end: 'quadratic.puzzle.5b', steps: [] },
+    { start: 'quadratic.puzzle.5b', end: 'quadratic.puzzle.5c', steps: [] },
+    { start: 'quadratic.puzzle.5c', end: 'quadratic.puzzle.5d', steps: [] },
+    { start: 'quadratic.puzzle.5d', end: 'quadratic.puzzle.6a', steps: [] },
+
+    { start: 'quadratic.puzzle.6a', end: 'quadratic.puzzle.6b', steps: [] },
+    { start: 'quadratic.puzzle.6b', end: 'quadratic.puzzle.6c', steps: [] },
+    { start: 'quadratic.puzzle.6c', end: 'quadratic.puzzle.6d', steps: [] },
+    { start: 'quadratic.puzzle.6d', end: 'quadratic.puzzle.1a', steps: [] },
+    
 ]
 
 
@@ -89,9 +95,12 @@ export function loadScene(gameState, sceneName, message = {}){
     switch(sceneNameSplit[1]){
         case "puzzle": 
             switch(sceneNameSplit[2]){
-                case '1':{
+                case '1a':{
                     Puzzles.drawFunctionLevel(gameState, {
-                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[1], targetOpts:{size:50}})})
+                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[1], targetOpts:{size:50}}),
+                        nextScenes: ['quadratic.puzzle.1b', 'quadratic.puzzle.1c', 'quadratic.puzzle.1d', 'quadratic.puzzle.2a',]
+                        
+                    })
                     const uiTip = {
                         update: function(ctx){
                             Color.setColor(ctx, Color.lightGray)
@@ -104,279 +113,321 @@ export function loadScene(gameState, sceneName, message = {}){
                     gameState.objects.push(uiTip)
                 }
                     break
-                case '2':
+                case '1b':
                     Puzzles.drawFunctionLevel(gameState, {
-                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[-1,0], targetOpts:{size:50}})})
+                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[-1,0], targetOpts:{size:50}}),
+                        nextScenes: ['quadratic.puzzle.1c']
+                    })
                     break
-                case '3':
+                case '1c':
                     Puzzles.drawFunctionLevel(gameState, {
-                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[0.5,1,1.5,2], targetOpts:{size:40}})})
+                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[0.5,1,1.5,2], targetOpts:{size:40}}),
+                        nextScenes: ['quadratic.puzzle.1d']
+                    })
                     break
-                case '4':
+                case '1d':
                     Puzzles.drawFunctionLevel(gameState, {
-                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[-1.5,-2,-1.5,0], targetOpts:{size:40}})})
+                        tracerStart: 1,
+                        targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[-0.5,-1,-0.5,1], targetOpts:{size:40}}),
+                        nextScenes: ['quadratic.puzzle.2a']
+                    })
                     break
-                case '5':
+                case '2a': 
+                {
+                    Puzzles.mathBlockTutorial(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>0.5*x, numTargets: 10, targetOpts: {}}),
+                        mathBlockSetupOpts: {
+                            blocks: Planet.standardBlocks('quadratic'),
+                        },
+                        nextScenes: ['quadratic.puzzle.2b', 'quadratic.puzzle.2c', 'quadratic.puzzle.3a'],
+                    })
+                }
+                break
+                case '2b':
+                {
+                    Puzzles.mathBlockTutorial(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>0.5*x+1, numTargets: 10, targetOpts: {}}),
+                        mathBlockSetupOpts: {
+                            blocks: Planet.standardBlocks('quadratic'),
+                        },
+                        nextScenes: ['quadratic.puzzle.2c'],
+                    })
+                }
+                break
+                case '2c':
+                {
+                    Puzzles.mathBlockTutorial(gameState, {
+                        targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>-x-1, numTargets: 10, targetOpts: {}}),
+                        mathBlockSetupOpts: {
+                            blocks: Planet.standardBlocks('quadratic'),
+                        },
+                        nextScenes: ['quadratic.puzzle.3a'],
+                    })
+                }
+                break
+                case '3a':
                     {
                         const numSliders = 4
                         const tracerStart = 2
                         Puzzles.sliderLevel(gameState, {
-                            numSliders:numSliders,
+                            gridSetupOpts: {topMargin: 100},
+                            sliderSetupOpts:{
+                                numSliders:numSliders,
+                                sliderOpts: {increment: 0.25},
+                            },
                             targetBuilder:Puzzles.buildTargetsFromDdx({ddx:x=>x, numTargets: numSliders, startY:tracerStart, targetOpts:{size:20}}),
                             tracerOpts: {originGridY:tracerStart},
+                            nextScenes: [ 'quadratic.puzzle.3b','quadratic.puzzle.3c','quadratic.puzzle.3d','quadratic.puzzle.4a',],
                         })
                     }
                     break
-                case '6':
-                    Puzzles.sliderLevelFromDdx(gameState, {
-                        ddx: x=>x, 
-                        numSliders: 8,
-                        tracerStart:2,
-                    })
-                    break
-                case '7':
+                case '3b':
                     {
-                        const numSliders = 20
+                        const numSliders = 8
                         const tracerStart = 2
                         Puzzles.sliderLevel(gameState, {
-                            numSliders:numSliders,
+                            gridSetupOpts: {topMargin: 100},
+                            sliderSetupOpts:{
+                                numSliders:numSliders,
+                                sliderOpts: {increment: 0.25},
+                            },
                             targetBuilder:Puzzles.buildTargetsFromDdx({ddx:x=>x, numTargets: numSliders, startY:tracerStart, targetOpts:{size:20}}),
                             tracerOpts: {originGridY:tracerStart},
+                            nextScenes: ['quadratic.puzzle.3c', ],
                         })
                     }
-                    quadDiscLevel(gameState, {numSliders:20, withMathBlock:true, nextScenes:["quadratic.puzzle.8"], ddx: x=>x, tracerStart:2})
                     break
-                case '8':
-                    quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10, withMathBlock:true, nextScenes:["quadratic.puzzle.9"]})
-                    break
-                case '9':
-                    quadDiscLevel(gameState, {numSliders:8, nextScenes:["quadratic.puzzle.10"], ddx: x=> -x, tracerStart:-1})
-                    break
-                case '10':
-                    quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
-                        withMathBlock:true, nextScenes:["quadratic.puzzle.11"], ddx: x=> -x, tracerStart:-1})
-                    break
-                case '11':
-                    quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
-                        withMathBlock:true, nextScenes:["quadratic.puzzle.12"], ddx: x=> -0.5*x, tracerStart:0})
-                    break
-                case '12':
-                    quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
-                        withMathBlock:true, nextScenes:["quadratic.puzzle.13"], func: x=>0.1*x*x})
-                    break
-                case '13':
-                    quadMathBlockTutorial(gameState, {
-                        targetVals: [0.5,0,0.5,2], 
-                        nextScenes: ["quadratic.puzzle.14"],
-                    })
-                    break
-                case '14':
-                    quadMathBlockTutorial(gameState, {
-                        targetVals: [1,2,1,-2], 
-                        nextScenes: ["quadratic.puzzle.15"],
-                    })
-                    break
-                case '15':
-                    applePuzzle(gameState, {
-                        version:'sliders',
-                        nextScenes: ["quadratic.puzzle.16"],
-                        solutionFun: x=> -x*x+9,
-                        solutionDdx:x=> -2*x,
-                        solutionFunString:"-t^2+9",
-                        solutionDdxString:"-2t",
-                        syFunMax: 2, syFunLen: 4, tyFunMax: 10, tyFunLen: 10,
-                        syDdxMax: 2,
-                        syDdxLen: 4,
-                        tyDdxMax: 2,
-                        tyDdxLen: 4,
-                        tMax:3,
-                        barMax:4,
-                        barStep:1,
-                        numMeasurement:5,
-                        ddxSliderSpacing:1,
-                        ddxMax: 0, ddxMin:-10,
-                        funMax: 10, funMin:0,
-                    })
-                    break
-                case '16':
-                    applePuzzle(gameState, {
-                        version:'fitDdx',
-                        nextScenes: ["quadratic.puzzle.17"],
-                        solutionFun: x=> -2*x*x+10,
-                        solutionDdx:x=>-4*x,
-                        solutionFunString:"-2t^2+10",
-                        solutionDdxString:"-4t",
-                        syFunMax: 5, syFunLen: 10, tyFunMax: 10, tyFunLen: 10,
-                        syDdxMax: 5,
-                        syDdxLen: 10,
-                        tyDdxMax: 0,
-                        tyDdxLen: 10,
-                        tMax:3,
-                        tStep:0.5,
-                        barMax:2.5,
-                        barStep:0.5,
-                        adderXPrecision:0.5,
-                        adderYPrecision:0.5,
-                        numMeasurement:5,
-                        ddxSliderSpacing:0.5,
-                        ddxMax: 0, ddxMin:-10,
-                        funMax: 10, funMin:0, 
-                    })
-                    break
-                case '17':
-                    applePuzzle(gameState, {
-                        version:'fitDdx',
-                        nextScenes: ["quadratic.puzzle.18"],
-                        solutionFun: x=> -0.5*x*x+8,
-                        solutionDdx:x=>-x,
-                        solutionFunString:"-0.5t^2+5",
-                        solutionDdxString:"-t",
-                        syFunMax: 5, syFunLen: 10, tyFunMax: 10, tyFunLen: 10,
-                        syDdxMax: 5,
-                        syDdxLen: 10,
-                        tyDdxMax: 0,
-                        tyDdxLen: 10,
-                        tMax:4,
-                        barMax:5,
-                        barStep:1,
-                        adderYPrecision:0.5,
-                        numMeasurement:5,
-                        ddxSliderSpacing:0.5,
-                        ddxMax: 0, ddxMin:-10,
-                        funMax: 10, funMin:0, 
-                    })
-                    break
-                case '18':
-                    applePuzzle(gameState, {
-                        version:'fitDdx',
-                        nextScenes: ["quadratic.puzzle.19"],
-                        solutionFun: x=> -4*x*x+10,
-                        solutionDdx:x=>-10*x,
-                        solutionFunString:"-4t^2+10",
-                        solutionDdxString:"-10t",
-                        syFunMax: 5, syFunLen: 10, tyFunMax: 10, tyFunLen: 10,
-                        syDdxMax: 0,
-                        syDdxLen: 10,
-                        tyDdxMax: 0,
-                        tyDdxLen: 10,
-                        tMax:2,
-                        tStep:0.5,
-                        barMax:2,
-                        barStep:0.5,
-                        adderYPrecision:1,
-                        adderXPrecision:0.5,
-                        numMeasurement:5,
-                        ddxSliderSpacing:0.5,
-                        ddxMax: 0, ddxMin:-20,
-                        funMax: 10, funMin:0, 
-                    })
-                    break
-                case '19':
-                    applePuzzle(gameState, {
-                        version:'fitDdx',
-                        nextScenes: ["quadratic.puzzle.20"],
-                        solutionFun: x=> x*x,
-                        solutionDdx:x=> 2*x,
-                        solutionFunString:"t^2",
-                        solutionDdxString:"2 t",
-                        syFunMax: 5, syFunLen: 10, tyFunMax: 10, tyFunLen: 10,
-                        syDdxMax: 5,
-                        syDdxLen: 10,
-                        tyDdxMax: 5,
-                        tyDdxLen: 10,
-                        tMax:5,
-                        barMax:4,
-                        barStep:1,
-                        numMeasurement:5,
-                        ddxSliderSpacing:0.5,
-                        ddxMax: 10, ddxMin:0,
-                        funMax: 10, funMin:0, 
-                    })
-                    break
-                case '20':
+                case '3c':
                     {
-                        const targetBlock = new MathBlock({type:MathBlock.POWER, token:'2',originX: 100, originY: 250,})
-                        targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
-                        targetBlock.insert(gameState.objects, 1)
-
-                        Puzzles.mathBlockLevel(gameState, {
-                            targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:100, targetOpts:{size:12}}),
-                            blocks: Planet.standardBlocks('quadratic'),
-                            sliderOpts: {maxValue:5, sliderLength:10, startValue: 1, showAxis:true, increment:1},
-                            //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
-                            tracerOpts: {originGridY: targetBlock.toFunction()(-2)},
-                            nextScenes: ["planetMap"],
+                        const numSliders = 16
+                        const tracerStart = 2
+                        const {sliderGroup} = Puzzles.sliderLevel(gameState, {
+                            gridSetupOpts: {topMargin: 200, rightMargin:300},
+                            sliderSetupOpts:{
+                                numSliders:numSliders,
+                                sliderOpts: {increment: 0.25},
+                            },
+                            targetBuilder:Puzzles.buildTargetsFromDdx({ddx:x=>x, numTargets: numSliders, startY:tracerStart, targetOpts:{size:20}}),
+                            tracerOpts: {originGridY:tracerStart},
+                            nextScenes: ['quadratic.puzzle.3d', ],
+                        })
+                        Puzzles.addMathBlocksToSliderLevel(gameState, {
+                            mbSliderOpts: {},
+                            sliders: sliderGroup.objects,
+                            blocks : Planet.standardBlocks('quadratic'),
                         })
                     }
-                break
-                // {
-                //     const targetBlock = new MathBlock({type: MathBlock.BIN_OP, token:"+", originX: 200, originY: 200})
-                //     const multBlock = new MathBlock({type: MathBlock.BIN_OP, token:"*"})
-                //     multBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"a"})) 
-                //     const squareBlock = new MathBlock({type: MathBlock.POWER, token:'2'})
-                //     multBlock.setChild(1, squareBlock)
-                //     squareBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
-                //     targetBlock.setChild(0, multBlock) 
-                //     targetBlock.setChild(1, new MathBlock({type: MathBlock.VARIABLE, token:"b"}))
-                //     const blocks = [
-                //         new MathBlock({type:MathBlock.CONSTANT}),
-                //         new MathBlock({type:MathBlock.VARIABLE, token:"a"}),
-                //         new MathBlock({type:MathBlock.VARIABLE, token:"b"}),
-                //         new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
-                //         new MathBlock({type:MathBlock.BIN_OP, token:"*"}),
-                //     ]
-                //     Experiment.ruleGuess(gameState, {planetUnlock:'exponential', targetBlock:targetBlock, blocks: blocks,
-                //         correctDdx:(x,a,b) => 2 * a * x,
-                //         initA:0.1,
-                //         initB:-5,
-                //     })
-                // }
-            }
-        break
-
-        case 'dialogue':
-            quadraticPlanet(gameState)
-            switch(sceneNameSplit[2]){
-                case '1':
-                    Planet.dialogueScene(gameState, {nextScenes:["quadratic.puzzle.5"], text: [
-                        'The more points you add, the smoother the line gets.',    
-                    ]})
-                break
-                case '2':
-                    Planet.dialogueScene(gameState, {nextScenes:["quadratic.puzzle.9"], text: [
-                        'Did you recognize that curved graph in the last few levels?',
-                        'It\'s the graph of x^2!',
-                        'Take this, it will let you make x^2 graphs.'
-                    ],
-                    onComplete:(gameState)=>{
-                        Planet.unlockPopup(gameState, {itemImage:'squareBlock', topText: 'You got a Square Block!', bottomText:''})
-                    }})
-                break
-                case '3':
-                    Planet.dialogueScene(gameState, {nextScenes:["quadratic.lab"], text: [  
-                        'Have you ever noticed that things speed up as they fall?',
-                    ]})
-                break
-                case '20':
+                    //quadDiscLevel(gameState, {numSliders:20, withMathBlock:true, nextScenes:["quadratic.puzzle.8"], ddx: x=>x, tracerStart:2})
+                    break
+                case '3d':
                     {
-                        const gss = gameState.stored
-                        const planetUnlock = 'power'
-                        // TODO make a planet unlock function
-                        if (gss.planetProgress[planetUnlock] == null || gss.planetProgress[planetUnlock] == 'locked')
-                            gss.planetProgress[[planetUnlock]] = 'unvisited'
-                        
-                        if (gss.navPuzzleMastery[gss.planet] == null){
-                            gss.navPuzzleMastery[gss.planet] = 0
-                        }
-                        Planet.dialogueScene(gameState, {nextScenes:["planetMap"],  filePath:'./dialogue/quadLast.txt'})
+                        const numSliders = 40
+                        const tracerStart = 2
+                        const {sliderGroup} = Puzzles.sliderLevel(gameState, {
+                            gridSetupOpts: {topMargin: 200, rightMargin:300},
+                            sliderSetupOpts:{
+                                numSliders:numSliders,
+                                sliderOpts: {increment: 0.1, circleRadius: 5},
+                            },
+                            targetBuilder:Puzzles.buildTargetsFromDdx({ddx:x=>x, numTargets: numSliders, startY:tracerStart, 
+                                targetOpts:{size:10}}),
+                            tracerOpts: {originGridY:tracerStart},
+                            nextScenes: ['quadratic.puzzle.4a', 'quadratic.puzzle.4b','quadratic.puzzle.4c','quadratic.puzzle.4d',],
+                        })
+                        Puzzles.addMathBlocksToSliderLevel(gameState, {
+                            mbSliderOpts: {},
+                            sliders: sliderGroup.objects,
+                            blocks : Planet.standardBlocks('quadratic'),
+                        })
                     }
+                    //quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10, withMathBlock:true, nextScenes:["quadratic.puzzle.9"]})
+                    break
+                case '4a':
+                    {
+                        const numSliders = 8
+                        const tracerStart = -1
+                        Puzzles.sliderLevel(gameState, {
+                            gridSetupOpts: {topMargin: 100},
+                            sliderSetupOpts:{
+                                numSliders:numSliders,
+                                sliderOpts: {increment: 0.25},
+                            },
+                            targetBuilder:Puzzles.buildTargetsFromDdx({ddx:x=>-x, numTargets: numSliders, startY:tracerStart, targetOpts:{size:20}}),
+                            tracerOpts: {originGridY:tracerStart},
+                            nextScenes: ['quadratic.puzzle.4b',],
+                        })
+                    }
+                    //quadDiscLevel(gameState, {numSliders:8, nextScenes:["quadratic.puzzle.10"], ddx: x=> -x, tracerStart:-1})
+                    break
+                case '4b':
+                    {
+                        const numSliders = 40
+                        const tracerStart = -1
+                        const {sliderGroup} = Puzzles.sliderLevel(gameState, {
+                            gridSetupOpts: {topMargin: 200, rightMargin:300},
+                            sliderSetupOpts:{
+                                numSliders:numSliders,
+                                sliderOpts: {increment: 0.1, circleRadius: 5, clickable:true},
+                            },
+                            targetBuilder:Puzzles.buildTargetsFromDdx({
+                                ddx:x=>-x, numTargets: numSliders, startY:tracerStart, 
+                                targetOpts:{size:10}}),
+                            tracerOpts: {originGridY:tracerStart},
+                            nextScenes: ['quadratic.puzzle.4c', ],
+                        })
+                        Puzzles.addMathBlocksToSliderLevel(gameState, {
+                            mbSliderOpts: {},
+                            sliders: sliderGroup.objects,
+                            blocks : Planet.standardBlocks('quadratic'),
+                        })
+                    } 
+                //quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
+                    //    withMathBlock:true, nextScenes:["quadratic.puzzle.11"], ddx: x=> -x, tracerStart:-1})
+                    break
+                case '4c': 
+                    {
+                        const numSliders = 40
+                        const tracerStart = 0
+                        const {sliderGroup} = Puzzles.sliderLevel(gameState, {
+                            gridSetupOpts: {topMargin: 200, rightMargin:300},
+                            sliderSetupOpts:{
+                                numSliders:numSliders,
+                                sliderOpts: {increment: 0.1, circleRadius: 5, clickable:true},
+                            },
+                            targetBuilder:Puzzles.buildTargetsFromDdx({
+                                ddx:x=>-0.5*x,
+                                numTargets: numSliders,
+                                startY:tracerStart, 
+                                targetOpts:{size:10}}),
+                            tracerOpts: {originGridY:tracerStart},
+                            nextScenes: ['quadratic.puzzle.4d'],
+                        })
+                        Puzzles.addMathBlocksToSliderLevel(gameState, {
+                            mbSliderOpts: {},
+                            sliders: sliderGroup.objects,
+                            blocks : Planet.standardBlocks('quadratic'),
+                        })
+                    } 
+                    // quadDiscLevel(gameState, {numSliders:200, sliderSize:10, targetSize:10,
+                    //     withMathBlock:true, nextScenes:["quadratic.puzzle.12"], ddx: x=> -0.5*x, tracerStart:0})
+                    break
+                case '4d':
+                    {
+                        const numSliders = 40
+                        const tracerStart = 0.4
+                        const {sliderGroup} = Puzzles.sliderLevel(gameState, {
+                            gridSetupOpts: {topMargin: 200, rightMargin:300},
+                            sliderSetupOpts:{
+                                numSliders:numSliders,
+                                sliderOpts: {increment: 0.1, circleRadius: 5, clickable:true},
+                            },
+                            targetBuilder:Puzzles.buildTargetsFromDdx({
+                                ddx:x=>0.2*x,
+                                numTargets: numSliders,
+                                startY:tracerStart, 
+                                targetOpts:{size:10}}),
+                            tracerOpts: {originGridY:tracerStart},
+                            nextScenes: ['quadratic.puzzle.5a', ],
+                        })
+                        Puzzles.addMathBlocksToSliderLevel(gameState, {
+                            mbSliderOpts: {},
+                            sliders: sliderGroup.objects,
+                            blocks : Planet.standardBlocks('quadratic'),
+                        })
+                    } 
+                    break
+                case '5a':{
+                    gravityPuzzle(gameState, {
+                        gravity: 2,
+                        initPos: 2,
+                        nextScenes: ["quadratic.puzzle.5b","quadratic.puzzle.5c","quadratic.puzzle.5c","quadratic.puzzle.6a"],
+                    })
+                }
+                    break
+                case '5b':{
+                    gravityPuzzle(gameState, {
+                        gravity: 0.5,
+                        initPos: 2,
+                        nextScenes: ["quadratic.puzzle.5c"],
+                    })
+                }
+                    break
+                case '5c':{
+                    gravityPuzzle(gameState, {
+                        gravity: 3,
+                        initPos: 1.5,
+                        nextScenes: ["quadratic.puzzle.5d"],
+                    })
+                }
+                    break
+                case '5d':{
+                    gravityPuzzle(gameState, {
+                        gravity: 1.5,
+                        initPos: 1,
+                        nextScenes: ["quadratic.puzzle.6a"],
+                    })
+                }
+                    break
+                case '6a':
+                    quadMathBlockLevel(gameState, {
+                        scaleY: 1,
+                        translateY : -2,
+                        nextScenes: ['quadratic.puzzle.6b', 'quadratic.puzzle.6c', 'quadratic.puzzle.6d'],
+                    })
+                break
+                case '6b':
+                    quadMathBlockLevel(gameState, {
+                        scaleY: 0.75,
+                        translateY : -1,
+                        nextScenes: ['quadratic.puzzle.6c',],
+                    })
+                break
+                case '6c':
+                    quadMathBlockLevel(gameState, {
+                        scaleY: -0.5,
+                        translateY : 1.5,
+                        nextScenes: ['quadratic.puzzle.6d',],
+                    })
+                break
+                case '6d':
+                    quadMathBlockLevel(gameState, {
+                        scaleY: 0.25,
+                        translateY : 0,
+                        nextScenes: ['planetMap',],
+                    })
                 break
 
             }
-            break
+        break
     }
 }
 
+function quadMathBlockLevel(gameState, {
+    scaleY,
+    translateY,
+    nextScenes,
+}){
+    const targetBlock = new MathBlock({ type: MathBlock.POWER, token: '2', originX: 200, originY: 250, }) 
+    const xBlock = new MathBlock({ type: MathBlock.VARIABLE, token: 'x'})
+    targetBlock.scaleY = scaleY
+    targetBlock.translateY = translateY
+    targetBlock.setChild(0, xBlock)
+    targetBlock.insert(gameState.objects, 1)
+
+    const fLabel = new TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
+    const ddxLabel = new TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 200, content: 'f\'(x)=' })
+    fLabel.insert(gameState.objects, 0)
+    ddxLabel.insert(gameState.objects, 0)
+
+    const {sySlider} = Puzzles.mathBlockLevel(gameState, {
+        targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 100, targetOpts: { size: 12 } }),
+        blocks: Planet.standardBlocks('quadratic'),
+        sliderOpts: { showAxis:true, increment: 0.5 },
+        //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
+        tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
+        nextScenes: nextScenes,
+    })
+}
 
 function quadraticPlanet(gameState,message={}){
     Planet.planetScene(gameState, {
@@ -387,181 +438,159 @@ function quadraticPlanet(gameState,message={}){
         playerPaths:paths,
         bgImg: 'quadPlanetBg',
         fgImg: 'placeholderFg',
+        firstScene: 'quadratic.puzzle.1a',
         message
     })
 }
 
-function quadDiscLevel (gameState, {
-    numSliders,
-    withMathBlock = false,
-    func, ddx, tracerStart,
-    targetSize = 20, sliderSize = 15,
-    nextScenes, 
-}){
-    if (func == null && ddx == null)
-        func = x => x*x/2
-    
-    const gss = gameState.stored
-    const backButton = Planet.backButton(gameState)
-    const nextButton = Planet.nextButton(gameState, nextScenes)
-
-    const gridLeft = new Grid({canvasX:withMathBlock ? 150 : 300, canvasY:350, canvasWidth:400, canvasHeight:400, 
-        gridXMin:-2, gridYMin:-2, gridXMax:2, gridYMax:2, labels:false, arrows:true})
-    const gridRight = new Grid({canvasX:withMathBlock ? 700 : 900, canvasY:350, canvasWidth:400, canvasHeight:400, 
-        gridXMin:-2, gridYMin:-2, gridXMax:2, gridYMax:2, labels:false, arrows:true})
-    
-    const spacing = gridLeft.gridWidth/numSliders
-    var sliders = []
-    for (let i = 0; i < numSliders; i++){
-        sliders.push(new Slider({grid:gridRight, gridPos:gridRight.gridXMin + i * spacing,
-            increment: withMathBlock ? 0.05 : 0.1,circleRadius:sliderSize}))
-    }
-    
-    var targets = []
-    if (func != null)
-        tracerStart = func(gridLeft.gridXMin)
-    var y = tracerStart
-    for (let i = 0; i < numSliders; i++) {
-        const x = gridLeft.gridXMin+(i+1)*spacing
-        if (func != null)
-            y = func(x)
-        else 
-            y += ddx(gridLeft.gridXMin+i*spacing)*spacing
-        targets.push(new Target({grid: gridLeft, gridX:x, gridY:y, size:targetSize}))
-    }
-    
-    
-    const tracer = new IntegralTracer({grid: gridLeft, input: {type:'sliders', sliders:sliders}, targets:targets, originGridY:tracerStart})
-    
-    const blocks = [
-        new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
-    ]
-    for (let b of gss.mathBlocksUnlocked){
-        blocks.push(new MathBlock({type: b.type, token: b.token}))
-    }
-
-    gameState.objects = [gridLeft, gridRight, tracer, backButton, nextButton].concat(targets).concat(sliders)
-
-
-    if (withMathBlock){
-
-        const sySlider = new Slider({canvasX: 1200, canvasY: 350, maxValue:2, sliderLength:4, startValue: 1, showAxis:true})
-        const tySlider = new Slider({canvasX: 1300, canvasY: 350, maxValue:2, sliderLength:4, showAxis:true})
-        const mbField = new MathBlockField({minX:700, minY:100, maxX:1100, maxY:300, outputSliders:sliders})
-        const mbm = new MathBlockManager({blocks : blocks, toolBarX: 1400, toolBarY:150, outputType:"sliders",
-            scaleYSlider: sySlider, translateYSlider:tySlider,
-            blockFields: [ mbField ],
-
-        })
-        gameState.objects = gameState.objects.concat([mbm, sySlider, tySlider])
-        gameState.update = ()=>{
-            if (mbField.rootBlock != null){
-                const fun = mbField.rootBlock.toFunction()
-                if (fun != null){
-                    for (let i = 0; i < numSliders; i++){
-                        sliders[i].moveToValue(fun(sliders[i].gridPos))
-                    }
-                }
-            }
-        }
-    }
-
-    Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
-    Planet.unlockScenes(nextScenes, gss)
-}
-
-function applePuzzle(gameState, {solutionFun, ...options}){
-    const blocks = [
-        new MathBlock({type:MathBlock.CONSTANT, token:'0'}),
-        new MathBlock({type:MathBlock.VARIABLE, token:'t'}),
-        new MathBlock({type:MathBlock.POWER, token:'2'})
-    ]
-    const turtle = {
-        maxDist:500,
-        originX:1100,
-        originY:800,
-        time:0,
-        update: function(ctx){
-            // Turtle
-            const y = this.originY - (Math.max(0,solutionFun(this.time)) * this.maxDist / 10)
-            ctx.font = "50px monospace"
-            ctx.textAlign = 'center'
-            ctx.textBaseline = 'middle'
-            ctx.fillText("🍎", this.originX+50, y)
-
-            // Number line
-            const numTicks = 10
-            const lineWidth = 5
-            const tickLength = 10
-            Color.setColor(ctx, Color.white)
-            Shapes.RoundedLine(ctx, this.originX, this.originY, this.originX, this.originY - this.maxDist, lineWidth)
-
-            ctx.font = '24px monospace'
-            ctx.textAlign = 'left'
-            ctx.textBaseline = 'top'
-            ctx.fillText('p(t) = ' + Math.max(0,solutionFun(this.time)).toFixed(1), 1250, 220)
-            ctx.fillText('t = ' + this.time.toFixed(1), 1050, 220)
-            
-            ctx.font = '20px monospace'
-            for (let i = 0; i < numTicks + 1; i++) {
-                const tickY = this.originY - this.maxDist / numTicks * i
-                ctx.textBaseline = 'middle'
-                ctx.textAlign = 'right'
-                ctx.fillText(i, this.originX-30, tickY)
-                Shapes.RoundedLine(ctx, this.originX - tickLength, tickY, this.originX + tickLength, tickY, lineWidth)
-            }
-
-            
-        }
-    }
-
-    measurementPuzzle(gameState, {measureObject:turtle,
-        blocks:blocks,solutionFun:solutionFun, ...options})
-}
-
-
-function quadMathBlockTutorial(gameState, {
-    targetVals, tracerStart = 0,
-    targetSize = 20, sliderSize = 15,
+function gravityPuzzle(gameState, {
+    gridSetupOpts,
     nextScenes,
-}) {
-    const gss = gameState.stored
-    const backButton = Planet.backButton(gameState)
-    const nextButton = Planet.nextButton(gameState, nextScenes)
-
-    const grid = new Grid({canvasX:600, canvasY:350, canvasWidth:400, canvasHeight:400, 
-        gridXMin:-2, gridYMin:-2, gridXMax:2, gridYMax:2, labels:false, arrows:true})
-
-    const spacing = grid.gridWidth/targetVals.length
-
-    var targets = []
-    for (let i = 0; i < targetVals.length; i++) {
-        targets.push(new Target({grid: grid, gridX:grid.gridXMin+(i+1)*spacing, gridY:targetVals[i], size:targetSize}))
-    }
-     
-    const functionTracer = new FunctionTracer({grid: grid, targets: targets, solvable:true})
-
-    const blocks = [
-        new MathBlock({type:MathBlock.CONSTANT}),
-        new MathBlock({type: MathBlock.VARIABLE, token:'x'}),
-        new MathBlock({type: MathBlock.POWER, token:'2'})
-    ]
-    const sySlider = new Slider({canvasX: 1200, canvasY: 350, maxValue:2, sliderLength:4, startValue: 1, showAxis:true})
-    const tySlider = new Slider({canvasX: 1300, canvasY: 350, maxValue:2, sliderLength:4, showAxis:true})
-
-    const mbField = new MathBlockField({minX:600, minY:100, maxX:1000, maxY:300})
-    const mbm = new MathBlockManager({blocks : blocks, toolBarX: 1400, toolBarY:100, outputType:"sliders",
-        scaleYSlider: sySlider, translateYSlider:tySlider,
-        blockFields: [ mbField ],
-        funTracers: [functionTracer],
+    initPos=2, gravity=1,
+}){
+    const gridGroup = Puzzles.gridSetup(gameState, {
+        numGrids: 2,
+        leftMargin: 450, topMargin: 200, 
+        gridOpts:{gridXMin:0, gridXMax:4, xAxisLabel:'Time t'},
+        spacing:50,
+        ...gridSetupOpts,
     })
+    const grids = gridGroup.objects
+    grids[0].gridTitle = 'Position'
+    grids[1].gridTitle = 'Velocity'
 
-    gameState.update = ()=>{
+    const targets = Puzzles.targetsFromFun(gameState, {
+        fun: x => initPos - gravity * x*x / 2,
+        grid: grids[0],
+        numTargets: 50,
+        targetOpts: {size: 20},
+    }).objects
 
-    }
+    const positionTracer = new FunctionTracer({
+        grid: grids[0], animated:true, 
+        autoStart:false,
+        targets:targets
+    })
+    positionTracer.insert(gameState.objects, 1)
 
-    gameState.objects = [grid, functionTracer, backButton, nextButton, mbm, sySlider, tySlider].concat(targets)
-    Planet.addWinCon(gameState, ()=>functionTracer.solved, nextButton)
-    Planet.unlockScenes(nextScenes, gss)
+    const velocityTracer = new FunctionTracer({
+        grid: grids[1], animated:true, 
+        autoStart:false,
+    })
+    velocityTracer.insert(gameState.objects, 1)
+
+    const ship = new GravityShip({
+        originX: 125,
+        originY: grids[0].canvasY,
+        positionGrid: grids[0],
+        positionTracer: positionTracer,
+        velocityTracer: velocityTracer,
+    })
+    ship.insert(gameState.objects,1)
+
+    Planet.levelNavigation(gameState, {
+        winCon: () => positionTracer.solved,
+        nextScenes: nextScenes,
+    })
 }
 
+class GravityShip extends GameObject {
+    constructor({
+        originX,
+        originY,
+        positionGrid,
+        positionTracer,
+        velocityTracer,
+    }){
+        super()
+        Object.assign(this, { originX, originY, positionGrid, positionTracer, velocityTracer})
+        
+        const shipScale = 0.6
+        this.shipImage = new GameObjects.ImageObject({
+            originX: this.originX + 20,
+            originY: this.originY,
+            height:55*shipScale,
+            width:200*shipScale, 
+            id : 'shipSide',
+        })
+        // Ground image
+
+        this.gravitySlider = new GameObjects.Slider({
+            canvasX: originX,
+            canvasY: originY - positionGrid.canvasHeight * 0.2, 
+            vertical: false,
+            minValue: 0,
+            maxValue: 3,
+            startValue:1,
+            increment:0.1,
+            name: 'Gravity'
+        })
+
+        const pSliderIncrement = 0.1
+        this.positionSlider = new GameObjects.Slider({
+            canvasX: originX,
+            canvasY: originY, 
+            minValue: positionGrid.gridYMin,
+            maxValue: positionGrid.gridYMax,
+            increment: pSliderIncrement,
+        })
+
+        this.initPos = 0
+
+        this.playPauseButton = new GameObjects.Button({
+            originX: this.originX + this.positionGrid.canvasWidth/2 - 30, 
+            originY: this.originY - positionGrid.canvasHeight * 0.4,
+            width: 50,
+            height: 50,
+            onclick: () => {
+                // Play
+                if (this.positionTracer.state == GameObjects.FunctionTracer.STOPPED_AT_BEGINNING) {
+                    this.positionSlider.clickable = false
+                    this.gravitySlider.clickable = false
+
+                    this.initPos = this.positionSlider.value
+                    this.positionSlider.increment = 0.001
+
+                    this.positionTracer.setInputFunction(x => this.initPos - this.gravitySlider.value * x*x / 2)
+                    this.velocityTracer.setInputFunction(x => - this.gravitySlider.value * x)
+
+                    this.positionTracer.start()
+                    this.velocityTracer.start()
+                } else {
+                    this.positionSlider.clickable = true
+                    this.gravitySlider.clickable = true
+
+                    this.positionSlider.setValue(this.initPos)
+                    this.positionSlider.increment = pSliderIncrement
+
+                    this.positionTracer.reset()
+                    this.velocityTracer.reset()
+                } 
+            },
+            label: "⏵", lineWidth: 5
+        })
+    }
+
+    update(ctx, audio, mouse) {
+        // Ship position
+        this.shipImage.originY = this.positionSlider.circlePos - this.shipImage.height/2
+
+        // Play button
+        if (this.positionTracer.state == GameObjects.FunctionTracer.STOPPED_AT_END) {
+            this.playPauseButton.label = '⏮'
+        }else if (this.positionTracer.state == GameObjects.FunctionTracer.STOPPED_AT_BEGINNING){
+            this.playPauseButton.label = '⏵'
+        } else {
+            this.positionSlider.setValue(this.positionTracer.currentY)
+            this.playPauseButton.label = '⏮'
+        }
+
+
+        this.gravitySlider.update(ctx, audio, mouse)
+        this.positionSlider.update(ctx, audio, mouse)
+        this.shipImage.update(ctx, audio, mouse)
+        this.playPauseButton.update(ctx,audio,mouse)
+    }
+
+
+}
