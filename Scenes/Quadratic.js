@@ -37,6 +37,11 @@ const nodes = {
     'quadratic.puzzle.5b': [12,3, 0,-1],
     'quadratic.puzzle.5c': [11,3, 0,-1],
     'quadratic.puzzle.5d': [10,3, 0,-1],
+
+    'quadratic.puzzle.6a': [9,3, 0,-1],
+    'quadratic.puzzle.6b': [8,3, 0,-1],
+    'quadratic.puzzle.6c': [7,3, 0,-1],
+    'quadratic.puzzle.6d': [6,3, 0,-1],
 }
 
 const paths = 
@@ -49,7 +54,7 @@ const paths =
     { start: 'quadratic.puzzle.1d', end: 'quadratic.puzzle.2a', steps: [] },
 
     { start: 'quadratic.puzzle.2a', end: 'quadratic.puzzle.2b', steps: [] },
-    { start: 'quadratic.puzzle.2b', end:  'quadratic.puzzle.2c', steps: [] },
+    { start: 'quadratic.puzzle.2b', end: 'quadratic.puzzle.2c', steps: [] },
     { start: 'quadratic.puzzle.2c', end: 'quadratic.puzzle.3a', steps: [] },
 
     { start: 'quadratic.puzzle.3a', end: 'quadratic.puzzle.3b', steps: [] },
@@ -66,6 +71,11 @@ const paths =
     { start: 'quadratic.puzzle.5b', end: 'quadratic.puzzle.5c', steps: [] },
     { start: 'quadratic.puzzle.5c', end: 'quadratic.puzzle.5d', steps: [] },
     { start: 'quadratic.puzzle.5d', end: 'quadratic.puzzle.6a', steps: [] },
+
+    { start: 'quadratic.puzzle.6a', end: 'quadratic.puzzle.6b', steps: [] },
+    { start: 'quadratic.puzzle.6b', end: 'quadratic.puzzle.6c', steps: [] },
+    { start: 'quadratic.puzzle.6c', end: 'quadratic.puzzle.6d', steps: [] },
+    { start: 'quadratic.puzzle.6d', end: 'quadratic.puzzle.1a', steps: [] },
     
 ]
 
@@ -330,16 +340,94 @@ export function loadScene(gameState, sceneName, message = {}){
                     gravityPuzzle(gameState, {
                         gravity: 2,
                         initPos: 2,
-                        nextScenes: ["linear.puzzle.5c"],
+                        nextScenes: ["quadratic.puzzle.5b","quadratic.puzzle.5c","quadratic.puzzle.5c","quadratic.puzzle.6a"],
                     })
                 }
                     break
+                case '5b':{
+                    gravityPuzzle(gameState, {
+                        gravity: 0.5,
+                        initPos: 2,
+                        nextScenes: ["quadratic.puzzle.5c"],
+                    })
+                }
+                    break
+                case '5c':{
+                    gravityPuzzle(gameState, {
+                        gravity: 3,
+                        initPos: 1.5,
+                        nextScenes: ["quadratic.puzzle.5d"],
+                    })
+                }
+                    break
+                case '5d':{
+                    gravityPuzzle(gameState, {
+                        gravity: 1.5,
+                        initPos: 1,
+                        nextScenes: ["quadratic.puzzle.6a"],
+                    })
+                }
+                    break
+                case '6a':
+                    quadMathBlockLevel(gameState, {
+                        scaleY: 1,
+                        translateY : -2,
+                        nextScenes: ['quadratic.puzzle.6b', 'quadratic.puzzle.6c', 'quadratic.puzzle.6d'],
+                    })
+                break
+                case '6b':
+                    quadMathBlockLevel(gameState, {
+                        scaleY: 0.75,
+                        translateY : -1,
+                        nextScenes: ['quadratic.puzzle.6c',],
+                    })
+                break
+                case '6c':
+                    quadMathBlockLevel(gameState, {
+                        scaleY: -0.5,
+                        translateY : 1.5,
+                        nextScenes: ['quadratic.puzzle.6d',],
+                    })
+                break
+                case '6d':
+                    quadMathBlockLevel(gameState, {
+                        scaleY: 0.25,
+                        translateY : 0,
+                        nextScenes: ['planetMap',],
+                    })
+                break
 
             }
         break
     }
 }
 
+function quadMathBlockLevel(gameState, {
+    scaleY,
+    translateY,
+    nextScenes,
+}){
+    const targetBlock = new MathBlock({ type: MathBlock.POWER, token: '2', originX: 200, originY: 250, }) 
+    const xBlock = new MathBlock({ type: MathBlock.VARIABLE, token: 'x'})
+    targetBlock.scaleY = scaleY
+    targetBlock.translateY = translateY
+    targetBlock.setChild(0, xBlock)
+    targetBlock.insert(gameState.objects, 1)
+
+    const fLabel = new TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
+    const ddxLabel = new TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 200, content: 'f\'(x)=' })
+    fLabel.insert(gameState.objects, 0)
+    ddxLabel.insert(gameState.objects, 0)
+
+    const {sySlider} = Puzzles.mathBlockLevel(gameState, {
+        targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 100, targetOpts: { size: 12 } }),
+        blocks: Planet.standardBlocks('quadratic'),
+        sliderOpts: { showAxis:true, increment: 0.5 },
+        //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
+        tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
+        nextScenes: nextScenes,
+    })
+}
 
 function quadraticPlanet(gameState,message={}){
     Planet.planetScene(gameState, {
@@ -432,7 +520,7 @@ class GravityShip extends GameObject {
             canvasY: originY - positionGrid.canvasHeight * 0.2, 
             vertical: false,
             minValue: 0,
-            maxValue: 5,
+            maxValue: 3,
             startValue:1,
             increment:0.1,
             name: 'Gravity'

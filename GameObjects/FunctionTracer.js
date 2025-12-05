@@ -212,7 +212,7 @@ export class FunctionTracer extends GameObject{
                 const cyObj = this.grid.gridToCanvasBoundedY(this.gridYs[i])
                 const cy = cyObj.y
                 // Line width is not accounted for. Intersection is just of middle of line.
-                if (!cyObj.out && t.pointIntersect(x-1,prevCy)){
+                if (!prevOob && t.pointIntersect(x-1,prevCy)){
                     if (!t.hit){
                         audioManager.play('drop_002',{pitch:this.gridYs[i-1]/this.grid.gridHeight*12, channel:this.audioChannel})
                     }
