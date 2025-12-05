@@ -1,6 +1,5 @@
 export class TileMap{
 
-
     /**
      * Maps are isometric tiles of 128 x 64. 
      * Maps are 1600 x 900, which is 12.5 x 14.0625 tiles
