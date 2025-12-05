@@ -362,7 +362,7 @@ export function loadScene(gameState, sceneName, message = {}) {
                         targetBlock.insert(gameState.objects, 1)
 
                         const fLabel = new TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
-                        const ddxLabel = new TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)=' })
+                        const ddxLabel = new TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 250, content: 'f\'(x)=' })
                         fLabel.insert(gameState.objects, 0)
                         ddxLabel.insert(gameState.objects, 0)
 
