@@ -444,10 +444,12 @@ export function tripleGraphMathBlockLevel(gameState, {
 function mathBlockSetup (gameState, {
     sliderOpts,
     blocks,
+    mbFieldOpts,
     grid,
 }){
     const {sySlider, tySlider} = mathBlockSlidersSetup(gameState, {sliderOpts:sliderOpts})
-    const mbField = new MathBlockField({minX:700, minY:100, maxX:1100, maxY:300})
+    const mbField = new MathBlockField({minX:grid.canvasX, minY:grid.canvasY - 200,
+         maxX:grid.canvasX+grid.canvasWidth, maxY:grid.canvasY - 50, ...mbFieldOpts})
 
     const funTracer = new FunctionTracer({grid:grid})
     funTracer.insert(gameState.objects, 1)
@@ -460,7 +462,7 @@ function mathBlockSetup (gameState, {
     })
     mbm.insert(gameState.objects, 10)
 
-    return {sySlider: sySlider, tySlider: tySlider, mbField:mbField, funTracer:funTracer}
+    return {sySlider: sySlider, tySlider: tySlider, mbField:mbField, funTracer:funTracer, mbm:mbm}
 }
 
 /**
@@ -553,20 +555,14 @@ export function drawFunctionLevel(gameState, {
 export function mathBlockTutorial(gameState, {
     gridSetupOpts,
     targetBuilder,
-    targetOpts,
-    targetFun,
-    blocks,
+    mathBlockSetupOpts,
     nextScenes,
-    gridXMin=-2, gridYMin=-2, gridXMax=2, gridYMax=2,
 }) {
     
     const gridGroup = gridSetup(gameState, {
         numGrids: 1,
-        topMargin: 100,
-        rightMargin: 300,
-        gridOpts: {
-
-        },
+        topMargin: 200,
+        rightMargin: 0,
         ...gridSetupOpts,
     }) 
     const grid = gridGroup.objects[0]
@@ -574,24 +570,14 @@ export function mathBlockTutorial(gameState, {
     const targetGroup = targetBuilder(gameState, grid)
     const targets = targetGroup.objects
 
-    const functionTracer = new FunctionTracer({grid: grid, targets: targets, solvable:true})
-    functionTracer.insert(gameState.objects, 1)
-
-    const sySlider = new Slider({canvasX: 1200, canvasY: 350, maxValue:2, sliderLength:4, startValue: 1, showAxis:true})
-    const tySlider = new Slider({canvasX: 1300, canvasY: 350, maxValue:2, sliderLength:4, showAxis:true})
-
-    const mbField = new MathBlockField({minX:600, minY:100, maxX:1000, maxY:300})
-    const mbm = new MathBlockManager({blocks : blocks, toolBarX: 1400, toolBarY:100, outputType:"sliders",
-        scaleYSlider: sySlider, translateYSlider:tySlider,
-        blockFields: [ mbField ],
-        funTracers: [functionTracer],
+    const {sySlider, tySlider, mbField, funTracer, mbm} = mathBlockSetup(gameState, {
+        grid:grid, ...mathBlockSetupOpts,
     })
-    const mathBlockObjs = new GameObjectGroup([sySlider,tySlider,mbField])
-    mathBlockObjs.insert(gameState.objects, 0)
-    mbm.insert(gameState.objects, 1)
+
+    funTracer.targets = targets
 
     Planet.levelNavigation(gameState, {
-        winCon: () => functionTracer.solved,
+        winCon: () => funTracer.solved,
         nextScenes: nextScenes,
     })
 }
