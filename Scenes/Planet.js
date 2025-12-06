@@ -1,149 +1,98 @@
 import {Color, Shapes} from '../util/index.js'
-import {PuzzleComputer, Player, Grid, FunctionTracer, Button, ImageObject, IntegralTracer, MathBlock, MathBlockManager, MathBlockField, Slider, Target, TargetAdder, TextBox, DialogueBox} from '../GameObjects/index.js'
+import * as GameObjects from '../GameObjects/index.js'
 import * as Scene from '../Scene.js'
-
-/**
- * 
- * Standard planet setup
- */
+import { TileMap } from '../util/TileMap.js'
 
 export function planetScene(gameState, {
-    planetName,
-    puzzleLocations,
-    shipX, shipY, shipDir='SE',
-    labX, labY, labDir='SE',
     tileMap,
-    playerNodes,
-    playerPaths,
-    bgImg, fgImg,
-    firstScene,
-    message
+    pathData,
+    bgImg,
+    fgImg,
 }){
     const gss = gameState.stored
-    var transition = true
+
+    const nodes = pathData.nodes
+    const paths = pathData.paths
 
     if (gss.planetProgress[gss.planet] == 'unvisited'){
         gss.planetProgress[gss.planet] = 'visited'
     }
 
-    // Player
-    if (!playerNodes[gss.playerLocation]){
-        gss.playerLocation = 'planetMap'
+    if (!nodes[gss.playerLocation]){
+        gss.playerLocation = 'ship'
     }
 
-    if (!firstScene){
-        firstScene = gss.planet + '.puzzle.1'
-    }
-
-    if (!gss.completedScenes[firstScene]){
-        gss.completedScenes[firstScene] = 'in progress'
-    }
-
-    const player = new Player({nodes:playerNodes, paths:playerPaths, currentNode:gss.playerLocation, tileMap:tileMap})     
+    const player = new GameObjects.Player({
+        nodes:nodes,
+        paths:paths,
+        currentNode:gss.playerLocation,
+        tileMap:tileMap
+    })
 
     const sprites = []
     const buttons = []
 
-    for (let node in playerNodes){
-        const nodeNameSplit = node.toLowerCase().split('.')
-        const pos = playerNodes[node]
-        const canvasPos = tileMap.isometricToCanvas(pos[0]+pos[2], pos[1]+pos[3])  
+    for (let nodeName in nodes){
+        const node = nodes[nodeName]
+        console.log('NODE ',nodeName, node)
+        
+        const dirCoord = TileMap.dirToCoord(node.dir)
+        const canvasPos = tileMap.isometricToCanvas(node.x + dirCoord.x, node.y + dirCoord.y)  
 
-        const button = new Button({
+        // Invisible button where this node is
+        const button = new GameObjects.Button({
             originX:0,
             originY:0,
-            onclick : () => player.moveTo(node),
+            onclick : () => player.moveTo(nodeName),
             bgColor: `rgba(100,0,100,0.1)`,
             color: `rgba(100,0,100,0.1)`
         })
         button.visible = false
         buttons.push(button)
         
-        if (nodeNameSplit.length >= 2){
-            switch(nodeNameSplit[1]){
-                case 'puzzle':
-                    button.originX = canvasPos.x + 230
-                    button.originY = canvasPos.y + 250
-                    button.width = 50
-                    button.height = 70
-                    
-                    const computer = new PuzzleComputer({x:canvasPos.x, y:canvasPos.y, text:nodeNameSplit[2]})
-                    var id = 'computer'
-                    // NW -> SE
-                    if (pos[2] == -1 && pos[3] == 0){
-                        computer.dir = 'SE'
-                    }
-                    // NE -> SW
-                    else if (pos[2] == 0 && pos[3] == -1){
-                        computer.dir = 'SW'
-                    }else{
-                        console.warn('unsupported computer direction', pos[2], pos[3])
-                        continue
-                    }
+        // Add sprite
+        switch(node.type){
+            default:
+            case 'puzzle':
+                button.originX = canvasPos.x + 230
+                button.originY = canvasPos.y + 250
+                button.width = 50
+                button.height = 70
+                
+                const computer = new GameObjects.PuzzleComputer({x:canvasPos.x, y:canvasPos.y, text:nodeName})
+                // NW -> SE
+                if (node.dir == 'NW'){
+                    computer.dir = 'SE'
+                }
+                // NE -> SW
+                else {
+                    computer.dir = 'SW'
+                }
 
-                    switch (gss.completedScenes[node]){
-                        case 'complete':
-                            computer.color = Color.adjustLightness(Color.blue, -50)
-                            break
-                        case 'in progress':
-                            computer.color = Color.adjustLightness(Color.magenta, -50)
-                            break
-                        default:
-                                button.active = false
-                            break
-                    }
-                    sprites.push(computer)
-                    break
-                case 'dialogue':
-                    var id = 'alienSE'
-                    // NE -> SW
-                    if (pos[2] == 0 && pos[3] == -1){
-                        id = 'alienSW'
-                    }
-                    sprites.push(new ImageObject({originX:canvasPos.x, originY:canvasPos.y, id:id}))
-                    button.originX = canvasPos.x + 230
-                    button.originY = canvasPos.y + 250
-                    button.width = 50
-                    button.height = 70
-                    button.onclick = ()=>{transition = false; player.moveTo(node)}
-                    switch (gss.completedScenes[node]){
-                        case 'complete':
-                            break
-                        case 'in progress':
-                            break
-                        default:
-                                button.active = false
-                            break
-                    }
-                    break 
-                case 'lab':
-                    sprites.push(new ImageObject({originX:labX, originY:labY, id:'lab'+labDir}))
-                    button.originX = labX+130,
-                    button.originY = labY+200,
-                    button.width = 250
-                    button.height = 150
-                    switch (gss.completedScenes[node]){
-                        case 'complete':
-                            break
-                        case 'in progress':
-                            break
-                        default:
-                                button.active = false
-                            break
-                    }
-                    break
-                default:
-                    console.warn('unknown node', node)
-                    break
-            }
-        }else if (nodeNameSplit[0] == 'planetmap'){
-            sprites.push(new ImageObject({originX:shipX, originY:shipY, id:'ship'+shipDir}))
-            button.originX = shipX+100,
-            button.originY = shipY+200,
-            button.width = 250
-            button.height = 150
-        }else {
-            console.warn('unknown node', node)
+                switch (gss.completedScenes[node]){
+                    case 'complete':
+                        computer.color = Color.adjustLightness(Color.blue, -50)
+                        break
+                    case 'in progress':
+                        computer.color = Color.adjustLightness(Color.magenta, -50)
+                        break
+                    default:
+                            button.active = false
+                        break
+                }
+                sprites.push(computer)
+                break
+            case 'ship':
+                sprites.push(new GameObjects.ImageObject({
+                    originX:canvasPos.x - 150,
+                    originY:canvasPos.y - 50,
+                    id:'shipSE'
+                }))
+                button.originX = canvasPos.x-25,
+                button.originY = canvasPos.y+150,
+                button.width = 250
+                button.height = 150
+                break
         }
     }
 
@@ -160,19 +109,14 @@ export function planetScene(gameState, {
     }
 
     gameState.objects = [
-        new ImageObject({originX:0, originY:0, id:bgImg}),
+        new GameObjects.ImageObject({originX:0, originY:0, id:bgImg}),
         ...sprites,
         player,
-        new ImageObject({originX:0, originY:0, id:fgImg}),
-        // experimentButton, shipButton, dialogueButton,
+        new GameObjects.ImageObject({originX:0, originY:0, id:fgImg}),
     ].concat(buttons)
-    
-    if (message && message.goTo){
-        player.moveTo(message.goTo)
-    }
-
 }
 
+// ---------------------------------------------------------------------------
 
 
 /**
@@ -184,7 +128,6 @@ export function levelNavigation(gameState, {
 }){
     if (nextScenes == null){
         nextScenes = defaultNextScenes(gameState)
-        console.log('default', nextScenes)
     }
     const backB = backButton(gameState)
     backB.insert(gameState.objects, 0)

@@ -19,7 +19,15 @@ export class TileMap{
         return {x: cx, y : cy}
     }
 
-
-    
+    static dirToCoord(dir){
+        switch (dir){
+            case 'NE': return {x:0,y:-1}
+            case 'NW': return {x:-1,y:0}
+            case 'SE': return {x:1,y:0}
+            case 'SW': return {x:0,y:1}
+            default: return {x:0,y:0}
+        }
+    }
     
 }
+
