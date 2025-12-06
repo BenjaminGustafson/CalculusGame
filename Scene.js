@@ -108,7 +108,7 @@ export function loadScene(gameState, sceneName, message = {}) {
             break
 
         // Quadratic Planet
-        case "quadratic": Quadratic.loadScene(gameState, sceneName, message)
+        case "quadratic": Quadratic.loadScene(gameState, sceneNameSplit[1], message)
             sceneTitle = 'Quadratic Planet'
             break
         case "exponential": Exponential.loadScene(gameState, sceneName, message)

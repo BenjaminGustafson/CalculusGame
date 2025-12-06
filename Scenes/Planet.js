@@ -162,7 +162,7 @@ export function backButton (gameState){
  */
 export function nextButton (gameState, nextScenes){
     const button = new GameObjects.Button({originX:200, originY: 50, width:100, height: 100,
-        onclick: ()=>Scene.loadScene(gameState, gameState.stored.planet, {goTo:nextScenes[0].split('.')[1]}), label:"→"})
+        onclick: ()=>Scene.loadScene(gameState, gameState.stored.planet, {goTo:nextScenes[0]}), label:"→"})
     button.active = false
     return button
 }

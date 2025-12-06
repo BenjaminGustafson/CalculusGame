@@ -5,140 +5,133 @@
     "x": 11,
     "y": 3,
     "dir": "NE",
-    "next": "1a"
+    "next": ["1a"]
 },
 "1a": {
     "x": 10,
     "y": 0,
     "dir": "NW",
-    "next": "1b",
-    "unlock": ["1b", "2a"]
+    "next": ["1b", "2a"]
 },
 "1b": {
     "x": 10,
     "y": -1,
     "dir": "NW",
-    "next": "2a"
+    "next": ["2a"]
 },
 "2a": {
     "x": 12,
     "y": -2,
     "dir": "NW",
-    "next": "2b",
-    "unlock": ["2b", "2c", "2d", "3a"]
+    "next": ["2b", "2c", "2d", "3a"]
 },
 "2b": {
     "x": 12,
     "y": -3,
     "dir": "NW",
-    "next": "2c"
+    "next": ["2c"]
 },
 "2c": {
     "x": 12,
     "y": -4,
     "dir": "NW",
-    "next": "2d"
+    "next": ["2d"]
 },
 "2d": {
     "x": 12,
     "y": -5,
     "dir": "NW",
-    "next": "3a"
+    "next": ["3a"]
 },
 "3a": {
     "x": 13,
     "y": -5,
     "dir": "NE",
-    "next": "3b",
-    "unlock": ["3b", "4a"]
+    "next": ["3b", "4a"]
 },
 "3b": {
     "x": 14,
     "y": -5,
     "dir": "NE",
-    "next": "4a"
+    "next": ["4a"]
 },
 "4a": {
     "x": 17,
     "y": -4,
     "dir": "NW",
-    "next": "4b",
-    "unlock": ["4b", "4c", "5a"]
+    "next": ["4b", "4c", "5a"]
 },
 "4b": {
     "x": 17,
     "y": -3,
     "dir": "NW",
-    "next": "4c"
+    "next": ["4c"]
 },
 "4c": {
     "x": 17,
     "y": -2,
     "dir": "NW",
-    "next": "5a"
+    "next": ["5a"]
 },
 "5a": {
     "x": 18,
     "y": 0,
     "dir": "NE",
-    "next": "5b",
-    "unlock": ["5b", "5c", "5d", "6a"]
+    "next": ["5b", "5c", "5d", "6a"]
 },
 "5b": {
     "x": 19,
     "y": 0,
     "dir": "NE",
-    "next": "5c"
+    "next": ["5c"]
 },
 "5c": {
     "x": 20,
     "y": 0,
     "dir": "NE",
-    "next": "5d"
+    "next": ["5d"]
 },
 "5d": {
     "x": 21,
     "y": 0,
     "dir": "NE",
-    "next": "6a"
+    "next": ["6a"]
 },
 "6a": {
     "x": 21,
     "y": 2,
     "dir": "NW",
-    "next": "6b",
-    "unlock": ["6b", "7a"]
+    "next": ["6b", "7a"]
 },
 "6b": {
     "x": 21,
     "y": 3,
     "dir": "NW",
-    "next": "7a"
+    "next": ["7a"]
 },
 "7a": {
     "x": 17,
     "y": 5,
     "dir": "NE",
-    "next": "7b",
-    "unlock": ["7b", "7c", "7d"]
+    "next": ["7b", "7c", "7d"]
 },
 "7b": {
     "x": 16,
     "y": 5,
     "dir": "NE",
-    "next": "7c"
+    "next": ["7c"]
 },
 "7c": {
     "x": 15,
     "y": 5,
     "dir": "NE",
-    "next": "7d"
+    "next": ["7d"]
 },
 "7d": {
     "x": 14,
     "y": 5,
     "dir": "NE",
-    "next": "ship"
+    "next": ["ship"]
 }
 },
 "pathSquares":{

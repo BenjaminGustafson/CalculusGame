@@ -11,14 +11,14 @@ import * as FileLoading from '../util/FileLoading.js'
 import { TileMap } from '../util/TileMap.js'
 
 
-async function linearPlanet(gameState, goTo) {
+function linearPlanet(gameState, pathData, goTo) {
     if (!gameState.stored.completedScenes['linear.1a']){
         gameState.stored.completedScenes['linear.1a'] = 'in progress'
     }
     planetScene(gameState, {
         planetName: 'Linear',
         tileMap:  new TileMap({ yTileOffset: -3, xTileOffset: -8, xImgOffset: 0, yImgOffset: 0}),
-        pathData: await FileLoading.loadJsonFile('/data/linearPlanet.json'),
+        pathData: pathData,
         bgImg: 'linearPlanetBg',
         fgImg: 'linearPlanetFg',
         goTo:goTo,
@@ -27,10 +27,12 @@ async function linearPlanet(gameState, goTo) {
 
 export async function loadScene(gameState, sceneName, message={}) {
     gameState.stored.planet = 'linear'
+
+    const pathData = await FileLoading.loadJsonFile('/data/linearPlanet.json')
     
     // Root scene
     if (!sceneName){
-        linearPlanet(gameState, message.goTo)
+        linearPlanet(gameState, pathData, message.goTo)
     }
 
     // Sub-scenes
@@ -41,6 +43,8 @@ export async function loadScene(gameState, sceneName, message={}) {
         break
         case '1a':{
             //linearPuzzle1(gameState, { nextScenes: ["linear.1b"] })
+            console.log(await pathData)
+            console.log(await pathData.nodes)
             sliderLevel(gameState, {
                 gridSetupOpts: {spacing:200, topMargin:50,
                     gridOpts:{gridXMin:0, gridXMax:1, gridYMin:0, gridYMax:1, canvasWidth:100, canvasHeight:100, arrows:false}},
@@ -50,7 +54,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                 },
                 targetBuilder: buildTargetsFromYs({ targetYs:  [1], targetOpts: { size: 20 } }),
                 tracerOpts: { numLabel: false, originGridY: 0 },
-                nextScenes: ["linear.1b"]
+                nextScenes: pathData.nodes[sceneName].next
             })
             const uiTip = {
                 update: function (ctx) {
@@ -76,7 +80,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                     },
                     targetBuilder: buildTargetsFromYs({ targetYs:  [1,0], targetOpts: { size: 20 } }),
                     tracerOpts: { numLabel: false, originGridY: 0 },
-                    nextScenes: ["linear.2a"]
+                    nextScenes: pathData.nodes[sceneName].next
                 })
             const uiTip = {
                 update: function (ctx) {
@@ -101,7 +105,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                 },
                 targetBuilder: buildTargetsFromYs({ targetYs:  [0, 1, 1, 2], targetOpts: { size: 20 } }),
                 tracerOpts: { numLabel: false, originGridY: 0 },
-                nextScenes: ["linear.2b", "linear.2c", "linear.2d", "linear.3a"]
+                nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/zero.txt'})
             break
@@ -113,7 +117,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                 },
                 targetBuilder: buildTargetsFromYs({ targetYs:  [2, 0, 1, -1], targetOpts: { size: 20 } }),
                 tracerOpts: { numLabel: false, originGridY: 0 },
-                nextScenes: ["linear.2c"]
+                nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/two.txt'})
             break
@@ -125,7 +129,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                 },
                 targetBuilder: buildTargetsFromYs({ targetYs:  [0.5, 1, 0.5, 1.5], targetOpts: { size: 20 } }),
                 tracerOpts: { numLabel: false, originGridY: 0 },
-                nextScenes: ["linear.2d"]
+                nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/fraction.txt'})
             break
@@ -137,7 +141,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                 },
                 targetBuilder: buildTargetsFromYs({ targetYs:  [0.5, 1, 0.5, 1.5], targetOpts: { size: 20 } }),
                 tracerOpts: { numLabel: false, originGridY: 1 },
-                nextScenes: ["linear.3a"]
+                nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/nice.txt'})
             break
@@ -150,7 +154,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                 },
                 targetBuilder: buildTargetsFromYs({ targetYs: [1.5,3], targetOpts: { size: 20 } }),
                 tracerOpts: { numLabel: false, originGridY: 0 },
-                nextScenes: ["linear.3b", "linear.4a"]
+                nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope.txt'})
             break
@@ -163,7 +167,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                 },
                 targetBuilder: buildTargetsFromYs({ targetYs: [-0.6,-1.2,-1.8,-2.4,-3], targetOpts: { size: 20 } }),
                 tracerOpts: { numLabel: false, originGridY: 0 },
-                nextScenes: ["linear.4a"],
+                nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope4.txt'})
             break
@@ -176,7 +180,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                 targetBuilder: buildTargetsFromYs({ targetYs: [1, 0.5, 1, 0, -0.5, -1, -0.5, 0],
                     targetOpts: { size: 18 } }),
                 tracerOpts: { numLabel: false, originGridY: 0 },
-                nextScenes:  ["linear.4b", "linear.4c", "linear.5a"],
+                nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/double.txt'})
             break
@@ -190,7 +194,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                 targetBuilder: buildTargetsFromYs({ targetYs: [1/3,2/3,0, 1/3,2/3,0],
                     targetOpts: { size: 18 } }),
                 tracerOpts: { numLabel: false, originGridY: 0 },
-                nextScenes: ["linear.4c"],
+                nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/triple.txt'})
             break
@@ -203,7 +207,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                 },
                 targetBuilder: buildTargetsFromYs({ targetYs: [0.125, 0.25, 0.375, 0.5, 0.25, 0, -0.25, -0.5], targetOpts: { size: 20 } }),
                 tracerOpts: { numLabel: false, originGridY: 0 },
-                nextScenes: ["linear.5a"],
+                nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/quadruple.txt'})
             break
@@ -216,7 +220,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                     },
                     targetBuilder: buildTargetsFromYs({ targetYs: [0.5,1,1.5,2],
                         targetOpts: { size: 20 } }),
-                    nextScenes: ["linear.5b","linear.5c","linear.5d","linear.6a"],
+                    nextScenes: pathData.nodes[sceneName].next
                 }
             })
             const uiTip = {
@@ -240,7 +244,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                     },
                     targetBuilder: buildTargetsFromYs({ targetYs: [-1,-2,0,2],
                         targetOpts: { size: 20 } }),
-                    nextScenes: ["linear.5c"],
+                    nextScenes: pathData.nodes[sceneName].next
                 }
             })
             break
@@ -253,7 +257,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                     },
                     targetBuilder: buildTargetsFromYs({ targetYs: [1,2,0,-2],
                         targetOpts: { size: 20 } }),
-                        nextScenes: ["linear.5d"],
+                        nextScenes: pathData.nodes[sceneName].next
                     },
                 hidePositionTargets:true,
             })
@@ -275,14 +279,15 @@ export async function loadScene(gameState, sceneName, message={}) {
                     },
                     targetBuilder: buildTargetsFromYs({ targetYs: [0.25, 0.5, 0.75, 1, 0.5, 0, 0.5, 1],
                         targetOpts: { size: 20 } }),
-                    nextScenes: ["linear.6a"],
+                    nextScenes: pathData.nodes[sceneName].next
                     },
                 hidePositionTargets:true,
             })
             break
         case '6a':
             mathBlockTutorials(gameState, { targetVals: [1, 1, 1, 1, 1, 1, 1, 1], 
-                nextScenes: ["linear.6b", "linear.7a"], withUITip: true })
+                nextScenes: pathData.nodes[sceneName].next,
+                withUITip: true })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/constantBlock.txt'})
             break
         case '6b':
@@ -305,7 +310,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                     sliderOpts: { showAxis:true, increment: 0.5 },
                     //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
                     tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
-                    nextScenes: ['linear.7b', 'linear.7c', 'linear.7d'],
+                    nextScenes: pathData.nodes[sceneName].next
                 })
                 sySlider.hidden = true
             }
@@ -328,7 +333,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                     sliderOpts: { showAxis:true, increment: 0.5 },
                     //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
                     tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
-                    nextScenes: ['linear.7c'],
+                    nextScenes: pathData.nodes[sceneName].next
                 })
                 sySlider.hidden = true
             }
@@ -352,7 +357,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                     sliderOpts: { showAxis:true, increment: 0.5 },
                     //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
                     tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
-                    nextScenes: ['linear.7d'],
+                    nextScenes: pathData.nodes[sceneName].next
                 })
                 sySlider.hidden = true
             }
@@ -376,7 +381,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                     sliderOpts: { showAxis:true, increment: 0.5 },
                     //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
                     tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
-                    nextScenes: ['planetMap'],
+                    nextScenes: pathData.nodes[sceneName].next
                 })
                 sySlider.hidden = true
             }
