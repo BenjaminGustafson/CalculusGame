@@ -12,6 +12,9 @@ import { TileMap } from '../util/TileMap.js'
 
 
 async function linearPlanet(gameState) {
+    if (!gameState.stored.completedScenes['linear.1a']){
+        gameState.stored.completedScenes['linear.1a'] = 'in progress'
+    }
     planetScene(gameState, {
         planetName: 'Linear',
         tileMap:  new TileMap({ yTileOffset: -3, xTileOffset: -8, xImgOffset: 0, yImgOffset: 0}),

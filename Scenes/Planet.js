@@ -10,9 +10,8 @@ export function planetScene(gameState, {
     fgImg,
 }){
     const gss = gameState.stored
-
     const nodes = pathData.nodes
-    const paths = pathData.paths
+
 
     if (gss.planetProgress[gss.planet] == 'unvisited'){
         gss.planetProgress[gss.planet] = 'visited'
@@ -23,8 +22,8 @@ export function planetScene(gameState, {
     }
 
     const player = new GameObjects.Player({
-        nodes:nodes,
-        paths:paths,
+        nodes:pathData.nodes,
+        pathSquares:pathData.pathSquares,
         currentNode:gss.playerLocation,
         tileMap:tileMap
     })
@@ -69,7 +68,7 @@ export function planetScene(gameState, {
                     computer.dir = 'SW'
                 }
 
-                switch (gss.completedScenes[node]){
+                switch (gss.completedScenes[gameState.stored.planet + '.' + nodeName]){
                     case 'complete':
                         computer.color = Color.adjustLightness(Color.blue, -50)
                         break
