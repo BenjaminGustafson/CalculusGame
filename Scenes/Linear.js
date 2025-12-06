@@ -1,5 +1,5 @@
 import { Color, Shapes } from '../util/index.js'
-import { TileMap, Grid, FunctionTracer, Button, ImageObject, IntegralTracer, MathBlock, MathBlockManager, MathBlockField, Slider, Target, TargetAdder, TextBox, DialogueBox } from '../GameObjects/index.js'
+import * as GameObjects from '../GameObjects/index.js'
 import * as Scene from '../Scene.js'
 import { GameObject } from '../GameObjects/GameObject.js'
 import { unlockScenes, planetScene, dialogueScene } from './Planet.js'
@@ -8,13 +8,14 @@ import * as Planet from './Planet.js'
 import * as Puzzles from './Puzzles.js'
 import { buildTargetsFromYs, sliderLevel } from './Puzzles.js'
 import * as FileLoading from '../util/FileLoading.js'
+import { TileMap } from '../util/TileMap.js'
 
 
-function linearPlanet(gameState, message = {}) {
+async function linearPlanet(gameState) {
     planetScene(gameState, {
         planetName: 'Linear',
         tileMap:  new TileMap({ yTileOffset: -3, xTileOffset: -8, xImgOffset: 0, yImgOffset: 0}),
-        pathData: FileLoading.loadJsonFile('/data/linearPlanet.json'),
+        pathData: await FileLoading.loadJsonFile('/data/linearPlanet.json'),
         bgImg: 'linearPlanetBg',
         fgImg: 'linearPlanetFg',
     })
