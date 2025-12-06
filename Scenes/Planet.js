@@ -178,7 +178,8 @@ export function addWinCon(gameState, condition, nextButton, nextScenes){
                 nextButton.active = true
                 nextButton.bgColor = Color.blue
             }
-            unlockScenes(nextScenes, gameState.stored)
+
+            unlockScenes(nextScenes.map(s => gameState.stored.planet+'.'+s), gameState.stored)
         }
     }
 }
@@ -189,15 +190,15 @@ export function addWinCon(gameState, condition, nextButton, nextScenes){
 
 export function standardBlocks(planet){
     const blocks = [
-        new MathBlock({type:MathBlock.CONSTANT}),
-        new MathBlock({type:MathBlock.VARIABLE, token:'x'}),
-        new MathBlock({type:MathBlock.POWER, token:'2'}),
-        new MathBlock({type:MathBlock.POWER, token:'3'}),
-        new MathBlock({type:MathBlock.EXPONENT, token:'e'}),
-        new MathBlock({type:MathBlock.FUNCTION, token:'sin'}),
-        new MathBlock({type:MathBlock.FUNCTION, token:'cos'}),
-        new MathBlock({type:MathBlock.BIN_OP, token:'+'}),
-        new MathBlock({type:MathBlock.BIN_OP, token:'*'}),
+        new GameObjects.MathBlock({type:GameObjects.MathBlock.CONSTANT}),
+        new GameObjects.MathBlock({type:GameObjects.MathBlock.VARIABLE, token:'x'}),
+        new GameObjects.MathBlock({type:GameObjects.MathBlock.POWER, token:'2'}),
+        new GameObjects.MathBlock({type:GameObjects.MathBlock.POWER, token:'3'}),
+        new GameObjects.MathBlock({type:GameObjects.MathBlock.EXPONENT, token:'e'}),
+        new GameObjects.MathBlock({type:GameObjects.MathBlock.FUNCTION, token:'sin'}),
+        new GameObjects.MathBlock({type:GameObjects.MathBlock.FUNCTION, token:'cos'}),
+        new GameObjects.MathBlock({type:GameObjects.MathBlock.BIN_OP, token:'+'}),
+        new GameObjects.MathBlock({type:GameObjects.MathBlock.BIN_OP, token:'*'}),
     ]
     switch (planet.toLowerCase()){
         case 'linear':

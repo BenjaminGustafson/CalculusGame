@@ -296,11 +296,11 @@ export async function loadScene(gameState, sceneName, message={}) {
             break
         case '7a':
             {
-                const targetBlock = new MathBlock({ type: MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
+                const targetBlock = new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
                 targetBlock.insert(gameState.objects, 1)
 
-                const fLabel = new TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
-                const ddxLabel = new TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 250, content: 'f\'(x)=' })
+                const fLabel = new GameObjects.TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
+                const ddxLabel = new GameObjects.TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 250, content: 'f\'(x)=' })
                 fLabel.insert(gameState.objects, 0)
                 ddxLabel.insert(gameState.objects, 0)
 
@@ -318,12 +318,12 @@ export async function loadScene(gameState, sceneName, message={}) {
             break
         case '7b':
             {
-                const targetBlock = new MathBlock({ type: MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
+                const targetBlock = new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
                 targetBlock.scaleY = 0.5
                 targetBlock.insert(gameState.objects, 1)
 
-                const fLabel = new TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
-                const ddxLabel = new TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)=' })
+                const fLabel = new GameObjects.TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
+                const ddxLabel = new GameObjects.TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)=' })
                 fLabel.insert(gameState.objects, 0)
                 ddxLabel.insert(gameState.objects, 0)
 
@@ -341,13 +341,13 @@ export async function loadScene(gameState, sceneName, message={}) {
             break
         case '7c':
             {
-                const targetBlock = new MathBlock({ type: MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
+                const targetBlock = new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
                 targetBlock.translateY = -3
                 targetBlock.scaleY = -2
                 targetBlock.insert(gameState.objects, 1)
 
-                const fLabel = new TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
-                const ddxLabel = new TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)=' })
+                const fLabel = new GameObjects.TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
+                const ddxLabel = new GameObjects.TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)=' })
                 fLabel.insert(gameState.objects, 0)
                 ddxLabel.insert(gameState.objects, 0)
 
@@ -365,13 +365,13 @@ export async function loadScene(gameState, sceneName, message={}) {
             break
         case '7d':
             {
-                const targetBlock = new MathBlock({ type: MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
+                const targetBlock = new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
                 targetBlock.scaleY = 1.5
                 targetBlock.translateY = 2
                 targetBlock.insert(gameState.objects, 1)
 
-                const fLabel = new TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
-                const ddxLabel = new TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)=' })
+                const fLabel = new GameObjects.TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
+                const ddxLabel = new GameObjects.TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)=' })
                 fLabel.insert(gameState.objects, 0)
                 ddxLabel.insert(gameState.objects, 0)
 
@@ -417,14 +417,14 @@ function mathBlockTutorials(gameState, {
     const functionTracer = new FunctionTracer({ grid: grid, targets: targets, solvable: true, numLabel: false })
 
     const blocks = [
-        new MathBlock({ type: MathBlock.CONSTANT }),
+        new GameObjects.MathBlock({ type: GameObjects.MathBlock.CONSTANT }),
     ]
-    if (withLinear) blocks.push(new MathBlock({ type: MathBlock.VARIABLE, token: 'x' }))
+    if (withLinear) blocks.push(new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x' }))
     const sySlider = new Slider({ canvasX: 1200, canvasY: 350, maxValue: 2, sliderLength: 4, startValue: 1, showAxis: true, valueLabel: false })
     const tySlider = new Slider({ canvasX: withLinear ? 1300 : 1200, canvasY: 350, maxValue: 2, sliderLength: 4, showAxis: true, valueLabel: false, increment:0.5, })
 
-    const mbField = new MathBlockField({ minX: 600, minY: 100, maxX: 1000, maxY: 300 })
-    const mbm = new MathBlockManager({
+    const mbField = new GameObjects.MathBlockField({ minX: 600, minY: 100, maxX: 1000, maxY: 300 })
+    const mbm = new GameObjects.MathBlockManager({
         blocks: blocks, toolBarX: 1150, toolBarY: 150, outputType: "sliders",
         scaleYSlider: sySlider, translateYSlider: tySlider,
         blockFields: [mbField],
