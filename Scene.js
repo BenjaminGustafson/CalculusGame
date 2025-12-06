@@ -65,6 +65,7 @@ export function loadSceneWithTransition(gameState, sceneName, {x = 800, y=450, o
  * 
  */
 export function loadScene(gameState, sceneName, message = {}) {
+    console.log('SCENE loadScene', sceneName)
     gtag("event", "load_scene", {
         sceneName: sceneName,
     });
@@ -82,7 +83,7 @@ export function loadScene(gameState, sceneName, message = {}) {
     gameState.objects = []
     gameState.update = () => { }
     
-    const sceneNameSplit = sceneName.toLowerCase().split('.')
+    const sceneNameSplit = sceneName.toLowerCase().split('.', 2)
     gameState.temp.startTime = Date.now()
 
     var sceneTitle = ''
@@ -102,7 +103,7 @@ export function loadScene(gameState, sceneName, message = {}) {
         break
 
         // Linear Planet (see Linear.js)
-        case 'linear': Linear.loadScene(gameState, sceneName, message)
+        case 'linear': Linear.loadScene(gameState, sceneNameSplit[1], message)
             sceneTitle = 'Linear Planet'
             break
 

@@ -28,6 +28,14 @@ export class TileMap{
             default: return {x:0,y:0}
         }
     }
-    
+ 
+    static reverseDir(dir){
+        switch (dir){
+            case 'NE': return 'SW'
+            case 'NW': return 'SE'
+            case 'SE': return 'NW'
+            case 'SW': return 'NE'
+        }
+    }
 }
 

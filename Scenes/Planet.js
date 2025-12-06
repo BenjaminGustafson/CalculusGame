@@ -3,15 +3,22 @@ import * as GameObjects from '../GameObjects/index.js'
 import * as Scene from '../Scene.js'
 import { TileMap } from '../util/TileMap.js'
 
+
 export function planetScene(gameState, {
+    planetName,
     tileMap,
     pathData,
     bgImg,
     fgImg,
+    goTo,
 }){
     const gss = gameState.stored
     const nodes = pathData.nodes
 
+    // // Map '1a' -> 'linear.1a'
+    // for (let node in pathData.nodes){
+    //     nodes[planetName + '.' + node] = pathData.nodes[node]
+    // }
 
     if (gss.planetProgress[gss.planet] == 'unvisited'){
         gss.planetProgress[gss.planet] = 'visited'
@@ -33,7 +40,6 @@ export function planetScene(gameState, {
 
     for (let nodeName in nodes){
         const node = nodes[nodeName]
-        console.log('NODE ',nodeName, node)
         
         const dirCoord = TileMap.dirToCoord(node.dir)
         const canvasPos = tileMap.isometricToCanvas(node.x + dirCoord.x, node.y + dirCoord.y)  
@@ -58,15 +64,11 @@ export function planetScene(gameState, {
                 button.width = 50
                 button.height = 70
                 
-                const computer = new GameObjects.PuzzleComputer({x:canvasPos.x, y:canvasPos.y, text:nodeName})
-                // NW -> SE
-                if (node.dir == 'NW'){
-                    computer.dir = 'SE'
-                }
-                // NE -> SW
-                else {
-                    computer.dir = 'SW'
-                }
+                const computer = new GameObjects.PuzzleComputer({
+                    x:canvasPos.x, y:canvasPos.y,
+                    text:nodeName,
+                    dir: TileMap.reverseDir(node.dir)
+                })
 
                 switch (gss.completedScenes[gameState.stored.planet + '.' + nodeName]){
                     case 'complete':
@@ -100,9 +102,9 @@ export function planetScene(gameState, {
         if (player.state == 'arrived'){
             gss.playerLocation = player.currentNode
             if (gss.playerLocation.split('.')[1] == 'dialogue'){
-                Scene.loadScene(gameState,player.currentNode)
+                Scene.loadScene(gameState, planetName + '.' + player.currentNode)
             }else {
-                Scene.loadSceneWithTransition(gameState,player.currentNode, {x:player.cx,y:player.cy})
+                Scene.loadSceneWithTransition(gameState,planetName + '.' + player.currentNode, {x:player.cx,y:player.cy})
             }
         }
     }
@@ -113,6 +115,10 @@ export function planetScene(gameState, {
         player,
         new GameObjects.ImageObject({originX:0, originY:0, id:fgImg}),
     ].concat(buttons)
+
+    if (goTo){
+        player.moveTo(goTo)
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -125,9 +131,6 @@ export function levelNavigation(gameState, {
     winCon, // boolean function for win condition
     nextScenes, // array of scenes to unlock
 }){
-    if (nextScenes == null){
-        nextScenes = defaultNextScenes(gameState)
-    }
     const backB = backButton(gameState)
     backB.insert(gameState.objects, 0)
     const nextB = nextButton(gameState, nextScenes)
@@ -148,7 +151,7 @@ export function unlockScenes (scenes, gss){
 }
 
 export function backButton (gameState){
-    return new Button({originX:50, originY: 50, width:100, height: 100,
+    return new GameObjects.Button({originX:50, originY: 50, width:100, height: 100,
         onclick: ()=>Scene.loadScene(gameState,gameState.stored.planet),
         label:"↑"
     })
@@ -158,22 +161,10 @@ export function backButton (gameState){
  * Create the button to go to the next scene 
  */
 export function nextButton (gameState, nextScenes){
-    const button = new Button({originX:200, originY: 50, width:100, height: 100,
-        onclick: ()=>Scene.loadScene(gameState, gameState.stored.planet, {goTo:nextScenes[0]}), label:"→"})
+    const button = new GameObjects.Button({originX:200, originY: 50, width:100, height: 100,
+        onclick: ()=>Scene.loadScene(gameState, gameState.stored.planet, {goTo:nextScenes[0].split('.')[1]}), label:"→"})
     button.active = false
     return button
-}
-
-/**
- * If no next scene specified, go to the next numerically
- * E.g. If sceneName is linear.puzzle.1, returns ['linear.puzzle.2'] 
- */
-function defaultNextScenes(gameState){
-    const parts = gameState.stored.sceneName.split('.')
-    const last = parts[parts.length - 1]
-    const n = parseInt(last.replace(/\D+/g, ''), 10)
-    parts[parts.length - 1] = `${n + 1}`
-    return [parts.join('.')]
 }
 
 export function addWinCon(gameState, condition, nextButton, nextScenes){
@@ -240,7 +231,7 @@ export function dialogueScene(gameState, {nextScenes = [], filePath, onComplete=
     const gss = gameState.stored
     gameState.objects.forEach(obj => obj.noInput = true)
 
-    const exitButton = new Button( {originX:50, originY:50, width:50, height:50, 
+    const exitButton = new GameObjects.Button( {originX:50, originY:50, width:50, height:50, 
         onclick: () => Scene.loadScene(gameState, gss.planet), label:"↑"} )
 
     // Read data from file
