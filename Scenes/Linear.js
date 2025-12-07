@@ -28,7 +28,7 @@ function linearPlanet(gameState, pathData, goTo) {
 export async function loadScene(gameState, sceneName, message={}) {
     gameState.stored.planet = 'linear'
 
-    const pathData = await FileLoading.loadJsonFile('/data/linearPlanet.json')
+    const pathData = await FileLoading.loadJsonFile('./data/linearPlanet.json')
     
     // Root scene
     if (!sceneName){

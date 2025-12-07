@@ -26,7 +26,7 @@ function quadraticPlanet(gameState, pathData, goTo) {
 export async function loadScene(gameState, sceneName, message = {}){
    gameState.stored.planet = 'quadratic'
    
-    const pathData = await FileLoading.loadJsonFile('/data/quadraticPlanet.json')
+    const pathData = await FileLoading.loadJsonFile('./data/quadraticPlanet.json')
     
     // Root scene
     if (!sceneName){
