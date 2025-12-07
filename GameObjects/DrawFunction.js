@@ -1,4 +1,4 @@
-import { Color } from "../util/index.js"
+import { Color, Shapes } from "../util/index.js"
 import { GameObject } from "./GameObject.js"
 
 /**
@@ -19,6 +19,14 @@ export class DrawFunction extends GameObject{
         this.gridYs = []
         for (let i = 0; i < numPoints; i ++){
             this.gridYs.push(defaultValue)
+        }
+
+        /**
+         * isConnected 
+         */
+        this.isConnected = []
+        for (let i = 0; i < numPoints; i ++){
+            this.isConnected.push(true)
         }
 
         // States: wait, draw, 
@@ -46,7 +54,6 @@ export class DrawFunction extends GameObject{
     }
 
     outputFunction(x){
-        console.log('OUTPUT')
         var i = this.gridXToIndex(x)
         if (i < 0) i = 0
         if (i > this.numPoints - 1) i = this.numPoints - 1
@@ -73,34 +80,65 @@ export class DrawFunction extends GameObject{
             if (this.state == 'draw'){
                 const x1 = this.canvasXToIndex(this.prevCanvasX)
                 const x2 = this.canvasXToIndex(mx)
+                // Draw left to right
                 if (x1 < x2){
                     for (let i = x1; i <= x2; i++){
                         const t = (i - x1)/(x2 - x1)
                         this.gridYs[i] = this.grid.canvasToGridYBounded(t * my + (1-t) * this.prevCanvasY)
+                        this.isConnected[i] = true
                     }
+                    this.isConnected[x2] = false
+                    // Draw right to left
                 }else if(x1 > x2){
                     for (let i = x2; i <= x1; i++){
                         const t = (i - x2)/(x1 - x2)
                         this.gridYs[i] = this.grid.canvasToGridYBounded(t * this.prevCanvasY + (1-t) * my)
+                        this.isConnected[i-1] = true
+                    }
+                    this.isConnected[x2-1] = false
+                }
+
+                if (this.penDown){
+                    if (x1 != x2){
+                        // only drop pen if it has moved
+                        this.penDown = false
+                    }
+                    if (x1 < x2) {
+                        // draw left to right, so disconnect left
+                        this.isConnected[x1-1] = false
+                    }else { // draw right to left, so disconnect right
+                        this.isConnected[x1] = false
                     }
                 }
+            // Pen down
             }else if (this.state == 'wait' && this.grid.isInBoundsCanvasY(my)){
                 this.state = 'draw'
+                this.penDown = true // true on the first frame where pen is down only
             }
-        }else{
+        }
+        // Pen up
+        else if (this.state == 'draw'){
             this.state = 'wait'
         }
+       
         this.prevCanvasY = my
         this.prevCanvasX = mx
 
 
-        Color.setStroke(ctx, this.color)
+        Color.setColor(ctx, this.color)
         ctx.lineWidth = this.lineWidth
-        ctx.beginPath()
-        for (let i = 0; i < this.gridYs.length; i ++){
-            ctx.lineTo(this.indexToCanvasX(i), this.grid.gridToCanvasY(this.gridYs[i]))
+        //ctx.beginPath()
+        for (let i = 0; i < this.gridYs.length-1; i ++){
+            const y1 = this.grid.gridToCanvasY(this.gridYs[i])
+            const y2 = this.grid.gridToCanvasY(this.gridYs[i+1])
+            const x1 = this.indexToCanvasX(i)
+            const x2 = this.indexToCanvasX(i+1)
+            if (this.isConnected[i]){
+                Shapes.Line(ctx,x1,y1,x2,y2,this.lineWidth,'rounded')
+            }else{
+                Shapes.Circle({ctx: ctx, centerX:this.indexToCanvasX(i), centerY:this.grid.gridToCanvasY(this.gridYs[i]), radius:this.lineWidth/2})  
+            }
         }
-        ctx.stroke()
-
+        //ctx.stroke()
     }
 }
