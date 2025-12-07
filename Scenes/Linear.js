@@ -35,6 +35,8 @@ export async function loadScene(gameState, sceneName, message={}) {
         linearPlanet(gameState, pathData, message.goTo)
     }
 
+    Scene.sceneTitle(gameState, 'Linear'+' ' + (sceneName ? sceneName : 'Planet'))
+
     // Sub-scenes
     switch (sceneName) {
         case 'ship':{
@@ -42,9 +44,6 @@ export async function loadScene(gameState, sceneName, message={}) {
         }
         break
         case '1a':{
-            //linearPuzzle1(gameState, { nextScenes: ["linear.1b"] })
-            console.log(await pathData)
-            console.log(await pathData.nodes)
             sliderLevel(gameState, {
                 gridSetupOpts: {spacing:200, topMargin:50,
                     gridOpts:{gridXMin:0, gridXMax:1, gridYMin:0, gridYMax:1, canvasWidth:100, canvasHeight:100, arrows:false}},
@@ -402,7 +401,7 @@ function mathBlockTutorials(gameState, {
     const backButton = Planet.backButton(gameState)
     const nextButton = Planet.nextButton(gameState, nextScenes)
 
-    const grid = new Grid({
+    const grid = new GameObjects.Grid({
         canvasX: 600, canvasY: 350, canvasWidth: 400, canvasHeight: 400,
         gridXMin: -2, gridYMin: -2, gridXMax: 2, gridYMax: 2, labels: false, arrows: true
     })
@@ -411,17 +410,17 @@ function mathBlockTutorials(gameState, {
 
     var targets = []
     for (let i = 0; i < targetVals.length; i++) {
-        targets.push(new Target({ grid: grid, gridX: grid.gridXMin + (i + 1) * spacing, gridY: targetVals[i], size: targetSize }))
+        targets.push(new GameObjects.Target({ grid: grid, gridX: grid.gridXMin + (i + 1) * spacing, gridY: targetVals[i], size: targetSize }))
     }
 
-    const functionTracer = new FunctionTracer({ grid: grid, targets: targets, solvable: true, numLabel: false })
+    const functionTracer = new GameObjects.FunctionTracer({ grid: grid, targets: targets, solvable: true, numLabel: false })
 
     const blocks = [
         new GameObjects.MathBlock({ type: GameObjects.MathBlock.CONSTANT }),
     ]
     if (withLinear) blocks.push(new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x' }))
-    const sySlider = new Slider({ canvasX: 1200, canvasY: 350, maxValue: 2, sliderLength: 4, startValue: 1, showAxis: true, valueLabel: false })
-    const tySlider = new Slider({ canvasX: withLinear ? 1300 : 1200, canvasY: 350, maxValue: 2, sliderLength: 4, showAxis: true, valueLabel: false, increment:0.5, })
+    const sySlider = new GameObjects.Slider({ canvasX: 1200, canvasY: 350, maxValue: 2, sliderLength: 4, startValue: 1, showAxis: true, valueLabel: false })
+    const tySlider = new GameObjects.Slider({ canvasX: withLinear ? 1300 : 1200, canvasY: 350, maxValue: 2, sliderLength: 4, showAxis: true, valueLabel: false, increment:0.5, })
 
     const mbField = new GameObjects.MathBlockField({ minX: 600, minY: 100, maxX: 1000, maxY: 300 })
     const mbm = new GameObjects.MathBlockManager({

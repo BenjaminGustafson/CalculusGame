@@ -103,8 +103,8 @@ export function loadScene(gameState, sceneName, message = {}) {
         break
 
         // Linear Planet (see Linear.js)
-        case 'linear': Linear.loadScene(gameState, sceneNameSplit[1], message)
-            sceneTitle = 'Linear Planet'
+        case 'linear': 
+            Linear.loadScene(gameState, sceneNameSplit[1], message)
             break
 
         // Quadratic Planet
@@ -127,25 +127,28 @@ export function loadScene(gameState, sceneName, message = {}) {
     }
     if (sceneName != 'mainMenu'){
         journal(gameState)
-        if (sceneNameSplit.length == 3){
-            sceneTitle = capFirst(sceneNameSplit[0]) + ' ' + sceneNameSplit[2].toUpperCase()
+        if (sceneNameSplit.length == 2){
+            sceneTitle = capFirst(sceneNameSplit[0]) + ' ' + sceneNameSplit[1].toUpperCase()
         }
+    }
+}
 
-        function capFirst(str) {
-            if (!str) return "";
-            return str[0].toUpperCase() + str.slice(1);
-        }
-        const sceneTitleBox = new GameObjects.TextBox({
-            originX: 800, originY: 50,
-            font:'30px monospace',
-            color:Color.white,
-            align:'center', baseline: 'middle',
-            content: sceneTitle,
-            bgColor: Color.black,
-        })
-        if (sceneTitle !== ''){
-            gameState.objects.push(sceneTitleBox)
-        }
+function capFirst(str) {
+    if (!str) return "";
+    return str[0].toUpperCase() + str.slice(1);
+}
+
+export function sceneTitle(gameState, title){
+    const sceneTitleBox = new GameObjects.TextBox({
+        originX: 800, originY: 50,
+        font:'30px monospace',
+        color:Color.white,
+        align:'center', baseline: 'middle',
+        content: title,
+        bgColor: Color.black,
+    })
+    if (title !== ''){
+        sceneTitleBox.insert(gameState.objects, 50)
     }
 }
 
