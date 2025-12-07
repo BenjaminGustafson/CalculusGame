@@ -16,7 +16,7 @@ function linearPlanet(gameState, pathData, goTo) {
         gameState.stored.completedScenes['linear.1a'] = 'in progress'
     }
     planetScene(gameState, {
-        planetName: 'Linear',
+        planetName: 'linear',
         tileMap:  new TileMap({ yTileOffset: -3, xTileOffset: -8, xImgOffset: 0, yImgOffset: 0}),
         pathData: pathData,
         bgImg: 'linearPlanetBg',
