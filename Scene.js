@@ -65,6 +65,7 @@ export function loadSceneWithTransition(gameState, sceneName, {x = 800, y=450, o
  * 
  */
 export function loadScene(gameState, sceneName, message = {}) {
+    console.log('SCENE loadScene', sceneName)
     gtag("event", "load_scene", {
         sceneName: sceneName,
     });
@@ -82,7 +83,7 @@ export function loadScene(gameState, sceneName, message = {}) {
     gameState.objects = []
     gameState.update = () => { }
     
-    const sceneNameSplit = sceneName.toLowerCase().split('.')
+    const sceneNameSplit = sceneName.toLowerCase().split('.', 2)
     gameState.temp.startTime = Date.now()
 
     var sceneTitle = ''
@@ -102,12 +103,12 @@ export function loadScene(gameState, sceneName, message = {}) {
         break
 
         // Linear Planet (see Linear.js)
-        case 'linear': Linear.loadScene(gameState, sceneName, message)
-            sceneTitle = 'Linear Planet'
+        case 'linear': 
+            Linear.loadScene(gameState, sceneNameSplit[1], message)
             break
 
         // Quadratic Planet
-        case "quadratic": Quadratic.loadScene(gameState, sceneName, message)
+        case "quadratic": Quadratic.loadScene(gameState, sceneNameSplit[1], message)
             sceneTitle = 'Quadratic Planet'
             break
         case "exponential": Exponential.loadScene(gameState, sceneName, message)
@@ -126,25 +127,28 @@ export function loadScene(gameState, sceneName, message = {}) {
     }
     if (sceneName != 'mainMenu'){
         journal(gameState)
-        if (sceneNameSplit.length == 3){
-            sceneTitle = capFirst(sceneNameSplit[0]) + ' ' + sceneNameSplit[2].toUpperCase()
+        if (sceneNameSplit.length == 2){
+            sceneTitle = capFirst(sceneNameSplit[0]) + ' ' + sceneNameSplit[1].toUpperCase()
         }
+    }
+}
 
-        function capFirst(str) {
-            if (!str) return "";
-            return str[0].toUpperCase() + str.slice(1);
-        }
-        const sceneTitleBox = new GameObjects.TextBox({
-            originX: 800, originY: 50,
-            font:'30px monospace',
-            color:Color.white,
-            align:'center', baseline: 'middle',
-            content: sceneTitle,
-            bgColor: Color.black,
-        })
-        if (sceneTitle !== ''){
-            gameState.objects.push(sceneTitleBox)
-        }
+function capFirst(str) {
+    if (!str) return "";
+    return str[0].toUpperCase() + str.slice(1);
+}
+
+export function sceneTitle(gameState, title){
+    const sceneTitleBox = new GameObjects.TextBox({
+        originX: 800, originY: 50,
+        font:'30px monospace',
+        color:Color.white,
+        align:'center', baseline: 'middle',
+        content: title,
+        bgColor: Color.black,
+    })
+    if (title !== ''){
+        sceneTitleBox.insert(gameState.objects, 50)
     }
 }
 

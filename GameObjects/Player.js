@@ -1,108 +1,128 @@
 import { GameObject } from "./GameObject.js"
+import { TileMap } from '../util/TileMap.js'
 
+/**
+ * "paths":{
+ *   {"x,y": true}
+ * }
+ */
 export class Player extends GameObject {
-
-    constructor({nodes, paths, currentNode, tileMap}){
+    constructor({
+        nodes,
+        pathSquares, 
+        currentNode,
+        tileMap
+    }) {
         super()
-        Object.assign(this, {nodes, paths, currentNode, tileMap})
+        Object.assign(this, {nodes, pathSquares, currentNode, tileMap})
 
         // Isometric grid location
-        this.isoX = nodes[currentNode][0]
-        this.isoY = nodes[currentNode][1]
+        this.isoX = nodes[currentNode].x
+        this.isoY = nodes[currentNode].y
 
         // Direction facing
-        this.dx = nodes[currentNode][2]
-        this.dy = nodes[currentNode][3]
-        
+        const dirCoord = TileMap.dirToCoord(nodes[currentNode].dir)
+        this.dx = dirCoord.x
+        this.dy = dirCoord.y
+
+        // State machine:
+        // waiting, moving, arrived
         this.state = 'waiting'
-        
+
         // Images
-        this.imgNE = document.getElementById('astronautB_NE'),
-        this.imgSE = document.getElementById('astronautB_SE'),
-        this.imgNW = document.getElementById('astronautB_NW'),
-        this.imgSW = document.getElementById('astronautB_SW'),
+        this.imgNE = document.getElementById('astronautB_NE')
+        this.imgSE = document.getElementById('astronautB_SE')
+        this.imgNW = document.getElementById('astronautB_NW')
+        this.imgSW = document.getElementById('astronautB_SW')
 
-        // Defined while moving
-        this.pathIndex = 0
-        this.currentPath = []
-        this.targetNode = ''
-        this.startTime = 0
-        this.stepCount = 0
-        this.stepTime = 50
-
-        this.cx = 0
+        // Movement variables
+        this.currentPath = [] // list of squares {x,y}
+        this.pathIndex = 0    // index of where we are on the currentPath
+        this.targetNode = ''  // the name of the destination node
+        this.startTime = 0    // Date.now when step started 
+        this.stepCount = 0    // Number of steps taken
+        this.stepTime = 50    // ms per step
+  
+        // Canvas x,y
+        this.cx = 0 
         this.cy = 0
-
-        this.adjacencyTable = this.createAdjacencyTable(nodes, paths)
     }
-
-    createAdjacencyTable(nodes, paths){
-        // Path does not include starting node
-        const adjacencyTable = {}
-        for (const {start, end, steps=[]} of paths) {
-            const forward = steps.slice() // copy array
-            forward.push(nodes[end])
-            const reverse = []
-            for (let i = forward.length-2; i >= 0; i--){
-                reverse.push(forward[i])
-            }
-            reverse.push(nodes[start])
-            if (adjacencyTable[start] == null)
-                adjacencyTable[start] = {}
-            if (adjacencyTable[end] == null)
-                adjacencyTable[end] = {}
-            adjacencyTable[start][end] = forward
-            adjacencyTable[end][start] = reverse
-        }
-        return adjacencyTable
-    }
-        
 
     /**
      * Breadth-first search
-     * @param {*} adj 
-     * @param {*} start 
-     * @param {*} goal 
-     * @returns 
      */
-    bfsPath(adj, start, goal) {
-        const queue = [[start]]
-        const visited = new Set([start])
+    bfsPath(nodes, pathSquares, startId, endId) {
+        const start = nodes[startId]
+        const end = nodes[endId]
+        const dirs = [
+            {dx: 1, dy: 0},
+            {dx: -1, dy: 0},
+            {dx: 0, dy: 1},
+            {dx: 0, dy: -1}
+        ];
+        
+        const queue = [];
+        const visited = new Set();
+        const parent = new Map(); // key: "x,y" → value: "px,py"
+        
+        const startKey = `${start.x},${start.y}`;
+        const endKey = `${end.x},${end.y}`;
+        
+        queue.push(start);
+        visited.add(startKey);
         
         while (queue.length > 0) {
-            const nodePath = queue.shift()
-            const node = nodePath[nodePath.length - 1]
-            if (node == goal) {
-                var coordPath = []
-                for (let i = 0; i < nodePath.length -1; i++){
-                    coordPath = coordPath.concat(adj[nodePath[i]][nodePath[i+1]])
+            const {x, y} = queue.shift();
+            const key = `${x},${y}`;
+        
+            if (key === endKey) {
+                // Reconstruct path
+                const path = [];
+                let curKey = key;
+                while (curKey) {
+                    const [cx, cy] = curKey.split(",").map(Number);
+                    path.push({x: cx, y: cy});
+                    curKey = parent.get(curKey);
                 }
-                return coordPath
+                return path.reverse();
             }
         
-            for (const neighbor in adj[node]) {
-                if (!visited.has(neighbor)) {
-                    visited.add(neighbor)
-                    queue.push([...nodePath, neighbor])
-                }
+            for (const {dx, dy} of dirs) {
+                const nx = x + dx;
+                const ny = y + dy;
+                const nKey = `${nx},${ny}`;
+        
+            if (!visited.has(nKey) && pathSquares[`${x},${y}`]) {
+                visited.add(nKey);
+                parent.set(nKey, key);
+                queue.push({x: nx, y: ny});
+            }
             }
         }
-        return null
+        
+        return null; // no path found         
     }
-      
+
     moveTo (node){
+        // Stop if we are already moving
         if (this.state == 'moving') return
+        
+        // Stop if we are already at destination
         if (node == this.currentNode) {
             this.state = 'arrived'
             return
         }
+        
+        // Set up the path to the node
         this.targetNode = node
-        this.currentPath = this.bfsPath(this.adjacencyTable, this.currentNode, node)
-        this.pathIndex = 0
-        this.stepTime = Math.max(50,Math.min(200,1000/this.currentPath.length)) // not precise, but good enough
+        this.currentPath = this.bfsPath(this.nodes, this.pathSquares, this.currentNode, node)
+        this.pathIndex = 1
+
+        // Speed up for further away nodes
+        this.stepTime = Math.max(50,Math.min(200,1000/this.currentPath.length)) 
         const nextTarget = this.currentPath[this.pathIndex]
-        this.dx = Math.sign(nextTarget[0] - this.isoX)
-        this.dy = Math.sign(nextTarget[1] - this.isoY) 
+        this.dx = Math.sign(nextTarget.x - this.isoX)
+        this.dy = Math.sign(nextTarget.y - this.isoY)
         this.startTime = Date.now()
         this.state = 'moving'
     }
@@ -117,20 +137,21 @@ export class Player extends GameObject {
                     this.isoY += this.dy
                     const targetCoord = this.currentPath[this.pathIndex]
                     // End of path step
-                    if (this.isoX == targetCoord[0] && this.isoY == targetCoord[1]){
+                    if (this.isoX == targetCoord.x && this.isoY == targetCoord.y){
                         this.pathIndex ++
                         // End of path
                         if (this.pathIndex >= this.currentPath.length){
                             this.currentNode = this.targetNode
                             this.state = 'arrived'
-                            this.dx =  this.nodes[this.currentNode][2]
-                            this.dy = this.nodes[this.currentNode][3]
+                            const coordDir = TileMap.dirToCoord(this.nodes[this.currentNode].dir)
+                            this.dx =  coordDir.x
+                            this.dy = coordDir.y
                         }
                         // Next step
                         else{    
                             const nextTarget = this.currentPath[this.pathIndex]
-                            this.dx = Math.sign(nextTarget[0] - this.isoX)
-                            this.dy = Math.sign(nextTarget[1] - this.isoY) 
+                            this.dx = Math.sign(nextTarget.x - this.isoX)
+                            this.dy = Math.sign(nextTarget.y - this.isoY)
                         }
                     }
                     this.startTime = Date.now()
@@ -141,6 +162,8 @@ export class Player extends GameObject {
             case 'arrived':
                 break
         }
+
+        // Draw the player
         const {x,y} = this.tileMap.isometricToCanvas(this.isoX,this.isoY)
         const nextCoord = this.tileMap.isometricToCanvas(this.isoX + this.dx,this.isoY+this.dy)
         const nx = nextCoord.x

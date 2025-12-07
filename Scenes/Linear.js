@@ -1,5 +1,5 @@
 import { Color, Shapes } from '../util/index.js'
-import { TileMap, Grid, FunctionTracer, Button, ImageObject, IntegralTracer, MathBlock, MathBlockManager, MathBlockField, Slider, Target, TargetAdder, TextBox, DialogueBox } from '../GameObjects/index.js'
+import * as GameObjects from '../GameObjects/index.js'
 import * as Scene from '../Scene.js'
 import { GameObject } from '../GameObjects/GameObject.js'
 import { unlockScenes, planetScene, dialogueScene } from './Planet.js'
@@ -7,471 +7,385 @@ import * as Experiment from './Experiment.js'
 import * as Planet from './Planet.js'
 import * as Puzzles from './Puzzles.js'
 import { buildTargetsFromYs, sliderLevel } from './Puzzles.js'
+import * as FileLoading from '../util/FileLoading.js'
+import { TileMap } from '../util/TileMap.js'
 
-const tileMap = new TileMap({ yTileOffset: -3, xTileOffset: -8, xImgOffset: 0, yImgOffset: 0})
 
-// [x,y,  dx,dy] where dx dy is the direction to face when stopped at node
-// SW 0,1 NW -1,0 NE 0,-1 SE 1,0
-const nodes = {
-    'planetMap': [11, 3, 0, -1],
-    'linear.puzzle.1a': [10, 0, -1, 0],
-    'linear.puzzle.1b': [10, -1, -1, 0],
-
-    'linear.puzzle.2a': [12, -2, -1, 0],
-    'linear.puzzle.2b': [12, -3, -1, 0],
-    'linear.puzzle.2c': [12, -4, -1, 0],
-    'linear.puzzle.2d': [12, -5, -1, 0],
-
-    'linear.puzzle.3a': [13, -5, 0, -1],
-    'linear.puzzle.3b': [14, -5, 0, -1],
-
-    'linear.puzzle.4a': [17, -4, -1, 0],
-    'linear.puzzle.4b': [17, -3, -1, 0],
-    'linear.puzzle.4c': [17, -2, -1, 0],
-
-    'linear.puzzle.5a': [18, 0, 0, -1],
-    'linear.puzzle.5b': [19, 0, 0, -1],
-    'linear.puzzle.5c': [20, 0, 0, -1],
-    'linear.puzzle.5d': [21, 0, 0, -1],
-
-    'linear.puzzle.6a': [21, 2, -1, 0],
-    'linear.puzzle.6b': [21, 3, -1, 0],
-
-    'linear.puzzle.7a': [17, 5, 0, -1],
-    'linear.puzzle.7b': [16, 5, 0, -1],
-    'linear.puzzle.7c': [15, 5, 0, -1],
-    'linear.puzzle.7d': [14, 5, 0, -1],
-}
-
-const paths =
-    [
-        { start: 'planetMap', end: 'linear.puzzle.1a', steps: [[11,1], [10,1]] },
-        { start: 'linear.puzzle.1a', end: 'linear.puzzle.1b', steps: [] },
-        { start: 'linear.puzzle.1b', end: 'linear.puzzle.2a', steps: [[12,-1]] },
-
-        { start: 'linear.puzzle.2a', end: 'linear.puzzle.2b', steps: [] },
-        {start: 'linear.puzzle.2b', end:  'linear.puzzle.2c', steps: [] },
-        { start: 'linear.puzzle.2c', end: 'linear.puzzle.2d', steps: [] },
-        { start: 'linear.puzzle.2d', end: 'linear.puzzle.3a', steps: [] },
-
-        { start: 'linear.puzzle.3a', end: 'linear.puzzle.3b', steps: [] },
-        { start: 'linear.puzzle.3b', end: 'linear.puzzle.4a', steps: [[17,-5]] },
-
-        { start: 'linear.puzzle.4a', end: 'linear.puzzle.4b', steps: [] },
-        { start: 'linear.puzzle.4b', end: 'linear.puzzle.4c', steps: [] },
-        { start: 'linear.puzzle.4c', end: 'linear.puzzle.5a', steps: [[17,0]] },
-
-        { start: 'linear.puzzle.5a', end: 'linear.puzzle.5b', steps: [] },
-        { start: 'linear.puzzle.5b', end: 'linear.puzzle.5c', steps: [] },
-        { start: 'linear.puzzle.5c', end: 'linear.puzzle.5d', steps: [] },
-        { start: 'linear.puzzle.5d', end: 'linear.puzzle.6a', steps: [] },
-
-        { start: 'linear.puzzle.6a', end: 'linear.puzzle.6b', steps: [] },
-        { start: 'linear.puzzle.6b', end: 'linear.puzzle.7a', steps: [[21,4],[19,4],[19,5]] },
-
-        { start: 'linear.puzzle.7a', end: 'linear.puzzle.7b', steps: [] },
-        { start: 'linear.puzzle.7b', end: 'linear.puzzle.7c', steps: [] },
-        { start: 'linear.puzzle.7c', end: 'linear.puzzle.7d', steps: [] },
-        { start: 'linear.puzzle.7d', end: 'planetMap', steps:[[13,5],[13,4],[11,4]] },
-    ]
-
-function linearPlanet(gameState, message = {}) {
+function linearPlanet(gameState, pathData, goTo) {
+    if (!gameState.stored.completedScenes['linear.1a']){
+        gameState.stored.completedScenes['linear.1a'] = 'in progress'
+    }
     planetScene(gameState, {
         planetName: 'linear',
-        shipX: 100, shipY: 0,
-        tileMap: tileMap,
-        playerNodes: nodes,
-        playerPaths: paths,
+        tileMap:  new TileMap({ yTileOffset: -3, xTileOffset: -8, xImgOffset: 0, yImgOffset: 0}),
+        pathData: pathData,
         bgImg: 'linearPlanetBg',
         fgImg: 'linearPlanetFg',
-        firstScene: 'linear.puzzle.1a',
-        message
+        goTo:goTo,
     })
 }
 
-
-export function loadScene(gameState, sceneName, message = {}) {
+export async function loadScene(gameState, sceneName, message={}) {
     gameState.stored.planet = 'linear'
 
-    const sceneNameSplit = sceneName.toLowerCase().split('.')
-
-    // Main scene
-    if (sceneNameSplit.length == 1) {
-        linearPlanet(gameState, message)
-        return
+    const pathData = await FileLoading.loadJsonFile('/data/linearPlanet.json')
+    
+    // Root scene
+    if (!sceneName){
+        linearPlanet(gameState, pathData, message.goTo)
     }
 
+    Scene.sceneTitle(gameState, 'Linear'+' ' + (sceneName ? sceneName : 'Planet'))
+
     // Sub-scenes
-    switch (sceneNameSplit[1]) {
-        case "puzzle":
-            switch (sceneNameSplit[2]) {
-                case '1a':{
-
-                    //linearPuzzle1(gameState, { nextScenes: ["linear.puzzle.1b"] })
-                    sliderLevel(gameState, {
-                        gridSetupOpts: {spacing:200, topMargin:50,
-                            gridOpts:{gridXMin:0, gridXMax:1, gridYMin:0, gridYMax:1, canvasWidth:100, canvasHeight:100, arrows:false}},
-                        sliderSetupOpts: {
-                            numSliders: 1,
-                            sliderOpts: { circleRadius: 15, increment: 0.1, valueLabel:false}
-                        },
-                        targetBuilder: buildTargetsFromYs({ targetYs:  [1], targetOpts: { size: 20 } }),
-                        tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes: ["linear.puzzle.1b"]
-                    })
-                    const uiTip = {
-                        update: function (ctx) {
-                            Color.setColor(ctx, Color.lightGray)
-                            ctx.font = '20px monospace'
-                            ctx.textAlign = 'left'
-                            ctx.textBaseline = 'bottom'
-                            Shapes.Line(ctx, 850, 520, 850, 430, 5, 'arrow', 10, true)
-                            ctx.fillText('Click and drag', 820, 590)
-                        }
-                    }
-                    gameState.objects.push(uiTip)
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/first.txt'})
+    switch (sceneName) {
+        case 'ship':{
+            Scene.loadScene(gameState, 'planetMap')
+        }
+        break
+        case '1a':{
+            sliderLevel(gameState, {
+                gridSetupOpts: {spacing:200, topMargin:50,
+                    gridOpts:{gridXMin:0, gridXMax:1, gridYMin:0, gridYMax:1, canvasWidth:100, canvasHeight:100, arrows:false}},
+                sliderSetupOpts: {
+                    numSliders: 1,
+                    sliderOpts: { circleRadius: 15, increment: 0.1, valueLabel:false}
+                },
+                targetBuilder: buildTargetsFromYs({ targetYs:  [1], targetOpts: { size: 20 } }),
+                tracerOpts: { numLabel: false, originGridY: 0 },
+                nextScenes: pathData.nodes[sceneName].next
+            })
+            const uiTip = {
+                update: function (ctx) {
+                    Color.setColor(ctx, Color.lightGray)
+                    ctx.font = '20px monospace'
+                    ctx.textAlign = 'left'
+                    ctx.textBaseline = 'bottom'
+                    Shapes.Line(ctx, 850, 520, 850, 430, 5, 'arrow', 10, true)
+                    ctx.fillText('Click and drag', 820, 590)
                 }
-                    break
-                case '1b':{
-                    sliderLevel(gameState, {
-                        gridSetupOpts: {spacing:400, topMargin:150,
-                            gridOpts:{gridXMin:0, gridXMax:2, gridYMin:-1, gridYMax:1, canvasWidth:200, canvasHeight:200, arrows:false}},
-                            sliderSetupOpts: {
-                                numSliders: 2,
-                                sliderOpts: { circleRadius: 15, increment: 0.1, valueLabel:false}
-                            },
-                            targetBuilder: buildTargetsFromYs({ targetYs:  [1,0], targetOpts: { size: 20 } }),
-                            tracerOpts: { numLabel: false, originGridY: 0 },
-                            nextScenes: ["linear.puzzle.2a"]
-                        })
-                    const uiTip = {
-                        update: function (ctx) {
-                            Color.setColor(ctx, Color.lightGray)
-                            ctx.font = '20px monospace'
-                            ctx.textAlign = 'right'
-                            ctx.textBaseline = 'middle'
-                            Shapes.Line(ctx, 950, 510, 950, 440, 5, 'arrow', 10, true)
-                            Shapes.Line(ctx, 950, 550, 950, 620, 5, 'arrow', 10, true)
-                            ctx.fillText('Click and drag', 930, 530)
-                        }
-                    }
-                    gameState.objects.push(uiTip)
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/upDown.txt'})
-                }
-                    break
-                case '2a':
-                    sliderLevel(gameState, {
-                        sliderSetupOpts: {
-                            numSliders: 4,
-                            sliderOpts: { circleRadius: 15, increment: 1}
-                        },
-                        targetBuilder: buildTargetsFromYs({ targetYs:  [0, 1, 1, 2], targetOpts: { size: 20 } }),
-                        tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes: ["linear.puzzle.2b", "linear.puzzle.2c", "linear.puzzle.2d", "linear.puzzle.3a"]
-                    })
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/zero.txt'})
-                    break
-                case '2b':
-                    sliderLevel(gameState, {
-                        sliderSetupOpts: {
-                            numSliders: 4,
-                            sliderOpts: { circleRadius: 15, increment: 1}
-                        },
-                        targetBuilder: buildTargetsFromYs({ targetYs:  [2, 0, 1, -1], targetOpts: { size: 20 } }),
-                        tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes: ["linear.puzzle.2c"]
-                    })
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/two.txt'})
-                    break
-                case '2c':
-                    sliderLevel(gameState, {
-                        sliderSetupOpts: {
-                            numSliders: 4,
-                            sliderOpts: { circleRadius: 15, increment: 0.5}
-                        },
-                        targetBuilder: buildTargetsFromYs({ targetYs:  [0.5, 1, 0.5, 1.5], targetOpts: { size: 20 } }),
-                        tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes: ["linear.puzzle.2d"]
-                    })
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/fraction.txt'})
-                    break
-                case '2d':
-                    sliderLevel(gameState, {
-                        sliderSetupOpts: {
-                            numSliders: 4,
-                            sliderOpts: { circleRadius: 15, increment: 0.5}
-                        },
-                        targetBuilder: buildTargetsFromYs({ targetYs:  [0.5, 1, 0.5, 1.5], targetOpts: { size: 20 } }),
-                        tracerOpts: { numLabel: false, originGridY: 1 },
-                        nextScenes: ["linear.puzzle.3a"]
-                    })
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/nice.txt'})
-                    break
-                case '3a':
-                    sliderLevel(gameState, {
-                        gridSetupOpts: {gridOpts:{gridXMin:0, gridXMax: 2, gridYMin:0, gridYMax:3, canvasWidth:200,canvasHeight:300, labels:true}, spacing: 200},
-                        sliderSetupOpts: {
-                            numSliders: 2,
-                            sliderOpts: { circleRadius: 15, increment: 0.5}
-                        },
-                        targetBuilder: buildTargetsFromYs({ targetYs: [1.5,3], targetOpts: { size: 20 } }),
-                        tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes: ["linear.puzzle.3b", "linear.puzzle.4a"]
-                    })
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope.txt'})
-                    break
-                case '3b':
-                    sliderLevel(gameState, {
-                        gridSetupOpts: {gridOpts:{gridXMin:0, gridXMax: 5, gridYMin:-3, gridYMax:0, canvasWidth:500,canvasHeight:300, labels:true}, spacing: 200},
-                        sliderSetupOpts: {
-                            numSliders: 5,
-                            sliderOpts: { circleRadius: 15, increment: 0.2}
-                        },
-                        targetBuilder: buildTargetsFromYs({ targetYs: [-0.6,-1.2,-1.8,-2.4,-3], targetOpts: { size: 20 } }),
-                        tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes: ["linear.puzzle.4a"],
-                    })
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope4.txt'})
-                    break
-                case '4a':
-                    sliderLevel(gameState, {
-                        sliderSetupOpts: {
-                            numSliders: 8,
-                            sliderOpts: { circleRadius: 12, increment: 1}
-                        },
-                        targetBuilder: buildTargetsFromYs({ targetYs: [1, 0.5, 1, 0, -0.5, -1, -0.5, 0],
-                            targetOpts: { size: 18 } }),
-                        tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes:  ["linear.puzzle.4b", "linear.puzzle.4c", "linear.puzzle.5a"],
-                    })
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/double.txt'})
-                    break
-                case '4b':
-                    sliderLevel(gameState, {
-                        gridSetupOpts: {gridOpts:{gridXMin:-1, gridXMax: 1, gridYMin:-2,gridYMax:2, canvasWidth:200}, spacing: 200},
-                        sliderSetupOpts: {
-                            numSliders: 6,
-                            sliderOpts: { circleRadius: 12, increment: 1}
-                        },
-                        targetBuilder: buildTargetsFromYs({ targetYs: [1/3,2/3,0, 1/3,2/3,0],
-                            targetOpts: { size: 18 } }),
-                        tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes: ["linear.puzzle.4c"],
-                    })
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/triple.txt'})
-                    break
-                case '4c':
-                    sliderLevel(gameState, {
-                        gridSetupOpts: {gridOpts:{gridXMin:-1, gridXMax: 1, gridYMin:-1, gridYMax:1}},
-                        sliderSetupOpts: {
-                            numSliders: 8,
-                            sliderOpts: { circleRadius: 15, increment: 0.5}
-                        },
-                        targetBuilder: buildTargetsFromYs({ targetYs: [0.125, 0.25, 0.375, 0.5, 0.25, 0, -0.25, -0.5], targetOpts: { size: 20 } }),
-                        tracerOpts: { numLabel: false, originGridY: 0 },
-                        nextScenes: ["linear.puzzle.5a"],
-                    })
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/quadruple.txt'})
-                    break
-                case '5a':
-                    Puzzles.shipPositionLevel(gameState, {
-                        sliderLevelOpts: {
-                            sliderSetupOpts: {
-                                numSliders: 4,
-                                sliderOpts: { circleRadius: 15, increment: 0.5}
-                            },
-                            targetBuilder: buildTargetsFromYs({ targetYs: [0.5,1,1.5,2],
-                                targetOpts: { size: 20 } }),
-                            nextScenes: ["linear.puzzle.5b","linear.puzzle.5c","linear.puzzle.5d","linear.puzzle.6a"],
-                        }
-                    })
-                    const uiTip = {
-                        update: function (ctx) {
-                            Color.setColor(ctx, Color.lightGray)
-                            ctx.font = '20px monospace'
-                            ctx.textAlign = 'right'
-                            ctx.textBaseline = 'middle'
-                            ctx.fillText('Push to start', 275, 225)
-                        }
-                    }
-                    gameState.objects.push(uiTip)
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/ship.txt'})
-                    break
-                case '5b':
-                    Puzzles.shipPositionLevel(gameState, {
-                        sliderLevelOpts: {
-                            sliderSetupOpts: {
-                                numSliders: 4,
-                                sliderOpts: { circleRadius: 15, increment: 0.5}
-                            },
-                            targetBuilder: buildTargetsFromYs({ targetYs: [-1,-2,0,2],
-                                targetOpts: { size: 20 } }),
-                            nextScenes: ["linear.puzzle.5c"],
-                        }
-                    })
-                    break
-                case '5c':
-                    Puzzles.shipPositionLevel(gameState, {
-                        sliderLevelOpts: {
-                            sliderSetupOpts: {
-                                numSliders: 4,
-                                sliderOpts: { circleRadius: 15, increment: 0.5}
-                            },
-                            targetBuilder: buildTargetsFromYs({ targetYs: [1,2,0,-2],
-                                targetOpts: { size: 20 } }),
-                                nextScenes: ["linear.puzzle.5d"],
-                            },
-                        hidePositionTargets:true,
-                    })
-                    break
-                case '5d':
-                    Puzzles.shipPositionLevel(gameState, {
-                        sliderLevelOpts: {
-                            // sliderSetupOpts: {
-                            //     numSliders: 4,
-                            //     sliderOpts: { circleRadius: 15, increment: 0.5}
-                            // },
-                            // targetBuilder: buildTargetsFromYs({ targetYs: [2,1.5,1,1],
-                            //     targetOpts: { size: 20 } }),
-                            //
-                            // },
-                            sliderSetupOpts: {
-                                numSliders: 8,
-                                sliderOpts: { circleRadius: 12, increment: 0.5}
-                            },
-                            targetBuilder: buildTargetsFromYs({ targetYs: [0.25, 0.5, 0.75, 1, 0.5, 0, 0.5, 1],
-                                targetOpts: { size: 20 } }),
-                            nextScenes: ["linear.puzzle.6a"],
-                            },
-                        hidePositionTargets:true,
-                    })
-                    break
-                case '6a':
-                    mathBlockTutorials(gameState, { targetVals: [1, 1, 1, 1, 1, 1, 1, 1], 
-                        nextScenes: ["linear.puzzle.6b", "linear.puzzle.7a"], withUITip: true })
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/constantBlock.txt'})
-                    break
-                case '6b':
-                    mathBlockTutorials(gameState, { targetVals: [-1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5], nextScenes: ["linear.puzzle.7a"] })
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/constantBlock2.txt'})
-                    break
-                case '7a':
-                    {
-                        const targetBlock = new MathBlock({ type: MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
-                        targetBlock.insert(gameState.objects, 1)
-
-                        const fLabel = new TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
-                        const ddxLabel = new TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 250, content: 'f\'(x)=' })
-                        fLabel.insert(gameState.objects, 0)
-                        ddxLabel.insert(gameState.objects, 0)
-
-                        const {sySlider} = Puzzles.mathBlockLevel(gameState, {
-                            targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 100, targetOpts: { size: 12 } }),
-                            blocks: Planet.standardBlocks('linear'),
-                            sliderOpts: { showAxis:true, increment: 0.5 },
-                            //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
-                            tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
-                            nextScenes: ['linear.puzzle.7b', 'linear.puzzle.7c', 'linear.puzzle.7d'],
-                        })
-                        sySlider.hidden = true
-                    }
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative.txt'})
-                    break
-                case '7b':
-                    {
-                        const targetBlock = new MathBlock({ type: MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
-                        targetBlock.scaleY = 0.5
-                        targetBlock.insert(gameState.objects, 1)
-
-                        const fLabel = new TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
-                        const ddxLabel = new TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)=' })
-                        fLabel.insert(gameState.objects, 0)
-                        ddxLabel.insert(gameState.objects, 0)
-
-                        const {sySlider} = Puzzles.mathBlockLevel(gameState, {
-                            targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 100, targetOpts: { size: 12 } }),
-                            blocks: Planet.standardBlocks('linear'),
-                            sliderOpts: { showAxis:true, increment: 0.5 },
-                            //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
-                            tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
-                            nextScenes: ['linear.puzzle.7c'],
-                        })
-                        sySlider.hidden = true
-                    }
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative2.txt'})
-                    break
-                case '7c':
-                    {
-                        const targetBlock = new MathBlock({ type: MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
-                        targetBlock.translateY = -3
-                        targetBlock.scaleY = -2
-                        targetBlock.insert(gameState.objects, 1)
-
-                        const fLabel = new TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
-                        const ddxLabel = new TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)=' })
-                        fLabel.insert(gameState.objects, 0)
-                        ddxLabel.insert(gameState.objects, 0)
-
-                        const {sySlider} = Puzzles.mathBlockLevel(gameState, {
-                            targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 100, targetOpts: { size: 12 } }),
-                            blocks: Planet.standardBlocks('linear'),
-                            sliderOpts: { showAxis:true, increment: 0.5 },
-                            //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
-                            tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
-                            nextScenes: ['linear.puzzle.7d'],
-                        })
-                        sySlider.hidden = true
-                    }
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative3.txt'})
-                    break
-                case '7d':
-                    {
-                        const targetBlock = new MathBlock({ type: MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
-                        targetBlock.scaleY = 1.5
-                        targetBlock.translateY = 2
-                        targetBlock.insert(gameState.objects, 1)
-
-                        const fLabel = new TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
-                        const ddxLabel = new TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)=' })
-                        fLabel.insert(gameState.objects, 0)
-                        ddxLabel.insert(gameState.objects, 0)
-
-                        const {sySlider} = Puzzles.mathBlockLevel(gameState, {
-                            targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 100, targetOpts: { size: 12 } }),
-                            blocks: Planet.standardBlocks('linear'),
-                            sliderOpts: { showAxis:true, increment: 0.5 },
-                            //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
-                            tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
-                            nextScenes: ['planetMap'],
-                        })
-                        sySlider.hidden = true
-                    }
-                    Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative4.txt'})
-                    Puzzles.planetUnlockOnSolve(gameState, {planetUnlock: 'quadratic'})
-                    break
-
             }
+            gameState.objects.push(uiTip)
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/first.txt'})
+        }
             break
-
-        case 'dialogue':
-            linearPlanet(gameState)
-            switch (sceneNameSplit[2]) {
-                case '1':
-                    {
-                        const gss = gameState.stored
-                        const planetUnlock = 'quadratic'
-                        // TODO make a planet unlock function
-                        if (gss.planetProgress[planetUnlock] == null || gss.planetProgress[planetUnlock] == 'locked')
-                            gss.planetProgress[[planetUnlock]] = 'unvisited'
-
-                        if (gss.navPuzzleMastery[gss.planet] == null) {
-                            gss.navPuzzleMastery[gss.planet] = 0
-                        }
-                        dialogueScene(gameState, { nextScenes: ["planetMap"], filePath: './dialogue/linear5.txt' })
-                    }
-                    break
+        case '1b':{
+            sliderLevel(gameState, {
+                gridSetupOpts: {spacing:400, topMargin:150,
+                    gridOpts:{gridXMin:0, gridXMax:2, gridYMin:-1, gridYMax:1, canvasWidth:200, canvasHeight:200, arrows:false}},
+                    sliderSetupOpts: {
+                        numSliders: 2,
+                        sliderOpts: { circleRadius: 15, increment: 0.1, valueLabel:false}
+                    },
+                    targetBuilder: buildTargetsFromYs({ targetYs:  [1,0], targetOpts: { size: 20 } }),
+                    tracerOpts: { numLabel: false, originGridY: 0 },
+                    nextScenes: pathData.nodes[sceneName].next
+                })
+            const uiTip = {
+                update: function (ctx) {
+                    Color.setColor(ctx, Color.lightGray)
+                    ctx.font = '20px monospace'
+                    ctx.textAlign = 'right'
+                    ctx.textBaseline = 'middle'
+                    Shapes.Line(ctx, 950, 510, 950, 440, 5, 'arrow', 10, true)
+                    Shapes.Line(ctx, 950, 550, 950, 620, 5, 'arrow', 10, true)
+                    ctx.fillText('Click and drag', 930, 530)
+                }
             }
+            gameState.objects.push(uiTip)
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/upDown.txt'})
+        }
+            break
+        case '2a':
+            sliderLevel(gameState, {
+                sliderSetupOpts: {
+                    numSliders: 4,
+                    sliderOpts: { circleRadius: 15, increment: 1}
+                },
+                targetBuilder: buildTargetsFromYs({ targetYs:  [0, 1, 1, 2], targetOpts: { size: 20 } }),
+                tracerOpts: { numLabel: false, originGridY: 0 },
+                nextScenes: pathData.nodes[sceneName].next
+            })
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/zero.txt'})
+            break
+        case '2b':
+            sliderLevel(gameState, {
+                sliderSetupOpts: {
+                    numSliders: 4,
+                    sliderOpts: { circleRadius: 15, increment: 1}
+                },
+                targetBuilder: buildTargetsFromYs({ targetYs:  [2, 0, 1, -1], targetOpts: { size: 20 } }),
+                tracerOpts: { numLabel: false, originGridY: 0 },
+                nextScenes: pathData.nodes[sceneName].next
+            })
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/two.txt'})
+            break
+        case '2c':
+            sliderLevel(gameState, {
+                sliderSetupOpts: {
+                    numSliders: 4,
+                    sliderOpts: { circleRadius: 15, increment: 0.5}
+                },
+                targetBuilder: buildTargetsFromYs({ targetYs:  [0.5, 1, 0.5, 1.5], targetOpts: { size: 20 } }),
+                tracerOpts: { numLabel: false, originGridY: 0 },
+                nextScenes: pathData.nodes[sceneName].next
+            })
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/fraction.txt'})
+            break
+        case '2d':
+            sliderLevel(gameState, {
+                sliderSetupOpts: {
+                    numSliders: 4,
+                    sliderOpts: { circleRadius: 15, increment: 0.5}
+                },
+                targetBuilder: buildTargetsFromYs({ targetYs:  [0.5, 1, 0.5, 1.5], targetOpts: { size: 20 } }),
+                tracerOpts: { numLabel: false, originGridY: 1 },
+                nextScenes: pathData.nodes[sceneName].next
+            })
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/nice.txt'})
+            break
+        case '3a':
+            sliderLevel(gameState, {
+                gridSetupOpts: {gridOpts:{gridXMin:0, gridXMax: 2, gridYMin:0, gridYMax:3, canvasWidth:200,canvasHeight:300, labels:true}, spacing: 200},
+                sliderSetupOpts: {
+                    numSliders: 2,
+                    sliderOpts: { circleRadius: 15, increment: 0.5}
+                },
+                targetBuilder: buildTargetsFromYs({ targetYs: [1.5,3], targetOpts: { size: 20 } }),
+                tracerOpts: { numLabel: false, originGridY: 0 },
+                nextScenes: pathData.nodes[sceneName].next
+            })
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope.txt'})
+            break
+        case '3b':
+            sliderLevel(gameState, {
+                gridSetupOpts: {gridOpts:{gridXMin:0, gridXMax: 5, gridYMin:-3, gridYMax:0, canvasWidth:500,canvasHeight:300, labels:true}, spacing: 200},
+                sliderSetupOpts: {
+                    numSliders: 5,
+                    sliderOpts: { circleRadius: 15, increment: 0.2}
+                },
+                targetBuilder: buildTargetsFromYs({ targetYs: [-0.6,-1.2,-1.8,-2.4,-3], targetOpts: { size: 20 } }),
+                tracerOpts: { numLabel: false, originGridY: 0 },
+                nextScenes: pathData.nodes[sceneName].next
+            })
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope4.txt'})
+            break
+        case '4a':
+            sliderLevel(gameState, {
+                sliderSetupOpts: {
+                    numSliders: 8,
+                    sliderOpts: { circleRadius: 12, increment: 1}
+                },
+                targetBuilder: buildTargetsFromYs({ targetYs: [1, 0.5, 1, 0, -0.5, -1, -0.5, 0],
+                    targetOpts: { size: 18 } }),
+                tracerOpts: { numLabel: false, originGridY: 0 },
+                nextScenes: pathData.nodes[sceneName].next
+            })
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/double.txt'})
+            break
+        case '4b':
+            sliderLevel(gameState, {
+                gridSetupOpts: {gridOpts:{gridXMin:-1, gridXMax: 1, gridYMin:-2,gridYMax:2, canvasWidth:200}, spacing: 200},
+                sliderSetupOpts: {
+                    numSliders: 6,
+                    sliderOpts: { circleRadius: 12, increment: 1}
+                },
+                targetBuilder: buildTargetsFromYs({ targetYs: [1/3,2/3,0, 1/3,2/3,0],
+                    targetOpts: { size: 18 } }),
+                tracerOpts: { numLabel: false, originGridY: 0 },
+                nextScenes: pathData.nodes[sceneName].next
+            })
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/triple.txt'})
+            break
+        case '4c':
+            sliderLevel(gameState, {
+                gridSetupOpts: {gridOpts:{gridXMin:-1, gridXMax: 1, gridYMin:-1, gridYMax:1}},
+                sliderSetupOpts: {
+                    numSliders: 8,
+                    sliderOpts: { circleRadius: 15, increment: 0.5}
+                },
+                targetBuilder: buildTargetsFromYs({ targetYs: [0.125, 0.25, 0.375, 0.5, 0.25, 0, -0.25, -0.5], targetOpts: { size: 20 } }),
+                tracerOpts: { numLabel: false, originGridY: 0 },
+                nextScenes: pathData.nodes[sceneName].next
+            })
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/quadruple.txt'})
+            break
+        case '5a':
+            Puzzles.shipPositionLevel(gameState, {
+                sliderLevelOpts: {
+                    sliderSetupOpts: {
+                        numSliders: 4,
+                        sliderOpts: { circleRadius: 15, increment: 0.5}
+                    },
+                    targetBuilder: buildTargetsFromYs({ targetYs: [0.5,1,1.5,2],
+                        targetOpts: { size: 20 } }),
+                    nextScenes: pathData.nodes[sceneName].next
+                }
+            })
+            const uiTip = {
+                update: function (ctx) {
+                    Color.setColor(ctx, Color.lightGray)
+                    ctx.font = '20px monospace'
+                    ctx.textAlign = 'right'
+                    ctx.textBaseline = 'middle'
+                    ctx.fillText('Push to start', 275, 225)
+                }
+            }
+            gameState.objects.push(uiTip)
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/ship.txt'})
+            break
+        case '5b':
+            Puzzles.shipPositionLevel(gameState, {
+                sliderLevelOpts: {
+                    sliderSetupOpts: {
+                        numSliders: 4,
+                        sliderOpts: { circleRadius: 15, increment: 0.5}
+                    },
+                    targetBuilder: buildTargetsFromYs({ targetYs: [-1,-2,0,2],
+                        targetOpts: { size: 20 } }),
+                    nextScenes: pathData.nodes[sceneName].next
+                }
+            })
+            break
+        case '5c':
+            Puzzles.shipPositionLevel(gameState, {
+                sliderLevelOpts: {
+                    sliderSetupOpts: {
+                        numSliders: 4,
+                        sliderOpts: { circleRadius: 15, increment: 0.5}
+                    },
+                    targetBuilder: buildTargetsFromYs({ targetYs: [1,2,0,-2],
+                        targetOpts: { size: 20 } }),
+                        nextScenes: pathData.nodes[sceneName].next
+                    },
+                hidePositionTargets:true,
+            })
+            break
+        case '5d':
+            Puzzles.shipPositionLevel(gameState, {
+                sliderLevelOpts: {
+                    // sliderSetupOpts: {
+                    //     numSliders: 4,
+                    //     sliderOpts: { circleRadius: 15, increment: 0.5}
+                    // },
+                    // targetBuilder: buildTargetsFromYs({ targetYs: [2,1.5,1,1],
+                    //     targetOpts: { size: 20 } }),
+                    //
+                    // },
+                    sliderSetupOpts: {
+                        numSliders: 8,
+                        sliderOpts: { circleRadius: 12, increment: 0.5}
+                    },
+                    targetBuilder: buildTargetsFromYs({ targetYs: [0.25, 0.5, 0.75, 1, 0.5, 0, 0.5, 1],
+                        targetOpts: { size: 20 } }),
+                    nextScenes: pathData.nodes[sceneName].next
+                    },
+                hidePositionTargets:true,
+            })
+            break
+        case '6a':
+            mathBlockTutorials(gameState, { targetVals: [1, 1, 1, 1, 1, 1, 1, 1], 
+                nextScenes: pathData.nodes[sceneName].next,
+                withUITip: true })
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/constantBlock.txt'})
+            break
+        case '6b':
+            mathBlockTutorials(gameState, { targetVals: [-1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5], nextScenes: ["linear.7a"] })
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/constantBlock2.txt'})
+            break
+        case '7a':
+            {
+                const targetBlock = new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
+                targetBlock.insert(gameState.objects, 1)
+
+                const fLabel = new GameObjects.TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
+                const ddxLabel = new GameObjects.TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 250, content: 'f\'(x)=' })
+                fLabel.insert(gameState.objects, 0)
+                ddxLabel.insert(gameState.objects, 0)
+
+                const {sySlider} = Puzzles.mathBlockLevel(gameState, {
+                    targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 100, targetOpts: { size: 12 } }),
+                    blocks: Planet.standardBlocks('linear'),
+                    sliderOpts: { showAxis:true, increment: 0.5 },
+                    //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
+                    tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
+                    nextScenes: pathData.nodes[sceneName].next
+                })
+                sySlider.hidden = true
+            }
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative.txt'})
+            break
+        case '7b':
+            {
+                const targetBlock = new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
+                targetBlock.scaleY = 0.5
+                targetBlock.insert(gameState.objects, 1)
+
+                const fLabel = new GameObjects.TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
+                const ddxLabel = new GameObjects.TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)=' })
+                fLabel.insert(gameState.objects, 0)
+                ddxLabel.insert(gameState.objects, 0)
+
+                const {sySlider} = Puzzles.mathBlockLevel(gameState, {
+                    targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 100, targetOpts: { size: 12 } }),
+                    blocks: Planet.standardBlocks('linear'),
+                    sliderOpts: { showAxis:true, increment: 0.5 },
+                    //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
+                    tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
+                    nextScenes: pathData.nodes[sceneName].next
+                })
+                sySlider.hidden = true
+            }
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative2.txt'})
+            break
+        case '7c':
+            {
+                const targetBlock = new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
+                targetBlock.translateY = -3
+                targetBlock.scaleY = -2
+                targetBlock.insert(gameState.objects, 1)
+
+                const fLabel = new GameObjects.TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
+                const ddxLabel = new GameObjects.TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)=' })
+                fLabel.insert(gameState.objects, 0)
+                ddxLabel.insert(gameState.objects, 0)
+
+                const {sySlider} = Puzzles.mathBlockLevel(gameState, {
+                    targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 100, targetOpts: { size: 12 } }),
+                    blocks: Planet.standardBlocks('linear'),
+                    sliderOpts: { showAxis:true, increment: 0.5 },
+                    //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
+                    tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
+                    nextScenes: pathData.nodes[sceneName].next
+                })
+                sySlider.hidden = true
+            }
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative3.txt'})
+            break
+        case '7d':
+            {
+                const targetBlock = new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
+                targetBlock.scaleY = 1.5
+                targetBlock.translateY = 2
+                targetBlock.insert(gameState.objects, 1)
+
+                const fLabel = new GameObjects.TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
+                const ddxLabel = new GameObjects.TextBox({ font: '30px monospace', align: 'right', baseline: 'top', originX: 680, originY: 100, content: 'f\'(x)=' })
+                fLabel.insert(gameState.objects, 0)
+                ddxLabel.insert(gameState.objects, 0)
+
+                const {sySlider} = Puzzles.mathBlockLevel(gameState, {
+                    targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 100, targetOpts: { size: 12 } }),
+                    blocks: Planet.standardBlocks('linear'),
+                    sliderOpts: { showAxis:true, increment: 0.5 },
+                    //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
+                    tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
+                    nextScenes: pathData.nodes[sceneName].next
+                })
+                sySlider.hidden = true
+            }
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative4.txt'})
+            Puzzles.planetUnlockOnSolve(gameState, {planetUnlock: 'quadratic'})
             break
     }
 }
@@ -487,7 +401,7 @@ function mathBlockTutorials(gameState, {
     const backButton = Planet.backButton(gameState)
     const nextButton = Planet.nextButton(gameState, nextScenes)
 
-    const grid = new Grid({
+    const grid = new GameObjects.Grid({
         canvasX: 600, canvasY: 350, canvasWidth: 400, canvasHeight: 400,
         gridXMin: -2, gridYMin: -2, gridXMax: 2, gridYMax: 2, labels: false, arrows: true
     })
@@ -496,20 +410,20 @@ function mathBlockTutorials(gameState, {
 
     var targets = []
     for (let i = 0; i < targetVals.length; i++) {
-        targets.push(new Target({ grid: grid, gridX: grid.gridXMin + (i + 1) * spacing, gridY: targetVals[i], size: targetSize }))
+        targets.push(new GameObjects.Target({ grid: grid, gridX: grid.gridXMin + (i + 1) * spacing, gridY: targetVals[i], size: targetSize }))
     }
 
-    const functionTracer = new FunctionTracer({ grid: grid, targets: targets, solvable: true, numLabel: false })
+    const functionTracer = new GameObjects.FunctionTracer({ grid: grid, targets: targets, solvable: true, numLabel: false })
 
     const blocks = [
-        new MathBlock({ type: MathBlock.CONSTANT }),
+        new GameObjects.MathBlock({ type: GameObjects.MathBlock.CONSTANT }),
     ]
-    if (withLinear) blocks.push(new MathBlock({ type: MathBlock.VARIABLE, token: 'x' }))
-    const sySlider = new Slider({ canvasX: 1200, canvasY: 350, maxValue: 2, sliderLength: 4, startValue: 1, showAxis: true, valueLabel: false })
-    const tySlider = new Slider({ canvasX: withLinear ? 1300 : 1200, canvasY: 350, maxValue: 2, sliderLength: 4, showAxis: true, valueLabel: false, increment:0.5, })
+    if (withLinear) blocks.push(new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x' }))
+    const sySlider = new GameObjects.Slider({ canvasX: 1200, canvasY: 350, maxValue: 2, sliderLength: 4, startValue: 1, showAxis: true, valueLabel: false })
+    const tySlider = new GameObjects.Slider({ canvasX: withLinear ? 1300 : 1200, canvasY: 350, maxValue: 2, sliderLength: 4, showAxis: true, valueLabel: false, increment:0.5, })
 
-    const mbField = new MathBlockField({ minX: 600, minY: 100, maxX: 1000, maxY: 300 })
-    const mbm = new MathBlockManager({
+    const mbField = new GameObjects.MathBlockField({ minX: 600, minY: 100, maxX: 1000, maxY: 300 })
+    const mbm = new GameObjects.MathBlockManager({
         blocks: blocks, toolBarX: 1150, toolBarY: 150, outputType: "sliders",
         scaleYSlider: sySlider, translateYSlider: tySlider,
         blockFields: [mbField],
@@ -551,29 +465,3 @@ function mathBlockTutorials(gameState, {
 }
 
 
-function checkFunctionsEqual(fun1, fun2) {
-    for (let x = 0; x <= 10; x++) {
-        if (Math.abs(fun1(x) - fun2(x)) > 0.00001) {
-            return { res: false, x: x }
-        }
-    }
-
-    /**
-     * It should be hard to accidentally make a function that
-     * is incorrect but hits integers [0,10].
-     *  We check [0,10] by 0.1 as well just in case.
-     * Integers are done first so that the error output is usually an int.
-     * 
-     * It is possible to fool the checker at any precision,
-     * by doing something like (0.1)^n + correct function.
-     * This is acceptable since it pretty much requires the
-     * player to be fooling the checker on purpose, and so 
-     * should not come up by accident.
-     */
-    for (let x = 0; x < 10; x += 0.1) {
-        if (Math.abs(fun1(x) - fun2(x)) > 0.00001) {
-            return { res: false, x: x }
-        }
-    }
-    return { res: true }
-}

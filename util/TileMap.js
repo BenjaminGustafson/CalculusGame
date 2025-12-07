@@ -1,6 +1,5 @@
 export class TileMap{
 
-
     /**
      * Maps are isometric tiles of 128 x 64. 
      * Maps are 1600 x 900, which is 12.5 x 14.0625 tiles
@@ -20,7 +19,23 @@ export class TileMap{
         return {x: cx, y : cy}
     }
 
-
-    
-    
+    static dirToCoord(dir){
+        switch (dir){
+            case 'NE': return {x:0,y:-1}
+            case 'NW': return {x:-1,y:0}
+            case 'SE': return {x:1,y:0}
+            case 'SW': return {x:0,y:1}
+            default: return {x:0,y:0}
+        }
+    }
+ 
+    static reverseDir(dir){
+        switch (dir){
+            case 'NE': return 'SW'
+            case 'NW': return 'SE'
+            case 'SE': return 'NW'
+            case 'SW': return 'NE'
+        }
+    }
 }
+

@@ -30,6 +30,15 @@ import {Color, Shapes} from '../util/index.js'
  * 
  * */
 
+// /**
+//  * A Puzzle is a Scene with a win condition
+//  */
+// class Puzzle extends Scene {
+
+// }
+
+
+
 export function addToUpdate(gameState, funToAdd){
     const oldUpdate = gameState.update
     gameState.update = () => {
@@ -696,8 +705,6 @@ export function ruleGuess(gameState, {planetUnlock, blocks, targetBlock, correct
 
     Planet.addWinCon(gameState, ()=>state == 'solved', nextButton)
 }
-
-
 
 /**
  * Puts a dialogue box on top of the current scene
