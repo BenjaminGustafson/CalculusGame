@@ -340,6 +340,7 @@ export async function loadScene(gameState, sceneName, message = {}){
                 translateY : 0,
                 nextScenes: pathData.nodes[sceneName].next,
             })
+            Puzzles.planetUnlockOnSolve(gameState, {planetUnlock: 'power'})
         break
     }
 }

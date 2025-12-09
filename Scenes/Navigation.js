@@ -212,6 +212,7 @@ export function navScene(gameState) {
                     }
                 }
                 if (hit){
+                    audio.play('back_001', {pitch:(Math.random())*3-6, volume:0.7})
                     ctx.fillStyle = `rgb(255,0,0,0.5)`
                     ctx.fillRect(this.shipX - this.shipWidth/2, - this.shipWidth/3/2, this.shipWidth,this.shipWidth/3)
                 }
