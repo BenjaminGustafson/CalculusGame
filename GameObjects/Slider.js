@@ -275,7 +275,7 @@ export class Slider extends GameObject{
             shadow:this.grabbed, 
         })
 
-        ctx.font = `${this.circleRadius} px monospace`
+        ctx.font = `${this.circleRadius*2}px monospace`
         if (this.name != ''){
             Color.setColor(ctx, Color.white)
             ctx.textAlign = this.vertical ? 'center' : 'right'

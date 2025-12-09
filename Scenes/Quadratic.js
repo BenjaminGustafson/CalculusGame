@@ -13,7 +13,7 @@ function quadraticPlanet(gameState, pathData, goTo) {
         gameState.stored.completedScenes['quadratic.1a'] = 'in progress'
     }
     Planet.planetScene(gameState, {
-        planetName: 'Quadratic',
+        planetName: 'quadratic',
         tileMap:  new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0}),
         pathData: pathData,
         bgImg: 'placeholderBg',
@@ -444,6 +444,7 @@ class GravityShip extends GameObject {
         })
         // Ground image
 
+        
         this.gravitySlider = new GameObjects.Slider({
             canvasX: originX,
             canvasY: originY - positionGrid.canvasHeight * 0.2, 
