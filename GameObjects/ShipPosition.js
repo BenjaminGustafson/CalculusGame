@@ -1,4 +1,3 @@
-import {Color, Shapes} from '../util/index.js'
 import * as GameObjects from "./index.js"
 
 export class ShipPosition extends GameObjects.GameObject {
@@ -8,11 +7,15 @@ export class ShipPosition extends GameObjects.GameObject {
         positionGrid,
         positionTracer,
         positionTargetGroup,
-        canvasWidth=400,
-        canvasHeight=400,
+        canvasWidth,
+        canvasHeight,
     }){
         super()
         Object.assign(this, { originX, originY, canvasWidth, canvasHeight, positionGrid, positionTracer, positionTargetGroup})
+
+        // Logic probably only works for square grid
+        if (!canvasWidth) this.canvasWidth = this.positionGrid.canvasHeight
+        if (!canvasHeight) this.canvasHeight = this.positionGrid.canvasWidth
 
         this.grid = new GameObjects.Grid({
             canvasX: originX, canvasY: originY, canvasWidth: canvasWidth, canvasHeight: canvasHeight,
@@ -27,6 +30,7 @@ export class ShipPosition extends GameObjects.GameObject {
             maxValue: positionGrid.gridYMax,
             vertical:false,
             increment: 0.0001,
+            canvasLength: this.canvasWidth,
         })
         this.pSlider.clickable = false
 
@@ -41,7 +45,7 @@ export class ShipPosition extends GameObjects.GameObject {
         })
         this.tSlider.clickable = false
 
-        const shipScale = 0.6
+        const shipScale = 0.6 * this.canvasWidth/400
         this.shipImage = new GameObjects.ImageObject({
             originX: this.originX,
             height:55*shipScale,
@@ -95,10 +99,10 @@ export class ShipPosition extends GameObjects.GameObject {
             width: 50,
             height: 50,
             onclick: () => {
-                if (this.positionTracer.state == GameObjects.FunctionTracer.STOPPED_AT_END) {
-                    this.positionTracer.reset()
-                }else{
+                if (this.positionTracer.state == GameObjects.FunctionTracer.STOPPED_AT_BEGINNING) {
                     this.positionTracer.start()
+                }else{
+                    this.positionTracer.reset()
                 }
             },
             label: "⏵", lineWidth: 5
@@ -143,10 +147,10 @@ export class ShipPosition extends GameObjects.GameObject {
         //     }
         // }
 
-        if (this.positionTracer.state == GameObjects.FunctionTracer.STOPPED_AT_END) {
-            this.playPauseButton.label = '⏮'
-        }else{
+        if (this.positionTracer.state == GameObjects.FunctionTracer.STOPPED_AT_BEGINNING) {
             this.playPauseButton.label = '⏵'
+        }else{
+            this.playPauseButton.label = '⏮'
         }
         
 

@@ -103,7 +103,10 @@ export function targetsFromFun(gameState, {fun, grid, numTargets, targetOpts}){
  * Builder version of targetsFromFun
  */
 export function buildTargetsFromFun({fun, numTargets, targetOpts}){
-    return (gameState, grid) => targetsFromFun(gameState, {fun: fun, grid:grid, numTargets:numTargets, targetOpts: targetOpts})
+    return (gameState, grid) => targetsFromFun(gameState, {
+        fun: fun, grid:grid,
+        numTargets:numTargets, targetOpts: targetOpts
+    })
 }
 
 /**
@@ -253,7 +256,7 @@ export function sliderLevel(gameState, {
     tracerOpts,
     nextScenes,
 }){
-    const gridGroup = gridSetup(gameState, {numGrids:2, spacing:100, ...gridSetupOpts})
+    const gridGroup = gridSetup(gameState, {numGrids:2, spacing:100, topMargin:150, ...gridSetupOpts})
     const grids = gridGroup.objects
 
     const sliderGroup = sliderSetup(gameState, {
@@ -282,12 +285,35 @@ export function sliderLevel(gameState, {
     return {gridGroup:gridGroup, sliderGroup:sliderGroup, targetGroup:targetGroup, tracer:tracer}
 }
 
+export function setupShipPosition(gameState, {
+    positionGrid, 
+    velocityGrid,
+    accelerationGrid,
+    shipPositionOpts,
+}){
+    positionGrid.gridTitle = 'Position'
+    velocityGrid.gridTitle = 'Velocity'
+    if (accelerationGrid) accelerationGrid.gridTitle = 'Acceleration'
+
+    const shipPosition = new ShipPosition({
+        originX: 125,
+        originY: positionGrid.canvasY,
+        positionGrid: positionGrid,
+        ...shipPositionOpts,
+    })
+    shipPosition.insert(gameState.objects,1)
+
+    return {shipPosition: shipPosition}
+}
+
 export function shipPositionLevel(gameState, {
     sliderLevelOpts,
     hidePositionTargets = false,
 }){
     const {gridGroup, sliderGroup, targetGroup, tracer} = sliderLevel(gameState, {
-        gridSetupOpts: {leftMargin: 450, topMargin: 50, gridOpts:{gridXMin:0, gridXMax:4, xAxisLabel:'Time t'}, spacing:50},
+        gridSetupOpts: {leftMargin: 450, topMargin: 50, gridOpts:{gridXMin:0, gridXMax:4, 
+            xAxisLabel:'Time t'},
+            spacing:50},
         ...sliderLevelOpts,
     })
 
@@ -331,22 +357,20 @@ export function sliderLevelFromDdx(gameState, {
 
 
 export function tripleGraphSliderLevel(gameState, {
-    numSliders, 
     targetBuilder,
     tracerMiddleOpts,
     tracerLeftOpts,
-    sliderOpts,
-    gridOpts,
+    sliderSetupOpts,
     gridSetupOpts,
     nextScenes,
 }){
-    const gridGroup = gridSetup({numGrids:3, spacing:50, topMargin:100, ...gridSetupOpts, gridOpts: gridOpts})
+    const gridGroup = gridSetup(gameState, {numGrids:3, spacing:50, topMargin:150, ...gridSetupOpts})
     const grids = gridGroup.objects
 
     const sliderGroup = sliderSetup(gameState, {
-        numSliders:numSliders,
         grid:grids[2],
-        sliderOpts:sliderOpts})
+        ...sliderSetupOpts
+    })
     const sliders = sliderGroup.objects
     sliderLinesSetup(gameState, {sliders: sliders, grid:grids[2]})
     const tracerMiddle = new IntegralTracer({
@@ -367,13 +391,13 @@ export function tripleGraphSliderLevel(gameState, {
         targets: targetGroup.objects,
         ...tracerLeftOpts,
     })
-    
+
     tracerLeft.insert(gameState.objects,1)
     Planet.levelNavigation(gameState, {
         winCon: () => tracerLeft.solved,
         nextScenes: nextScenes,
     })
-    return {gridGroup: gridGroup, sliderGroup:sliderGroup, targetGroup: targetGroup}
+    return {gridGroup, sliderGroup, targetGroup, tracerLeft, tracerMiddle}
 }
 
 export function addMathBlocksToSliderLevel(gameState, {
@@ -411,11 +435,13 @@ export function tripleGraphMathBlockLevel(gameState, {
     tracerLeftOpts,
     sliderOpts,
     gridSetupOpts,
-    gridOpts = {canvasWidth: 300, canvasHeight: 300},
     nextScenes,
     blocks,
 }){
-    const grids = gridSetup({numGrids:3, spacing:50, topMargin:100, rightMargin:300, ...gridSetupOpts, gridOpts:gridOpts})
+    gridSetupOpts.gridOpts ??= {}
+    gridSetupOpts.gridOpts.canvasWidth ??= 300
+    gridSetupOpts.gridOpts.canvasHeight ??= 300
+    const grids = gridSetup({numGrids:3, spacing:50, topMargin:100, rightMargin:300, ...gridSetupOpts})
     const gridGroup = new GameObjectGroup(grids)
     gridGroup.insert(gameState.objects, 0)
 
@@ -447,6 +473,7 @@ export function tripleGraphMathBlockLevel(gameState, {
         winCon: () => tracerLeft.solved,
         nextScenes: nextScenes,
     })
+    return {sySlider, tySlider, mbField, funTracer}
 }
 
 

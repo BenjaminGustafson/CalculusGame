@@ -26,12 +26,15 @@ export async function loadScene(gameState, sceneName, message = {}){
 
     const pathData = await FileLoading.loadJsonFile('./data/powerPlanet.json')
        
+    Scene.sceneTitle(gameState, 'Power ' + (sceneName ? sceneName : 'Planet'))
+    
     // Root scene
     if (!sceneName){
         powerPlanet(gameState, pathData, message.goTo)
+        return
     }
 
-    Scene.sceneTitle(gameState, 'Power ' + (sceneName ? sceneName : 'Planet'))
+    const nextScenes = pathData.nodes[sceneName].next
 
     // Sub-scenes
     switch(sceneName){
@@ -40,22 +43,62 @@ export async function loadScene(gameState, sceneName, message = {}){
                 }
                 break
         case '1a':
-            powerLevel(gameState, {numSliders:4, sliderSize:15,
-                    gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:-2,
-                    nextScenes: pathData.nodes[sceneName].next})
+            Puzzles.tripleGraphSliderLevel(gameState, {
+                sliderSetupOpts:{
+                    numSliders: 4,
+                    sliderOpts:{circleRadius: 15, increment: 0.25},
+                }, 
+                targetBuilder: Puzzles.buildTargetsFromFun({
+                    fun: x=>x*x/2,
+                    numTargets: 4,
+                    targetOpts: {size:20},
+                }),
+                tracerLeftOpts: {
+                    originGridY: 2,
+                },
+                tracerMiddleOpts: {
+                    originGridY: -2,
+                }, 
+                gridSetupOpts:{
+
+                },
+                nextScenes: nextScenes,
+            })
             break
         case '1b':
-            powerLevel(gameState, {numSliders:20, sliderSize:10, targetSize:15,gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:-2,
+            powerLevel(gameState, {numSliders:20, sliderSize:10, targetSize:15,
+                gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:-2,
                 withMathBlock:true,
                 nextScenes: pathData.nodes[sceneName].next})
             break
-        case '1c':
+        case '2a':
+            tripleGraphShipPositionLevel(gameState, {
+                sliderLevelOpts: {
+                    sliderSetupOpts: {
+                        numSliders: 4,
+                        sliderOpts: { circleRadius: 12, increment: 0.5}
+                    },
+                    targetBuilder: Puzzles.buildTargetsFromYs({
+                        targetYs: [0.5,0,0.5,2],
+                        targetOpts: { size: 15 } }),
+                    nextScenes: nextScenes,
+                    tracerLeftOpts: {
+                        originGridY: 2,
+                    },
+                    tracerMiddleOpts: {
+                        originGridY: -2,
+                    }, 
+                }
+            })
+            break
+        
+        case '3':
             powerLevel(gameState, {numSliders:3, sliderSize:15, gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:2,
                 targetFun: x => x*x*x/6, 
                 nextScenes: pathData.nodes[sceneName].next
             })
             break
-        case '1d':
+        case '4':
             powerLevel(gameState, {numSliders:400, sliderSize:5, targetSize:10,gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:2,
                 withMathBlock:true,targetFun: x => x*x*x/6, increment:0.05,
                 nextScenes: pathData.nodes[sceneName].next
@@ -193,6 +236,31 @@ export async function loadScene(gameState, sceneName, message = {}){
             }
         break
     }
+}
+
+
+function tripleGraphShipPositionLevel (gameState, {
+    sliderLevelOpts,
+}){
+    const {gridGroup, targetGroup, tracerLeft} =
+     Puzzles.tripleGraphSliderLevel(gameState, {
+        gridSetupOpts: {leftMargin: 500, topMargin: 50,
+            gridOpts:{canvasWidth: 300, canvasHeight: 300, 
+                gridXMin:0, gridXMax:4, xAxisLabel:'Time'},
+            spacing:50},
+        ...sliderLevelOpts,
+    })
+    const grids = gridGroup.objects
+    Puzzles.setupShipPosition(gameState, {
+        positionGrid: grids[0],
+        velocityGrid: grids[1],
+        accelerationGrid: grids[2],
+        shipPositionOpts: {
+            originX: 100,
+            positionTracer: tracerLeft,
+            positionTargetGroup: targetGroup,
+        },
+    })
 }
 
 // TODO: re-organize this to be part of the standard level

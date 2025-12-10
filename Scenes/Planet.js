@@ -42,7 +42,7 @@ export function planetScene(gameState, {
         const node = nodes[nodeName]
         
         const dirCoord = TileMap.dirToCoord(node.dir)
-        const canvasPos = tileMap.isometricToCanvas(node.x + dirCoord.x, node.y + dirCoord.y)  
+        const canvasPos = tileMap.isometricToCanvas(node.x + dirCoord.x, node.y + dirCoord.y)
 
         // Invisible button where this node is
         const button = new GameObjects.Button({
@@ -162,7 +162,8 @@ export function backButton (gameState){
  */
 export function nextButton (gameState, nextScenes){
     const button = new GameObjects.Button({originX:200, originY: 50, width:100, height: 100,
-        onclick: ()=>Scene.loadScene(gameState, gameState.stored.planet, {goTo:nextScenes[0]}), label:"→"})
+        onclick: ()=>Scene.loadScene(gameState, 
+            gameState.stored.planet, {goTo:nextScenes[0]}), label:"→"})
     button.active = false
     return button
 }
