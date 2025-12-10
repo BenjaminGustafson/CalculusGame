@@ -1,4 +1,4 @@
-import {Color, Shapes, AudioManager} from './util/index.js'
+import {Color, AudioManager} from './util/index.js'
 import {loadScene, PLANETS} from './Scene.js'
 import { MathBlock } from './GameObjects/MathBlock.js'
 
@@ -43,12 +43,12 @@ import { MathBlock } from './GameObjects/MathBlock.js'
 // "play" release version
 const build = "play"
 
-var keysPressed = {}
+let keysPressed = {}
 
 // Setup - called on page load 
 function setup() {
     // Game is drawn on this canvas
-    var canvas = document.getElementById('myCanvas');
+    const canvas = document.getElementById('myCanvas');
 
     // Load audio
     const audioManager = new AudioManager();
@@ -60,16 +60,17 @@ function setup() {
         'drop_003.ogg', 'drop_001.ogg', //target adder
         'error_008.ogg','bong_001.ogg', // dialogue
         'click_005.ogg', // footstep
+        'back_001.ogg', // asteroid impact
     ];
+    
 
     Promise.all(
         audioPaths.map(path => {
             const name = path.split(".")[0]; // drop file extension
             return audioManager.load(name, "audio/" + path)
-        })
-    ).then(() => {
-        console.log("All audio loaded.")
-    })
+        }))
+    .then(() => console.log("All audio loaded."))
+    .catch(err => console.error("Audio load error:", err));
 
     // Mouse object
     const mouse = {
@@ -83,7 +84,7 @@ function setup() {
     }
 
     // Game state
-    var gameState = {
+    let gameState = {
         objects: [], // The GameObjects in the current scene
         update: (() => { }), // The update function for the scene
         stored: {}, // The part of the state that is saved. See initStoredState for object contents
@@ -124,7 +125,7 @@ function setup() {
 
     // Try to load stored data
     const storedState = localStorage.getItem('storedState')
-    var savedScene = null
+    let savedScene = null
     if (storedState == null){ // Local storage does not have stored data
         console.log('No stored data. Creating new save')
         initStoredState()
@@ -171,7 +172,7 @@ function setup() {
     
     document.addEventListener('mousemove', e => {
         mouse.moved = true
-        var rect = canvas.getBoundingClientRect();
+        const rect = canvas.getBoundingClientRect();
         mouse.x = (e.clientX - rect.left) * (canvas.width / rect.width);
         mouse.y = (e.clientY - rect.top) * (canvas.height / rect.height);
     });
@@ -392,7 +393,7 @@ function setup() {
 
     // ------------------------------------- Main update loop --------------------------------------------------------
     let frameCount = 0
-    var prevTime = Date.now()
+    let prevTime = Date.now()
     function update() {
 
         // Save progress every 200 frames
@@ -411,7 +412,7 @@ function setup() {
         gameState.update(audioManager)
 
         // Get rendering context
-        var ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d');
 
         // Draw background
         Color.setColor(ctx, Color.black)
