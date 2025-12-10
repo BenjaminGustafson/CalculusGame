@@ -33,7 +33,7 @@ export async function loadScene(gameState, sceneName, message = {}){
         quadraticPlanet(gameState, pathData, message.goTo)
     }
 
-    Scene.sceneTitle(gameState, 'Quadratic'+' ' + (sceneName ? sceneName : 'Planet'))
+    Scene.sceneTitle(gameState, 'Quadratic ' + (sceneName ? sceneName : 'Planet'))
 
     // Sub-scenes
     switch(sceneName){
