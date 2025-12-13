@@ -144,15 +144,22 @@ export function sliderSetup(gameState, {
     sliderOpts, // parameters to be passed to slider constructor
 }){
     var sliders = []
+    var labels = []
     const spacing = grid.gridWidth/numSliders
     for (let i = 0; i < numSliders; i++){
-        sliders.push(new Slider({grid:grid,
+        const slider = new Slider({grid:grid,
             gridPos:grid.gridXMin + i * spacing,
             increment: 0.1,
-            ...sliderOpts}))
+            ...sliderOpts})
+        sliders.push(slider)
+        if (slider.valueLabel){
+            labels.push(slider.labelObject)
+        }
     }
     const sliderGroup = new GameObjectGroup(sliders)
+    const labelGroup = new GameObjectGroup(labels)
     sliderGroup.insert(gameState.objects, 2)
+    labelGroup.insert(gameState.objects, LAYERS.label)
     return sliderGroup
 }
 
@@ -430,23 +437,22 @@ export function addMathBlocksToSliderLevel(gameState, {
 }
 
 export function tripleGraphMathBlockLevel(gameState, {
+    gridSetupOpts,
+    mbSetupOpts,
     targetBuilder,
     tracerMiddleOpts,
     tracerLeftOpts,
-    sliderOpts,
-    gridSetupOpts,
     nextScenes,
-    blocks,
 }){
     gridSetupOpts.gridOpts ??= {}
     gridSetupOpts.gridOpts.canvasWidth ??= 300
     gridSetupOpts.gridOpts.canvasHeight ??= 300
-    const grids = gridSetup({numGrids:3, spacing:50, topMargin:100, rightMargin:300, ...gridSetupOpts})
-    const gridGroup = new GameObjectGroup(grids)
-    gridGroup.insert(gameState.objects, 0)
+    
+    const gridGroup = gridSetup(gameState, {numGrids:3, spacing:50, topMargin:100, rightMargin:300, ...gridSetupOpts})
+    const grids = gridGroup.objects
 
     const {sySlider, tySlider, mbField, funTracer} = mathBlockSetup(gameState, {
-        sliderOpts:sliderOpts, blocks:blocks, grid:grids[2],
+        grid:grids[2], ...mbSetupOpts,
     })
     
     const tracerMiddle = new IntegralTracer({
@@ -473,7 +479,7 @@ export function tripleGraphMathBlockLevel(gameState, {
         winCon: () => tracerLeft.solved,
         nextScenes: nextScenes,
     })
-    return {sySlider, tySlider, mbField, funTracer}
+    return {gridGroup, sySlider, tySlider, mbField, funTracer}
 }
 
 

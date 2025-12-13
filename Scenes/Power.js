@@ -43,6 +43,8 @@ export async function loadScene(gameState, sceneName, message = {}){
                 }
                 break
         case '1a':
+            // 4 slider, triple graph, solution is all 1s.
+            // Shows that x^2/2 -> x -> 1
             Puzzles.tripleGraphSliderLevel(gameState, {
                 sliderSetupOpts:{
                     numSliders: 4,
@@ -66,6 +68,48 @@ export async function loadScene(gameState, sceneName, message = {}){
             })
             break
         case '1b':
+            Puzzles.tripleGraphSliderLevel(gameState, {
+                sliderSetupOpts:{
+                    numSliders: 4,
+                    sliderOpts:{circleRadius: 15, increment: 0.25},
+                }, 
+                targetBuilder: Puzzles.buildTargetsFromYs({
+                    targetYs: [0.5,1,0,-1],
+                    targetOpts: { size: 20 } }),
+                tracerLeftOpts: {
+                    originGridY: 0,
+                },
+                tracerMiddleOpts: {
+                    originGridY: 0,
+                }, 
+                gridSetupOpts:{
+
+                },
+                nextScenes: nextScenes,
+            })
+            break
+        case '1c':
+            Puzzles.tripleGraphSliderLevel(gameState, {
+                sliderSetupOpts:{
+                    numSliders: 4,
+                    sliderOpts:{circleRadius: 15, increment: 0.25},
+                }, 
+                targetBuilder: Puzzles.buildTargetsFromYs({
+                    targetYs: [0,1,0,-1],
+                    targetOpts: { size: 20 } }),
+                tracerLeftOpts: {
+                    originGridY: 0,
+                },
+                tracerMiddleOpts: {
+                    originGridY: 2,
+                }, 
+                gridSetupOpts:{
+
+                },
+                nextScenes: nextScenes,
+            })
+            break
+        case '2':
             powerLevel(gameState, {numSliders:20, sliderSize:10, targetSize:15,
                 gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:-2,
                 withMathBlock:true,
@@ -91,7 +135,50 @@ export async function loadScene(gameState, sceneName, message = {}){
                 }
             })
             break
-        
+        case '2b':
+            // Constant targets lead to oscillating solution: 1,-2,2,-2
+            tripleGraphShipPositionLevel(gameState, {
+                sliderLevelOpts: {
+                    sliderSetupOpts: {
+                        numSliders: 4,
+                        sliderOpts: { circleRadius: 12, increment: 0.5}
+                    },
+                    targetBuilder: Puzzles.buildTargetsFromYs({
+                        targetYs: [0.5,0.5,0.5,0.5],
+                        targetOpts: { size: 15 } }),
+                    nextScenes: nextScenes,
+                    tracerLeftOpts: {
+                        originGridY: 0,
+                    },
+                    tracerMiddleOpts: {
+                        originGridY: 0,
+                    }, 
+                }
+            })
+            break
+        case '3a':
+            Puzzles.tripleGraphMathBlockLevel(gameState, {
+                targetBuilder: Puzzles.buildTargetsFromFun({
+                    fun: x=>x*x*x/6,
+                    numTargets: 40,
+                    targetOpts: {size:15},
+                }),
+                tracerLeftOpts: {
+                    originGridY: -4/3,
+                },
+                tracerMiddleOpts: {
+                    originGridY: 2,
+                }, 
+                gridSetupOpts:{
+
+                },
+                mbSetupOpts: {
+                    blocks: Planet.standardBlocks('quadratic'),
+                     
+                },
+                nextScenes: nextScenes,
+            })
+            break
         case '3':
             powerLevel(gameState, {numSliders:3, sliderSize:15, gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:2,
                 targetFun: x => x*x*x/6, 
