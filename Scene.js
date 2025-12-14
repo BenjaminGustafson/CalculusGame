@@ -102,13 +102,16 @@ export function loadScene(gameState, sceneName, message = {}) {
         // Linear Planet (see Linear.js)
         case 'linear': Linear.loadScene(gameState, sceneNameRemainder, message)
             break
-        // Quadratic Planet
+        // Quadratic Planet (Quadratic.js)
         case "quadratic": Quadratic.loadScene(gameState, sceneNameRemainder, message)
             break
+        // Power Planet (Power.js)
         case "power": Power.loadScene(gameState, sceneNameRemainder, message)
             break
+        // Exponential (Exponential.js)
         case "exponential": Exponential.loadScene(gameState, sceneNameRemainder, message)
             break
+        // Sine (Sine.js)
         case "sine": Sine.loadScene(gameState, sceneNameRemainder, message)
             break
         case "sum": Sum.loadScene(gameState, sceneNameRemainder, message)
@@ -140,6 +143,7 @@ export function sceneTitle(gameState, title){
     if (title !== ''){
         sceneTitleBox.insert(gameState.objects, 50)
     }
+    console.log(gameState.objects)
 }
 
 function journal(gameState){

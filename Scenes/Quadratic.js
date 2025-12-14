@@ -28,12 +28,15 @@ export async function loadScene(gameState, sceneName, message = {}){
    
     const pathData = await FileLoading.loadJsonFile('./data/quadraticPlanet.json')
     
+    Scene.sceneTitle(gameState, 'Quadratic ' + (sceneName ? sceneName : 'Planet'))
+    
     // Root scene
     if (!sceneName){
         quadraticPlanet(gameState, pathData, message.goTo)
+        return
     }
 
-    Scene.sceneTitle(gameState, 'Quadratic ' + (sceneName ? sceneName : 'Planet'))
+    const nextScenes = pathData.nodes[sceneName].next
 
     // Sub-scenes
     switch(sceneName){
@@ -41,10 +44,16 @@ export async function loadScene(gameState, sceneName, message = {}){
             Scene.loadScene(gameState, 'planetMap')
         }
         break
+        /**
+         * Section 1: Draw functions. Introduction to draw function.
+         */
         case '1a':{
+            // Single target draw function
             Puzzles.drawFunctionLevel(gameState, {
-                targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[1], targetOpts:{size:50}}),
-                nextScenes: pathData.nodes[sceneName].next,
+                targetBuilder: Puzzles.buildTargetsFromYs({
+                    targetYs:[1],
+                    targetOpts:{size:50}}),
+                nextScenes,
             })
             const uiTip = {
                 update: function(ctx){
@@ -60,27 +69,36 @@ export async function loadScene(gameState, sceneName, message = {}){
             break
         case '1b':
             Puzzles.drawFunctionLevel(gameState, {
-                targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[-1,0], targetOpts:{size:50}}),
+                targetBuilder: Puzzles.buildTargetsFromYs({
+                    targetYs:[-1,0],
+                    targetOpts:{size:50}}),
                 nextScenes: pathData.nodes[sceneName].next,
             })
             break
         case '1c':
             Puzzles.drawFunctionLevel(gameState, {
-                targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[0.5,1,1.5,2], targetOpts:{size:40}}),
+                targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[0.5,1,1.5,2],
+                    targetOpts:{size:40}}),
                 nextScenes: pathData.nodes[sceneName].next,
             })
             break
         case '1d':
             Puzzles.drawFunctionLevel(gameState, {
                 tracerStart: 1,
-                targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[-0.5,-1,-0.5,1], targetOpts:{size:40}}),
+                targetBuilder: Puzzles.buildTargetsFromYs({targetYs:[-0.5,-1,-0.5,1],
+                    targetOpts:{size:40}}),
                 nextScenes: pathData.nodes[sceneName].next,
             })
             break
+        /**
+         * Section 2: 
+         */
         case '2a': 
         {
             Puzzles.mathBlockTutorial(gameState, {
-                targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>0.5*x, numTargets: 10, targetOpts: {}}),
+                targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>0.5*x,
+                    numTargets: 10,
+                    targetOpts: {}}),
                 mathBlockSetupOpts: {
                     blocks: Planet.standardBlocks('quadratic'),
                 },
@@ -91,7 +109,8 @@ export async function loadScene(gameState, sceneName, message = {}){
         case '2b':
         {
             Puzzles.mathBlockTutorial(gameState, {
-                targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>0.5*x+1, numTargets: 10, targetOpts: {}}),
+                targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>0.5*x+1, 
+                    numTargets: 10, targetOpts: {}}),
                 mathBlockSetupOpts: {
                     blocks: Planet.standardBlocks('quadratic'),
                 },

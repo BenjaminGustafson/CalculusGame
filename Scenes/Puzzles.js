@@ -53,8 +53,8 @@ const LAYERS = {
     'tracer' : 1,
     'target' : 2,
     'slider' : 2,
-    'mathblock' : 10,
-    'label' : 10,
+    'mathblock' : 100,
+    'label' : 100,
 }
 
 /**
@@ -502,7 +502,7 @@ function mathBlockSetup (gameState, {
         blockFields: [ mbField ],
         funTracers: [ funTracer ],
     })
-    mbm.insert(gameState.objects, 10)
+    mbm.insert(gameState.objects, LAYERS.mathblock)
 
     return {sySlider: sySlider, tySlider: tySlider, mbField:mbField, funTracer:funTracer, mbm:mbm}
 }
@@ -515,12 +515,16 @@ function mathBlockSlidersSetup(gameState, {
     tySliderOpts,
     sliderOpts,
 }){
-    const sySlider = new Slider({canvasX: 1200, canvasY: 350, maxValue:2,
+    const sySlider = new Slider({canvasX: 1250, canvasY: 350, maxValue:2,
         sliderLength:4, startValue: 1, ...sySliderOpts, ...sliderOpts})
     sySlider.insert(gameState.objects, 0)
+    if (sySlider.valueLabel) sySlider.labelObject.insert(gameState.objects, LAYERS.label)
+    
     const tySlider = new Slider({canvasX: 1300, canvasY: 350, maxValue:2,
-        sliderLength:4, ...tySliderOpts, ...sliderOpts})
+    sliderLength:4, ...tySliderOpts, ...sliderOpts})
     tySlider.insert(gameState.objects, 0)
+    if (tySlider.valueLabel) tySlider.labelObject.insert(gameState.objects, LAYERS.label)
+
     return {sySlider:sySlider, tySlider:tySlider}
 }
 

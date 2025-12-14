@@ -25,16 +25,20 @@ export async function loadScene(gameState, sceneName, message = {}){
     gameState.stored.planet = 'power'
 
     const pathData = await FileLoading.loadJsonFile('./data/powerPlanet.json')
-       
+    
     Scene.sceneTitle(gameState, 'Power ' + (sceneName ? sceneName : 'Planet'))
     
     // Root scene
     if (!sceneName){
         powerPlanet(gameState, pathData, message.goTo)
+        console.log(gameState.objects)
         return
     }
+    
 
     const nextScenes = pathData.nodes[sceneName].next
+
+    const blocks = Planet.standardBlocks('power')
 
     // Sub-scenes
     switch(sceneName){
@@ -42,6 +46,9 @@ export async function loadScene(gameState, sceneName, message = {}){
                     Scene.loadScene(gameState, 'planetMap')
                 }
                 break
+        /**
+         * Section 1:G
+         */
         case '1a':
             // 4 slider, triple graph, solution is all 1s.
             // Shows that x^2/2 -> x -> 1
@@ -64,7 +71,7 @@ export async function loadScene(gameState, sceneName, message = {}){
                 gridSetupOpts:{
 
                 },
-                nextScenes: nextScenes,
+                nextScenes,
             })
             break
         case '1b':
@@ -179,6 +186,55 @@ export async function loadScene(gameState, sceneName, message = {}){
                 nextScenes: nextScenes,
             })
             break
+        case '3b':
+            // 3x^3 - 2x -> x^2 - 2 -> 2x
+            // Cubic -> quad -> linear that fits on 2x2 grid
+            Puzzles.tripleGraphMathBlockLevel(gameState, {
+                targetBuilder: Puzzles.buildTargetsFromFun({
+                    fun: x=>x*x*x/3-2*x,
+                    numTargets: 40,
+                    targetOpts: {size:10},
+                }),
+                tracerLeftOpts: {
+                    originGridY: 4/3,
+                },
+                tracerMiddleOpts: {
+                    originGridY: 2,
+                }, 
+                gridSetupOpts:{
+
+                },
+                mbSetupOpts: {
+                    blocks: Planet.standardBlocks('quadratic'),
+                        
+                },
+                nextScenes: nextScenes,
+            })
+            break
+        case '3c':
+            
+            Puzzles.tripleGraphMathBlockLevel(gameState, {
+                targetBuilder: Puzzles.buildTargetsFromFun({
+                    fun: x=>x*x*x/3-2*x,
+                    numTargets: 40,
+                    targetOpts: {size:10},
+                }),
+                tracerLeftOpts: {
+                    originGridY: 4/3,
+                },
+                tracerMiddleOpts: {
+                    originGridY: 2,
+                }, 
+                gridSetupOpts:{
+
+                },
+                mbSetupOpts: {
+                    blocks: Planet.standardBlocks('quadratic'),
+                        
+                },
+                nextScenes: nextScenes,
+            })
+            break
         case '3':
             powerLevel(gameState, {numSliders:3, sliderSize:15, gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:2,
                 targetFun: x => x*x*x/6, 
@@ -191,51 +247,85 @@ export async function loadScene(gameState, sceneName, message = {}){
                 nextScenes: pathData.nodes[sceneName].next
             })
             break
-        case '5':
+        case '4a':
             Puzzles.mathBlockTutorial(gameState, {
-                numTargets:20, targetFun: x=>x*x*x,blocks:blocks,
+                gridSetupOpts: {
+
+                },
+                targetBuilder: Puzzles.buildTargetsFromFun({
+                    fun: x=>x*x*x,
+                    numTargets: 20, 
+                }),
+                mathBlockSetupOpts: {
+                    blocks:blocks,
+                },
                 nextScenes: pathData.nodes[sceneName].next
             })
             
             break
-        case '6':
+        case '4b':
             Puzzles.mathBlockTutorial(gameState, {
-                numTargets:20, targetFun: x=>-x*x*x,blocks:blocks,
+                gridSetupOpts: {
+
+                },
+                targetBuilder: Puzzles.buildTargetsFromFun({
+                    fun: x=>-x*x*x,
+                    numTargets: 20, 
+                }),
+                mathBlockSetupOpts: {
+                    blocks:blocks,
+                },
                 nextScenes: pathData.nodes[sceneName].next
             })
             break
-        case '7':
+        case '4c':
             Puzzles.mathBlockTutorial(gameState, {
-                numTargets:20, targetFun: x=>-x*x*x*0.2+0.5,blocks:blocks,
+                gridSetupOpts: {
+
+                },
+                targetBuilder: Puzzles.buildTargetsFromFun({
+                    fun: x=>-x*x*x*0.2+0.5,
+                    numTargets: 20, 
+                }),
+                mathBlockSetupOpts: {
+                    blocks:blocks,
+                },
                 nextScenes: pathData.nodes[sceneName].next
             })
             break
-        case '8':
+        case '4d':{
             const numSliders = 8
             const startY = -2
             Puzzles.sliderLevel(gameState, {
-                numSliders: numSliders,
-                targetBuilder: Puzzles.buildTargetsFromDdx({ddx: x=>x*x/2, numTargets:numSliders, targetOpts:{size:20}, startY:startY}),
-                tracerOpts: {originGridY: startY},
-                sliderOpts: {size:15},
-                nextScenes: pathData.nodes[sceneName].next
-            })
+                sliderSetupOpts: {
+                    numSliders: numSliders,
+                    sliderOpts:{
+                        increment: 0.1,
+                    }
+                },
+                targetBuilder: Puzzles.buildTargetsFromDdx({ddx: x=>x*x/2, 
+                    numTargets:numSliders, targetOpts:{size:20}, startY:startY}),
+                    tracerOpts: {originGridY: startY},
+                    sliderOpts: {size:15},
+                    nextScenes: pathData.nodes[sceneName].next
+                })
+            }
             break
-        case '9':
+        case '5a':
             Puzzles.drawFunctionLevel(gameState, {
                 targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>x*x*x/6, numTargets:8, targetOpts:{size:30}}),
                 tracerStart: -8/6,
                 nextScenes: pathData.nodes[sceneName].next
             })
             break
-        case '10':
+        case '5b':
             Puzzles.drawFunctionLevel(gameState, {
                 targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>-x*x*x/6, numTargets:8, targetOpts:{size:30}}),
                 tracerStart: 8/6,
                 nextScenes: pathData.nodes[sceneName].next
             })
             break
-        case '11':
+        case '6a':
             Puzzles.mathBlockLevel(gameState, {
                 targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>x*x*x/6, numTargets:8, targetOpts:{size:30}}),
                 tracerOpts: {originGridY: -8/6},
@@ -243,19 +333,22 @@ export async function loadScene(gameState, sceneName, message = {}){
                 nextScenes: pathData.nodes[sceneName].next
             })
             break
-        case '12':{
+        case '6b':{
             const numSliders = 8
             const startY = 2
             Puzzles.sliderLevel(gameState, {
-                numSliders: numSliders,
-                targetBuilder: Puzzles.buildTargetsFromDdx({ddx: x=>x*x*x/4, numTargets:numSliders, targetOpts:{size:20}, startY:startY}),
+                sliderSetupOpts: {
+                    numSliders: numSliders,
+                },
+                targetBuilder: Puzzles.buildTargetsFromDdx({ddx: x=>x*x*x/4, 
+                    numTargets:numSliders, targetOpts:{size:20}, startY:startY}),
                 tracerOpts: {originGridY: startY},
                 sliderOpts: {size:15},
                 nextScenes: pathData.nodes[sceneName].next
             })
         }
             break
-        case '13':
+        case '6c':
             Puzzles.mathBlockLevel(gameState, {
                 targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>x*x*x*x/8, numTargets:100, targetOpts:{size:12}}),
                 tracerOpts: {originGridY: 2},
@@ -263,7 +356,8 @@ export async function loadScene(gameState, sceneName, message = {}){
                 nextScenes: pathData.nodes[sceneName].next
             })
             break
-        case '14':
+        case '6d':
+            // - x^3
             Puzzles.mathBlockLevel(gameState, {
                 targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>-x*x*x*x/4+2, numTargets:100, targetOpts:{size:12}}),
                 tracerOpts: {originGridY: -2},
@@ -271,7 +365,7 @@ export async function loadScene(gameState, sceneName, message = {}){
                 nextScenes: pathData.nodes[sceneName].next
             })
             break
-        case '15':
+        case '7a':
             {
                 const targetBlock = new MathBlock({type:MathBlock.POWER, token:'4',originX: 100, originY: 250,})
                 targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
@@ -287,7 +381,7 @@ export async function loadScene(gameState, sceneName, message = {}){
                 })
             }
             break
-        case '16':
+        case '7b':
                 {
                 const targetBlock = new MathBlock({type:MathBlock.POWER, token:'5',originX: 100, originY: 250,})
                 targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
@@ -303,7 +397,7 @@ export async function loadScene(gameState, sceneName, message = {}){
                 })
             }
                 break
-        case '17':
+        case '7c':
             {
                 const targetBlock = new MathBlock({type:MathBlock.POWER, token:'6',originX: 100, originY: 250,})
                 targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 

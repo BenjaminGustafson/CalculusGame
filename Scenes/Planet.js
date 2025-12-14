@@ -2,7 +2,7 @@ import {Color, Shapes} from '../util/index.js'
 import * as GameObjects from '../GameObjects/index.js'
 import * as Scene from '../Scene.js'
 import { TileMap } from '../util/TileMap.js'
-
+import { GameObjectGroup } from '../GameObjects/GameObject.js'
 
 export function planetScene(gameState, {
     planetName,
@@ -109,12 +109,13 @@ export function planetScene(gameState, {
         }
     }
 
-    gameState.objects = [
+    
+    new GameObjectGroup([
         new GameObjects.ImageObject({originX:0, originY:0, id:bgImg}),
         ...sprites,
         player,
         new GameObjects.ImageObject({originX:0, originY:0, id:fgImg}),
-    ].concat(buttons)
+    ].concat(buttons)).insert(gameState.objects, 0)
 
     if (goTo){
         player.moveTo(goTo)

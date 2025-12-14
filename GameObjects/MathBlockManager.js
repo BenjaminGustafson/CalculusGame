@@ -63,16 +63,27 @@ export class MathBlockManager extends GameObject{
         this.createToolbar(blocks, toolBarX, toolBarY)
 
 
-        const iconSize = 30
-        this.scaleIcon = new ImageObject({id:'scaleIcon', originX:scaleYSlider.canvasX - iconSize/4,
-            originY:scaleYSlider.canvasY+scaleYSlider.canvasLength + iconSize/2, width: iconSize/2, height:iconSize})
-        this.translateIcon = new ImageObject({id:'translateIcon', originX:translateYSlider.canvasX - iconSize/4,
-            originY:translateYSlider.canvasY+translateYSlider.canvasLength + iconSize/2, width: iconSize/2, height:iconSize})
-        if (numSlider != null){
-            this.numIcon = new ImageObject({id:'numIcon', originX:numSlider.canvasX - iconSize/4,
-                originY:numSlider.canvasY+numSlider.canvasLength + iconSize/2, width: iconSize/2, height:iconSize})
+        //const iconSize = 30
+        // this.scaleIcon = new ImageObject({id:'scaleIcon', 
+        //     originX:scaleYSlider.canvasX - iconSize/4,
+        //     originY:scaleYSlider.canvasY+scaleYSlider.canvasLength + iconSize/2,
+        //     width: iconSize/2, height:iconSize})
+        // this.translateIcon = new ImageObject({id:'translateIcon',
+        //     originX:translateYSlider.canvasX - iconSize/4,
+        //     originY:translateYSlider.canvasY+translateYSlider.canvasLength + iconSize/2,
+        //     width: iconSize/2, height:iconSize})
+        translateYSlider.name = '+'
+        scaleYSlider.name = '*'
+        if (numSlider) numSlider.name = 'n'
+        translateYSlider.baseCircleColor = Color.green
+        scaleYSlider.baseCircleColor = Color.green
+        if (numSlider) numSlider.baseCircleColor = Color.green
+        // if (numSlider != null){
+        //     this.numIcon = new ImageObject({id:'numIcon', originX:numSlider.canvasX - iconSize/4,
+        //         originY:numSlider.canvasY+numSlider.canvasLength + iconSize/2, width: iconSize/2,
+        //         height:iconSize})
                 
-        }
+        // }
 
     }
 
@@ -298,9 +309,9 @@ export class MathBlockManager extends GameObject{
         }
 
 
-        if (!this.scaleYSlider.hidden) this.scaleIcon.update(ctx)
-        if (!this.translateYSlider.hidden) this.translateIcon.update(ctx)
-        if (this.numIcon != null) this.numIcon.update(ctx)
+        //if (!this.scaleYSlider.hidden) this.scaleIcon.update(ctx)
+        //if (!this.translateYSlider.hidden) this.translateIcon.update(ctx)
+        //if (this.numIcon != null) this.numIcon.update(ctx)
        
         // Update blocks
         this.toolBar.forEach(b => b.update(ctx,audioManager,mouse))
