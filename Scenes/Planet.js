@@ -104,7 +104,8 @@ export function planetScene(gameState, {
             if (gss.playerLocation.split('.')[1] == 'dialogue'){
                 Scene.loadScene(gameState, planetName + '.' + player.currentNode)
             }else {
-                Scene.loadSceneWithTransition(gameState,planetName + '.' + player.currentNode, {x:player.cx,y:player.cy})
+                Scene.loadSceneWithTransition(gameState,planetName + '.' + player.currentNode,
+                    {x:player.cx,y:player.cy})
             }
         }
     }

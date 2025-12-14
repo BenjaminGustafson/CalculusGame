@@ -289,7 +289,7 @@ export function sliderLevel(gameState, {
         nextScenes: nextScenes,
     })
     
-    return {gridGroup:gridGroup, sliderGroup:sliderGroup, targetGroup:targetGroup, tracer:tracer}
+    return {gridGroup, sliderGroup, targetGroup, tracer}
 }
 
 export function setupShipPosition(gameState, {
