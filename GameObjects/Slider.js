@@ -295,11 +295,13 @@ export class Slider extends GameObject{
         }
 
         // Slider label (numeric)
-        this.labelObject.hidden = !this.mouseOver && !this.grabbed || !this.valueLabel 
-        if (!this.labelObject.hidden){
-            this.labelObject.text = Number(this.value.toFixed(6))
-            this.labelObject.originX = circleX - this.circleRadius - 20
-            this.labelObject.originY = circleY
+        if (this.valueLabel){
+            this.labelObject.hidden = !(this.mouseOver || this.grabbed)
+            if (!this.labelObject.hidden){
+                this.labelObject.text = Number(this.value.toFixed(6))
+                this.labelObject.originX = circleX - this.circleRadius - 20
+                this.labelObject.originY = circleY
+            }
         }
     }
 

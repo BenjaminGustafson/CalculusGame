@@ -252,7 +252,7 @@ function eBlockLevel(gameState, {
     const targetBlock = new MathBlock({type:MathBlock.EXPONENT, token:'e',originX: 200, 
         originY: 250,})
     targetBlock.scaleY = scaleY
-    targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
+    targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"}))
     targetBlock.insert(gameState.objects, 1)
 
     const fLabel = new TextBox({font:'30px monospace',baseline: 'top', originX: 100,

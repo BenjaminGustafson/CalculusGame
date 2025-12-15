@@ -793,7 +793,7 @@ export function dialogueOverlay(gameState, {
             },
             originY:20,
         })
-        dialogueBox.insert(gameState.objects, 100)
+        dialogueBox.insert(gameState.objects, 1000)
         }); // end .then
 }
 

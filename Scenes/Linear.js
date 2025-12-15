@@ -452,7 +452,7 @@ function mathBlockTutorials(gameState, {
 
     if (!withLinear) {
         sySlider.hidden = true
-        mbm.scaleIcon.hidden = true
+        //mbm.scaleIcon.hidden = true
     }
 
 
