@@ -485,6 +485,10 @@ class GravityShip extends GameObject {
             increment: pSliderIncrement,
         })
 
+        const labelGroup = new GameObjectGroup([])
+            sliderGroup.insert(gameState.objects, 2)
+            labelGroup.insert(gameState.objects, LAYERS.label)
+
         this.initPos = 0
 
         this.playPauseButton = new GameObjects.Button({

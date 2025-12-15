@@ -163,6 +163,17 @@ export function sliderSetup(gameState, {
     return sliderGroup
 }
 
+export function sliderLabels(sliders){
+    var labels = []
+    for (let i = 0; i < sliders.length; i++){
+        if (sliders[i].labelObject){
+            labels.push(sliders[i].labelObject)
+        }
+    }
+    const labelGroup = new GameObjectGroup(labels)
+    labelGroup.insert(gameState.objects, LAYERS.label)
+}
+
 
 /**
  * Put constant lines after sliders
