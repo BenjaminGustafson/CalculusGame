@@ -83,53 +83,46 @@ export function loadScene(gameState, sceneName, message = {}) {
     gameState.objects = []
     gameState.update = () => { }
     
-    const sceneNameSplit = sceneName.toLowerCase().split('.', 2)
+    const [sceneNameFirst, sceneNameRemainder] = sceneName.toLowerCase().split('.', 2)
     gameState.temp.startTime = Date.now()
 
     var sceneTitle = ''
 
-    switch (sceneNameSplit[0]) {
+    switch (sceneNameFirst) {
         //------------------------------------------------------------
         // Menus (see Menus.js)
         //------------------------------------------------------------
         default:
         case "startmenu": Menus.startMenu(gameState, message['nextScene'])
-        break
-
+            break
         case "planetmap": Menus.planetMap(gameState)
-        break
-
+            break
         case "navigation": Navigation.navScene(gameState, 'ship')
-        break
-
+            break
         // Linear Planet (see Linear.js)
-        case 'linear': 
-            Linear.loadScene(gameState, sceneNameSplit[1], message)
+        case 'linear': Linear.loadScene(gameState, sceneNameRemainder, message)
             break
-
-        // Quadratic Planet
-        case "quadratic": Quadratic.loadScene(gameState, sceneNameSplit[1], message)
-            sceneTitle = 'Quadratic Planet'
+        // Quadratic Planet (Quadratic.js)
+        case "quadratic": Quadratic.loadScene(gameState, sceneNameRemainder, message)
             break
-        case "exponential": Exponential.loadScene(gameState, sceneName, message)
-            sceneTitle = 'Exponential Planet'
+        // Power Planet (Power.js)
+        case "power": Power.loadScene(gameState, sceneNameRemainder, message)
             break
-        case "sine": Sine.loadScene(gameState, sceneName, message)
+        // Exponential (Exponential.js)
+        case "exponential": Exponential.loadScene(gameState, sceneNameRemainder, message)
             break
-        case "power": Power.loadScene(gameState, sceneName, message)
+        // Sine (Sine.js)
+        case "sine": Sine.loadScene(gameState, sceneNameRemainder, message)
             break
-        case "sum": Sum.loadScene(gameState, sceneName, message)
+        case "sum": Sum.loadScene(gameState, sceneNameRemainder, message)
             break
-        case "product": Product.loadScene(gameState, sceneName, message)
+        case "product": Product.loadScene(gameState, sceneNameRemainder, message)
             break
-        case "chain": Chain.loadScene(gameState, sceneName, message)
+        case "chain": Chain.loadScene(gameState, sceneNameRemainder, message)
             break
     }
     if (sceneName != 'mainMenu'){
         journal(gameState)
-        if (sceneNameSplit.length == 2){
-            sceneTitle = capFirst(sceneNameSplit[0]) + ' ' + sceneNameSplit[1].toUpperCase()
-        }
     }
 }
 
@@ -150,6 +143,7 @@ export function sceneTitle(gameState, title){
     if (title !== ''){
         sceneTitleBox.insert(gameState.objects, 50)
     }
+    console.log(gameState.objects)
 }
 
 function journal(gameState){

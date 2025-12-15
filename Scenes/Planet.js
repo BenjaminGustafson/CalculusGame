@@ -2,7 +2,7 @@ import {Color, Shapes} from '../util/index.js'
 import * as GameObjects from '../GameObjects/index.js'
 import * as Scene from '../Scene.js'
 import { TileMap } from '../util/TileMap.js'
-
+import { GameObjectGroup } from '../GameObjects/GameObject.js'
 
 export function planetScene(gameState, {
     planetName,
@@ -42,7 +42,7 @@ export function planetScene(gameState, {
         const node = nodes[nodeName]
         
         const dirCoord = TileMap.dirToCoord(node.dir)
-        const canvasPos = tileMap.isometricToCanvas(node.x + dirCoord.x, node.y + dirCoord.y)  
+        const canvasPos = tileMap.isometricToCanvas(node.x + dirCoord.x, node.y + dirCoord.y)
 
         // Invisible button where this node is
         const button = new GameObjects.Button({
@@ -104,17 +104,19 @@ export function planetScene(gameState, {
             if (gss.playerLocation.split('.')[1] == 'dialogue'){
                 Scene.loadScene(gameState, planetName + '.' + player.currentNode)
             }else {
-                Scene.loadSceneWithTransition(gameState,planetName + '.' + player.currentNode, {x:player.cx,y:player.cy})
+                Scene.loadSceneWithTransition(gameState,planetName + '.' + player.currentNode,
+                    {x:player.cx,y:player.cy})
             }
         }
     }
 
-    gameState.objects = [
+    
+    new GameObjectGroup([
         new GameObjects.ImageObject({originX:0, originY:0, id:bgImg}),
         ...sprites,
         player,
         new GameObjects.ImageObject({originX:0, originY:0, id:fgImg}),
-    ].concat(buttons)
+    ].concat(buttons)).insert(gameState.objects, 0)
 
     if (goTo){
         player.moveTo(goTo)
@@ -162,7 +164,8 @@ export function backButton (gameState){
  */
 export function nextButton (gameState, nextScenes){
     const button = new GameObjects.Button({originX:200, originY: 50, width:100, height: 100,
-        onclick: ()=>Scene.loadScene(gameState, gameState.stored.planet, {goTo:nextScenes[0]}), label:"→"})
+        onclick: ()=>Scene.loadScene(gameState, 
+            gameState.stored.planet, {goTo:nextScenes[0]}), label:"→"})
     button.active = false
     return button
 }

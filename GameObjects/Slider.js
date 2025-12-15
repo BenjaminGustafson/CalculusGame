@@ -1,5 +1,6 @@
 import {Color, Shapes} from '../util/index.js'
 import { GameObject } from "./GameObject.js"
+import { Label } from './Label.js'
 
 /**
  * A slider UI element.
@@ -102,7 +103,11 @@ export class Slider extends GameObject{
 
         this.baseCircleColor = this.circleColor
 
-        this.circlePos = this.valueToCanvas(this.value) 
+        this.circlePos = this.valueToCanvas(this.value)
+
+        if (valueLabel){
+            this.labelObject = new Label({fontSize: this.circleRadius*2})
+        }
     }
 
     setSize(maxValue, sliderLength){
@@ -210,7 +215,8 @@ export class Slider extends GameObject{
         if (this.mouseValue != this.value){
             const dir = (this.mouseValue > this.value ? 1 : -1)
             this.setValueInternal(this.value + dir*this.increment)
-            audioManager.play('click_001', {pitch:((this.value-this.minValue) / this.sliderLength-0.5)*6, volume:0.8})
+            audioManager.play('click_001', {
+                pitch:((this.value-this.minValue) / this.sliderLength-0.5)*6, volume:0.8})
             // if (this.value%1 == 0){// == this.minValue || this.value == this.maxValue){
             //     console.log('A')
             //     audioManager.play('click4', ((this.value-this.minValue) / this.sliderLength)*3-3)
@@ -223,9 +229,11 @@ export class Slider extends GameObject{
         if (this.showLines){
             Color.setColor(ctx, Color.white)
             if (this.vertical){
-                Shapes.RoundedLine(ctx, this.canvasX, this.canvasY, this.canvasX, this.canvasY + this.canvasLength, this.lineWidth)
+                Shapes.RoundedLine(ctx, this.canvasX, this.canvasY,
+                     this.canvasX, this.canvasY + this.canvasLength, this.lineWidth)
             }else{
-                Shapes.RoundedLine(ctx, this.canvasX, this.canvasY, this.canvasX + this.canvasLength, this.canvasY, this.lineWidth)
+                Shapes.RoundedLine(ctx, this.canvasX, this.canvasY,
+                     this.canvasX + this.canvasLength, this.canvasY, this.lineWidth)
             }
 
             for (let i = 0; i <= this.sliderLength; i++){
@@ -272,9 +280,10 @@ export class Slider extends GameObject{
             centerY: circleY,
             radius:this.circleRadius,
             inset: this.clickable,
-            shadow:this.grabbed, 
+            shadow:this.grabbed,
         })
 
+        // Slider name (e.g. Velocity)
         ctx.font = `${this.circleRadius*2}px monospace`
         if (this.name != ''){
             Color.setColor(ctx, Color.white)
@@ -284,37 +293,26 @@ export class Slider extends GameObject{
             const nameY = this.canvasY + (this.vertical ? -20 : 0) 
             ctx.fillText(this.name, nameX, nameY)
         }
-        if (this.valueLabel && (this.mouseOver || this.grabbed)){
-            const text = Number(this.value.toFixed(6))
-            const textWidth = ctx.measureText(text).width
-            const labelPad = 10
-            const labelRight = circleX - this.circleRadius - 20
-            Color.setColor(ctx, Color.darkBlack)
-            Shapes.Rectangle({
-                ctx: ctx, 
-                originX: labelRight - labelPad * 2 - textWidth,
-                originY: circleY-this.circleRadius,
-                width: textWidth + 20,
-                height: this.circleRadius*2,
-                shadow: 8,
-            })
-            ctx.textAlign = 'right'
-            ctx.textBaseline = 'middle'
-            Color.setColor(ctx, Color.white)
-            ctx.fillText(text,labelRight - labelPad, circleY)
-            
-        }
-        
-        
-    }
 
+        // Slider label (numeric)
+        if (this.valueLabel){
+            this.labelObject.hidden = !(this.mouseOver || this.grabbed)
+            if (!this.labelObject.hidden){
+                this.labelObject.text = Number(this.value.toFixed(6))
+                this.labelObject.originX = circleX - this.circleRadius - 20
+                this.labelObject.originY = circleY
+            }
+        }
+    }
 
     mouseOverCircle(x,y){
         const square = x => x * x;
         if (this.vertical){
-            return square(this.canvasX - x) + square(this.circlePos- y) <= square(this.circleRadius)
+            return square(this.canvasX - x) + square(this.circlePos- y) <=
+                   square(this.circleRadius)
         } else {
-            return square(this.canvasY - y) + square(this.circlePos - x) <= square(this.circleRadius)
+            return square(this.canvasY - y) + square(this.circlePos - x) <=
+                   square(this.circleRadius)
         }
     }
 

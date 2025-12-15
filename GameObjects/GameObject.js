@@ -3,7 +3,7 @@
  */
 export class GameObject {
     // States that are handled in the main loop:
-    hidden = false // When hidden, the objects update function is not called
+    hidden = false // When hidden, the object's update function is not called
     noInput = false // When true, object recieves no input
 
     /**
@@ -51,6 +51,9 @@ export class GameObjectGroup extends GameObject{
         this.objects = objects
     }
     update(ctx, audio, mouse){
-        this.objects.forEach(obj => obj.update(ctx, audio, mouse))
+        this.objects.forEach(obj => {
+            if (!obj.hidden)
+                obj.update(ctx, audio, mouse)
+        })
     }
 }

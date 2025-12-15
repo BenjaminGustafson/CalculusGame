@@ -44,8 +44,8 @@ export class FunctionTracer extends GameObject{
         this.originCanvasY = this.grid.gridToCanvasY(this.originGridY)      
         
         this.pixelIndex = this.grid.canvasWidth // Number of pixels from the start that the tracer is on.
-        this.currentX = 0 // the current grid X-value
-        this.currentY = 0 // the most recent y-value traced
+        this.currentX = this.originGridX // the current grid X-value
+        this.currentY = this.originGridY // the most recent y-value traced
         this.gridYs = [] // y-values for each traced pixel.
         
         this.solved = false // True if the tracer hits all targets

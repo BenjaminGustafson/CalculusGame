@@ -43,6 +43,7 @@ export class Grid extends GameObject{
         gridXMax = 2, gridYMax = 2,
         labels = false, arrows = true,
         autoCellSize = false,
+        minCellSize = 20,
         lineWidthMax = 4,
         majorLinesX = 1, majorLinesY = 1,
         lineWidthMin = 1,
@@ -58,6 +59,7 @@ export class Grid extends GameObject{
             lineWidthMax, lineWidthMin,
             majorLinesX, majorLinesY,
             xAxisLabel, yAxisLabel, gridTitle,
+            minCellSize,
         });
         // The location of the x-axis (horizontal axis), starting from 0 at the top of the grid
         this.xAxis = gridYMax
@@ -78,7 +80,6 @@ export class Grid extends GameObject{
 
         this.cellSizeX = 1 // the size of one grid cell
         this.cellSizeY = 1
-        const minCellSize = 20 // pixels
         if (autoCellSize){
             /**
              * Map the scale in pixels to the best cell size.
