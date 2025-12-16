@@ -2,7 +2,7 @@ IDS
 A: astronautAPortrait
 P: astronautBPortrait
 TEXT
-A: Hey! You finally decided to give the computer puzzles a shot?
+A: Hey! You finally decided to give the puzzles a shot?
 P: Yes, I want to learn how to fly that ship.
 A: Good for you! I'd love to help you learn.
 END

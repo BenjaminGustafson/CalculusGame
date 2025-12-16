@@ -43,10 +43,20 @@ export async function loadScene(gameState, sceneName, message={}) {
             Scene.loadScene(gameState, 'planetMap')
         }
         break
+        /**
+         * Section 1: Introduction to the slider and integral tracer interface.
+         */
+
+        /**
+         * 1x1 grid puzzle
+         * Introduces how to interact with the slider. 
+         * Solution: 1
+         */
         case '1a':{
             sliderLevel(gameState, {
                 gridSetupOpts: {spacing:200, topMargin:50,
-                    gridOpts:{gridXMin:0, gridXMax:1, gridYMin:0, gridYMax:1, canvasWidth:100, canvasHeight:100, arrows:false}},
+                    gridOpts:{gridXMin:0, gridXMax:1, gridYMin:0, gridYMax:1, canvasWidth:100,
+                         canvasHeight:100, arrows:false}},
                 sliderSetupOpts: {
                     numSliders: 1,
                     sliderOpts: { circleRadius: 15, increment: 0.1, valueLabel:false}
@@ -68,7 +78,14 @@ export async function loadScene(gameState, sceneName, message={}) {
             gameState.objects.push(uiTip)
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/first.txt'})
         }
-            break
+        break
+        
+        /**
+         * 2x2 grid puzzle. 
+         * The player now sees that the sliders can go up and down, and 
+         * that the line accumulates changes.
+         * Solution: 1, 0
+         */
         case '1b':{
             sliderLevel(gameState, {
                 gridSetupOpts: {spacing:400, topMargin:150,
@@ -95,19 +112,35 @@ export async function loadScene(gameState, sceneName, message={}) {
             gameState.objects.push(uiTip)
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/upDown.txt'})
         }
-            break
+        break
+        
+/**
+ *  Section 2: Now up to 4x4 grids.
+ *  
+ */
+
+        /**
+         * Slider increment switches to 0.5 to make it easier to land on the right solution.
+         * 
+         * 
+         * Solution: 0, 1, 1, 0 
+         */
         case '2a':
             sliderLevel(gameState, {
                 sliderSetupOpts: {
                     numSliders: 4,
-                    sliderOpts: { circleRadius: 15, increment: 1}
+                    sliderOpts: { circleRadius: 15, increment: 0.5}
                 },
                 targetBuilder: buildTargetsFromYs({ targetYs:  [0, 1, 1, 2], targetOpts: { size: 20 } }),
                 tracerOpts: { numLabel: false, originGridY: 0 },
                 nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/zero.txt'})
-            break
+        break
+        
+        /**
+         * 
+         */
         case '2b':
             sliderLevel(gameState, {
                 sliderSetupOpts: {
@@ -119,7 +152,8 @@ export async function loadScene(gameState, sceneName, message={}) {
                 nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/two.txt'})
-            break
+        break
+        
         case '2c':
             sliderLevel(gameState, {
                 sliderSetupOpts: {
@@ -131,7 +165,11 @@ export async function loadScene(gameState, sceneName, message={}) {
                 nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/fraction.txt'})
-            break
+        break
+        
+        /**
+         * 
+         */
         case '2d':
             sliderLevel(gameState, {
                 sliderSetupOpts: {
@@ -143,7 +181,18 @@ export async function loadScene(gameState, sceneName, message={}) {
                 nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/nice.txt'})
-            break
+        break
+
+/**
+ * Section 3: Slope puzzles.
+ * 
+ * These puzzles show that the 
+ */
+
+        /**
+         * 3 over 2
+         * Solution: 1.5
+         */
         case '3a':
             sliderLevel(gameState, {
                 gridSetupOpts: {gridOpts:{gridXMin:0, gridXMax: 2, gridYMin:0, gridYMax:3, canvasWidth:200,canvasHeight:300, labels:true}, spacing: 200},
@@ -156,7 +205,8 @@ export async function loadScene(gameState, sceneName, message={}) {
                 nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope.txt'})
-            break
+        break
+
         case '3b':
             sliderLevel(gameState, {
                 gridSetupOpts: {gridOpts:{gridXMin:0, gridXMax: 5, gridYMin:-3, gridYMax:0, canvasWidth:500,canvasHeight:300, labels:true}, spacing: 200},
@@ -168,8 +218,9 @@ export async function loadScene(gameState, sceneName, message={}) {
                 tracerOpts: { numLabel: false, originGridY: 0 },
                 nextScenes: pathData.nodes[sceneName].next
             })
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope4.txt'})
-            break
+            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope2.txt'})
+        break
+
         case '4a':
             sliderLevel(gameState, {
                 sliderSetupOpts: {
@@ -182,7 +233,8 @@ export async function loadScene(gameState, sceneName, message={}) {
                 nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/double.txt'})
-            break
+        break
+
         case '4b':
             sliderLevel(gameState, {
                 gridSetupOpts: {gridOpts:{gridXMin:-1, gridXMax: 1, gridYMin:-2,gridYMax:2, canvasWidth:200}, spacing: 200},
@@ -196,7 +248,8 @@ export async function loadScene(gameState, sceneName, message={}) {
                 nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/triple.txt'})
-            break
+        break
+
         case '4c':
             sliderLevel(gameState, {
                 gridSetupOpts: {gridOpts:{gridXMin:-1, gridXMax: 1, gridYMin:-1, gridYMax:1}},
@@ -209,7 +262,8 @@ export async function loadScene(gameState, sceneName, message={}) {
                 nextScenes: pathData.nodes[sceneName].next
             })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/quadruple.txt'})
-            break
+        break
+
         case '5a':
             Puzzles.shipPositionLevel(gameState, {
                 sliderLevelOpts: {
@@ -233,7 +287,8 @@ export async function loadScene(gameState, sceneName, message={}) {
             }
             gameState.objects.push(uiTip)
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/ship.txt'})
-            break
+        break
+
         case '5b':
             Puzzles.shipPositionLevel(gameState, {
                 sliderLevelOpts: {
@@ -246,7 +301,8 @@ export async function loadScene(gameState, sceneName, message={}) {
                     nextScenes: pathData.nodes[sceneName].next
                 }
             })
-            break
+        break
+
         case '5c':
             Puzzles.shipPositionLevel(gameState, {
                 sliderLevelOpts: {
@@ -260,7 +316,8 @@ export async function loadScene(gameState, sceneName, message={}) {
                     },
                 hidePositionTargets:true,
             })
-            break
+        break
+
         case '5d':
             Puzzles.shipPositionLevel(gameState, {
                 sliderLevelOpts: {
@@ -282,17 +339,20 @@ export async function loadScene(gameState, sceneName, message={}) {
                     },
                 hidePositionTargets:true,
             })
-            break
+        break
+
         case '6a':
             mathBlockTutorials(gameState, { targetVals: [1, 1, 1, 1, 1, 1, 1, 1], 
                 nextScenes: pathData.nodes[sceneName].next,
                 withUITip: true })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/constantBlock.txt'})
-            break
+        break
+
         case '6b':
             mathBlockTutorials(gameState, { targetVals: [-1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5], nextScenes: ["linear.7a"] })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/constantBlock2.txt'})
-            break
+        break
+
         case '7a':
             {
                 const targetBlock = new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
@@ -314,7 +374,8 @@ export async function loadScene(gameState, sceneName, message={}) {
                 sySlider.hidden = true
             }
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative.txt'})
-            break
+        break
+
         case '7b':
             {
                 const targetBlock = new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
@@ -337,7 +398,8 @@ export async function loadScene(gameState, sceneName, message={}) {
                 sySlider.hidden = true
             }
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative2.txt'})
-            break
+        break
+
         case '7c':
             {
                 const targetBlock = new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
@@ -361,7 +423,8 @@ export async function loadScene(gameState, sceneName, message={}) {
                 sySlider.hidden = true
             }
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative3.txt'})
-            break
+        break
+
         case '7d':
             {
                 const targetBlock = new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
@@ -386,7 +449,7 @@ export async function loadScene(gameState, sceneName, message={}) {
             }
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative4.txt'})
             Puzzles.planetUnlockOnSolve(gameState, {planetUnlock: 'quadratic'})
-            break
+        break
     }
 }
 
