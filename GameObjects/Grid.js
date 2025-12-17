@@ -47,7 +47,7 @@ export class Grid extends GameObject{
         lineWidthMax = 4,
         majorLinesX = 1, majorLinesY = 1,
         lineWidthMin = 1,
-        xAxisLabel= "", yAxisLabel = "", gridTitle="",
+        xAxisLabel= "", yAxisLabel = "", gridTitle,
     }){
         super()
         Object.assign(this, {
@@ -205,15 +205,15 @@ export class Grid extends GameObject{
     update(ctx, audioManager, mouse){
         ctx.translate(this.canvasX,this.canvasY)
         Color.setColor(ctx, this.bgColor)
-        ctx.shadowColor = 'rgba(255, 255, 255, 0.05)';
-        ctx.shadowBlur = 5;
-        ctx.shadowOffsetX = -5;
-        ctx.shadowOffsetY = -5;
-        ctx.fillRect(0,0,this.canvasWidth,this.canvasHeight)
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-        ctx.shadowBlur = 10;
-        ctx.shadowOffsetX = 5;
-        ctx.shadowOffsetY = 5;
+        // ctx.shadowColor = 'rgba(255, 255, 255, 0.05)';
+        // ctx.shadowBlur = 5;
+        // ctx.shadowOffsetX = -5;
+        // ctx.shadowOffsetY = -5;
+        //ctx.fillRect(0,0,this.canvasWidth,this.canvasHeight)
+        // ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+        // ctx.shadowBlur = 8;
+        // ctx.shadowOffsetX = 5;
+        // ctx.shadowOffsetY = 5;
         ctx.fillRect(0,0,this.canvasWidth,this.canvasHeight)
         ctx.shadowColor = 'transparent';
         Color.setColor(ctx,this.lineColor)
@@ -289,12 +289,112 @@ export class Grid extends GameObject{
             i++
         }
 
-        ctx.fillText(this.gridTitle, this.canvasWidth/2, -30)
-        ctx.fillText(this.xAxisLabel, this.canvasWidth/2, this.canvasHeight+50)
-        ctx.rotate(-Math.PI/2)
-        ctx.fillText(this.yAxisLabel, -this.canvasHeight/2, -80)
+        if (this.gridTitle){
+            ctx.fillText(this.gridTitle, this.canvasWidth/2, -30)
+        }
+        if (this.labels){
+            ctx.fillText(this.xAxisLabel, this.canvasWidth/2, this.canvasHeight+50)
+            ctx.rotate(-Math.PI/2)
+            ctx.fillText(this.yAxisLabel, -this.canvasHeight/2, -80)
+        }
 
         ctx.resetTransform()
     }
+
+    // update(ctx, audioManager, mouse){
+    //     Color.setColor(ctx, this.bgColor)
+    //     ctx.shadowColor = 'rgba(255, 255, 255, 0.05)';
+    //     ctx.shadowBlur = 5;
+    //     ctx.shadowOffsetX = -5;
+    //     ctx.shadowOffsetY = -5;
+    //     ctx.fillRect(this.canvasX,this.canvasY,this.canvasX+this.canvasWidth,this.canvasY+this.canvasHeight)
+    //     ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+    //     ctx.shadowBlur = 10;
+    //     ctx.shadowOffsetX = 5;
+    //     ctx.shadowOffsetY = 5;
+    //     ctx.fillRect(this.canvasX,this.canvasY,this.canvasX+this.canvasWidth,this.canvasY+this.canvasHeight)
+    //     ctx.shadowColor = 'transparent';
+    //     Color.setColor(ctx,this.lineColor)
+
+    //     // Horizontal lines. Starting at top = 0
+    //     ctx.font = '20px monospace'
+    //     ctx.textAlign = 'right'
+    //     ctx.textBaseline = 'middle'
+    //     var i = 0 // line count
+    //     var gy = this.gridYMin 
+    //     while (gy < this.gridYMax){
+    //         gy = Number((this.gridYMin + i*this.cellSizeY).toFixed(6))
+    //         const cy = this.canvasHeight - this.yScale*i*this.cellSizeY// canvas x (relative)
+    //         var lineWidth = this.lineWidthMax  
+    //         var endCap = 'rounded'
+    //         var endCapSize = lineWidth
+    //         var startX = 0
+    //         var endX = this.canvasWidth
+    //         const ratio = gy / (this.majorLinesY*this.cellSizeY)
+    //         if (gy == 0){
+    //             if (this.arrows){
+    //                 endCap = 'arrow'
+    //                 // endCapSize *= 1.5
+    //                 // startX -= 5
+    //                 // endX += 5
+    //             } 
+    //             if (this.labels) ctx.fillText(gy,  - 20, cy)
+    //         } else if (Math.abs(ratio - Math.round(ratio)) < 1e-9){
+    //             lineWidth = this.lineWidthMax/2 // 0.5*(this.lineWidthMin + this.lineWidthMax)  
+    //             if (this.labels) ctx.fillText(gy,  - 20, cy)
+    //         }else {
+    //             lineWidth = this.lineWidthMax / 4
+    //         }
+    //         Shapes.Line(
+    //             ctx,
+    //             this.canvasX + startX, this.canvasY + cy,
+    //             this.canvasX + endX, this.canvasY + cy, 
+    //             lineWidth, 
+    //             endCap,
+    //             endCapSize
+    //         )
+    //         i++
+    //     }
+
+    //     // Vertical lines. Starting at left = 0
+    //     ctx.font = '20px monospace'
+    //     ctx.textAlign = 'center'
+    //     ctx.textBaseline = 'top'
+    //     var i = 0 // line count
+    //     var gx = this.gridXMin 
+    //     while (gx < this.gridXMax){
+    //         gx = Number((this.gridXMin + i*this.cellSizeX).toFixed(6))
+    //         const cx = this.xScale*i*this.cellSizeX// canvas x (relative)
+    //         var lineWidth = this.lineWidthMax  
+    //         var endCap = 'none'
+    //         const ratio = gx / (this.majorLinesX*this.cellSizeX)
+    //         if (gx == 0){
+    //             if (this.arrows) endCap = 'arrow'
+    //             if (this.labels) ctx.fillText(gx, cx, this.canvasHeight + 20)
+    //         } else if (Math.abs(ratio - Math.round(ratio)) < 1e-9){
+    //         lineWidth = this.lineWidthMax/2 // 0.5*(this.lineWidthMin + this.lineWidthMax)  
+    //         if (this.labels) ctx.fillText(gx, cx, this.canvasHeight + 20)
+    //         }else {
+    //             lineWidth = this.lineWidthMax / 4
+    //         }
+    //         Shapes.Line(
+    //             ctx,
+    //             this.canvasX + cx, this.canvasY + 0, 
+    //             this.canvasX + cx, this.canvasHeight, 
+    //             lineWidth, 
+    //             endCap
+    //         )
+    //         i++
+    //     }
+
+    //     if (this.gridTitle){
+    //         ctx.fillText(this.gridTitle, this.canvasWidth/2, -30)
+    //     }
+    //     if (this.labels){
+    //         ctx.fillText(this.xAxisLabel, this.canvasWidth/2, this.canvasHeight+50)
+    //         ctx.rotate(-Math.PI/2)
+    //         ctx.fillText(this.yAxisLabel, -this.canvasHeight/2, -80)
+    //     }
+    // }
 
 }
