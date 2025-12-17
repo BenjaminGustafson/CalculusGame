@@ -58,11 +58,18 @@ export async function loadScene(gameState, sceneName, message = {}){
         }
         break
         /**
-         * Section 1: Exponential slider puzzles. The targets match the 
-         * value of the sliders.
+         * Section 1: Slider puzzles linked to targets
+         * 
+         * These are normal 2 graph slider puzzles with a twist:
+         * the targets move along with the sliders. 
+         * This leads the player to consider a functions that is its own derivative.
          */
-        case '1a':{
-            // TODO make grids smaller just for this level
+
+        /**
+         * A 2 slider puzzle. Introduces the slider-target link.
+         * Solution: 1, 2
+         */
+        case '1a':{     
             const numSliders = 2
             const {sliderGroup, targetGroup} = Puzzles.sliderLevel(gameState, {
                 gridSetupOpts: {
@@ -94,6 +101,11 @@ export async function loadScene(gameState, sceneName, message = {}){
             expSliderTargets(gameState, {sliders:sliderGroup.objects, targets:targetGroup.objects})
         }
         break
+        
+        /**
+         * A 4 slider puzzle with x-increment 1. Results in powers of 2.
+         * Solution: 1,2,4,8
+         */
         case '1b':
             // 4 sliders, ys are powers of 2 up to 16
             {
@@ -130,12 +142,14 @@ export async function loadScene(gameState, sceneName, message = {}){
                 expSliderTargets(gameState, {sliders:sliderGroup.objects, targets:targetGroup.objects})
             }
             break
+        
+        /**
+         * 4 sliders with mathblock
+         * Solution: 2^n 
+         */
         case '1c':
-            /**
-             * 4 sliders with mathblock
-             * Solution: 2^n 
-             */
-            exponentialLevel(gameState, {numSliders:4,
+            exponentialLevel(gameState, {
+                numSliders:4,
                 nextScenes,
                 withMathBlock:true,
                 gridXMax:4,gridYMax:16,
@@ -144,21 +158,24 @@ export async function loadScene(gameState, sceneName, message = {}){
                 oneSlider:true,
             })
             break
+
+        /**
+         * 8 slider exponential
+         * Solution:
+         */
         case '1d':
-            /**
-             * 8 slider exponential
-             */
-            exponentialLevel(gameState, {numSliders:8,
+            exponentialLevel(gameState, {
+                numSliders:8,
                 nextScenes,
                 gridXMax:4,gridYMax:30,
                 sliderSize: 15, targetSize:16, increment:1}
             )
-            
             break
+
+        /**
+         * 8 slider exponential with mathblock
+         */
         case '5':
-            /**
-             * 8 slider exponential with mathblock
-             */
             exponentialLevel(gameState, {numSliders:8,
                 nextScenes,
                 withMathBlock:true,
@@ -168,11 +185,13 @@ export async function loadScene(gameState, sceneName, message = {}){
                 oneSlider:true,
             })
             break
-        case '6':
-            /**
+
+        /**
              * 400 slider exponential with mathblock
              * Solution: 2.7^x
-             */
+        */
+        case '6':
+            
             exponentialLevel(gameState, {numSliders:400,
                 nextScenes,
                 withMathBlock:true,
