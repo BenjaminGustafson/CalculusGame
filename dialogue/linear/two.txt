@@ -2,8 +2,8 @@ IDS
 A: astronautAPortrait
 P: astronautBPortrait
 TEXT
-A: If you want to go up by 2 grid squares, you have to set the slider to 2.
+A: If you want to go up by 2 squares, you have to set the slider to 2.
 P: Makes sense.
+END
 A: If you wanted to go up 3...
 P: Yes, I get it.
-END

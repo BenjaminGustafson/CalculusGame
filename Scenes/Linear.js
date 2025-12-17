@@ -43,9 +43,11 @@ export async function loadScene(gameState, sceneName, message={}) {
             Scene.loadScene(gameState, 'planetMap')
         }
         break
-        /**
-         * Section 1: Introduction to the slider and integral tracer interface.
-         */
+/**
+ * Section 1: Introduction to the slider and integral tracer interface.
+ * 
+ * 
+ */
 
         /**
          * 1x1 grid puzzle
@@ -115,7 +117,7 @@ export async function loadScene(gameState, sceneName, message={}) {
         break
         
 /**
- *  Section 2: Now up to 4x4 grids.
+ *  Section 2: Now up to 4x4 grids. 
  *  
  */
 
@@ -185,8 +187,8 @@ export async function loadScene(gameState, sceneName, message={}) {
 
 /**
  * Section 3: Slope puzzles.
- * 
- * These puzzles show that the 
+ * - Sliders set the slope
+ * - Slope is delta y over delta x 
  */
 
         /**
@@ -207,6 +209,10 @@ export async function loadScene(gameState, sceneName, message={}) {
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope.txt'})
         break
 
+        /**
+         * -3 over 5
+         * Solution: -0.6
+         */
         case '3b':
             sliderLevel(gameState, {
                 gridSetupOpts: {gridOpts:{gridXMin:0, gridXMax: 5, gridYMin:-3, gridYMax:0, canvasWidth:500,canvasHeight:300, labels:true}, spacing: 200},
@@ -221,6 +227,17 @@ export async function loadScene(gameState, sceneName, message={}) {
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope2.txt'})
         break
 
+/**
+ * 
+ * Section 4: Multiple sliders per unit.
+ * - 
+ * 
+ */
+
+        /**
+         * 8 sliders, 2 per unit
+         *  
+         */
         case '4a':
             sliderLevel(gameState, {
                 sliderSetupOpts: {
@@ -235,6 +252,9 @@ export async function loadScene(gameState, sceneName, message={}) {
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/double.txt'})
         break
 
+        /**
+         * 
+         */
         case '4b':
             sliderLevel(gameState, {
                 gridSetupOpts: {gridOpts:{gridXMin:-1, gridXMax: 1, gridYMin:-2,gridYMax:2, canvasWidth:200}, spacing: 200},
@@ -250,6 +270,9 @@ export async function loadScene(gameState, sceneName, message={}) {
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/triple.txt'})
         break
 
+        /**
+         * 
+         */
         case '4c':
             sliderLevel(gameState, {
                 gridSetupOpts: {gridOpts:{gridXMin:-1, gridXMax: 1, gridYMin:-1, gridYMax:1}},
@@ -264,7 +287,15 @@ export async function loadScene(gameState, sceneName, message={}) {
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/quadruple.txt'})
         break
 
-        case '5a':
+/**
+ * Section 5: Ship position puzzles
+ * - Slope applied to position and velocity
+ */
+
+        /**
+         * 
+         */
+        case '5a':{
             Puzzles.shipPositionLevel(gameState, {
                 sliderLevelOpts: {
                     sliderSetupOpts: {
@@ -273,9 +304,9 @@ export async function loadScene(gameState, sceneName, message={}) {
                     },
                     targetBuilder: buildTargetsFromYs({ targetYs: [0.5,1,1.5,2],
                         targetOpts: { size: 20 } }),
-                    nextScenes: pathData.nodes[sceneName].next
-                }
-            })
+                        nextScenes: pathData.nodes[sceneName].next
+                    }
+                })
             const uiTip = {
                 update: function (ctx) {
                     Color.setColor(ctx, Color.lightGray)
@@ -287,8 +318,12 @@ export async function loadScene(gameState, sceneName, message={}) {
             }
             gameState.objects.push(uiTip)
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/ship.txt'})
+        }
         break
 
+        /**
+         * 
+         */
         case '5b':
             Puzzles.shipPositionLevel(gameState, {
                 sliderLevelOpts: {
@@ -303,6 +338,9 @@ export async function loadScene(gameState, sceneName, message={}) {
             })
         break
 
+        /**
+         * 
+         */
         case '5c':
             Puzzles.shipPositionLevel(gameState, {
                 sliderLevelOpts: {
@@ -318,6 +356,9 @@ export async function loadScene(gameState, sceneName, message={}) {
             })
         break
 
+        /**
+         * 
+         */
         case '5d':
             Puzzles.shipPositionLevel(gameState, {
                 sliderLevelOpts: {
@@ -341,6 +382,13 @@ export async function loadScene(gameState, sceneName, message={}) {
             })
         break
 
+/**
+ * Section 6: 
+ */
+
+        /**
+         * 
+         */
         case '6a':
             mathBlockTutorials(gameState, { targetVals: [1, 1, 1, 1, 1, 1, 1, 1], 
                 nextScenes: pathData.nodes[sceneName].next,
@@ -348,10 +396,17 @@ export async function loadScene(gameState, sceneName, message={}) {
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/constantBlock.txt'})
         break
 
+        /**
+         * 
+         */
         case '6b':
             mathBlockTutorials(gameState, { targetVals: [-1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5], nextScenes: ["linear.7a"] })
             Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/constantBlock2.txt'})
         break
+
+/**
+ * Section 7: Linear rule.
+ */
 
         case '7a':
             {
