@@ -1,5 +1,6 @@
 import {Color, Shapes} from '../util/index.js'
 import { GameObject } from "./GameObject.js"
+import * as SyntaxTree from '../util/SyntaxTree.js'
 
 /**
  * 
@@ -13,13 +14,13 @@ import { GameObject } from "./GameObject.js"
 
 export class MathBlock extends GameObject{
 
-    static VARIABLE = 0 // m x +b
-    static POWER = 1    // m []^2 +b
-    static EXPONENT = 2 // m e^[] +b
-    static FUNCTION = 3 // m f([]) +b
-    static BIN_OP = 4   // []+[]
-    static CONSTANT = 5 // c
-    static FRACTION = 6 // [] / []
+    static VARIABLE = 'VARIABLE' // m x +b
+    static POWER = 'POWER'    // m []^2 +b
+    static EXPONENT = 'EXPONENT' // m e^[] +b
+    static FUNCTION = 'FUNCTION' // m f([]) +b
+    static BIN_OP = 'BIN_OP'   // []+[]
+    static CONSTANT = 'CONSTANT' // c
+    static FRACTION = '' // [] / []
 
     depth = 0
     
@@ -361,23 +362,127 @@ export class MathBlock extends GameObject{
        this.draw(ctx)
     }
 
-    static fromSyntaxTree (tree){
-        var num_children = 0
-        if (tree.left && tree.right){
-            num_children = 2
-        }else if (tree.left || tree.right){
-            num_children = 1
+    
+
+    /**
+     * Grammar:
+     * Block
+     * - Brackets [] surround every block
+     * Inside of block
+     * - Optional scalar a and translate b, i.e. a*x+b
+     * Content
+     * - See MathBlock types
+     * 
+     * B -> [I]
+     * I -> num * C + num | C + num | num * C | C
+     * C -> num | var | var B | B ^ num | num ^ B | e ^ B | B + B | B * B
+     * 
+     * Examples:
+     * [3*x+4]
+     * [[x+2]^2]
+     * [e^[-1*x]]
+     * [2*x+-5.5]
+     * [3*sin[cos[2]]]
+     * [[x]+[x]]
+     */
+    static parse(expression) {
+        /**
+         * Turn a expression string into an array of token strings
+         */
+        function tokenize(expression) {
+            // Match numbers, variables and function names, parens and operators
+            const re = /-?\d+\.?\d*|[a-zA-Z]+|[\[\]()+*^]/g;
+            return expression.match(re) || [];
         }
 
-        const block = new MathBlock(num_children, tree.value)
-        if (tree.left){
-            block.setChild(0, MathBlock.fromSyntaxTree(tree.left))
+        const numRE = /-?\d+\.?\d*/
+        const varRE = /[a-zA-Z]+/
+
+        const tokens = tokenize(expression);
+        let i = 0
+
+        // B -> [I]
+        function parseBlock() {
+            if (tokens[i] == '[') {
+                i++;
+                const block = parseInside();
+                if (tokens[i] != ']') {
+                    throw new Error('Expected ]');
+                }
+                i++;
+                return block;
+            }
         }
-        if (tree.right){
-            block.setChild(1, MathBlock.fromSyntaxTree(tree.right))
+
+        // I -> num * C + num  | num * C | C + num | C
+        function parseInside(){
+            let a = 1
+            let b = 0
+            if (numRE.test(tokens[i]) && tokens[i+1] == '*'){
+                a = tokens[i]
+                i += 2;
+            }
+            const block = parseContent()
+            if (tokens[i] == '+' && numRE.test(tokens[i+1])){
+                b = tokens[i+1]
+                block.translateY = Number(b)
+                i += 2;
+            }
+            block.scaleY = Number(a)
+            return block
         }
-        block.setupChildren()
-        return block
+
+        // C -> num ^ B | e ^ B | num | var ( B ) | var | B ^ num | B + B | B * B
+        function parseContent() {
+            let block;
+            if ((numRE.test(tokens[i]) || tokens[i] == 'e') && tokens[i+1] == '^'){ // num ^ B | e ^ b
+                block = new MathBlock({type: MathBlock.EXPONENT, token: tokens[i]})
+                i += 2
+                block.children[0] = parseBlock()
+            }else if (numRE.test(tokens[i])){ // num
+                block = new MathBlock({type: MathBlock.CONSTANT})
+                block.translateY = Number(tokens[i])
+                i++
+            }else if (varRE.test(tokens[i]) && tokens[i+1] == '('){ // var ( B )
+                block = new MathBlock({type: MathBlock.FUNCTION, token: tokens[i]})
+                i += 2
+                block.children[0] = parseBlock()
+                if (tokens[i] == ')'){
+                    i++
+                }else {
+                    throw new Error('Expected ) but received ' + tokens[i])
+                }
+            }else if (varRE.test(tokens[i])) { // var
+                block = new MathBlock({type: MathBlock.VARIABLE, token: tokens[i]})
+                i++
+            } else { 
+                const child0 = parseBlock()
+                if (tokens[i] == '^' && numRE.test(tokens[i+1])){ // B ^ num
+                    block = new MathBlock({type: MathBlock.POWER, token: tokens[i]})
+                    i+=2
+                }else if (tokens[i] == '+' || tokens[i] == '*'){ // B + B | B * B
+                    block = new MathBlock({type: MathBlock.BIN_OP, token: tokens[i]})
+                    i++
+                }else {
+                    throw new Error('Unexpected input on token ' + tokens[i])
+                }
+                block.children[0] = child0
+                block.children[1] = parseBlock()
+            }
+
+            return block
+        }
+
+        const block = parseBlock()
+        if (i < tokens.length) {
+            throw new Error('Unexpected input on token ' + tokens[i]);
+        }
+        return block;
+    }
+
+
+    static fromString(expression){
+        return this.fromSyntaxTree(SyntaxTree.parse(expression))
     }
 
     toArray (){
