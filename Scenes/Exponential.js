@@ -63,6 +63,8 @@ export async function loadScene(gameState, sceneName, message = {}){
          * These are normal 2 graph slider puzzles with a twist:
          * the targets move along with the sliders. 
          * This leads the player to consider a functions that is its own derivative.
+         * 
+         * As we add more targets, the function approaches 2.7^x.
          */
 
         /**
@@ -94,6 +96,7 @@ export async function loadScene(gameState, sceneName, message = {}){
                     numSliders,
                     sliderOpts: {
                         circleRadius:15,
+                        increment:0.5,
                     },
                 },
                 nextScenes,
@@ -107,7 +110,6 @@ export async function loadScene(gameState, sceneName, message = {}){
          * Solution: 1,2,4,8
          */
         case '1b':
-            // 4 sliders, ys are powers of 2 up to 16
             {
                 const numSliders = 4
                 const {sliderGroup, targetGroup} = Puzzles.sliderLevel(gameState, {
@@ -141,23 +143,67 @@ export async function loadScene(gameState, sceneName, message = {}){
                 })
                 expSliderTargets(gameState, {sliders:sliderGroup.objects, targets:targetGroup.objects})
             }
-            break
+        break
         
         /**
          * 4 sliders with mathblock
          * Solution: 2^n 
          */
-        case '1c':
-            exponentialLevel(gameState, {
-                numSliders:4,
+        case '1c': {
+            const numSliders = 4
+            const {sliderGroup, targetGroup, gridGroup} = Puzzles.sliderLevel(gameState, {
+                gridSetupOpts: {
+                    gridOpts:{
+                        gridXMax:4,
+                        gridYMax:16,
+                        gridXMin:0,
+                        gridYMin:0,
+                        autoCellSize: true,
+                        minCellSize:20,
+                        labels:true,
+                    },
+                },
+                tracerOpts: {originGridY: 1},
+                targetBuilder: Puzzles.buildTargetsFromYs({
+                    targetYs: new Array(numSliders).fill(0),
+                    targetOpts:{
+                        size:20
+                    }, 
+                    indexOffset: 0}
+                ),
+                sliderSetupOpts: {
+                    numSliders,
+                    sliderOpts: {
+                        circleRadius:15,
+                        increment:0.2,
+                    },
+                },
                 nextScenes,
-                withMathBlock:true,
-                gridXMax:4,gridYMax:16,
-                lastTarget:16,
-                increment: 0.2,
-                oneSlider:true,
             })
-            break
+            expSliderTargets(gameState, {sliders:sliderGroup.objects, targets:targetGroup.objects})
+            const gridRight = gridGroup.objects[1]
+            const mb = MathBlock.parse('[0^[x]]')
+            mb.x = gridRight.originX
+            mb.y = gridRight.originY - 100
+            mb.isHighlighted = true
+            mb.insert(gameState.objects)
+            // TODO add slider
+            const nSlider = new Slider({
+                canvasX: gridRight.originX+gridRight.canvasWidth+100,
+                canvasY: gridRight.originY,
+                canvasLength: gridRight.canvasHeight,
+                minValue: 0, maxValue: 5,
+                circleColor: Color.green,
+                circleRadius: 15,
+                increment: 0.5,
+            })
+            nSlider.insert(gameState.objects)
+            Puzzles.addToUpdate(gameState, () => {
+                mb.token = nSlider.value.toFixed(1)
+                Puzzles.setSlidersToMathBlock({sliders: sliderGroup.objects, mathBlock: mb})
+            })
+        }
+        break
 
         /**
          * 8 slider exponential
@@ -170,12 +216,12 @@ export async function loadScene(gameState, sceneName, message = {}){
                 gridXMax:4,gridYMax:30,
                 sliderSize: 15, targetSize:16, increment:1}
             )
-            break
+        break
 
         /**
          * 8 slider exponential with mathblock
          */
-        case '5':
+        case '1e':
             exponentialLevel(gameState, {numSliders:8,
                 nextScenes,
                 withMathBlock:true,
@@ -184,14 +230,13 @@ export async function loadScene(gameState, sceneName, message = {}){
                 sliderSize: 12, targetSize:16, increment: 0.2,
                 oneSlider:true,
             })
-            break
+        break
 
         /**
-             * 400 slider exponential with mathblock
-             * Solution: 2.7^x
+         * 400 slider exponential with mathblock
+         * Solution: 2.7^x
         */
-        case '6':
-            
+        case '1f':
             exponentialLevel(gameState, {numSliders:400,
                 nextScenes,
                 withMathBlock:true,
@@ -200,50 +245,80 @@ export async function loadScene(gameState, sceneName, message = {}){
                 sliderSize: 5, targetSize:6, increment: 0.1,
                 oneSlider:true,
             })
-            break
+        break
+
+        /**
+         * Section 3: Population puzzles 
+         */
         case '3a':
-            /**
-             * 
-             */
             populationLevel(gameState, {
                 nextScenes,
                 targetX:3.5, targetY:1000,
             })
-            break
+        break
+
         case '3b':
             populationLevel(gameState, {
                 nextScenes,
                 targetX:5, targetY:400,
             })
-            break
+        break
+
         case '3c':
             populationLevel(gameState, {
                 nextScenes,
                 targetX:1.7, targetY:1000,
             })
-            break
+        break
+
+        /**
+         * Section 4: Mathblock tutorial
+         * 
+         * - The e block
+         */
+
         case '4a':
             eBlockLevel(gameState, {
 
             })
-            break
+        break
+
         case '4b':
             eBlockLevel(gameState, {
                 scaleY:2,
             })
         break
+
         case '4c':
             eBlockLevel(gameState, {
                 scaleY:0.5,
                 sliderOpts :{maxValue:2, sliderLength:4, showAxis:true, increment:0.5}, 
             })
         break
+        
         case '4d':
             eBlockLevel(gameState, {
                 scaleY:-1,
                 sliderOpts :{maxValue:2, sliderLength:4, showAxis:true, increment:0.5}, 
             })
         break
+
+        /**
+         * Section 5: exp rule
+         * 
+         * - e^x -> e^x 
+         * 
+         */
+        
+        /**
+         * Section 6: e^x variations 
+         * 
+         * Setting f = -f' gives e^-x
+         * Setting f = f'' gives e^x
+         * 
+         */
+
+
         case '20':{
             const targetBlock = new MathBlock({type:MathBlock.EXPONENT, token:'e',originX: 100, originY: 250,})
 
@@ -260,7 +335,9 @@ export async function loadScene(gameState, sceneName, message = {}){
             })
             Planet.dialogueScene(gameState, {filePath: './dialogue/expE.txt', noExit:true})
         }
-        break   
+        break
+
+
     }
 }
 
