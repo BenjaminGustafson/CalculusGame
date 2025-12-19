@@ -1,7 +1,7 @@
 import {Color, Shapes} from '../util/index.js'
 import * as GameObjects from '../GameObjects/index.js'
 import * as Scene from '../Scene.js'
-import { GameObject } from '../GameObjects/GameObject.js'
+import { GameObjectGroup, GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
 import * as Puzzles from './Puzzles.js'
 import { TileMap } from '../util/TileMap.js'
@@ -485,9 +485,8 @@ class GravityShip extends GameObject {
             increment: pSliderIncrement,
         })
 
-        const labelGroup = new GameObjectGroup([])
-            sliderGroup.insert(gameState.objects, 2)
-            labelGroup.insert(gameState.objects, LAYERS.label)
+        //const labelGroup = new GameObjectGroup([])
+        //labelGroup.insert(gameState.objects, Puzzles.LAYERS.label)
 
         this.initPos = 0
 
@@ -538,7 +537,6 @@ class GravityShip extends GameObject {
             this.positionSlider.setValue(this.positionTracer.currentY)
             this.playPauseButton.label = '⏮'
         }
-
 
         this.gravitySlider.update(ctx, audio, mouse)
         this.positionSlider.update(ctx, audio, mouse)
