@@ -32,6 +32,33 @@ function expSliderTargets(gameState, {
     })
 }
 
+function expMBSliderSetup(gameState, {
+    gridGroup, sliderGroup, sliderOpts,
+}){
+    const gridRight = gridGroup.objects[1]
+    const mb = MathBlock.parse('[0^[x]]')
+    mb.x = gridRight.originX
+    mb.y = gridRight.originY - 100
+    mb.isHighlighted = true
+    mb.insert(gameState.objects)
+    // TODO add slider
+    const nSlider = new Slider({
+        canvasX: gridRight.originX+gridRight.canvasWidth+100,
+        canvasY: gridRight.originY,
+        canvasLength: gridRight.canvasHeight,
+        minValue: 0, maxValue: 5,
+        circleColor: Color.green,
+        circleRadius: 15,
+        increment: 0.5,
+        ...sliderOpts,
+    })
+    nSlider.insert(gameState.objects)
+    Puzzles.addToUpdate(gameState, () => {
+        mb.token = nSlider.value.toFixed(1)
+        Puzzles.setSlidersToMathBlock({sliders: sliderGroup.objects, mathBlock: mb})
+    })
+}
+
 
 export async function loadScene(gameState, sceneName, message = {}){
     gameState.stored.planet = 'exponential'
@@ -181,27 +208,7 @@ export async function loadScene(gameState, sceneName, message = {}){
                 nextScenes,
             })
             expSliderTargets(gameState, {sliders:sliderGroup.objects, targets:targetGroup.objects})
-            const gridRight = gridGroup.objects[1]
-            const mb = MathBlock.parse('[0^[x]]')
-            mb.x = gridRight.originX
-            mb.y = gridRight.originY - 100
-            mb.isHighlighted = true
-            mb.insert(gameState.objects)
-            // TODO add slider
-            const nSlider = new Slider({
-                canvasX: gridRight.originX+gridRight.canvasWidth+100,
-                canvasY: gridRight.originY,
-                canvasLength: gridRight.canvasHeight,
-                minValue: 0, maxValue: 5,
-                circleColor: Color.green,
-                circleRadius: 15,
-                increment: 0.5,
-            })
-            nSlider.insert(gameState.objects)
-            Puzzles.addToUpdate(gameState, () => {
-                mb.token = nSlider.value.toFixed(1)
-                Puzzles.setSlidersToMathBlock({sliders: sliderGroup.objects, mathBlock: mb})
-            })
+            expMBSliderSetup(gameState, {gridGroup, sliderGroup})
         }
         break
 
@@ -210,61 +217,142 @@ export async function loadScene(gameState, sceneName, message = {}){
          * Solution:
          */
         case '1d':
-            exponentialLevel(gameState, {
-                numSliders:8,
-                nextScenes,
-                gridXMax:4,gridYMax:30,
-                sliderSize: 15, targetSize:16, increment:1}
-            )
+            {
+                const numSliders = 8
+                const {sliderGroup, targetGroup} = Puzzles.sliderLevel(gameState, {
+                    gridSetupOpts: {
+                        gridOpts:{
+                            gridXMax:4,
+                            gridYMax:30,
+                            gridXMin:0,
+                            gridYMin:0,
+                            autoCellSize: true,
+                            minCellSize:20,
+                            labels:true,
+                        },
+                    },
+                    tracerOpts: {originGridY: 1},
+                    targetBuilder: Puzzles.buildTargetsFromYs({
+                        targetYs: new Array(numSliders).fill(0),
+                        targetOpts:{
+                            size:16
+                        }, 
+                        indexOffset: 0}
+                    ),
+                    sliderSetupOpts: {
+                        numSliders,
+                        sliderOpts: {
+                            circleRadius:15,
+                            increment:0.5,
+                        },
+                    },
+                    nextScenes,
+                })
+                expSliderTargets(gameState, {sliders:sliderGroup.objects, targets:targetGroup.objects})
+            }
+
         break
 
         /**
          * 8 slider exponential with mathblock
          */
         case '1e':
-            exponentialLevel(gameState, {numSliders:8,
-                nextScenes,
-                withMathBlock:true,
-                gridXMax:4,gridYMax:30,
-                lastTarget:27,
-                sliderSize: 12, targetSize:16, increment: 0.2,
-                oneSlider:true,
-            })
+            {
+                const numSliders = 8
+                const {sliderGroup, targetGroup, gridGroup} = Puzzles.sliderLevel(gameState, {
+                    gridSetupOpts: {
+                        gridOpts:{
+                            gridXMax:4,
+                            gridYMax:30,
+                            gridXMin:0,
+                            gridYMin:0,
+                            autoCellSize: true,
+                            minCellSize:20,
+                            labels:true,
+                        },
+                    },
+                    tracerOpts: {originGridY: 1},
+                    targetBuilder: Puzzles.buildTargetsFromYs({
+                        targetYs: new Array(numSliders).fill(0),
+                        targetOpts:{
+                            size:16
+                        }, 
+                        indexOffset: 0}
+                    ),
+                    sliderSetupOpts: {
+                        numSliders,
+                        sliderOpts: {
+                            circleRadius:15,
+                            increment:0.5,
+                        },
+                    },
+                    nextScenes,
+                })
+                expSliderTargets(gameState, {sliders:sliderGroup.objects, targets:targetGroup.objects})
+                expMBSliderSetup(gameState, {gridGroup, sliderGroup, sliderOpts:{increment: 0.1}})
+            }
+
         break
 
         /**
-         * 400 slider exponential with mathblock
+         * 200 slider exponential with mathblock
          * Solution: 2.7^x
         */
-        case '1f':
-            exponentialLevel(gameState, {numSliders:400,
+        case '1f':{
+            const numSliders = 200
+            const {sliderGroup, targetGroup, gridGroup} = Puzzles.sliderLevel(gameState, {
+                gridSetupOpts: {
+                    gridOpts:{
+                        gridXMax:4,
+                        gridYMax:60,
+                        gridXMin:0,
+                        gridYMin:0,
+                        autoCellSize: true,
+                        minCellSize:20,
+                        labels:true,
+                    },
+                },
+                tracerOpts: {originGridY: 1},
+                targetBuilder: Puzzles.buildTargetsFromYs({
+                    targetYs: new Array(numSliders).fill(0),
+                    targetOpts:{
+                        size:7
+                    }, 
+                    indexOffset: 0}
+                ),
+                sliderSetupOpts: {
+                    numSliders,
+                    sliderOpts: {
+                        circleRadius:7,
+                        increment:0.5,
+                    },
+                },
                 nextScenes,
-                withMathBlock:true,
-                gridXMax:4,gridYMax:60,
-                lastTarget:53,
-                sliderSize: 5, targetSize:6, increment: 0.1,
-                oneSlider:true,
             })
+            expSliderTargets(gameState, {sliders:sliderGroup.objects, targets:targetGroup.objects})
+            expMBSliderSetup(gameState, {gridGroup, sliderGroup, sliderOpts:{increment: 0.1}})
+        }
         break
 
         /**
-         * Section 3: Population puzzles 
+         * Section 2: Population puzzles
+         * 
          */
-        case '3a':
+        case '2a':
             populationLevel(gameState, {
                 nextScenes,
                 targetX:3.5, targetY:1000,
             })
         break
 
-        case '3b':
+        case '2b':
             populationLevel(gameState, {
                 nextScenes,
                 targetX:5, targetY:400,
             })
         break
 
-        case '3c':
+        case '2c':
             populationLevel(gameState, {
                 nextScenes,
                 targetX:1.7, targetY:1000,
@@ -272,7 +360,7 @@ export async function loadScene(gameState, sceneName, message = {}){
         break
 
         /**
-         * Section 4: Mathblock tutorial
+         * Section 3: Mathblock tutorial
          * 
          * - The e block
          */
