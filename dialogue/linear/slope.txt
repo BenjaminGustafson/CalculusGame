@@ -3,9 +3,9 @@ A: astronautAPortrait
 P: astronautBPortrait
 TEXT
 A: What the sliders actually do is set the slope of the line.
-P: So like the steepness of the line?
+P: Slope? Is that like the steepness of the line?
 A: Yeah. Slope is the change in y divided by the change in x.
 A: In this case, the change in y is 3 and change in x is 2.
-P: So the slope is 1.5!
-A: Exactly
+P: So the slope is 1.5.
+A: Exactly!
 END

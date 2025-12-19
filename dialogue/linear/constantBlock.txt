@@ -3,6 +3,6 @@ A: astronautAPortrait
 P: astronautBPortrait
 TEXT
 A: You just used a Constant Block. It lets you set a function to be a constant.
-P: Like y = 1, in this case?
+P: Like f(x) = 1, in this case?
 A: Precisely!
 END

@@ -538,11 +538,17 @@ class GravityShip extends GameObject {
             this.playPauseButton.label = '⏮'
         }
 
-        this.gravitySlider.update(ctx, audio, mouse)
-        this.positionSlider.update(ctx, audio, mouse)
-        this.shipImage.update(ctx, audio, mouse)
-        this.playPauseButton.update(ctx,audio,mouse)
+        //this.gravitySlider.update(ctx, audio, mouse)
+        // this.positionSlider.update(ctx, audio, mouse)
+        // this.shipImage.update(ctx, audio, mouse)
+        // this.playPauseButton.update(ctx,audio,mouse)
     }
 
-
+    insert(list, z=0){
+        super.insert(list, z)
+        this.gravitySlider.insert(list, z)
+        this.positionSlider.insert(list,z)
+        this.shipImage.insert(list, z)
+        this.playPauseButton.insert(list, z)
+    }
 }

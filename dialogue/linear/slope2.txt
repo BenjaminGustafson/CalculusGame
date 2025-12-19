@@ -3,6 +3,6 @@ A: astronautAPortrait
 P: astronautBPortrait
 TEXT
 P: The line goes down 3 units on the y and 5 units across on the x.
-P: So the slope is -3/5 = -0/6.
+P: So the slope is -3/5 = -0.6.
 A: Perfect!
 END

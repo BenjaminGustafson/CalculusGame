@@ -2,7 +2,8 @@ IDS
 A: astronautAPortrait
 P: astronautBPortrait
 TEXT
-P: Simple enough. Moving the red slider up makes the line go up.
+P: Simple enough. 
+P: Moving the red slider up makes the line go up.
 A: Yes. And if you move the slider down?
 P: The line goes down.
 A: You catch on quick!

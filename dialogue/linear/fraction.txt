@@ -3,6 +3,8 @@ A: astronautAPortrait
 P: astronautBPortrait
 TEXT
 A: You can also set the sliders to fractional values.
-P: I see that. Setting the slider to 0.5 moves the line up 0.5. When do we get to the hard stuff?
+P: Got it. 
+P: Setting the slider to 0.5 moves the line up half of a square.
+P: When do we get to the hard stuff?
 A: Patience...
 END

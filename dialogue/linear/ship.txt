@@ -2,6 +2,7 @@ IDS
 A: astronautAPortrait
 P: astronautBPortrait
 TEXT
-P: Velocity is the slope of position?
+A: Position is the location of the ship, and velocity is how fast it's going.
+P: So velocity is the slope of position? 
 A: Yes. Velocity is the change in position over time.
 END

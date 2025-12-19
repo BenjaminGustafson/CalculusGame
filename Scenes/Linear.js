@@ -456,8 +456,8 @@ export async function loadScene(gameState, sceneName, message={}) {
         case '7c':
             {
                 const targetBlock = new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
-                targetBlock.translateY = -3
-                targetBlock.scaleY = -2
+                targetBlock.translateY = -1
+                targetBlock.scaleY = -1.5
                 targetBlock.insert(gameState.objects, 1)
 
                 const fLabel = new GameObjects.TextBox({ font: '30px monospace', baseline: 'top', originX: 100, originY: 250, content: 'f(x)=' })
@@ -481,7 +481,7 @@ export async function loadScene(gameState, sceneName, message={}) {
         case '7d':
             {
                 const targetBlock = new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x', originX: 200, originY: 250, })
-                targetBlock.scaleY = 1.5
+                targetBlock.scaleY = 2
                 targetBlock.translateY = 2
                 targetBlock.insert(gameState.objects, 1)
 
