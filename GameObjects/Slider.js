@@ -110,6 +110,13 @@ export class Slider extends GameObject{
         }
     }
 
+    insert(list, z = 0, labelZ = 100){
+        super.insert(list, z=0)
+        if (this.labelObject){
+            this.labelObject.insert(list, labelZ)
+        }
+    }
+
     setSize(maxValue, sliderLength){
         this.maxValue = maxValue
         this.sliderLength = sliderLength
