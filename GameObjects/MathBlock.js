@@ -1,6 +1,5 @@
 import {Color, Shapes} from '../util/index.js'
 import { GameObject } from "./GameObject.js"
-import * as SyntaxTree from '../util/SyntaxTree.js'
 
 /**
  * 
@@ -480,10 +479,6 @@ export class MathBlock extends GameObject{
         return block;
     }
 
-
-    static fromString(expression){
-        return this.fromSyntaxTree(SyntaxTree.parse(expression))
-    }
 
     toArray (){
         var arr = [this]
