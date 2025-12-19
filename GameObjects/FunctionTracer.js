@@ -107,7 +107,46 @@ export class FunctionTracer extends GameObject{
         this.startTime = Date.now()
     }
 
-    update(ctx, audioManager, mouse){
+    /**
+     * TODO
+     * Puts targets into a sorted collection based on 
+     * x value 
+     */
+    setTargets(targets){
+
+    }
+
+    /**
+     * Assuming all targets have the same width, we can 
+     * simplify search by only considering targets at the possible x range.
+     * 
+     * 
+     */
+    checkTargetIntersection(audio){
+        this.targets.forEach(t => {
+            var hit = false
+            var cyObj = this.grid.gridToCanvasBoundedY(this.gridYs[0])
+            var prevCy = cyObj.y
+            var prevOob = cyObj.out
+            for (let i = 1; i <= this.pixelIndex+1; i++){
+                const x = this.originCanvasX+i
+                const cyObj = this.grid.gridToCanvasBoundedY(this.gridYs[i])
+                const cy = cyObj.y
+                // Line width is not accounted for. Intersection is just of middle of line.
+                if (!prevOob && t.pointIntersect(x-1,prevCy)){
+                    if (!t.hit){
+                        audio.play('drop_002',{pitch:this.gridYs[i-1]/this.grid.gridHeight*12, channel:this.audioChannel})
+                    }
+                    hit = true
+                }
+                prevCy = cy
+                prevOob = cyObj.out
+            }
+            t.hit = hit
+        })
+    }
+
+    update(ctx, audio, mouse){
         // Calculate current coords
         this.currentX = this.grid.canvasToGridX(this.originCanvasX + this.pixelIndex)
         if (this.gridYs[this.pixelIndex] != null){
@@ -201,28 +240,7 @@ export class FunctionTracer extends GameObject{
             prevOob = cyObj.out
         }
 
-        // Check if targets are hit by line
-        this.targets.forEach(t => {
-            var hit = false
-            var cyObj = this.grid.gridToCanvasBoundedY(this.gridYs[0])
-            var prevCy = cyObj.y
-            var prevOob = cyObj.out
-            for (let i = 1; i <= this.pixelIndex+1; i++){
-                const x = this.originCanvasX+i
-                const cyObj = this.grid.gridToCanvasBoundedY(this.gridYs[i])
-                const cy = cyObj.y
-                // Line width is not accounted for. Intersection is just of middle of line.
-                if (!prevOob && t.pointIntersect(x-1,prevCy)){
-                    if (!t.hit){
-                        audioManager.play('drop_002',{pitch:this.gridYs[i-1]/this.grid.gridHeight*12, channel:this.audioChannel})
-                    }
-                    hit = true
-                }
-                prevCy = cy
-                prevOob = cyObj.out
-            }
-            t.hit = hit
-        })
+        this.checkTargetIntersection(audio)
 
         if (!this.animated){
             var solved = true
@@ -233,7 +251,7 @@ export class FunctionTracer extends GameObject{
                 }
             })
             if (!this.solved && solved){
-                audioManager.play('confirmation_001', {channel:this.audioChannel, pitch:-7*this.audioChannel})
+                audio.play('confirmation_001', {channel:this.audioChannel, pitch:-7*this.audioChannel})
             }
             this.solved = solved
         }
@@ -263,7 +281,7 @@ export class FunctionTracer extends GameObject{
                 }
             })
             if (this.solved){
-                audioManager.play('confirmation_001', {channel:this.audioChannel, pitch:-7*this.audioChannel})
+                audio.play('confirmation_001', {channel:this.audioChannel, pitch:-7*this.audioChannel})
             }
         }
     }

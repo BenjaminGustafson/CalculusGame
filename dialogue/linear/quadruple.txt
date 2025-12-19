@@ -3,5 +3,5 @@ A: astronautAPortrait
 P: astronautBPortrait
 TEXT
 A: Now there were 4 sliders per square.
-P: But I set all 4 to the same value. So it had the same effect as if there was 1 slider.
+P: But I set all 4 to the same value. So it had the same effect as if there was 1 slider per square.
 END

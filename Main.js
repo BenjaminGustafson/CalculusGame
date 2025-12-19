@@ -41,7 +41,7 @@ import { MathBlock } from './GameObjects/MathBlock.js'
 
 // Build "dev" for developement
 // "play" release version
-const build = "play"
+const build = "dev"
 
 var keysPressed = {}
 
@@ -393,8 +393,25 @@ function setup() {
     // ------------------------------------- Main update loop --------------------------------------------------------
     let frameCount = 0
     var prevTime = Date.now()
+    let performanceCounter = 0
+    let performanceTotals = []
+    let performaceStartTime = performance.now()
+    let allPerformance = {}
+    allPerformance['saving'] = 0
+    allPerformance['update'] = 0
+    allPerformance['gameobjects'] = 0
+    allPerformance['background'] = 0
+    const ctx = canvas.getContext('2d');
     function update() {
-
+        // if (performanceCounter % 1000 == 0) {
+        //     const elapsed = performance.now() - performaceStartTime
+        //     console.log('===========', elapsed/1000 ,'================')
+        //     console.log('saving', allPerformance['saving']/elapsed, 'update', allPerformance['update']/elapsed,
+        //          'gameobjects', allPerformance['gameobjects']/elapsed,  'background', allPerformance['background']/elapsed)
+        // }
+        performanceCounter ++
+        
+        let performanceTimeStamp = performance.now()
         // Save progress every 200 frames
         frameCount++
         if (frameCount >= 200 && gameState.stored.sceneName != 'startMenu') {
@@ -406,16 +423,24 @@ function setup() {
             localStorage.setItem('storedState', JSON.stringify(gameState.stored));
             frameCount = 0
         }
+        allPerformance['saving'] += performance.now() - performanceTimeStamp
 
+        
+        performanceTimeStamp = performance.now()
         // Call the scene update function
         gameState.update(audioManager)
+        allPerformance['update'] += performance.now() - performanceTimeStamp
+
+        performanceTimeStamp = performance.now()
 
         // Get rendering context
-        var ctx = canvas.getContext('2d');
+         
 
         // Draw background
         Color.setColor(ctx, Color.black)
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        allPerformance['background'] +=  performance.now() - performanceTimeStamp
 
         // Reset cursor before objects update
         mouse.cursor = 'default'
@@ -424,12 +449,24 @@ function setup() {
         const defaultMouse = {x:-1, y:-1, down:false, held:false, up: false, moved: false, cursor: 'default'}
 
         // Update all GameObjects
+        performanceTimeStamp = performance.now()
         for (let i = 0; i < gameState.objects.length; i++) {
             const obj = gameState.objects[i]
+            const performanceObjectTimeStamp = performance.now()
+
             if (!obj.hidden){
                 obj.update(ctx, audioManager, obj.noInput ? defaultMouse : mouse);
             }
+
+            // if (!performanceTotals[i]) performanceTotals[i] = 0
+            // const now = performance.now()
+            // performanceTotals[i] += performance.now() - performanceObjectTimeStamp
+            // if (performanceCounter % 1000 == 0) {
+            //     console.log(performanceTotals[i]/(now - performaceStartTime), gameState.objects[i])
+            // }
         }
+        allPerformance['gameobjects'] += performance.now() - performanceTimeStamp
+        
 
         // Reset mouse state
         mouse.down = false

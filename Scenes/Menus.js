@@ -18,11 +18,11 @@ export function startMenu(gameState, nextScene){
     var popUp = false
     const startButton = new Button({originX:200, originY:300, width:200, height:50, lineWidth:5,
         onclick:(() => {
-            if (document.fullscreenElement){
+            //if (document.fullscreenElement){
                 Scene.loadScene(gameState,nextScene)
-            }else{
-                popUp = true
-            }
+            // }else{
+            //     popUp = true
+            // }
         }),
         label:"Start"
     })

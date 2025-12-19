@@ -2,7 +2,9 @@ IDS
 A: astronautAPortrait
 P: astronautBPortrait
 TEXT
-A: Now the function is f(x) = ax + b. It's a line where a is the slope and b is the y-intercept. 
-P: It doesn't seem like f(x) = ax + b was different than if it was f(x) = ax. Maybe the +b doesn't matter? 
+A: The function f(x) = ax + b is a line where a is the slope and b is the y-intercept. 
+P: We just saw that if f(x) = -1.5x - 1 then f'(x) = -1.5.
+P: It would have been the same if it was just f(x) = -1.5x.
+P: Maybe the -1 doesn't matter? 
 END
 P: If f(x) = x then f'(x) = 1. And if f(x) = 0.5 then f'(x) = 0.5.

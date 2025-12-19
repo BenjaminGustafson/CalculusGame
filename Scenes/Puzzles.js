@@ -47,7 +47,7 @@ export function addToUpdate(gameState, funToAdd){
     }
 }
 
-const LAYERS = {
+export const LAYERS = {
     'grid' : 0,
     'button' : 0,
     'tracer' : 1,
@@ -446,6 +446,16 @@ export function addMathBlocksToSliderLevel(gameState, {
         }
     })
 }
+
+export function setSlidersToMathBlock({sliders, mathBlock}){
+    const fun = mathBlock.toFunction()
+    if (fun != null){
+        for (let i = 0; i < sliders.length; i++){
+            sliders[i].moveToValue(fun(sliders[i].gridPos))
+        }
+    }
+}
+
 
 export function tripleGraphMathBlockLevel(gameState, {
     gridSetupOpts,

@@ -1,10 +1,159 @@
-import {Color, Shapes} from '../util/index.js'
+import { Color, Shapes } from '../util/index.js'
 import * as GameObjects from '../GameObjects/index.js'
-import * as Scene from '../Scene.js'
 import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
-import * as Experiment from './Experiment.js'
 import * as Puzzles from './Puzzles.js'
+import * as FileLoading from '../util/FileLoading.js'
+import { TileMap } from '../util/TileMap.js'
+import * as Scene from '../Scene.js'
+
+
+function sinePlanet(gameState, pathData, goTo) {
+    if (!gameState.stored.completedScenes['sine.1a']){
+        gameState.stored.completedScenes['sine.1a'] = 'in progress'
+    }
+    Planet.planetScene(gameState, {
+        planetName: 'sine',
+        tileMap:  new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0}),
+        pathData: pathData,
+        bgImg: 'placeholderBg',
+        fgImg: 'placeholderFg',
+        goTo:goTo,
+    })
+}
+
+export async function loadScene(gameState, sceneName, message = {}){
+    gameState.stored.planet = 'sine'
+
+    const pathData = await FileLoading.loadJsonFile('./data/sinePlanet.json')
+
+    Scene.sceneTitle(gameState, 'Sine ' + (sceneName ? sceneName : 'Planet'))
+
+    // Root scene
+    if (!sceneName){
+        sinePlanet(gameState, pathData, message.goTo)
+        console.log(gameState.objects)
+        return
+    }
+
+    const nextScenes = pathData.nodes[sceneName].next
+
+    const blocks = Planet.standardBlocks('sine')
+
+    // Sub-scenes
+    switch(sceneName){
+        case 'ship':{
+            Scene.loadScene(gameState, 'planetMap')
+        }
+        break
+
+        case '1a': {
+            const numSliders = 8
+            const {sliderGroup, targetGroup} = Puzzles.sliderLevel(gameState, {
+                gridSetupOpts: {gridOpts:{gridXMin:0, gridXMax: 4, gridYMin:-2, gridYMax:2}},
+                sliderSetupOpts: {numSliders: numSliders},
+                tracerOpts: {originGridY: 1},
+                targetBuilder: Puzzles.buildTargetsFromYs({
+                    targetYs: new Array(numSliders).fill(0),
+                    targetOpts: {size:20}, 
+                    indexOffset: 0,
+                }),
+            })
+            Puzzles.addToUpdate(gameState, () => {
+                for (let i = 0; i < numSliders; i++) {
+                    targetGroup.objects[i].setGridYPosition(-sliderGroup.objects[i].value)
+                }
+                if (gameState.temp.solved && !gameState.temp.shownDialogue){
+                    gameState.temp.shownDialogue = true
+                    Puzzles.dialogueOverlay(gameState, {filePath: './dialogue/sineENeg.txt'})
+                }
+            })
+        }
+            break
+        case '2':
+
+            // sineSliderLevel(gameState, {
+            //     numSliders: 4,
+            //     tracerLeftStart:0,
+            //     tracerMiddleStart:-1,
+            // })
+            // sineSliderLevel(gameState, {
+            //     numSliders: 4,
+            //     tracerLeftStart:0,
+            //     tracerMiddleStart:1,
+            // })
+            
+            break
+        case '3':
+            sineSliderLevel(gameState, {
+                numSliders: 8,
+                tracerLeftStart:0,
+                tracerMiddleStart:-1,
+            })
+            
+            break
+        case '4':
+            sineSliderLevel(gameState, {
+                numSliders: 12,
+                tracerLeftStart:0,
+                tracerMiddleStart:1,
+                gridOpts:{canvasWidth:400, canvasHeight:400,gridXMin:-3,gridXMax:3,gridYMin:-3,gridYMax:3},
+            })
+            // Solution: -sin(x)
+            // sineLevel(gameState, {numSliders:100, sliderSize:5, targetSize:10, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:6,
+            //         nextScenes:["sine.puzzle.7"], withMathBlock:true, increment:0.05, tracerLeftStart:0, tracerMiddleStart:1})
+            break
+        case '5':
+            sineSliderLevel(gameState, {
+                numSliders: 50,
+                tracerLeftStart:0,
+                tracerMiddleStart:-1,
+                targetOpts: {size:15},
+                sliderOpts: {circleRadius:10, increment: 0.05},
+                gridOpts:{gridXMin:0,gridXMax:4,gridYMin:-2,gridYMax:2},
+                withMathBlock:true,
+            })
+            
+            // Puzzles.addToUpdate(gameState, () => {
+            //     for (let i = 0; i < numSliders; i++) {
+            //         targetGroup.objects[i].setGridYPosition(-sliderGroup.objects[i].value)
+            //     }
+            // })
+            // Solution: sin(x)
+            // sineLevel(gameState, {numSliders:40, sliderSize:10, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:4,
+            //         nextScenes:["sine.puzzle.4"], withMathBlock:true, tracerLeftStart:0, tracerMiddleStart:-1})
+            // Too hard
+            // sineLevel(gameState, {numSliders:100, sliderSize:5, targetSize:10, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:6,
+            //         nextScenes:["sine.puzzle.6"], withMathBlock:true, increment:0.05, tracerLeftStart:1, tracerMiddleStart:0})
+            break
+        case '6':
+            Puzzles.tripleGraphMathBlockLevel(gameState, {
+                targetBuilder: Puzzles.buildTargetsFromFun({fun: x => Math.sin(x), numTargets:200, targetOpts:{size:12}}),
+                tracerMiddleOpts: {originGridY: 1},
+                tracerLeftOpts: {originGridY: 0},
+                blocks: Planet.standardBlocks('sine'),
+                sliderOpts: {maxValue:10, sliderLength:20, startValue: 1, showAxis:true, increment:1},
+            })
+            break
+        case '7':
+            sineLevel(gameState, {numSliders:200, sliderSize:5, targetSize:12, gridYMin:-3, gridYMax:3,gridXMin:0,gridXMax:6,
+                    nextScenes:["sine.puzzle.8"], withMathBlock:true, increment:0.05, tracerLeftStart:0, tracerMiddleStart:-2})
+            break
+        case '8':
+            sineLevel(gameState, {numSliders:100, sliderSize:5, targetSize:12, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:6,
+                    nextScenes:["sine.puzzle.9"], withMathBlock:true, increment:0.05, tracerLeftStart:0, tracerMiddleStart:-0.5})
+            break
+        case '9':
+            // I can't solve my own puzzle! Maybe I just put those starting numbers in by accident
+            sineLevel(gameState, {numSliders:100, sliderSize:5, targetSize:12, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:6,
+                    nextScenes:["sine.puzzle.10"], withMathBlock:true, increment:0.05, tracerLeftStart:1, tracerMiddleStart:-1})
+            break
+        case '10':
+            springLevel(gameState, {nextScenes:["sine.puzzle.10"],})
+            break
+    }
+}
+
 
 
 function sineSliderLevel(gameState, {numSliders, tracerMiddleStart,
@@ -54,162 +203,6 @@ function sineSliderLevel(gameState, {numSliders, tracerMiddleStart,
     }
 }
 
-
-
-
-export function loadScene(gameState, sceneName, message = {}){
-    gameState.stored.planet = 'sine'
-
-    const sceneNameSplit = sceneName.toLowerCase().split('.')
-
-    // Main scene
-    if (sceneNameSplit.length == 1) {
-        sinePlanet(gameState, message)
-        return
-    }
-
-    // Sub-scenes
-    switch(sceneNameSplit[1]){
-        case "puzzle": 
-            switch(sceneNameSplit[2]){
-                case '1': {
-                    const numSliders = 8
-                    const {sliderGroup, targetGroup} = Puzzles.sliderLevel(gameState, {
-                        gridSetupOpts: {gridOpts:{gridXMin:0, gridXMax: 4, gridYMin:-2, gridYMax:2}},
-                        sliderSetupOpts: {numSliders: numSliders},
-                        tracerOpts: {originGridY: 1},
-                        targetBuilder: Puzzles.buildTargetsFromYs({
-                            targetYs: new Array(numSliders).fill(0),
-                            targetOpts: {size:20}, 
-                            indexOffset: 0,
-                        }),
-                    })
-                    Puzzles.addToUpdate(gameState, () => {
-                        for (let i = 0; i < numSliders; i++) {
-                            targetGroup.objects[i].setGridYPosition(-sliderGroup.objects[i].value)
-                        }
-                        if (gameState.temp.solved && !gameState.temp.shownDialogue){
-                            gameState.temp.shownDialogue = true
-                            Puzzles.dialogueOverlay(gameState, {filePath: './dialogue/sineENeg.txt'})
-                        }
-                    })
-                }
-                    break
-                case '2':
-
-                    // sineSliderLevel(gameState, {
-                    //     numSliders: 4,
-                    //     tracerLeftStart:0,
-                    //     tracerMiddleStart:-1,
-                    // })
-                    // sineSliderLevel(gameState, {
-                    //     numSliders: 4,
-                    //     tracerLeftStart:0,
-                    //     tracerMiddleStart:1,
-                    // })
-                    
-                    break
-                case '3':
-                    sineSliderLevel(gameState, {
-                        numSliders: 8,
-                        tracerLeftStart:0,
-                        tracerMiddleStart:-1,
-                    })
-                    
-                    break
-                case '4':
-                    sineSliderLevel(gameState, {
-                        numSliders: 12,
-                        tracerLeftStart:0,
-                        tracerMiddleStart:1,
-                        gridOpts:{canvasWidth:400, canvasHeight:400,gridXMin:-3,gridXMax:3,gridYMin:-3,gridYMax:3},
-                    })
-                    // Solution: -sin(x)
-                    // sineLevel(gameState, {numSliders:100, sliderSize:5, targetSize:10, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:6,
-                    //         nextScenes:["sine.puzzle.7"], withMathBlock:true, increment:0.05, tracerLeftStart:0, tracerMiddleStart:1})
-                    break
-                case '5':
-                    sineSliderLevel(gameState, {
-                        numSliders: 50,
-                        tracerLeftStart:0,
-                        tracerMiddleStart:-1,
-                        targetOpts: {size:15},
-                        sliderOpts: {circleRadius:10, increment: 0.05},
-                        gridOpts:{gridXMin:0,gridXMax:4,gridYMin:-2,gridYMax:2},
-                        withMathBlock:true,
-                    })
-                    
-                    // Puzzles.addToUpdate(gameState, () => {
-                    //     for (let i = 0; i < numSliders; i++) {
-                    //         targetGroup.objects[i].setGridYPosition(-sliderGroup.objects[i].value)
-                    //     }
-                    // })
-                    // Solution: sin(x)
-                    // sineLevel(gameState, {numSliders:40, sliderSize:10, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:4,
-                    //         nextScenes:["sine.puzzle.4"], withMathBlock:true, tracerLeftStart:0, tracerMiddleStart:-1})
-                    // Too hard
-                    // sineLevel(gameState, {numSliders:100, sliderSize:5, targetSize:10, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:6,
-                    //         nextScenes:["sine.puzzle.6"], withMathBlock:true, increment:0.05, tracerLeftStart:1, tracerMiddleStart:0})
-                    break
-                case '6':
-                    Puzzles.tripleGraphMathBlockLevel(gameState, {
-                        targetBuilder: Puzzles.buildTargetsFromFun({fun: x => Math.sin(x), numTargets:200, targetOpts:{size:12}}),
-                        tracerMiddleOpts: {originGridY: 1},
-                        tracerLeftOpts: {originGridY: 0},
-                        blocks: Planet.standardBlocks('sine'),
-                        sliderOpts: {maxValue:10, sliderLength:20, startValue: 1, showAxis:true, increment:1},
-                    })
-                    break
-                case '7':
-                    sineLevel(gameState, {numSliders:200, sliderSize:5, targetSize:12, gridYMin:-3, gridYMax:3,gridXMin:0,gridXMax:6,
-                            nextScenes:["sine.puzzle.8"], withMathBlock:true, increment:0.05, tracerLeftStart:0, tracerMiddleStart:-2})
-                    break
-                case '8':
-                    sineLevel(gameState, {numSliders:100, sliderSize:5, targetSize:12, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:6,
-                            nextScenes:["sine.puzzle.9"], withMathBlock:true, increment:0.05, tracerLeftStart:0, tracerMiddleStart:-0.5})
-                    break
-                case '9':
-                    // I can't solve my own puzzle! Maybe I just put those starting numbers in by accident
-                    sineLevel(gameState, {numSliders:100, sliderSize:5, targetSize:12, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:6,
-                            nextScenes:["sine.puzzle.10"], withMathBlock:true, increment:0.05, tracerLeftStart:1, tracerMiddleStart:-1})
-                    break
-                case '10':
-                    springLevel(gameState, {nextScenes:["sine.puzzle.10"],})
-                    break
-            }
-        break
-
-        case 'dialogue':
-            sinePlanet(gameState)
-            switch(sceneNameSplit[2]){
-                case '1':
-                    dialogueScene(gameState, {exitTo:"sine", nextScenes:["sine.puzzle.5"], text: [    
-                        "⯘Ⳃⱙⰺⳡ ⰺⳝ⯨⯃⯎ ⱤⳆⰸ⯃ ⳙ⯹ⱡ ⯷ⳞⳤⱭⰶ.",
-                        "ⳏⳐⰷ⯁Ⱨⰴ ⯢ⱋⳒⰳⳙ ⯚⯜⯍ ⳙⰿⱆ ⳨⯟ⳑ⳪⳰ ⰴⱢⳈⳡ ⱍ⳧Ⳑⰿ.",
-                        "ⳟ⯔ ⳓ⯥ⱄⰳ ⳉⳂⳙ⯎ ⱤⳆⰸ⯃ Ɀⰳⱅⰸⳝ ⯢ⳔⳂⳚ ⱇⱏⰴⳂ ⰳⳤⱑ⯅ⰴ!"
-                    ]})
-                break
-            }
-            break
-    }
-}
-
-function sinePlanet(gameState,message){
-    console.log('Quadratic function')
-    Planet.planetScene(gameState, {
-        planetName:'sine',
-        shipX:10, shipY: -200,
-        tileMap:tileMap,
-        playerNodes:nodes,
-        playerPaths:paths,
-        bgImg: 'placeholderBg',
-        fgImg: 'placeholderFg',
-        message
-    })
-    const capFirst = str => str[0].toUpperCase() + str.slice(1)
-    const planetName = new TextBox({originX: 400, originY: 50, font: '40px monospace', content:capFirst(gameState.stored.planet) + ' Planet'})
-    planetName.insert(gameState.objects,1)
-}
 
 
 function sineLevel (gameState, {
