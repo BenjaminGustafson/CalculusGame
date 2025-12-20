@@ -1,6 +1,7 @@
 import {Color, Shapes} from '../util/index.js'
 import {Grid, FunctionTracer, Button, IntegralTracer, MathBlock, MathBlockManager, MathBlockField, Slider, Target, TargetAdder, TextBox, DialogueBox, DrawFunction} from '../GameObjects/index.js'
 import * as Scene from '../Scene.js'
+import * as GameObjects from '../GameObjects/index.js'
 import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
 import * as Puzzles from './Puzzles.js'
@@ -340,8 +341,9 @@ export async function loadScene(gameState, sceneName, message = {}){
          */
         case '2a':
             populationLevel(gameState, {
-                nextScenes,
-                targetX:3.5, targetY:1000,
+                solutionGrowthRate: 2,
+                initPos: 2,
+                nextScenes: pathData.nodes[sceneName].next,
             })
         break
 
@@ -556,87 +558,127 @@ function exponentialLevel (gameState, {
     Planet.unlockScenes(nextScenes, gss)
 }
 
-function populationLevel (gameState, {
-    nextScenes, tMax=5, targetX, targetY,
+
+function populationLevel(gameState, {
+    gridSetupOpts,
+    initPop=1, solutionGrowthRate=1,
+    nextScenes,
 }){
-    const gss = gameState.stored
-    const backButton = Planet.backButton(gameState)
-    const nextButton = Planet.nextButton(gameState, nextScenes)
-
-    var initialPop = 1
-    const petri = new PetriDish ({originX: 300, originY:450})
-    const birthSlider = new Slider({canvasX:1100,canvasY:200,canvasLength:200,
-        sliderLength:4, maxValue:4, vertical:false, increment:0.1, startValue:1})
-
-    function popFunction (t) {
-        return initialPop * Math.pow(Math.E, birthSlider.value*t)
-    }
-    const grid = new Grid({canvasX: 850, canvasY: 350, gridXMin:0, gridXMax:tMax, gridYMin:0, gridYMax:1000,
-        autoCellSize:true, labels:true, arrows:false})
-
-    const target = new Target({grid:grid, gridX:targetX, gridY:targetY, size:30})
-
-    const tracer = new FunctionTracer({grid:grid, inputFunction: x => popFunction(x), 
-        resetCondition: ()=> birthSlider.grabbed,
-        targets: [target],
+    // GRIDS
+    const gridGroup = Puzzles.gridSetup(gameState, {
+        numGrids: 2,
+        leftMargin: 450, topMargin: 200, 
+        gridOpts:{gridXMin:0, gridXMax:4, gridYMin:0, gridYMax:1000,autoCellSize:true,
+            labels:true, xAxisLabel:'Time t (minutes)'},
+        spacing:100,
+        ...gridSetupOpts,
     })
+    const grids = gridGroup.objects
+    grids[0].gridTitle = 'Population (number of cells)'
+    grids[1].gridTitle = 'Rate of change (new cells per minute)'
 
-    var time = 0
-    var playing = false
-    var startTime = Date.now()
-    var startValue = 0
-    const tSlider = new Slider({canvasX:1100,canvasY:150,canvasLength:450,
-        sliderLength:tMax, maxValue:tMax, vertical:false, increment:0.1})
-    const timeLabel = new TextBox({originX:1000,originY:80, font:'26px monospace'})
-    const playPauseButton = new Button({originX:1000,originY:120,width:50,height:50,
-        onclick: function(){
-            if (time >= tMax){
-                playing = true
-                time = 0
-                startTime = Date.now()
-                startValue = 0
-                tSlider.setValue(0)
-            }else{
-                if (playing){
-                    playing = false
-                }else{
-                    startTime = Date.now()
-                    startValue = time
-                    playing = true
-                }
+
+    // TARGETS
+    const targets = Puzzles.targetsFromFun(gameState, {
+        fun: x => initPop * Math.pow(Math.E, solutionGrowthRate * x),
+        grid: grids[0],
+        numTargets: 10,
+        targetOpts: {size: 15},
+    }).objects
+
+    // TRACERS
+    const popTracer = new GameObjects.FunctionTracer({
+        grid: grids[0], animated:true, 
+        autoStart:false,
+        targets:targets
+    })
+    popTracer.insert(gameState.objects, 1)
+
+    const popDdxTracer = new GameObjects.FunctionTracer({
+        grid: grids[1], animated:true, 
+        autoStart:false,
+    })
+    popDdxTracer.insert(gameState.objects, 1)
+
+    // PETRI DISH
+    const petriDish = new PetriDish({
+        originX: 100 + grids[0].canvasWidth/2,
+        originY: grids[0].canvasY+ grids[0].canvasHeight/2,
+        popTracer: popTracer,
+        popDdxTracer: popDdxTracer,
+    })
+    petriDish.insert(gameState.objects,1)
+
+    // GROWTH RATE    
+    const growthRateSlider = new GameObjects.Slider({
+        canvasX: 100 + grids[0].canvasWidth/2,
+        canvasY: grids[0].canvasY - grids[0].canvasHeight * 0.2, 
+        canvasLength: grids[0].canvasWidth/2,
+        vertical: false,
+        minValue: 0,
+        maxValue: 3,
+        startValue:1,
+        increment:0.1,
+        name: 'Growth Rate'
+    })
+    growthRateSlider.insert(gameState.objects, 0)
+
+
+    // Could make an init pop slider
+    // Issue with that is it has to be on the scale of 1000 to 
+    // have much effect? Could try it but not necessary
+    // const pSliderIncrement = 0.1
+    // this.positionSlider = new GameObjects.Slider({
+    //     canvasX: originX,
+    //     canvasY: originY, 
+    //     minValue: positionGrid.gridYMin,
+    //     maxValue: positionGrid.gridYMax,
+    //     increment: pSliderIncrement,
+    // })
+
+    const playPauseButton = new GameObjects.Button({
+        originX: 100 + grids[0].canvasWidth/2 - 30, 
+        originY: grids[0].originY - grids[0].canvasHeight * 0.4,
+        width: 50,
+        height: 50,
+        onclick: () => {
+            // Play
+            if (popTracer.state == GameObjects.FunctionTracer.STOPPED_AT_BEGINNING) {
+                growthRateSlider.clickable = false
+
+                popTracer.setInputFunction(x => initPop * Math.pow(Math.E, growthRateSlider.value * x))
+                popDdxTracer.setInputFunction(x => initPop * growthRateSlider.value * Math.pow(Math.E, growthRateSlider.value * x))
+
+                popTracer.start()
+                popDdxTracer.start()
+            } else {
+                growthRateSlider.clickable = true
+
+                popTracer.reset()
+                popDdxTracer.reset()
             } 
         },
-        label:"⏸", lineWidth:5
-    }) 
+        label: "⏵", lineWidth: 5
+    })
+    playPauseButton.insert(gameState.objects)
 
-
-    gameState.update = () => {
-        petri.population = Math.min(1000,Math.floor(popFunction(time)))
-        tracer.pixelIndex = Math.floor(time/tMax * grid.canvasWidth)
-
-        tSlider.active = !playing
-        if (playing){
-            time = (Date.now() - startTime)/1000 + startValue // time in secs to 1 decimal
-            tSlider.setValue(time)
-            playPauseButton.label =  '⏸'
-        }else{
-            playPauseButton.label =  '⏵'
-            time = tSlider.value
-        }
-        if (time >= tMax){
-            time = tMax
-            playing = false
+    Puzzles.addToUpdate(gameState, () => {
+        // Play button
+        if (popTracer.state == GameObjects.FunctionTracer.STOPPED_AT_END) {
+            playPauseButton.label = '⏮'
+        }else if (popTracer.state == GameObjects.FunctionTracer.STOPPED_AT_BEGINNING){
+            playPauseButton.label = '⏵'
+        } else {
             playPauseButton.label = '⏮'
         }
-        timeLabel.content = "t = " + time.toFixed(1)
-    }
+        petriDish.population = Math.min(1000,popTracer.currentY)
+    })
 
-
-    gameState.objects = [backButton, nextButton, petri, playPauseButton, tSlider, timeLabel,  birthSlider,
-         grid, tracer, target]
-    Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
-    Planet.unlockScenes(nextScenes, gss)
-    
+    // NAVIGATION
+    Planet.levelNavigation(gameState, {
+        winCon: () => popTracer.solved,
+        nextScenes: nextScenes,
+    })
 }
 
 class PetriDish extends GameObject{
@@ -649,7 +691,11 @@ class PetriDish extends GameObject{
         Object.assign(this, {originX, originY,
             cellRadius,
             dishRadius,})
-        this.population = 100
+
+        /**
+         * The puzzle should set this field in order to change the population
+         */
+        this.population = 1
         this.prevPop = this.population
     }
 
@@ -661,7 +707,6 @@ class PetriDish extends GameObject{
         return (n >>> 0) / 4294967296;          // normalize to [0,1)
     }
 
-
     update(ctx, audio, mouse){
         if (this.prevPop != this.population){
             if (this.prevPop < this.population){
@@ -670,7 +715,8 @@ class PetriDish extends GameObject{
             this.prevPop = this.population
         }
         Color.setColor(ctx,Color.white)
-        Shapes.Circle({ctx:ctx, centerX:this.originX, centerY:this.originY, radius:this.dishRadius, shadow:true})
+        Shapes.Circle({ctx:ctx, centerX:this.originX, centerY:this.originY,
+            radius:this.dishRadius})
 
         ctx.globalAlpha = 0.8
         Color.setColor(ctx, Color.green)
@@ -682,64 +728,8 @@ class PetriDish extends GameObject{
                 radius:this.cellRadius})
         }
         ctx.globalAlpha = 1
-
-
-        // var layer = 1
-        // var side = 1
-        // var j = 0
-        // var x = 1
-        // const sqrt3 = Math.sqrt(3)
-        // var y = -sqrt3
-       
-        // Color.setColor(ctx, Color.green)
-        // Shapes.Circle({ctx:ctx,
-        //     centerX: this.originX,
-        //     centerY: this.originY, radius:this.cellRadius})
-        // for (let i = 0; i < 100; i++){
-        //     // draw circle at rx, ry
-        //     Shapes.Circle({ctx:ctx,
-        //         centerX: this.originX + this.cellRadius * x,
-        //         centerY: this.originY + this.cellRadius * y, radius:this.cellRadius})
-            
-        //     switch(side){
-        //         case 0:
-        //             x -= 1
-        //             y -= sqrt3
-        //         break
-        //         case 1:
-        //             x-=2
-        //         break
-        //         case 2:
-        //             x -= 1
-        //             y += sqrt3
-        //         break
-        //         case 3:
-        //             x += 1
-        //             y += sqrt3
-        //         break
-        //         case 4:
-        //             x += 2
-        //         break
-        //         case 5:
-        //             x += 1
-        //             y -= sqrt3
-        //         break
-                
-        //     }
-        //     j++
-        //     if (j >= layer){
-        //         side++
-        //         j = 0
-        //         if (side == 5) j = -1
-        //         if (side == 6) {
-        //             j = 1
-        //             layer++
-        //             side = 0
-        //         }
-        //     }
-            
-        // }
-        
     }
 }
+
+
 
