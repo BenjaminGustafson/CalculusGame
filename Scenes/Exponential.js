@@ -60,7 +60,6 @@ function expMBSliderSetup(gameState, {
     })
 }
 
-
 export async function loadScene(gameState, sceneName, message = {}){
     gameState.stored.planet = 'exponential'
 
@@ -342,22 +341,35 @@ export async function loadScene(gameState, sceneName, message = {}){
         case '2a':
             populationLevel(gameState, {
                 solutionGrowthRate: 2,
-                initPos: 2,
-                nextScenes: pathData.nodes[sceneName].next,
+                initPop: 1,
+                nextScenes,
             })
         break
 
         case '2b':
             populationLevel(gameState, {
+                solutionGrowthRate: 3,
+                initPop: 1,
                 nextScenes,
-                targetX:5, targetY:400,
+                gridSetupOpts:{
+                    gridOpts: {
+                        gridYMax:1000,
+                    }
+                }
             })
+            
         break
 
         case '2c':
             populationLevel(gameState, {
+                solutionGrowthRate: 0.5,
+                initPop: 1,
                 nextScenes,
-                targetX:1.7, targetY:1000,
+                gridSetupOpts:{
+                    gridOpts: {
+                        gridYMax:100,
+                    }
+                }
             })
         break
 
@@ -367,73 +379,382 @@ export async function loadScene(gameState, sceneName, message = {}){
          * - The e block
          */
 
+        case '3a':{
+            Puzzles.mathBlockTutorial(gameState, {
+                gridSetupOpts: { 
+                    gridOpts:{
+                        gridXMin: -2,
+                        gridYMin: 0,
+                        gridXMax: 2,
+                        gridYMax: 10,
+                        labels: true,
+                        autoCellSize: true,
+                    }
+                },
+                targetBuilder: Puzzles.buildTargetsFromFun({
+                    fun: x => Math.pow(Math.E, x),
+                    numTargets: 20,
+                    targetOpts: {
+                        size: 20,
+                    }
+                }),
+                mathBlockSetupOpts: {
+                    blocks},
+                nextScenes,
+            })
+        }
+        break
+        
+        case '3b':{
+            Puzzles.mathBlockTutorial(gameState, {
+                gridSetupOpts: { 
+                    gridOpts:{
+                        gridXMin: -2,
+                        gridYMin: 0,
+                        gridXMax: 2,
+                        gridYMax: 10,
+                        labels: true,
+                        autoCellSize: true,
+                    }
+                },
+                targetBuilder: Puzzles.buildTargetsFromFun({
+                    fun: x => 2 * Math.pow(Math.E, x) + 1,
+                    numTargets: 20,
+                    targetOpts: {
+                        size: 20,
+                    }
+                }),
+                mathBlockSetupOpts: {
+                    blocks
+                },
+                nextScenes,
+            })
+        }
+        break
+
+        case '3c':{
+            Puzzles.mathBlockTutorial(gameState, {
+                gridSetupOpts: { 
+                    gridOpts:{
+                        gridXMin: -2,
+                        gridYMin: 0,
+                        gridXMax: 2,
+                        gridYMax: 10,
+                        labels: true,
+                        autoCellSize: true,
+                    }
+                },
+                targetBuilder: Puzzles.buildTargetsFromFun({
+                    fun: x => Math.pow(Math.E, 2*x),
+                    numTargets: 20,
+                    targetOpts: {
+                        size: 20,
+                    }
+                }),
+                mathBlockSetupOpts: {
+                    blocks
+                },
+                nextScenes,
+            })
+        }
+        break
+
+        /**
+         * Section 4: exp rule
+         * 
+         * - e^x -> e^x 
+         * 
+         */
+
         case '4a':
             eBlockLevel(gameState, {
-
+                nextScenes,
             })
         break
 
         case '4b':
             eBlockLevel(gameState, {
                 scaleY:2,
+                nextScenes,
             })
         break
 
         case '4c':
             eBlockLevel(gameState, {
                 scaleY:0.5,
-                sliderOpts :{maxValue:2, sliderLength:4, showAxis:true, increment:0.5}, 
+                sliderOpts :{maxValue:2, sliderLength:4, showAxis:true, increment:0.5},
+                nextScenes,
             })
         break
         
         case '4d':
             eBlockLevel(gameState, {
                 scaleY:-1,
-                sliderOpts :{maxValue:2, sliderLength:4, showAxis:true, increment:0.5}, 
+                sliderOpts :{maxValue:2, sliderLength:4, showAxis:true, increment:0.5},
+                nextScenes,
             })
         break
-
-        /**
-         * Section 5: exp rule
-         * 
-         * - e^x -> e^x 
-         * 
-         */
         
         /**
-         * Section 6: e^x variations 
+         * Section 5: e^x variations 
          * 
          * Setting f = -f' gives e^-x
          * Setting f = f'' gives e^x
          * 
          */
 
-
-        case '20':{
-            const targetBlock = new MathBlock({type:MathBlock.EXPONENT, token:'e',originX: 100, originY: 250,})
-
-            targetBlock.setChild(0, new MathBlock({type: MathBlock.VARIABLE, token:"x"})) 
-            targetBlock.insert(gameState.objects, 1)
-
-            Puzzles.mathBlockLevel(gameState, {
-                targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), numTargets:100, targetOpts:{size:12}}),
-                blocks: Planet.standardBlocks('exponential'),
-                sliderOpts: {maxValue:5, sliderLength:10, showAxis:true, increment:1},
-                gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
-                tracerOpts: {originGridY: targetBlock.toFunction()(-5)},
+        /**
+         * e^-x
+         * Solution: -1, 0, 0, 0
+         */
+        case '5a':
+        {
+            const numSliders = 4
+            const {sliderGroup, targetGroup} = Puzzles.sliderLevel(gameState, {
+                gridSetupOpts: {
+                    gridOpts:{
+                        gridXMax:4,
+                        gridYMax:2,
+                        gridXMin:0,
+                        gridYMin:-2,
+                        autoCellSize: true,
+                        minCellSize:20,
+                        labels:true,
+                    },
+                },
+                tracerOpts: {originGridY: 1},
+                targetBuilder: Puzzles.buildTargetsFromYs({
+                    targetYs: new Array(numSliders).fill(0),
+                    targetOpts:{
+                        size:20
+                    }, 
+                    indexOffset: 0}
+                ),
+                sliderSetupOpts: {
+                    numSliders,
+                    sliderOpts: {
+                        circleRadius:15,
+                        increment:0.5,
+                    },
+                },
                 nextScenes,
             })
-            Planet.dialogueScene(gameState, {filePath: './dialogue/expE.txt', noExit:true})
+            Puzzles.addToUpdate(gameState, () => {
+                for (let i = 0; i < sliderGroup.objects.length; i++) {
+                    targetGroup.objects[i].setGridYPosition(-sliderGroup.objects[i].value)
+                }
+            })
         }
         break
 
 
+        case '5b':
+        {
+            const numSliders = 8
+            const {sliderGroup, targetGroup} = Puzzles.sliderLevel(gameState, {
+                gridSetupOpts: {
+                    gridOpts:{
+                        gridXMax:4,
+                        gridYMax:1,
+                        gridXMin:0,
+                        gridYMin:-1,
+                        autoCellSize: true,
+                        minCellSize:20,
+                        labels:true,
+                    },
+                },
+                tracerOpts: {originGridY: 1},
+                targetBuilder: Puzzles.buildTargetsFromYs({
+                    targetYs: new Array(numSliders).fill(0),
+                    targetOpts:{
+                        size:20
+                    }, 
+                    indexOffset: 0}
+                ),
+                sliderSetupOpts: {
+                    numSliders,
+                    sliderOpts: {
+                        circleRadius:15,
+                        increment:0.1,
+                    },
+                },
+                nextScenes,
+            })
+            Puzzles.addToUpdate(gameState, () => {
+                for (let i = 0; i < sliderGroup.objects.length; i++) {
+                    targetGroup.objects[i].setGridYPosition(-sliderGroup.objects[i].value)
+                }
+            })
+        }
+        break
+
+
+        /**
+         * Mathblock version,
+         * e^-x -> -e^-x
+         */
+        case '5c':
+            const targetBlock = MathBlock.parse('[e^[-1*x]]')
+            targetBlock.x = 200
+            targetBlock.y = 250
+            targetBlock.insert(gameState.objects)
+
+            const fLabel = new TextBox({font:'30px monospace',baseline: 'top', originX: 100,
+                 originY: 250, content: 'f(x)='})
+            const ddxLabel = new TextBox({font:'30px monospace', align: 'right', baseline: 'top',
+                 originX: 680, originY: 250, content: 'f\'(x)='})
+            fLabel.insert(gameState.objects)
+            ddxLabel.insert(gameState.objects)
+        
+            Puzzles.mathBlockLevel(gameState, {
+                targetBuilder: Puzzles.buildTargetsFromFun({fun: targetBlock.toFunction(), 
+                    numTargets:100, targetOpts:{size:12}}),
+                blocks: Planet.standardBlocks('exponential'),
+                sliderOpts: {maxValue:2, sliderLength:4, showAxis:true, increment:0.5},
+                gridOpts: {gridXMin:0 , gridYMin:-2,gridXMax:4, gridYMax:2,labels:true, 
+                    autoCellSize:true},
+                tracerOpts: {originGridY: targetBlock.toFunction()(0)},
+                nextScenes,
+            })
+        break
+        
+    
+        /**
+         * 
+         */
+        case '6a':
+        {
+            const numSliders = 4
+            const {sliderGroup, targetGroup} = Puzzles.tripleGraphSliderLevel(gameState, {
+                gridSetupOpts: {
+                    gridOpts:{
+                        gridXMax:4,
+                        gridYMax:20,
+                        gridXMin:0,
+                        gridYMin:0,
+                        autoCellSize: true,
+                        minCellSize:20,
+                        labels:true,
+                    },
+                },
+                tracerLeftOpts: {originGridY: 1},
+                targetBuilder: Puzzles.buildTargetsFromYs({
+                    targetYs: new Array(numSliders).fill(0),
+                    targetOpts:{
+                        size:20
+                    }, 
+                    indexOffset: 0}
+                ),
+                sliderSetupOpts: {
+                    numSliders,
+                    sliderOpts: {
+                        circleRadius:15,
+                        increment:1,
+                    },
+                },
+                nextScenes,
+            })
+            Puzzles.addToUpdate(gameState, () => {
+                for (let i = 0; i < sliderGroup.objects.length; i++) {
+                    targetGroup.objects[i].setGridYPosition(sliderGroup.objects[i].value)
+                }
+            })
+        }
+        break
+
+        /**
+         * 
+         */
+        case '6b':
+        {
+            const numSliders = 8
+            const {gridGroup, sliderGroup, targetGroup} = Puzzles.tripleGraphSliderLevel(gameState, {
+                gridSetupOpts: {
+                    gridOpts:{
+                        gridXMax:4,
+                        gridYMax:20,
+                        gridXMin:0,
+                        gridYMin:0,
+                        autoCellSize: true,
+                        minCellSize:20,
+                        labels:true,
+                    },
+                },
+                tracerLeftOpts: {originGridY: 1},
+                targetBuilder: Puzzles.buildTargetsFromYs({
+                    targetYs: new Array(numSliders).fill(0),
+                    targetOpts:{
+                        size:20
+                    }, 
+                    indexOffset: 0}
+                ),
+                sliderSetupOpts: {
+                    numSliders,
+                    sliderOpts: {
+                        circleRadius:15,
+                        increment:0.5,
+                    },
+                },
+                nextScenes,
+            })
+            Puzzles.addToUpdate(gameState, () => {
+                for (let i = 0; i < sliderGroup.objects.length; i++) {
+                    targetGroup.objects[i].setGridYPosition(sliderGroup.objects[i].value)
+                }
+            })
+
+        }
+        break
+        case '6c': {
+            
+            const targetBlock = MathBlock.parse('[e^[x]]')
+
+            const {gridGroup} = Puzzles.tripleGraphMathBlockLevel(gameState, {
+                gridSetupOpts: {
+                    gridOpts:{
+                        gridXMax:4,
+                        gridYMax:20,
+                        gridXMin:0,
+                        gridYMin:0,
+                        autoCellSize: true,
+                        minCellSize:20,
+                        labels:true,
+                    },
+                },
+                tracerLeftOpts: {originGridY: 1},
+                tracerMiddleOpts: {originGridY: 1},
+                targetBuilder: Puzzles.buildTargetsFromFun({
+                    fun: targetBlock.toFunction(),
+                    numTargets: 20,``
+                }),
+                mbSetupOpts: {
+                    blocks,
+                },
+                nextScenes,
+            })
+
+            const grids = gridGroup.objects
+            const fLabel = new TextBox({font:'30px monospace',baseline: 'top', originX: 100,
+                originY: 250, content: 'f(x)='})
+            const ddxLabel = new TextBox({font:'30px monospace', align: 'right', baseline: 'top',
+                    originX: 600, originY: 250, content: 'f\'(x)= ?'})
+            const ddx2Label = new TextBox({font:'30px monospace', align: 'right', baseline: 'top',
+                originX: grids[2].canvasX-5, originY: 250, content: 'f\'\'(x)='})
+            fLabel.insert(gameState.objects)
+            ddxLabel.insert(gameState.objects)
+            ddx2Label.insert(gameState.objects)
+
+            targetBlock.x = 200
+            targetBlock.y = 250
+            targetBlock.insert(gameState.objects)
+        }
     }
 }
 
 function eBlockLevel(gameState, {
     scaleY = 1,
     sliderOpts = {maxValue:5, sliderLength:10, showAxis:true, increment:1},
+    nextScenes,
 }){
     const targetBlock = new MathBlock({type:MathBlock.EXPONENT, token:'e',originX: 200, 
         originY: 250,})
@@ -455,125 +776,56 @@ function eBlockLevel(gameState, {
         sliderOpts: sliderOpts,
         gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
         tracerOpts: {originGridY: targetBlock.toFunction()(-5)},
+        nextScenes,
     })
 }
 
-function exponentialLevel (gameState, {
-    numSliders,
-    withMathBlock = false,
-     tracerStart=1,
-    targetSize = 20, sliderSize = 15,
-    nextScenes, 
-    gridXMax=4,gridYMax=16, increment=1,
-    //lastTarget,
-    oneSlider = false,
-    nSliderMin=0,nSliderMax=5,nSliderIncrement=0.1,
-}){
-    const gss = gameState.stored
-    const backButton = Planet.backButton(gameState)
-    const nextButton = Planet.nextButton(gameState, nextScenes)
-
-    const gridLeft = new Grid({canvasX:withMathBlock ? 150 : 300, canvasY:350, canvasWidth:400, canvasHeight:400, 
-        gridXMin:0, gridYMin:0, gridXMax:gridXMax, gridYMax:gridYMax, labels:true, arrows:false, autoCellSize: true})
-    const gridRight = new Grid({canvasX:withMathBlock ? 700 : 900, canvasY:350, canvasWidth:400, canvasHeight:400, 
-        gridXMin:0, gridYMin:0, gridXMax:gridXMax, gridYMax:gridYMax, labels:true, arrows:false, autoCellSize: true})
-    
-    const spacing = gridLeft.gridWidth/numSliders
-    var sliders = []
-    for (let i = 0; i <= numSliders; i++){
-        sliders.push(new Slider({grid:gridRight, gridPos:gridRight.gridXMin + i * spacing,
-            increment: increment,circleRadius:sliderSize}))
-    }
-    
-    // var targets = []
-    // for (let i = 0; i < numSliders; i++) {
-    //     const x = gridLeft.gridXMin+(i+1)*spacing
-    //     targets.push(new Target({grid: gridLeft, gridX:x, gridY:func(x), size:targetSize}))
-    // }
-
-    var targets = []
-    for (let i = 0; i <= numSliders; i++) {
-        const x = gridLeft.gridXMin+(i)*spacing
-        targets.push(new Target({grid: gridLeft, gridX:x, gridY:0, size:targetSize}))
-    }
-    // if (lastTarget != null)
-    //     targets.push(new Target({grid: gridLeft, gridX:gridLeft.gridXMax, gridY:lastTarget, size:targetSize}))
-    
-    
-    const tracer = new IntegralTracer({grid: gridLeft, input:{type:'sliders', sliders: sliders, spacing: gridLeft.gridWidth / (numSliders)}, targets:targets, originGridY:tracerStart, 
-        
-    })
-    
-    const blocks = [
-        new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
-        new MathBlock({type:MathBlock.EXPONENT, token:'0'}),
-    ]
-    // for (let b of gss.mathBlocksUnlocked){
-    //     blocks.push(new MathBlock({type: b.type, token: b.token}))
-    // }
-
-    gameState.objects = [gridLeft, gridRight, tracer, backButton, nextButton].concat(targets).concat(sliders)
-    gameState.update = ()=> {
-        for (let i = 0; i <= numSliders; i++) {
-            targets[i].setGridYPosition(sliders[i].value)
-        }
-    }
-
-    if (withMathBlock){
-
-        sliders.forEach(s => s.clickable = false)
-
-        const sySlider = new Slider({canvasX: 1180, canvasY: 350, maxValue:2, sliderLength:4, startValue: 1, showAxis:true})
-        const tySlider = new Slider({canvasX: 1260, canvasY: 350, maxValue:2, sliderLength:4, showAxis:true})
-        const nSlider = new Slider({canvasX: 1340, canvasY: 350, maxValue:nSliderMax, sliderLength:nSliderMax-nSliderMin, increment:nSliderIncrement, showAxis:true})
-        const mbField = new MathBlockField({minX:700, minY:100, maxX:1100, maxY:300, outputSliders:sliders})
-        if (oneSlider){
-            sySlider.hidden = true
-            tySlider.hidden = true
-            nSlider.canvasX = 1200
-        }
-        const mbm = new MathBlockManager({blocks : blocks, toolBarX: 1400, toolBarY:150, outputType:"sliders",
-            scaleYSlider: sySlider, translateYSlider:tySlider, numSlider:nSlider,
-            blockFields: [ mbField ],
-
-        })
-        gameState.objects = gameState.objects.concat([mbm, sySlider, tySlider, nSlider])
-        
-        const update = gameState.update
-        gameState.update = ()=>{
-            update()
-            if (mbField.rootBlock != null){
-                const fun = mbField.rootBlock.toFunction()
-                if (fun != null){
-                    for (let i = 0; i <= numSliders; i++){
-                        sliders[i].moveToValue(fun(sliders[i].gridPos))
-                        //sliders[i].setValue(fun(sliders[i].gridPos))
-                    }
-                }
-            }
-        }
-    }
-
-    Planet.addWinCon(gameState, ()=>tracer.solved, nextButton)
-    Planet.unlockScenes(nextScenes, gss)
-}
 
 
+
+/**
+ * 
+ * A level with a petri dish, where you set the growth rate.
+ * 
+ */
 function populationLevel(gameState, {
-    gridSetupOpts,
+    gridSetupOpts = {},
     initPop=1, solutionGrowthRate=1,
     nextScenes,
 }){
     // GRIDS
+    const defaultGridOpts = {
+        gridXMin: 0,
+        gridXMax: 4,
+        gridYMin: 0,
+        gridYMax: 1000,
+        autoCellSize: true,
+        labels: true,
+        xAxisLabel: 'Time t (minutes)',
+    }
+
+    // Pull out gridOpts
+    const {
+        gridOpts: gridOptsOverride = {},
+        ...restGridSetupOpts
+    } = gridSetupOpts
+    // Really what we want is a helper function
+    // that does this
+
     const gridGroup = Puzzles.gridSetup(gameState, {
         numGrids: 2,
-        leftMargin: 450, topMargin: 200, 
-        gridOpts:{gridXMin:0, gridXMax:4, gridYMin:0, gridYMax:1000,autoCellSize:true,
-            labels:true, xAxisLabel:'Time t (minutes)'},
-        spacing:100,
-        ...gridSetupOpts,
+        leftMargin: 450,
+        topMargin: 200, 
+        ...restGridSetupOpts, 
+
+        gridOpts: {
+            ...defaultGridOpts,
+            ...gridOptsOverride,
+        },
     })
+
     const grids = gridGroup.objects
+    const popGrid = grids[0]
     grids[0].gridTitle = 'Population (number of cells)'
     grids[1].gridTitle = 'Rate of change (new cells per minute)'
 
@@ -582,7 +834,7 @@ function populationLevel(gameState, {
     const targets = Puzzles.targetsFromFun(gameState, {
         fun: x => initPop * Math.pow(Math.E, solutionGrowthRate * x),
         grid: grids[0],
-        numTargets: 10,
+        numTargets: 20,
         targetOpts: {size: 15},
     }).objects
 
@@ -602,18 +854,19 @@ function populationLevel(gameState, {
 
     // PETRI DISH
     const petriDish = new PetriDish({
-        originX: 100 + grids[0].canvasWidth/2,
-        originY: grids[0].canvasY+ grids[0].canvasHeight/2,
+        originX: 100 + popGrid.canvasWidth/2,
+        originY: popGrid.canvasY+ popGrid.canvasHeight/2,
         popTracer: popTracer,
         popDdxTracer: popDdxTracer,
     })
+    petriDish.population = initPop
     petriDish.insert(gameState.objects,1)
 
     // GROWTH RATE    
     const growthRateSlider = new GameObjects.Slider({
-        canvasX: 100 + grids[0].canvasWidth/2,
-        canvasY: grids[0].canvasY - grids[0].canvasHeight * 0.2, 
-        canvasLength: grids[0].canvasWidth/2,
+        canvasX: 100 + popGrid.canvasWidth/2,
+        canvasY: popGrid.canvasY - popGrid.canvasHeight * 0.2, 
+        canvasLength: popGrid.canvasWidth/2,
         vertical: false,
         minValue: 0,
         maxValue: 3,
@@ -654,6 +907,7 @@ function populationLevel(gameState, {
             } else {
                 growthRateSlider.clickable = true
 
+                petriDish.population = initPop
                 popTracer.reset()
                 popDdxTracer.reset()
             } 
@@ -670,8 +924,8 @@ function populationLevel(gameState, {
             playPauseButton.label = '⏵'
         } else {
             playPauseButton.label = '⏮'
+            petriDish.population = Math.min(1000,popTracer.currentY)
         }
-        petriDish.population = Math.min(1000,popTracer.currentY)
     })
 
     // NAVIGATION
