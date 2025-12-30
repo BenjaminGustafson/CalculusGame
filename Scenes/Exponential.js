@@ -725,7 +725,7 @@ export async function loadScene(gameState, sceneName, message = {}){
                 tracerMiddleOpts: {originGridY: 1},
                 targetBuilder: Puzzles.buildTargetsFromFun({
                     fun: targetBlock.toFunction(),
-                    numTargets: 20,``
+                    numTargets: 20,
                 }),
                 mbSetupOpts: {
                     blocks,
