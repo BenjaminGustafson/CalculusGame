@@ -47,11 +47,14 @@ export async function loadScene(gameState, sceneName, message = {}){
                 }
                 break
         /**
-         * Section 1:G
+         * Section 1: Triple graph, 4 slider
+         */
+
+        /**
+         * Shows that x^2/2 -> x -> 1
+         * Solution: All 1s.
          */
         case '1a':
-            // 4 slider, triple graph, solution is all 1s.
-            // Shows that x^2/2 -> x -> 1
             Puzzles.tripleGraphSliderLevel(gameState, {
                 sliderSetupOpts:{
                     numSliders: 4,
@@ -73,7 +76,15 @@ export async function loadScene(gameState, sceneName, message = {}){
                 },
                 nextScenes,
             })
-            break
+        break
+
+        /**
+         * Maybe some unexpected effects of the triple graph
+         * Target graph is less responsive, but still moves in the direction 
+         * of second derivative eventually
+         * 
+         * Solution: 1, -1, -2, 2
+         */
         case '1b':
             Puzzles.tripleGraphSliderLevel(gameState, {
                 sliderSetupOpts:{
@@ -94,7 +105,13 @@ export async function loadScene(gameState, sceneName, message = {}){
                 },
                 nextScenes: nextScenes,
             })
-            break
+        break
+
+        /**
+         * 2 quads -> 2 lines -> 2 constants
+         * Makes a nice visual
+         * Solution: -2, -2, 2, 2
+         */
         case '1c':
             Puzzles.tripleGraphSliderLevel(gameState, {
                 sliderSetupOpts:{
@@ -102,7 +119,7 @@ export async function loadScene(gameState, sceneName, message = {}){
                     sliderOpts:{circleRadius: 15, increment: 0.25},
                 }, 
                 targetBuilder: Puzzles.buildTargetsFromYs({
-                    targetYs: [0,1,0,-1],
+                    targetYs: [1,0,-1,0],
                     targetOpts: { size: 20 } }),
                 tracerLeftOpts: {
                     originGridY: 0,
@@ -115,13 +132,21 @@ export async function loadScene(gameState, sceneName, message = {}){
                 },
                 nextScenes: nextScenes,
             })
-            break
-        case '2':
-            powerLevel(gameState, {numSliders:20, sliderSize:10, targetSize:15,
-                gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:-2,
-                withMathBlock:true,
-                nextScenes: pathData.nodes[sceneName].next})
-            break
+        break
+        
+        /**
+         * Section 2: Ship triple graph levels
+         * Introduce accel
+         * 
+         * These puzzles are exactly the same
+         * as section 1. There isn't really a progression here, 
+         * we just want the player to play with acceleration.
+         */
+
+        /**
+         * Same as 1a, but with the ship
+         * Solution: 1,1,1,1
+         */
         case '2a':
             tripleGraphShipPositionLevel(gameState, {
                 sliderLevelOpts: {
@@ -141,7 +166,8 @@ export async function loadScene(gameState, sceneName, message = {}){
                     }, 
                 }
             })
-            break
+        break
+
         case '2b':
             // Constant targets lead to oscillating solution: 1,-2,2,-2
             tripleGraphShipPositionLevel(gameState, {
@@ -162,8 +188,103 @@ export async function loadScene(gameState, sceneName, message = {}){
                     }, 
                 }
             })
-            break
+        break
+
+        /**
+         * Indicating that linear -> const -> 0
+         * Solution: -0.5, -0.5, 0,0
+         */
+        case '2c':
+            tripleGraphShipPositionLevel(gameState, {
+                sliderLevelOpts: {
+                    sliderSetupOpts: {
+                        numSliders: 4,
+                        sliderOpts: { circleRadius: 12, increment: 0.5}
+                    },
+                    targetBuilder: Puzzles.buildTargetsFromYs({
+                        targetYs: [1.75,1,0,-1],
+                        targetOpts: { size: 15 } }),
+                    nextScenes: nextScenes,
+                    tracerLeftOpts: {
+                        originGridY: 2,
+                    },
+                    tracerMiddleOpts: {
+                        originGridY: 0,
+                    }, 
+                }
+            })
+        break
+
+        /**
+         * Section 3: Triple graph mathblock
+         * Just trying to teach the shapes at this point.
+         * Is it better to label the target graph or leave it unlabeled?
+         * 
+         * Issues: 
+         * mb sliders too long?
+         */
+
+        /**
+         * Quad -> linear -> const
+         * Solution: -1
+         */
         case '3a':
+            Puzzles.tripleGraphMathBlockLevel(gameState, {
+                targetBuilder: Puzzles.buildTargetsFromFun({
+                    fun: x=>-x*x/2+1,
+                    numTargets: 40,
+                    targetOpts: {size:15},
+                }),
+                tracerLeftOpts: {
+                    originGridY: -1,
+                },
+                tracerMiddleOpts: {
+                    originGridY: 2,
+                }, 
+                gridSetupOpts:{
+
+                },
+                
+                mbSetupOpts: {
+                    blocks: Planet.standardBlocks('quadratic'),
+                     
+                },
+                nextScenes: nextScenes,
+            })
+        break
+
+        /**
+         * Quad -> linear -> const
+         */
+        case '3b':
+            Puzzles.tripleGraphMathBlockLevel(gameState, {
+                targetBuilder: Puzzles.buildTargetsFromFun({
+                    fun: x=>x*x/4,
+                    numTargets: 40,
+                    targetOpts: {size:15},
+                }),
+                tracerLeftOpts: {
+                    originGridY: 1,
+                },
+                tracerMiddleOpts: {
+                    originGridY: -1,
+                }, 
+                gridSetupOpts:{
+
+                },
+                
+                mbSetupOpts: {
+                    blocks: Planet.standardBlocks('quadratic'),
+                     
+                },
+                nextScenes: nextScenes,
+            })
+        break
+
+        /**
+         * 1/6 x^3 -> 1/2 x^2 -> x
+         */
+        case '3c':
             Puzzles.tripleGraphMathBlockLevel(gameState, {
                 targetBuilder: Puzzles.buildTargetsFromFun({
                     fun: x=>x*x*x/6,
@@ -179,14 +300,19 @@ export async function loadScene(gameState, sceneName, message = {}){
                 gridSetupOpts:{
 
                 },
+                
                 mbSetupOpts: {
                     blocks: Planet.standardBlocks('quadratic'),
                      
                 },
                 nextScenes: nextScenes,
             })
-            break
-        case '3b':
+        break
+
+        /**
+         * Solution: 2x
+         */
+        case '3d':
             // 3x^3 - 2x -> x^2 - 2 -> 2x
             // Cubic -> quad -> linear that fits on 2x2 grid
             Puzzles.tripleGraphMathBlockLevel(gameState, {
@@ -210,50 +336,19 @@ export async function loadScene(gameState, sceneName, message = {}){
                 },
                 nextScenes: nextScenes,
             })
-            break
-        case '3c':
-            
-            Puzzles.tripleGraphMathBlockLevel(gameState, {
-                targetBuilder: Puzzles.buildTargetsFromFun({
-                    fun: x=>x*x*x/3-2*x,
-                    numTargets: 40,
-                    targetOpts: {size:10},
-                }),
-                tracerLeftOpts: {
-                    originGridY: 4/3,
-                },
-                tracerMiddleOpts: {
-                    originGridY: 2,
-                }, 
-                gridSetupOpts:{
+        break
 
-                },
-                mbSetupOpts: {
-                    blocks: Planet.standardBlocks('quadratic'),
-                        
-                },
-                nextScenes: nextScenes,
-            })
-            break
-        case '3':
-            powerLevel(gameState, {numSliders:3, sliderSize:15, gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:2,
-                targetFun: x => x*x*x/6, 
-                nextScenes: pathData.nodes[sceneName].next
-            })
-            break
-        case '4':
-            powerLevel(gameState, {numSliders:400, sliderSize:5, targetSize:10,gridYMin:-2, gridYMax:2,gridXMin:-2,gridXMax:2,tracerMiddleStart:2,
-                withMathBlock:true,targetFun: x => x*x*x/6, increment:0.05,
-                nextScenes: pathData.nodes[sceneName].next
-            })
-            break
+        /**
+         * Section 4: Mathblock tutorial
+         * Now that player has seen shapes of quad and cube, give mathblocks
+         */
         case '4a':
             Puzzles.mathBlockTutorial(gameState, {
                 gridSetupOpts: {
 
                 },
                 targetBuilder: Puzzles.buildTargetsFromFun({
-                    fun: x=>x*x*x,
+                    fun: x=>x*x,
                     numTargets: 20, 
                 }),
                 mathBlockSetupOpts: {
@@ -269,7 +364,7 @@ export async function loadScene(gameState, sceneName, message = {}){
 
                 },
                 targetBuilder: Puzzles.buildTargetsFromFun({
-                    fun: x=>-x*x*x,
+                    fun: x=>x*x*x,
                     numTargets: 20, 
                 }),
                 mathBlockSetupOpts: {
@@ -292,8 +387,33 @@ export async function loadScene(gameState, sceneName, message = {}){
                 },
                 nextScenes: pathData.nodes[sceneName].next
             })
-            break
-        case '4d':{
+        break
+        
+        /**
+         * Translate left right
+         * Probably need to spend some more time on this,
+         * maybe use 5
+         */
+        case '4d':
+            Puzzles.mathBlockTutorial(gameState, {
+                gridSetupOpts: {
+
+                },
+                targetBuilder: Puzzles.buildTargetsFromFun({
+                    fun: x=>(x+1)*(x+1),
+                    numTargets: 20, 
+                }),
+                mathBlockSetupOpts: {
+                    blocks:blocks,
+                },
+                nextScenes: pathData.nodes[sceneName].next
+            })
+        break
+
+        /**
+         * Section 5: Easy interlude -- A slider and a draw puzzle
+         */
+        case '5a':{
             const numSliders = 8
             const startY = -2
             Puzzles.sliderLevel(gameState, {
@@ -311,20 +431,24 @@ export async function loadScene(gameState, sceneName, message = {}){
                 })
             }
             break
-        case '5a':
+        case '5b':
             Puzzles.drawFunctionLevel(gameState, {
-                targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>x*x*x/6, numTargets:8, targetOpts:{size:30}}),
+                targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>x*x*x/6, numTargets:20, targetOpts:{size:30}}),
                 tracerStart: -8/6,
                 nextScenes: pathData.nodes[sceneName].next
             })
             break
-        case '5b':
+        case '5c':
             Puzzles.drawFunctionLevel(gameState, {
-                targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>-x*x*x/6, numTargets:8, targetOpts:{size:30}}),
+                targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>-x*x*x/6, numTargets:20, targetOpts:{size:30}}),
                 tracerStart: 8/6,
                 nextScenes: pathData.nodes[sceneName].next
             })
             break
+        
+        /**
+         * Section 6: Mathblock puzzles
+         */
         case '6a':
             Puzzles.mathBlockLevel(gameState, {
                 targetBuilder: Puzzles.buildTargetsFromFun({fun: x=>x*x*x/6, numTargets:8, targetOpts:{size:30}}),
@@ -365,6 +489,10 @@ export async function loadScene(gameState, sceneName, message = {}){
                 nextScenes: pathData.nodes[sceneName].next
             })
             break
+
+        /**
+         * Section 7: RULE
+         */
         case '7a':
             {
                 const targetBlock = new MathBlock({type:MathBlock.POWER, token:'4',originX: 100, originY: 250,})
