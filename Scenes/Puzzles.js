@@ -382,7 +382,8 @@ export function tripleGraphSliderLevel(gameState, {
     gridSetupOpts,
     nextScenes,
 }){
-    const gridGroup = gridSetup(gameState, {numGrids:3, spacing:50, topMargin:150, ...gridSetupOpts})
+    const gridGroup = gridSetup(gameState, {numGrids:3, spacing:50, 
+        topMargin:150, ...gridSetupOpts})
     const grids = gridGroup.objects
 
     const sliderGroup = sliderSetup(gameState, {
@@ -844,6 +845,22 @@ export function planetUnlockOnSolve (gameState, {
         }
     })
 }
+
+function mergeWithNested(defaults, overrides = {}, nestedKeys = []) {
+    const result = { ...defaults, ...overrides };
+  
+    for (const key of nestedKeys) {
+      if (defaults[key] || overrides[key]) {
+        result[key] = {
+          ...(defaults[key] ?? {}),
+          ...(overrides[key] ?? {}),
+        };
+      }
+    }
+  
+    return result;
+  }
+  
 
 function capFirst(str) {
     if (!str) return "";

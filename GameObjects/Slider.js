@@ -3,6 +3,10 @@ import { GameObject } from "./GameObject.js"
 import { Label } from './Label.js'
 
 /**
+ * TODO: - Minor bug with slider showing label when it is not grabbed
+ */
+
+/**
  * A slider UI element.
  * 
  * Drawn as a line with tick marks and a circle that can be dragged along the line.
