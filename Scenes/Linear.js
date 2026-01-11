@@ -145,7 +145,7 @@ export async function loadScene(gameState, sceneName, message={}) {
             sliderLevel(gameState, {
                 sliderSetupOpts: {
                     numSliders: 4,
-                    sliderOpts: { circleRadius: 15, increment: 1}
+                    sliderOpts: { circleRadius: 15, increment: 0.5}
                 },
                 targetBuilder: buildTargetsFromYs({ targetYs:  [2, 0, 1, -1], targetOpts: { size: 20 } }),
                 tracerOpts: { numLabel: false, originGridY: 0 },
@@ -240,7 +240,7 @@ export async function loadScene(gameState, sceneName, message={}) {
             sliderLevel(gameState, {
                 sliderSetupOpts: {
                     numSliders: 8,
-                    sliderOpts: { circleRadius: 12, increment: 1}
+                    sliderOpts: { circleRadius: 12, increment: 0.5}
                 },
                 targetBuilder: buildTargetsFromYs({ targetYs: [1, 0.5, 1, 0, -0.5, -1, -0.5, 0],
                     targetOpts: { size: 18 } }),
@@ -258,7 +258,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                 gridSetupOpts: {gridOpts:{gridXMin:-1, gridXMax: 1, gridYMin:-2,gridYMax:2, canvasWidth:200}, spacing: 200},
                 sliderSetupOpts: {
                     numSliders: 6,
-                    sliderOpts: { circleRadius: 12, increment: 1}
+                    sliderOpts: { circleRadius: 12, increment: 0.5}
                 },
                 targetBuilder: buildTargetsFromYs({ targetYs: [1/3,2/3,0, 1/3,2/3,0],
                     targetOpts: { size: 18 } }),
@@ -276,7 +276,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                 gridSetupOpts: {gridOpts:{gridXMin:-1, gridXMax: 1, gridYMin:-1, gridYMax:1}},
                 sliderSetupOpts: {
                     numSliders: 8,
-                    sliderOpts: { circleRadius: 15, increment: 0.5}
+                    sliderOpts: { circleRadius: 15, increment: 0.25}
                 },
                 targetBuilder: buildTargetsFromYs({ targetYs: [0.125, 0.25, 0.375, 0.5, 0.25, 0, -0.25, -0.5], targetOpts: { size: 20 } }),
                 tracerOpts: { numLabel: false, originGridY: 0 },
@@ -417,7 +417,7 @@ export async function loadScene(gameState, sceneName, message={}) {
                 ddxLabel.insert(gameState.objects, 0)
 
                 const {sySlider} = Puzzles.mathBlockLevel(gameState, {
-                    targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 100, targetOpts: { size: 12 } }),
+                    targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 20, targetOpts: { size: 15 } }),
                     blocks: Planet.standardBlocks('linear'),
                     sliderOpts: { showAxis:true, increment: 0.5 },
                     //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
