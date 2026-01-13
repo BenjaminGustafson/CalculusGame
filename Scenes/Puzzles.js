@@ -505,7 +505,7 @@ export function tripleGraphMathBlockLevel(gameState, {
 }
 
 
-function mathBlockSetup (gameState, {
+export function mathBlockSetup (gameState, {
     sliderOpts,
     blocks,
     mbFieldOpts,

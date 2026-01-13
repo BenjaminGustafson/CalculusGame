@@ -161,30 +161,27 @@ export class MathBlockManager extends GameObject{
                     for (let i = 0; i < this.blockFields.length; i++){
                         const field = this.blockFields[i]
 
-                        //There is no root
-                        if (field.rootBlock == null ){
-                            // Attach to field
-                            if (field.checkAttach(g)){
-                                audioManager.play('switch9')
-                                field.rootBlock = g
-                                g.attached = true
-                                g.rootOfField = field
-                                g.x = field.minX
-                                g.y = field.minY
-                                isAttaching = true
-                                break
-                            }
-                        } 
-                        // There is a root
-                        else {
+                        // Check other blocks for attachment
+                        if (field.rootBlock != null){
                             const attachObj = field.rootBlock.checkAttach(g.x,g.y,g.w,g.h)
-                            // There is a block to attach to
                             if (attachObj != null){
                                 audioManager.play('switch6')
                                 attachObj.block.setChild(attachObj.childIndex, g)
                                 isAttaching = true
                                 break
                             }
+                        }
+
+                        // Attach to field as root
+                        if (field.checkAttach(g)){
+                            audioManager.play('switch9')
+                            field.rootBlock = g
+                            g.attached = true
+                            g.rootOfField = field
+                            g.x = field.minX
+                            g.y = field.minY
+                            isAttaching = true
+                            break
                         }
                     }
 

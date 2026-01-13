@@ -10,6 +10,7 @@ import * as Power from './Scenes/Power.js'
 import * as Sum from './Scenes/Sum.js'
 import * as Product from './Scenes/Product.js'
 import * as Chain from './Scenes/Chain.js'
+import * as Tests from './Scenes/Tests.js'
 
 
 export const CANVAS_WIDTH = 1600
@@ -98,6 +99,11 @@ export function loadScene(gameState, sceneName, message = {}) {
         case "planetmap": Menus.planetMap(gameState)
             break
         case "navigation": Navigation.navScene(gameState, 'ship')
+            break
+        // Testing scenes (not deployed):
+        case 'mblocktest':
+            console.log('TEST 1')
+            Tests.mblockTest(gameState)
             break
         // Linear Planet (see Linear.js)
         case 'linear': Linear.loadScene(gameState, sceneNameRemainder, message)
