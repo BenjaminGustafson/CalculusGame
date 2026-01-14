@@ -78,7 +78,6 @@ export async function loadScene(gameState, sceneName, message={}) {
                 }
             }
             gameState.objects.push(uiTip)
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/first.txt'})
         }
         break
         

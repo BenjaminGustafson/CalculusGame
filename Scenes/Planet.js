@@ -140,6 +140,15 @@ export function levelNavigation(gameState, {
     const hintB = hintButton(gameState, nextScenes)
     hintB.insert(gameState.objects, 0)
 
+    if (gameState.stored.completedScenes[gameState.stored.sceneName] == 'complete'){
+        const solutionB = new GameObjects.Button({originX:400, originY: 25, width:60, height: 60,
+            onclick: () => videoOverlay(gameState, gameState.temp.nodeData.solution),
+            label:"▶",
+            fontSize: 30,
+        })
+        solutionB.insert(gameState.objects)
+    }
+
     addWinCon(gameState, winCon, nextB, nextScenes)
     //unlockScenes(nextScenes, gameState.stored)
 }
@@ -155,23 +164,38 @@ export function unlockScenes (scenes, gss){
 }
 
 export function backButton (gameState){
-    return new GameObjects.Button({originX:50, originY: 50, width:100, height: 100,
+    return new GameObjects.Button({originX:100, originY: 25, width:60, height: 60,
         onclick: ()=>Scene.loadScene(gameState,gameState.stored.planet),
-        label:"↑"
+        label:"↑",
+        fontSize: 30,
     })
 }
 
+
+/**
+ * Create the button to go to the next scene 
+ */
+export function nextButton (gameState, nextScenes){
+    const button = new GameObjects.Button({originX:200, originY: 25, width:60, height: 60,
+        onclick: ()=>Scene.loadScene(gameState, gameState.stored.planet, {goTo:nextScenes[0]}),
+        label:"→", fontSize: 30,
+        })
+    button.active = false
+    return button
+}
+
+
 export function hintButton (gameState){
-    return new GameObjects.Button({originX:350, originY: 50, width:100, height: 100,
+    return new GameObjects.Button({originX:300, originY: 25, width:60, height: 60,
         onclick: () => videoOverlay(gameState, gameState.temp.nodeData.hint),
-        label:"?"
+        label:"?", fontSize: 30,
     })
 }
 
 function videoOverlay(gameState, url){
-    gameState.objects.forEach(o => o.noInput = true) // freeze all objects
-
-    
+    const savedObjects = gameState.objects.slice()
+    gameState.objects = []
+    Scene.sceneTitle(gameState, gameState.temp.sceneTitle)
 
     const canvas = document.getElementById("myCanvas");
 
@@ -205,27 +229,15 @@ function videoOverlay(gameState, url){
     window.addEventListener("resize", positionVideo);
     window.addEventListener("scroll", positionVideo);
 
-    const exitButton = new GameObjects.Button({originX:50, originY: 50, width:100, height: 100,
+    const exitButton = new GameObjects.Button({originX:50, originY: 90, width:60, height: 60,
         onclick: function() {
             iframe.remove()
-            gameState.objects.forEach(o => o.noInput = false)
-            this.visible = false
+            gameState.objects = savedObjects
         },
         label:"X"
     })
     exitButton.insert(gameState.objects,1000)
 
-}
-
-/**
- * Create the button to go to the next scene 
- */
-export function nextButton (gameState, nextScenes){
-    const button = new GameObjects.Button({originX:200, originY: 50, width:100, height: 100,
-        onclick: ()=>Scene.loadScene(gameState, 
-            gameState.stored.planet, {goTo:nextScenes[0]}), label:"→"})
-    button.active = false
-    return button
 }
 
 export function addWinCon(gameState, condition, nextButton, nextScenes){
@@ -241,6 +253,8 @@ export function addWinCon(gameState, condition, nextButton, nextScenes){
             }
 
             unlockScenes(nextScenes.map(s => gameState.stored.planet+'.'+s), gameState.stored)
+
+            videoOverlay(gameState, gameState.temp.nodeData.solution)
         }
     }
 }
