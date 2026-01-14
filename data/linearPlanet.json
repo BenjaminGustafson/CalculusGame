@@ -11,7 +11,9 @@
     "x": 10,
     "y": 0,
     "dir": "NW",
-    "next": ["1b", "2a"]
+    "next": ["1b", "2a"],
+    "hint": "dQw4w9WgXcQ",
+    "sol": "dQw4w9WgXcQ"
 },
 "1b": {
     "x": 10,

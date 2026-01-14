@@ -137,6 +137,8 @@ export function levelNavigation(gameState, {
     backB.insert(gameState.objects, 0)
     const nextB = nextButton(gameState, nextScenes)
     nextB.insert(gameState.objects, 0)
+    const hintB = hintButton(gameState, nextScenes)
+    hintB.insert(gameState.objects, 0)
 
     addWinCon(gameState, winCon, nextB, nextScenes)
     //unlockScenes(nextScenes, gameState.stored)
@@ -157,6 +159,62 @@ export function backButton (gameState){
         onclick: ()=>Scene.loadScene(gameState,gameState.stored.planet),
         label:"↑"
     })
+}
+
+export function hintButton (gameState){
+    return new GameObjects.Button({originX:350, originY: 50, width:100, height: 100,
+        onclick: () => videoOverlay(gameState, gameState.temp.nodeData.hint),
+        label:"?"
+    })
+}
+
+function videoOverlay(gameState, url){
+    gameState.objects.forEach(o => o.noInput = true) // freeze all objects
+
+    
+
+    const canvas = document.getElementById("myCanvas");
+
+    // Create iframe
+    const iframe = document.createElement("iframe");
+    iframe.src = "https://www.youtube.com/embed/" + url + "?autoplay=1";
+    console.log(url)
+    iframe.style.position = "absolute";
+    iframe.style.border = "0";
+    iframe.allowFullscreen = true;
+
+    document.body.appendChild(iframe);
+
+    function positionVideo() {
+        const rect = canvas.getBoundingClientRect();
+
+        const m = 0.10
+        const marginX = rect.width * m;
+        const marginY = rect.height * m;
+
+        iframe.style.left = rect.left + marginX + "px";
+        iframe.style.top = rect.top + marginY + "px";
+        iframe.style.width = rect.width * (1-m*2) + "px";
+        iframe.style.height = rect.height * (1-m*2) + "px";
+    }
+
+    // Initial positioning
+    positionVideo();
+
+    // Keep it aligned
+    window.addEventListener("resize", positionVideo);
+    window.addEventListener("scroll", positionVideo);
+
+    const exitButton = new GameObjects.Button({originX:50, originY: 50, width:100, height: 100,
+        onclick: function() {
+            iframe.remove()
+            gameState.objects.forEach(o => o.noInput = false)
+            this.visible = false
+        },
+        label:"X"
+    })
+    exitButton.insert(gameState.objects,1000)
+
 }
 
 /**

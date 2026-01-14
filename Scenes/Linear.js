@@ -35,6 +35,8 @@ export async function loadScene(gameState, sceneName, message={}) {
 
     Scene.sceneTitle(gameState, 'Linear'+' ' + (sceneName ? sceneName : 'Planet'))
 
+    gameState.temp.nodeData = pathData.nodes[sceneName]
+
     // Sub-scenes
     switch (sceneName) {
         case 'ship':{
