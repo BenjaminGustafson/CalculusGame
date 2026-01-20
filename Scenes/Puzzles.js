@@ -329,15 +329,19 @@ export function shipPositionLevel(gameState, {
     hidePositionTargets = false,
 }){
     const {gridGroup, sliderGroup, targetGroup, tracer} = sliderLevel(gameState, {
-        gridSetupOpts: {leftMargin: 450, topMargin: 50, gridOpts:{gridXMin:0, gridXMax:4, 
+        gridSetupOpts: {leftMargin: 450, topMargin: 50, rightMargin: -100, gridOpts:{gridXMin:0, gridXMax:4, 
             xAxisLabel:'Time t'},
-            spacing:50},
+            spacing:100},
         ...sliderLevelOpts,
     })
 
     const grids = gridGroup.objects
-    grids[0].gridTitle = 'Position'
-    grids[1].gridTitle = 'Velocity'
+    grids[0].yAxisLabel = 'Position'
+    grids[0].xAxisLabel = 'Time'
+    grids[0].labels = true
+    grids[1].yAxisLabel = 'Velocity'
+    grids[1].xAxisLabel = 'Time'
+    grids[1].labels = true
     const shipPosition = new ShipPosition({
         originX: 125,
         originY: grids[0].canvasY,

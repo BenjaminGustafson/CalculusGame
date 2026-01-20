@@ -111,7 +111,6 @@ export async function loadScene(gameState, sceneName, message={}) {
                 }
             }
             gameState.objects.push(uiTip)
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/upDown.txt'})
         }
         break
         
@@ -136,7 +135,6 @@ export async function loadScene(gameState, sceneName, message={}) {
                 tracerOpts: { numLabel: false, originGridY: 0 },
                 nextScenes: pathData.nodes[sceneName].next
             })
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/zero.txt'})
         break
         
         /**
@@ -152,7 +150,6 @@ export async function loadScene(gameState, sceneName, message={}) {
                 tracerOpts: { numLabel: false, originGridY: 0 },
                 nextScenes: pathData.nodes[sceneName].next
             })
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/two.txt'})
         break
         
         case '2c':
@@ -165,7 +162,6 @@ export async function loadScene(gameState, sceneName, message={}) {
                 tracerOpts: { numLabel: false, originGridY: 0 },
                 nextScenes: pathData.nodes[sceneName].next
             })
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/fraction.txt'})
         break
         
         /**
@@ -181,7 +177,6 @@ export async function loadScene(gameState, sceneName, message={}) {
                 tracerOpts: { numLabel: false, originGridY: 1 },
                 nextScenes: pathData.nodes[sceneName].next
             })
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/nice.txt'})
         break
 
 /**
@@ -205,7 +200,6 @@ export async function loadScene(gameState, sceneName, message={}) {
                 tracerOpts: { numLabel: false, originGridY: 0 },
                 nextScenes: pathData.nodes[sceneName].next
             })
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope.txt'})
         break
 
         /**
@@ -223,7 +217,6 @@ export async function loadScene(gameState, sceneName, message={}) {
                 tracerOpts: { numLabel: false, originGridY: 0 },
                 nextScenes: pathData.nodes[sceneName].next
             })
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/slope2.txt'})
         break
 
 /**
@@ -248,7 +241,6 @@ export async function loadScene(gameState, sceneName, message={}) {
                 tracerOpts: { numLabel: false, originGridY: 0 },
                 nextScenes: pathData.nodes[sceneName].next
             })
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/double.txt'})
         break
 
         /**
@@ -266,7 +258,6 @@ export async function loadScene(gameState, sceneName, message={}) {
                 tracerOpts: { numLabel: false, originGridY: 0 },
                 nextScenes: pathData.nodes[sceneName].next
             })
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/triple.txt'})
         break
 
         /**
@@ -283,7 +274,6 @@ export async function loadScene(gameState, sceneName, message={}) {
                 tracerOpts: { numLabel: false, originGridY: 0 },
                 nextScenes: pathData.nodes[sceneName].next
             })
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/quadruple.txt'})
         break
 
 /**
@@ -316,7 +306,6 @@ export async function loadScene(gameState, sceneName, message={}) {
                 }
             }
             gameState.objects.push(uiTip)
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/ship.txt'})
         }
         break
 
@@ -392,7 +381,6 @@ export async function loadScene(gameState, sceneName, message={}) {
             mathBlockTutorials(gameState, { targetVals: [1, 1, 1, 1, 1, 1, 1, 1], 
                 nextScenes: pathData.nodes[sceneName].next,
                 withUITip: true })
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/constantBlock.txt'})
         break
 
         /**
@@ -400,7 +388,6 @@ export async function loadScene(gameState, sceneName, message={}) {
          */
         case '6b':
             mathBlockTutorials(gameState, { targetVals: [-1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5, -1.5], nextScenes: ["linear.7a"] })
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/constantBlock2.txt'})
         break
 
 /**
@@ -427,7 +414,6 @@ export async function loadScene(gameState, sceneName, message={}) {
                 })
                 sySlider.hidden = true
             }
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative.txt'})
         break
 
         case '7b':
@@ -451,7 +437,6 @@ export async function loadScene(gameState, sceneName, message={}) {
                 })
                 sySlider.hidden = true
             }
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative2.txt'})
         break
 
         case '7c':
@@ -476,7 +461,6 @@ export async function loadScene(gameState, sceneName, message={}) {
                 })
                 sySlider.hidden = true
             }
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative3.txt'})
         break
 
         case '7d':
@@ -501,7 +485,6 @@ export async function loadScene(gameState, sceneName, message={}) {
                 })
                 sySlider.hidden = true
             }
-            Puzzles.dialogueOnSolve(gameState, {filePath: './dialogue/linear/derivative4.txt'})
             Puzzles.planetUnlockOnSolve(gameState, {planetUnlock: 'quadratic'})
         break
     }

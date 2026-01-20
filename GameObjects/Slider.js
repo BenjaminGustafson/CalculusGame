@@ -38,13 +38,14 @@ export class Slider extends GameObject{
         lineWidth = 4,
         tickLength = 8,
         valueLabel = true,
+        tickLabels = false,
         clickable = true,
         name='',
     }){
         super()
         Object.assign(this, {
             canvasLength, sliderLength, minValue, maxValue, startValue, increment, circleRadius,
-            vertical, showLines, showAxis, circleColor, lineWidth, gridPos, valueLabel, tickLength, name, clickable
+            vertical, showLines, showAxis, circleColor, lineWidth, gridPos, valueLabel, tickLength, name, clickable, tickLabels
         })
 
         if (canvasX != null && canvasY != null){
@@ -276,7 +277,15 @@ export class Slider extends GameObject{
                         this.canvasX+i*this.unitLength, this.canvasY+tickLength, 
                         lineWidth, lineType
                     )
+                    // Tick number labels
+                    if (this.tickLabels){
+                        ctx.font = tickLength*3 + 'px monospace'
+                        ctx.textAlign = 'center'
+                        ctx.textBaseline = 'top'
+                        ctx.fillText(val, this.canvasX+i*this.unitLength, this.canvasY+tickLength*2)
+                    }
                 }
+
             }
         }
 

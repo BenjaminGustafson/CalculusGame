@@ -31,6 +31,8 @@ export class ShipPosition extends GameObjects.GameObject {
             vertical:false,
             increment: 0.0001,
             canvasLength: this.canvasWidth,
+            tickLabels: true,
+            name: 'Position'
         })
         this.pSlider.clickable = false
 

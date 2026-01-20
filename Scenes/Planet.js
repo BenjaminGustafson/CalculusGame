@@ -143,7 +143,7 @@ export function levelNavigation(gameState, {
     if (gameState.stored.completedScenes[gameState.stored.sceneName] == 'complete'){
         const solutionB = new GameObjects.Button({originX:400, originY: 25, width:60, height: 60,
             onclick: () => videoOverlay(gameState, gameState.temp.nodeData.solution),
-            label:"▶",
+            label:"!",
             fontSize: 30,
         })
         solutionB.insert(gameState.objects)
@@ -192,10 +192,8 @@ export function hintButton (gameState){
     })
 }
 
-function videoOverlay(gameState, url){
+function videoOverlay(gameState, url, delay = 0){
     const savedObjects = gameState.objects.slice()
-    gameState.objects = []
-    Scene.sceneTitle(gameState, gameState.temp.sceneTitle)
 
     const canvas = document.getElementById("myCanvas");
 
@@ -207,15 +205,17 @@ function videoOverlay(gameState, url){
     iframe.style.border = "0";
     iframe.allowFullscreen = true;
 
+    setTimeout(function(){
+                
     document.body.appendChild(iframe);
-
+    
     function positionVideo() {
         const rect = canvas.getBoundingClientRect();
-
+        
         const m = 0.10
         const marginX = rect.width * m;
         const marginY = rect.height * m;
-
+        
         iframe.style.left = rect.left + marginX + "px";
         iframe.style.top = rect.top + marginY + "px";
         iframe.style.width = rect.width * (1-m*2) + "px";
@@ -224,11 +224,15 @@ function videoOverlay(gameState, url){
 
     // Initial positioning
     positionVideo();
-
+    
     // Keep it aligned
     window.addEventListener("resize", positionVideo);
     window.addEventListener("scroll", positionVideo);
-
+    
+    
+    gameState.objects = []
+    Scene.sceneTitle(gameState, gameState.temp.sceneTitle)
+    
     const exitButton = new GameObjects.Button({originX:50, originY: 90, width:60, height: 60,
         onclick: function() {
             iframe.remove()
@@ -237,7 +241,8 @@ function videoOverlay(gameState, url){
         label:"X"
     })
     exitButton.insert(gameState.objects,1000)
-
+    
+    }, delay);    
 }
 
 export function addWinCon(gameState, condition, nextButton, nextScenes){
@@ -254,7 +259,7 @@ export function addWinCon(gameState, condition, nextButton, nextScenes){
 
             unlockScenes(nextScenes.map(s => gameState.stored.planet+'.'+s), gameState.stored)
 
-            videoOverlay(gameState, gameState.temp.nodeData.solution)
+            videoOverlay(gameState, gameState.temp.nodeData.solution, 500)
         }
     }
 }
