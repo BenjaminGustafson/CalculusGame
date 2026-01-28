@@ -7,13 +7,13 @@ const glowImgIds = ['computerSE','shipSE','labSE', 'alienSE']
 const effects = {'in progress':{glowColor:'rgba(255,255,220,1.0)', blurRadius:10, padding:0, strength:3},
                  'complete':{glowColor:'rgba(86,180,233,0.9)', blurRadius:6, padding:0, strength:1}}
 const glowImgs = {}
-for (let i = 0; i < glowImgIds.length; i ++){
-    const img = document.getElementById(glowImgIds[i])
-    glowImgs[glowImgIds[i]] = {}
-    for (let effect in effects){
-        glowImgs[glowImgIds[i]][effect] = createGlowSprite(img, effects[effect])
-    }
-}
+// for (let i = 0; i < glowImgIds.length; i ++){
+//     const img = document.getElementById(glowImgIds[i])
+//     glowImgs[glowImgIds[i]] = {}
+//     for (let effect in effects){
+//         glowImgs[glowImgIds[i]][effect] = createGlowSprite(img, effects[effect])
+//     }
+// }
 
 const imgIds = ['computerSE','computerSEBlue','shipSE','labSE','computerSW','computerSWBlue','shipSW','labSW','alienSE','alienSW']
 const imgs = {}
