@@ -1,0 +1,50 @@
+html, body, #root {
+    font-family: "Open Sans", sans-serif;
+    background: rgb(43,43,43);
+    height: 100%;
+    margin: 0;
+    color: rgb(233,233,233)
+}
+  
+  .section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  
+  .hero {
+    background: rgb(43,43,60);
+    min-height: 100vh; /* Hero section takes up full height */
+  }
+  
+  .twoCol {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 1200px;
+    width: 100%;
+  }
+  
+  .graphic {
+    color: rgb(43,43,43);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+  }
+  
+  .text {
+    display: flex;
+    font-size: large;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 300px;
+  }
+  
+  @media (max-width: 768px) {
+    .twoCol {
+      grid-template-columns: 1fr;
+    }
+  }
+  
