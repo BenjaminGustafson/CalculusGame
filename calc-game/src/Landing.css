@@ -3,8 +3,42 @@ html, body, #root {
     background: rgb(43,43,43);
     height: 100%;
     margin: 0;
-    color: rgb(233,233,233)
+    color: rgb(233,233,233);
 }
+
+  h1 {
+    font-weight: 500;
+  }
+
+  h2 {
+    font-weight: 500;
+  }
+
+  button {
+    max-width: fit-content;
+  }
+
+  .header {
+    font-family: "Open Sans", sans-serif;
+    color: rgb(233,233,233);
+    background: rgb(43,43,60);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem 2rem;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+  }
+  
+  .header .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: #000;
+  }
+  
   
   .section {
     display: flex;
@@ -16,6 +50,10 @@ html, body, #root {
   .hero {
     background: rgb(43,43,60);
     min-height: 100vh; /* Hero section takes up full height */
+  }
+
+  .end {
+    background: rgb(12,12,43);
   }
   
   .twoCol {
@@ -32,6 +70,7 @@ html, body, #root {
     align-items: center;
     justify-content: center;
     min-height: 300px;
+    width: 100%;
   }
   
   .text {
@@ -41,6 +80,7 @@ html, body, #root {
     justify-content: center;
     min-height: 300px;
   }
+
   
   @media (max-width: 768px) {
     .twoCol {
