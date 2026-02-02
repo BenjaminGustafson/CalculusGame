@@ -3,6 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Header } from "./Header";
 
+import shipSW from './assets/shipSW.png';
+
+
 function PlayButton({ refProp }: { refProp: React.Ref<HTMLButtonElement> }) {
   return <Link to="/loadsave"><button ref={refProp}>Play now</button></Link>;
 }
@@ -28,7 +31,7 @@ export function Landing() {
         <div className="twoCol">
           <div className="graphic">
             <img
-              src="./src/assets/shipSW.png"
+              src={shipSW}
               alt="Hero Graphic"
               className="graphic"
             />

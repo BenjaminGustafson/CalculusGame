@@ -11,7 +11,9 @@ export function PlanetMap() {
                 <p>Learn how to take the derivative of <i>ax+b</i>, and how to fly a spaceship.</p>
                 <div className='planetRow'>
                     <div className='planetButton'>
+                        <a href='/play'>
                         <button> Learn</button>
+                        </a>
                         <p>0/12 puzzles complete</p>
                     </div>
                 <img
