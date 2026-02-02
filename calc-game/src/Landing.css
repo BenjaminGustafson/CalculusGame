@@ -37,27 +37,7 @@ html, body, #root {
    filter: brightness(1.1);
   }
 
-  .header {
-    font-family: "Open Sans", sans-serif;
-    color: rgb(233,233,233);
-    background: rgb(60,60,80);
-    position: fixed;
-    margin: 0;
-    width: 100%;
-    padding: 1rem 1rem;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    border-bottom: 0.2rem solid rgb(23,23,40);
-    
-  }
-  
-  .header .logo {
-    font-size: 1.5rem;
-    text-decoration: none;
-    color: rgb(233,233,233);
-  }
+
 
   
   .section {
