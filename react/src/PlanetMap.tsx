@@ -1,5 +1,8 @@
 import { Header } from './Header'
-import "./PlanetMap.css"; 
+import "./PlanetMap.css";
+
+import linearPlanet from './assets/linearplanet.svg';
+import quadPlanet from './assets/quadplanet.svg';
 
 export function PlanetMap() {
     return (
@@ -17,7 +20,7 @@ export function PlanetMap() {
                         <p>0/12 puzzles complete</p>
                     </div>
                 <img
-                src="./src/assets/linearplanet.svg"
+                src={linearPlanet}
                 alt="Linear Planet"
                 className="planetGraphic"
                 />
@@ -36,7 +39,7 @@ export function PlanetMap() {
                         <button> Learn</button>
                         <p>0/12 puzzles complete</p>
                     </div>
-                    <img src="./src/assets/quadplanet.svg" alt="Linear Planet" className="planetGraphic"/>
+                    <img src={quadPlanet} alt="Linear Planet" className="planetGraphic"/>
                     <div className='planetButton'>
                         <button> Practice</button>
                         <p></p>
@@ -51,7 +54,7 @@ export function PlanetMap() {
                         <button> Learn</button>
                         <p>0/12 puzzles complete</p>
                     </div>
-                    <img src="./src/assets/quadplanet.svg" alt="Linear Planet" className="planetGraphic"/>
+                    <img src={quadPlanet} alt="Linear Planet" className="planetGraphic"/>
                     <div className='planetButton'>
                         <button> Practice</button>
                         <p></p>

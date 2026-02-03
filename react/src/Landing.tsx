@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Header } from "./Header";
 
 import shipSW from './assets/shipSW.png';
+import quad3b from './assets/quad3b.mp4'
 
 
 function PlayButton({ refProp }: { refProp: React.Ref<HTMLButtonElement> }) {
@@ -52,7 +53,7 @@ export function Landing() {
             </p>
           </div>
           <div className="graphic">
-            <video src="./src/assets/quad3b.mp4" autoPlay loop muted playsInline className="graphic"/>
+            <video src={quad3b} autoPlay loop muted playsInline className="graphic"/>
         </div>
         </div>
       </section>
