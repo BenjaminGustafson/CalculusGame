@@ -1,18 +1,97 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="./assets/icon32.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fluxionum | Calculus Game</title>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="assets/icon32.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fluxionum | Calculus Game</title>
+  
+  <link rel="stylesheet" href="Header.css">
+  <link rel="stylesheet" href="Landing.css">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="/CalculusGame/assets/index-BYaBS0MU.js"></script>
-    <link rel="stylesheet" crossorigin href="/CalculusGame/assets/index-BRK97NfP.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
-</html>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="header">
+    <a href>
+      <h1 class="logo">
+        <img src="./assets/shipSW.png"/>
+        Fluxionum
+      </h1>
+    </a>
+  </div>
+  <section class="section hero">
+    <div class="twoCol">
+      <div class="graphic">
+        <img
+        src="assets/shipSW.png"
+        alt="Hero Graphic"
+        class="graphic"
+        />
+      </div>
+      <div class="text">
+        <h1>A puzzle game that teaches calculus.</h1>
+        <p>Completely free. Runs in the browser.</p>
+        <a href="/loadsave">
+          <button id="PlayButton">Play Now</button>
+        </a>
+      </div>
+    </div>
+  </section>
+  
+  <section class="section feature">
+    <div class="twoCol">
+      <div class="text">
+        <h2>Learn by playing</h2>
+        <p>The game builds intuition for calculus with visual and interactive puzzles.
+        </p>
+      </div>
+      <div class="graphic">
+        <video src={quad3b} autoPlay loop muted playsInline class="graphic"/>
+      </div>
+    </div>
+  </section>
+  
+  <section class="section feature">
+    <div class="twoCol">
+      <div class="graphic"></div>
+      <div class="text">
+        <h2>Practice and master the derivative</h2>
+        <p>A block-based system simplifies algebra.</p>
+      </div>
+    </div>
+  </section>
+  
+  <section class="section feature">
+    <div class="twoCol">
+      <div class="text">
+        <h2>Video solutions when you get stuck</h2>
+        <p></p>
+      </div>
+      <div class="graphic">Title</div>
+    </div>
+  </section>
+  
+  <section class="section darkblue">
+    <div class="oneCol">
+      <div class="text">
+        <h2>Work in progress</h2>
+        <p>The game is still in developement. This is a project that I am working on in my free time.</p>
+        <p>About 60 puzzles are currently playable. I am working on creating short solution videos for each level.</p>
+      </div>
+    </div>
+  </section>
+  
+  <section class="section end">
+    <div class="oneCol">
+      <div class="text">
+        <h2>Contact</h2>
+        <p>Have any feedback? Let me know: bengusgamedev@gmail.com</p>
+      </div>
+    </div>
+  </section>
+  
+</body>
+  
