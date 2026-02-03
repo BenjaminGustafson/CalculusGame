@@ -132,6 +132,7 @@ function capFirst(str) {
 }
 
 export function sceneTitle(gameState, title){
+    gameState.temp.sceneTitle = title
     const sceneTitleBox = new GameObjects.TextBox({
         originX: 800, originY: 50,
         font:'30px monospace',

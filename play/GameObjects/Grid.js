@@ -292,10 +292,12 @@ export class Grid extends GameObject{
         if (this.gridTitle){
             ctx.fillText(this.gridTitle, this.canvasWidth/2, -30)
         }
-        if (this.labels){
-            ctx.fillText(this.xAxisLabel, this.canvasWidth/2, this.canvasHeight+50)
+        if (this.xAxisLabel){
+            ctx.fillText(this.xAxisLabel, this.canvasWidth/2, this.canvasHeight+(this.labels? 50:20))
+        }
+        if (this.yAxisLabel){
             ctx.rotate(-Math.PI/2)
-            ctx.fillText(this.yAxisLabel, -this.canvasHeight/2, -80)
+            ctx.fillText(this.yAxisLabel, -this.canvasHeight/2, this.labels ? -70 : -50)
         }
 
         ctx.resetTransform()
