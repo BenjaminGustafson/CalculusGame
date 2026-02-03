@@ -1,0 +1,32 @@
+.planetMap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 8rem;
+}
+
+.planet {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.planetRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 2rem;
+}
+
+.planetButton {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+}
+
+
+.planetGraphic {
+    min-width: 100px;
+    max-width: 10vw;
+    padding: 2rem;
+}
