@@ -28,9 +28,13 @@ html, body, #root {
     cursor: pointer;
   }
   
-  button:active {
+  button:active{
     box-shadow: none;
     transform: translate(0, 4px);
+  }
+
+  button:disabled {
+    background: rgb(100,100,100);
   }
   
   button:hover:not(:disabled) {
