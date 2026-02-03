@@ -1,105 +1,97 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-WF69N9313C"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-WF69N9313C');
-  </script>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="assets/icon32.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fluxionum | Calculus Game</title>
   
-  <meta charset="UTF-8">
-  <title>Calculus Game</title>
-  <link rel="icon" type="image/png" href="./images/icon32n.png">
-  <script type="module" src="Main.js"></script>
+  <link rel="stylesheet" href="Header.css">
+  <link rel="stylesheet" href="Landing.css">
 
-  
-<style>
-
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-
-#myCanvas {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100vw;
-    height: calc(100vw * 9 / 16);
-    max-height: 100vh;
-    max-width: calc(100vh * 16 / 9);
-    user-select: none;
-    -moz-user-select: none;
-    -webkit-user-drag: none;
-} 
-</style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
 </head>
-<body style="background-color:rgb(43,43,43);">
 
-<canvas id="myCanvas" width="1600" height="900" draggable="false"></canvas>
-  <audio id="myAudio">
-    <source src="audio/confirmation_001.ogg" type="audio/ogg">
-  </audio>
-  <audio id="clickAudio">
-    <source src="audio/click_001.ogg" type="audio/ogg">
-  </audio>
-
-
-  <div style="display:none;">
-    <img id="computerSE" src="images/computerSE.png" />
-    <img id="computerSW" src="images/computerSW.png" />
-    <img id="computerSETrans" src="images/desk_computerScreen_SE.png" />
-    <img id="computerSWTrans" src="images/desk_computerScreen_SW.png" />
-    <img id="shipSE" src="images/shipSE.png" />
-    <img id="shipSW" src="images/shipSW.png" />
-    <img id="labSE" src="images/labSE.png" />
-    <img id="labSW" src="images/labSW.png" />
-    <img id="alienSE" src="images/alienSE.png" />
-    <img id="alienSW" src="images/alienSW.png" />
-    <img id="shipicon_img" src="images/shipicon.png" />
-    <img id="linearicon_img" src="images/linearicon.png" />
-    <img id="quadraticicon_img" src="images/quadraticicon.png" />
-    <!--Maps-->
-    <img id="linearPlanetFg" src="images/linearPlanetFg.png" />
-    <img id="linearPlanetBg" src="images/linearPlanetBg.png" />
-    <img id="quadPlanetBg" src="images/quadPlanetBg.png" />
-    <img id="riverPlanetBg" src="images/riverplanetBg.png" />
-    <img id="riverPlanetFg" src="images/riverPlanetFg.png" />
-    <img id="placeholderBg" src="images/mapBg.png" />
-    <img id="placeholderFg" src="images/mapFg.png" />
-    <!--Items-->
-    <img id="constantBlock" src="images/constantBlock.png"/>
-    <img id="linearBlock" src="images/linearBlock.png"/>
-    <img id="squareBlock" src="images/squareBlock.png"/>
-    <!--Icons-->
-    <img id="translateIcon" src="images/translateIcon.png"/>
-    <img id="scaleIcon" src="images/scaleIcon.png"/>
-    <img id="numIcon" src="images/numIcon.png"/>
-    <!--Character portraits-->
-    <img id="glorpPortrait" src="images/glorp.png" />
-    <img id="astronautBPortrait" src="images/astronautBPortrait.png" />
-    <img id="astronautAPortrait" src="images/astronautAPortrait.png" />
-
-
-    <img id="shipSide" src="images/shipSide.png" />
-    <img id="asteroidImg" src="images/asteroid.png" />
-    <img id="astronautB_NE" src="images/astronautB_NE.png"/>
-    <img id="astronautB_SE" src="images/astronautB_SE.png"/>
-    <img id="astronautB_NW" src="images/astronautB_NW.png"/>
-    <img id="astronautB_SW" src="images/astronautB_SW.png"/>
-    <img id="menuImg" src="images/menu.png"/>
-
+<body>
+  <div class="header">
+    <a href>
+      <h1 class="logo">
+        <img src="./assets/shipSW.png"/>
+        Fluxionum
+      </h1>
+    </a>
   </div>
+  <section class="section hero">
+    <div class="twoCol">
+      <div class="graphic">
+        <img
+        src="./assets/shipSW.png"
+        alt="Hero Graphic"
+        class="graphic"
+        />
+      </div>
+      <div class="text">
+        <h1>A puzzle game that teaches calculus.</h1>
+        <p>Completely free. Runs in the browser.</p>
+        <a href="./loadsave">
+          <button id="PlayButton">Play Now</button>
+        </a>
+      </div>
+    </div>
+  </section>
+  
+  <section class="section feature">
+    <div class="twoCol">
+      <div class="text">
+        <h2>Learn by playing</h2>
+        <p>The game builds intuition for calculus with visual and interactive puzzles.
+        </p>
+      </div>
+      <div class="graphic">
+        <video src={quad3b} autoPlay loop muted playsInline class="graphic"/>
+      </div>
+    </div>
+  </section>
+  
+  <section class="section feature">
+    <div class="twoCol">
+      <div class="graphic"></div>
+      <div class="text">
+        <h2>Practice and master the derivative</h2>
+        <p>A block-based system simplifies algebra.</p>
+      </div>
+    </div>
+  </section>
+  
+  <section class="section feature">
+    <div class="twoCol">
+      <div class="text">
+        <h2>Video solutions when you get stuck</h2>
+        <p></p>
+      </div>
+      <div class="graphic">Title</div>
+    </div>
+  </section>
+  
+  <section class="section darkblue">
+    <div class="oneCol">
+      <div class="text">
+        <h2>Work in progress</h2>
+        <p>The game is still in developement. This is a project that I am working on in my free time.</p>
+        <p>About 60 puzzles are currently playable. I am working on creating short solution videos for each level.</p>
+      </div>
+    </div>
+  </section>
+  
+  <section class="section end">
+    <div class="oneCol">
+      <div class="text">
+        <h2>Contact</h2>
+        <p>Have any feedback? Let me know: bengusgamedev@gmail.com</p>
+      </div>
+    </div>
+  </section>
+  
 </body>
-
-</html>
+  
