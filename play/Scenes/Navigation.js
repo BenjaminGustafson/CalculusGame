@@ -104,7 +104,6 @@ export function navScene(gameState) {
     const mngr = new MathBlockManager({
         blocks:mathBlocks, blockSize:26,
         translateYSlider:tySlider, scaleYSlider:sySlider, 
-        toolBarX:1400, toolBarY: 250,
         blockFields: [blockField],
         funTracers: [funRight],
     })

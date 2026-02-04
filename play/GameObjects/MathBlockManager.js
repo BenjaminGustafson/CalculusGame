@@ -49,13 +49,15 @@ export class MathBlockManager extends GameObject{
         blockFields=[],
         funTracers = [],
         toolBarX = 1400,
-        toolBarY = 100,
+        toolBarY = 150,
+        toolBarW = 150,
+        toolBarH = 700,
         blockSize = 40,
     }){
         super()
         Object.assign(this,{
             blocks, translateYSlider, scaleYSlider, blockFields, toolBarX,
-            toolBarY, blockSize, funTracers, numSlider
+            toolBarY, blockSize, funTracers, numSlider, toolBarH, toolBarW
         })
 
 
@@ -87,16 +89,16 @@ export class MathBlockManager extends GameObject{
 
     }
 
-    createToolbar(blocks, originX, originY){
+    createToolbar(){
         this.toolBar = []
-        for(let i = 0; i < blocks.length; i++){
-            blocks[i].onToolBar = true
-            blocks[i].originX = originX
-            blocks[i].originY = originY + i * (this.blockSize * 2 + 5)
-            blocks[i].x = blocks[i].originX
-            blocks[i].y = blocks[i].originY
-            blocks[i].baseSize = this.blockSize
-            this.toolBar.push(blocks[i])
+        for(let i = 0; i < this.blocks.length; i++){
+            this.blocks[i].onToolBar = true
+            this.blocks[i].originX = this.toolBarX + 25
+            this.blocks[i].originY = this.toolBarY + i * (this.blockSize * 2 + 5) + 25
+            this.blocks[i].x = this.blocks[i].originX
+            this.blocks[i].y = this.blocks[i].originY
+            this.blocks[i].baseSize = this.blockSize
+            this.toolBar.push(this.blocks[i])
         }
     }
 
@@ -314,6 +316,15 @@ export class MathBlockManager extends GameObject{
         //if (this.numIcon != null) this.numIcon.update(ctx)
        
         // Update blocks
+        Color.setFill(ctx, Color.black)
+        Color.setStroke(ctx, Color.gray)
+        Shapes.Rectangle({ctx:ctx, originX:this.toolBarX, originY:this.toolBarY+2,
+            width: this.toolBarW, height:this.toolBarH, stroke: true, lineWidth: 3,
+        })
+        Shapes.Rectangle({ctx:ctx, originX:this.toolBarX, originY:this.toolBarY,
+            width: this.toolBarW, height:this.toolBarH, stroke: true, lineWidth: 3,
+        })
+        
         this.toolBar.forEach(b => b.update(ctx,audioManager,mouse))
         if (this.grabbed != null){
             this.grabbed.update(ctx,audioManager,mouse)
