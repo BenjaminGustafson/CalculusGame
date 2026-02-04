@@ -140,14 +140,14 @@ export function levelNavigation(gameState, {
     const hintB = hintButton(gameState, nextScenes)
     hintB.insert(gameState.objects, 0)
 
-    if (gameState.stored.completedScenes[gameState.stored.sceneName] == 'complete'){
-        const solutionB = new GameObjects.Button({originX:400, originY: 25, width:60, height: 60,
-            onclick: () => videoOverlay(gameState, gameState.temp.nodeData.solution),
-            label:"!",
-            fontSize: 30,
-        })
-        solutionB.insert(gameState.objects)
-    }
+    // if (gameState.stored.completedScenes[gameState.stored.sceneName] == 'complete'){
+    //     const solutionB = new GameObjects.Button({originX:400, originY: 25, width:60, height: 60,
+    //         onclick: () => videoOverlay(gameState, gameState.temp.nodeData.solution),
+    //         label:"!",
+    //         fontSize: 30,
+    //     })
+    //     solutionB.insert(gameState.objects)
+    // }
 
     addWinCon(gameState, winCon, nextB, nextScenes)
     //unlockScenes(nextScenes, gameState.stored)

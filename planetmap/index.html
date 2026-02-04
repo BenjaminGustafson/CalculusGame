@@ -13,6 +13,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+
+  <script src="PlanetMap.js" defer></script>
 </head>
 <body>
   <div class="header">
@@ -25,12 +27,12 @@
   </div>
 
   <div class="planetMap">
-    <div class="planet">
-        <h2 class="planetName">Linear</h2>
+    <div class="planet" id="linearPlanet">
+        <h2 class="planetName">Linear Planet</h2>
         <p>Learn how to take the derivative of <i>ax+b</i>, and how to fly a spaceship.</p>
         <div class='planetRow'>
-            <div class='planetButton'>
-                <a href='../play'>
+            <div class='planetButton learn'>
+                <a href='../learn/linear'>
                 <button> Learn</button>
                 </a>
                 <p>0/12 puzzles complete</p>
@@ -40,10 +42,10 @@
         alt="Linear Planet"
         class="planetGraphic"
         />
-        <div class='planetButton'>
-                <button> Practice</button>
-                <p></p>
-            </div>
+        <div class='planetButton practice'>
+            <button>Practice</button>
+            <p></p>
+        </div>
         </div>
     </div>
 

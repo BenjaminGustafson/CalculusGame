@@ -86,12 +86,22 @@ export class Shapes {
 
     static Rectangle({ctx, originX, originY, width, height,
         lineWidth = 5, fill = true, shadow = 0, stroke = false, radius = 5,
-        inset = false, recessed = false
+        inset = false, recessed = false,
+        inset2d = 0,
     }) {
         ctx.lineWidth = lineWidth;
+        if (inset2d != 0){
+            ctx.save()
+            ctx.fillStyle = 'rgb(0,0,0)'
+            ctx.beginPath();
+            ctx.roundRect(originX, originY+inset2d, width, height, radius);
+            ctx.fill();
+            ctx.restore()
+        }
+
         ctx.beginPath();
         ctx.roundRect(originX, originY, width, height, radius);
-    
+
         if (fill) {
             if (shadow != 0) {
                 ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
