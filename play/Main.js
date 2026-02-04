@@ -92,7 +92,7 @@ function setup() {
 
     function initStoredState(){
         gameState.stored = {
-            sceneName: "startMenu", // the unique name of the current scene
+            sceneName: "planetMap", // the unique name of the current scene
             planet: 'linear', // the current planet landed on, or the planet we just left
             landed:true, // true if the ship is on a planet, false if it is in space
             

@@ -18,12 +18,14 @@ export function header (gameState, {
     border = false,
 }){
     const buttons = []
+    var x = 100
     for (let i = 0; i < buttonOptsList.length; i++){
         buttons.push(new GameObjects.Button({
-            originX:100+i*50, originY: 20, width:60, height: 60,
+            originX:x, originY: 20, width:60, height: 60,
             fontSize: 30,
             ...buttonOptsList[i],
         }))
+        x += buttons[i].width + 50
     }
     const buttonGroup = new GameObjectGroup(buttons)
     buttonGroup.insert(gameState.objects, 50)
@@ -31,7 +33,7 @@ export function header (gameState, {
     gameState.temp.sceneTitle = title
     const sceneTitleBox = new GameObjects.TextBox({
         originX: 800, originY: 30,
-        font:'40px sans-serif',
+        font:'40px monospace',
         color:Color.white,
         align:'center', baseline: 'top',
         content: title,

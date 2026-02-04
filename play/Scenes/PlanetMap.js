@@ -2,99 +2,81 @@ import {Color, Shapes} from '../util/index.js'
 import {Button, ImageObject, TextBox} from '../GameObjects/index.js'
 import * as Scene from '../Scene.js'
 import * as Header from './Header.js'
+import { GameObjectGroup } from '../GameObjects/GameObject.js'
+import * as FileLoading from '../util/FileLoading.js'
 
-export function planetMap (gameState){
+
+export async function planetMap (gameState){
     const gss = gameState.stored
 
-    // const backButton =  new Button({originX:50, originY: 50, width:60, height: 60,
-    //     onclick: ()=>Scene.loadScene(gameState,gss.planet), label:"↑"})
     Header.header(gameState, {
         buttonOptsList: [
-            {onclick: ()=>Scene.loadScene(gameState,gss.planet), label:"↑"}
+            {onclick: ()=> window.location.href = '..' , label:"Quit", width: 90}
         ],
-        title: 'Fluxionum',
+        title: 'Map',
     })
 
-    // Confirmation popup
-    var popUp = false
-    const confirmButton = new Button({originX:650, originY: 400, width:100, height: 50,
-        onclick: ()=>Scene.loadScene(gameState,'navigation'), label:"Travel"})
-    const cancelButton = new Button({originX:850, originY: 400, width:100, height: 50,
-        onclick: () => popUp = false, label:"Cancel"}) 
+    const planets = [
+        {name:'Linear', img: 'linearPlanetIcon', data: 'linearPlanet.json'},
+        {name:'Quadratic', img: 'quadPlanetIcon', data: 'quadraticPlanet.json'},
+        // {name:'Power', img: 'quadPlanetIcon'},
+        // {name:'Sine', img: 'quadPlanetIcon'},
+    ]
     
-    const confirmNav = {
-        update: function(ctx, audio, mouse){
-            Color.setColor(ctx, Color.darkBlack)
-            Shapes.Rectangle({ctx:ctx, originX: 500, originY:200, width: 600, height:400,inset:true, shadow:8})
-            Color.setColor(ctx, Color.white)
-            ctx.font = "40px monospace"
-            ctx.textBaseline = 'alphabetic'
-            ctx.textAlign = 'center'
-            ctx.fillText(`Travel to ${gameState.stored.nextPlanet}?`,800,300)
-        } 
-    }
+    for (let i = 0; i < planets.length; i++){
+        const x = 100 + i * 400
+        
+        const pathData = await FileLoading.loadJsonFile('./data/'+planets[i].data)
+        const numPuzzles = Object.keys(pathData.nodes).length - 1
+        const numComplete = Object.entries(gameState.stored.completedScenes)
+            .filter(([key, value]) => key.startsWith(planets[i].name.toLowerCase+'.') && value === 'complete').length
+        
 
-    function travelTo(planet){
-        // Do not travel if already at planet
-        if (gss.planet == planet){
-            Scene.loadScene(gameState, planet)
-            return
-        }
-        // Teleport if planet has been visited 
-        if (gss.planetProgress[planet] == 'visited' || gss.planetProgress[planet] == 'complete'){
-            Scene.loadScene(gameState, planet)
-            return
-        }
-        gss.navDistance = 0
-        gss.nextPlanet = planet
-        popUp = true
-    }
-    
-
-    // Planet Buttons
-    const planetPositions = {
-        'linear':[100,400],
-        'quadratic':[300,400],
-        'power':[500,400],
-        'exponential':[700,400],
-        'sine':[900,400],
-        'sum':[1100,400],
-        'product':[1300,400],
-        'chain':[1500,400]
-    }
-    
-    const planetButtons = {}
-    for (let planet in planetPositions){
-        planetButtons[planet] = new Button( {
-            originX: planetPositions[planet][0]-(planet.length*15+30)/2, originY: planetPositions[planet][1],
-            width: planet.length*15+30, height:50,
-            onclick: () => {travelTo(planet)},
-            label: planet.charAt(0).toUpperCase() + planet.slice(1),
+        const planetName = new TextBox({
+            originX: x, originY: 300,
+            content: planets[i].name,
+            font: '30px monospace'
         })
 
-        switch (gss.planetProgress[planet]){
-            case 'complete':
-                planetButtons[planet].color = Color.blue
-                break
-            case 'visited':
-            case 'unvisited':
-                break
-            default:
-            case 'locked':
-                planetButtons[planet].active = false
-                break
-                //planetButtons[planet].hidden = true
-                break
-        }
+        const planetIcon = new ImageObject({
+            originX: x, originY: 320,
+            width: 100, height:100,
+            id: planets[i].img,
+        })
+
+        const learnButton = new Button({
+            originX: x, originY: 450,
+            onclick: () => {Scene.loadScene(gameState, planets[i].name.toLowerCase())},
+            label: "Learn",
+            
+            width: 100,
+        })
+
+        const learnProgress = new TextBox({
+            originX: x, originY: 540,
+            content: numComplete + '/' + numPuzzles + ' puzzles',
+            font: '20px monospace'
+        })
+
+        const practiceButton = new Button({
+            originX: x, originY: 600,
+            onclick: () => {
+                gss.planet = planets[i].name.toLowerCase()
+                Scene.loadScene(gameState, 'navigation')
+            },
+            label: "Practice",
+            width: 145,
+        })
+
+        const mastery = gss.navPuzzleMastery[planets[i].name.toLowerCase()]
+
+        const masteryText = new TextBox({
+            originX: x, originY: 680,
+            content: mastery ? mastery : 0 + '% mastery',
+            font: '20px monospace'
+        })
+
+        const planetGroup = new GameObjectGroup([learnButton, planetName, planetIcon, practiceButton, learnProgress, masteryText])
+        planetGroup.insert(gameState.objects)
     }
-
-
-    // Set objects and update
-    // const baseObjs = Object.values(planetButtons)
-    // gameState.update = () => {
-    //     gameState.objects = baseObjs
-    //     if (popUp){
-    //         gameState.objects = baseObjs.concat([confirmNav, confirmButton, cancelButton])
-    //     }
-    // }
 }

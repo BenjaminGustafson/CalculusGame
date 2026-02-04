@@ -6,16 +6,17 @@
 .header {
     font-family: "Open Sans", sans-serif;
     color: rgb(233,233,233);
-    background: rgb(60,60,80);
+    background: rgb(43,43,43);
     position: fixed;
     margin: 0;
     width: 100%;
+    max-height: 2rem;
     padding: 1rem 1rem;
     z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    border-bottom: 0.2rem solid rgb(40,40,60);
+    border-bottom: 0.2rem solid rgb(60,60,60);
 }
   
 .header .logo {
