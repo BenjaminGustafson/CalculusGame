@@ -3,6 +3,7 @@ import * as GameObjects from '../GameObjects/index.js'
 import * as Scene from '../Scene.js'
 import { TileMap } from '../util/TileMap.js'
 import { GameObjectGroup } from '../GameObjects/GameObject.js'
+import * as Header from './Header.js' 
 
 export function planetScene(gameState, {
     planetName,
@@ -27,6 +28,21 @@ export function planetScene(gameState, {
     if (!nodes[gss.playerLocation]){
         gss.playerLocation = 'ship'
     }
+
+
+    
+    function capFirst(str) {
+        if (!str) return "";
+        return str[0].toUpperCase() + str.slice(1);
+    }
+
+    Header.header(gameState, {
+        buttonOptsList: [
+            {onclick: ()=> Scene.loadScene(gameState, 'planetMap'), label:"←"}
+        ],
+        title: capFirst(planetName) + " Planet",
+    })
+    
 
     const player = new GameObjects.Player({
         nodes:pathData.nodes,
@@ -365,6 +381,8 @@ export function dialogueScene(gameState, {nextScenes = [], filePath, onComplete=
     
     unlockScenes(nextScenes, gss)
 }
+
+
 
 export function unlockPopup(gameState, {itemImage, topText, onComplete = () => {}, bottomText=''}){
     const gss = gameState.stored

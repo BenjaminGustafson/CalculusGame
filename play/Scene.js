@@ -127,10 +127,6 @@ export function loadScene(gameState, sceneName, message = {}) {
     // }
 }
 
-function capFirst(str) {
-    if (!str) return "";
-    return str[0].toUpperCase() + str.slice(1);
-}
 
 export function sceneTitle(gameState, title){
     gameState.temp.sceneTitle = title
