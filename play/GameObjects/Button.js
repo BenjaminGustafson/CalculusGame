@@ -44,6 +44,8 @@ export class Button extends GameObject{
         })
         this.visible = true // when false the button is not drawn, but is still clickable
         this.active = true // when false the button is not clickable and is drawn in gray
+
+        this.pressed = false
     }
 
     update(ctx, audioManager, mouse){
@@ -53,16 +55,27 @@ export class Button extends GameObject{
         Color.setStroke(ctx,buttonColor)
 
 
+        // If mouse over
         if (this.active && this.originX <= mouse.x && mouse.x <= this.originX + this.width && this.originY <= mouse.y && mouse.y <= this.originY + this.height){
+            // Mouse pressed on button
             if (mouse.down){
                 mouse.down = false // don't allow clicking multiple things
                 audioManager.play('click_003')
-                this.onclick(audioManager)
-            }else{
+                this.pressed = true
+            }
+            // Mouse hovering over button
+            else{
                 this.onhover(ctx, audioManager, mouse)
+            }
+            // Mouse released on button
+            if (this.pressed && !mouse.held){
+                this.onclick(audioManager)
             }
             //Color.setColor(ctx,Color.adjustLightness(this.color,50))
             mouse.cursor = 'pointer'
+        }
+        if (!mouse.held){
+            this.pressed = false
         }
 
         // Drawing:
@@ -70,9 +83,24 @@ export class Button extends GameObject{
             return
         }
 
-        Shapes.Rectangle({ctx:ctx,originX:this.originX,originY:this.originY,width:this.width,height:this.height,
-            lineWidth:this.lineWidth,stroke:false,fill:true,shadow:0,
-            inset:this.active})
+        if (!this.pressed){
+            Color.setFill(ctx, Color.adjustLightness(this.bgColor, -50))
+            Shapes.Rectangle({ctx:ctx,
+                originX:this.originX,originY:this.originY+5,
+                width:this.width,height:this.height,
+                lineWidth:this.lineWidth,stroke:false,fill:true,
+                radius:10,
+            })
+        }
+        const pressY = this.pressed ? 5 : 0
+
+        Color.setFill(ctx, this.bgColor)
+        Shapes.Rectangle({ctx:ctx,originX:this.originX,originY:this.originY + pressY,
+            width:this.width,height:this.height,
+            lineWidth:this.lineWidth,stroke:false,fill:true,
+            radius:10,
+        })
+
         ctx.font = "40px monospace"
         ctx.textBaseline = 'alphabetic'
         ctx.textAlign = 'start'
@@ -83,7 +111,7 @@ export class Button extends GameObject{
         ctx.font = this.fontSize + "px monospace"
         text_size = ctx.measureText(this.label)
         // text baseline = top + half of height + half of font...
-        ctx.fillText(this.label, this.originX + this.width/2-text_size.width/2, this.originY + this.height/2 + text_size.actualBoundingBoxAscent/2)
+        ctx.fillText(this.label, this.originX + this.width/2-text_size.width/2, this.originY + this.height/2 + text_size.actualBoundingBoxAscent/2 + pressY)
     }
 
 }

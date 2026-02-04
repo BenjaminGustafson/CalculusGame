@@ -24,23 +24,24 @@ export async function planetMap (gameState){
     ]
     
     for (let i = 0; i < planets.length; i++){
+        const planet = planets[i].name.toLowerCase()
         const x = 100 + i * 400
         
         const pathData = await FileLoading.loadJsonFile('./data/'+planets[i].data)
         const numPuzzles = Object.keys(pathData.nodes).length - 1
         const numComplete = Object.entries(gameState.stored.completedScenes)
-            .filter(([key, value]) => key.startsWith(planets[i].name.toLowerCase+'.') && value === 'complete').length
+            .filter(([key, value]) => key.startsWith(planet) && value === 'complete').length
         
 
         const planetName = new TextBox({
-            originX: x, originY: 300,
+            originX: x, originY: 240,
             content: planets[i].name,
             font: '30px monospace'
         })
 
         const planetIcon = new ImageObject({
-            originX: x, originY: 320,
-            width: 100, height:100,
+            originX: x, originY: 260,
+            width: 150, height:150,
             id: planets[i].img,
         })
 
@@ -48,7 +49,6 @@ export async function planetMap (gameState){
             originX: x, originY: 450,
             onclick: () => {Scene.loadScene(gameState, planets[i].name.toLowerCase())},
             label: "Learn",
-            
             width: 100,
         })
 
@@ -59,7 +59,7 @@ export async function planetMap (gameState){
         })
 
         const practiceButton = new Button({
-            originX: x, originY: 600,
+            originX: x, originY: 580,
             onclick: () => {
                 gss.planet = planets[i].name.toLowerCase()
                 Scene.loadScene(gameState, 'navigation')
@@ -67,16 +67,30 @@ export async function planetMap (gameState){
             label: "Practice",
             width: 145,
         })
+        if (gss.planetProgress[planet] === "locked"){
+            learnButton.active = false
+            practiceButton.active = false
+        }
 
         const mastery = gss.navPuzzleMastery[planets[i].name.toLowerCase()]
 
         const masteryText = new TextBox({
-            originX: x, originY: 680,
-            content: mastery ? mastery : 0 + '% mastery',
+            originX: x, originY: 660,
+            content: ((mastery ? mastery : 0)*100).toFixed(1) + '% mastery',
             font: '20px monospace'
         })
 
         const planetGroup = new GameObjectGroup([learnButton, planetName, planetIcon, practiceButton, learnProgress, masteryText])
         planetGroup.insert(gameState.objects)
     }
+
+    const practiceAllButton = new Button({
+        originX: 700, originY: 750,
+        onclick: () => {
+            Scene.loadScene(gameState, 'navigation')
+        },
+        label: "Practice All",
+        width: 210,
+    }).insert(gameState.objects)
+
 }

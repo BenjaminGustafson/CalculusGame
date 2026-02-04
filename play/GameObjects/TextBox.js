@@ -40,7 +40,6 @@ export class TextBox extends GameObject{
                 originY: this.originY - textMeasure.fontBoundingBoxAscent - this.padding, 
                 width: textMeasure.actualBoundingBoxLeft + textMeasure.actualBoundingBoxRight + 20 + this.padding*2, 
                 height: textMeasure.fontBoundingBoxAscent + textMeasure.fontBoundingBoxDescent + this.padding*2,
-                inset:true,
             })
         }
         Color.setColor(ctx,this.color)
