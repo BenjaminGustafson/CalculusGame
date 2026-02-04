@@ -10,6 +10,7 @@ import * as Power from './Scenes/Power.js'
 import * as Sum from './Scenes/Sum.js'
 import * as Product from './Scenes/Product.js'
 import * as Chain from './Scenes/Chain.js'
+import { planetMap } from './Scenes/PlanetMap.js'
 
 
 export const CANVAS_WIDTH = 1600
@@ -95,7 +96,7 @@ export function loadScene(gameState, sceneName, message = {}) {
         default:
         case "startmenu": Menus.startMenu(gameState, message['nextScene'])
             break
-        case "planetmap": Menus.planetMap(gameState)
+        case "planetmap": planetMap(gameState)
             break
         case "navigation": Navigation.navScene(gameState, 'ship')
             break
@@ -121,9 +122,9 @@ export function loadScene(gameState, sceneName, message = {}) {
         case "chain": Chain.loadScene(gameState, sceneNameRemainder, message)
             break
     }
-    if (sceneName != 'mainMenu'){
-        journal(gameState)
-    }
+    // if (sceneName != 'mainMenu'){
+    //     journal(gameState)
+    // }
 }
 
 function capFirst(str) {

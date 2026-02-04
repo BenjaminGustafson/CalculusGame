@@ -17,10 +17,11 @@ export class TextBox extends GameObject{
         align='start',
         baseline='alphabetic',
         updateContent, 
+        padding=0,
     }){
         super()
         Object.assign(this, {
-            originX, originY, content, font, color, align, baseline, updateContent, bgColor
+            originX, originY, content, font, color, align, baseline, updateContent, bgColor, padding
         })
     }
 
@@ -35,10 +36,10 @@ export class TextBox extends GameObject{
             Color.setColor(ctx,this.bgColor)
             const textMeasure = ctx.measureText(this.content)
             Shapes.Rectangle({ ctx: ctx,
-                originX: this.originX - textMeasure.actualBoundingBoxLeft - 10,
-                originY: this.originY - textMeasure.fontBoundingBoxAscent, 
-                width: textMeasure.actualBoundingBoxLeft + textMeasure.actualBoundingBoxRight + 20, 
-                height: textMeasure.fontBoundingBoxAscent + textMeasure.fontBoundingBoxDescent,
+                originX: this.originX - textMeasure.actualBoundingBoxLeft - 10 - this.padding,
+                originY: this.originY - textMeasure.fontBoundingBoxAscent - this.padding, 
+                width: textMeasure.actualBoundingBoxLeft + textMeasure.actualBoundingBoxRight + 20 + this.padding*2, 
+                height: textMeasure.fontBoundingBoxAscent + textMeasure.fontBoundingBoxDescent + this.padding*2,
                 inset:true,
             })
         }
