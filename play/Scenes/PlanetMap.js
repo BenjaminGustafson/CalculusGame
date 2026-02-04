@@ -19,7 +19,7 @@ export async function planetMap (gameState){
     const planets = [
         {name:'Linear', img: 'linearPlanetIcon', data: 'linearPlanet.json'},
         {name:'Quadratic', img: 'quadPlanetIcon', data: 'quadraticPlanet.json'},
-        // {name:'Power', img: 'quadPlanetIcon'},
+        {name:'Power', img: 'quadPlanetIcon', data: 'powerPlanet.json'},
         // {name:'Sine', img: 'quadPlanetIcon'},
     ]
     
