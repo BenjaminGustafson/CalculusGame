@@ -41,7 +41,7 @@ import { MathBlock } from './GameObjects/MathBlock.js'
 
 // Build "dev" for developement
 // "play" release version
-const build = "dev"
+const build = "play"
 
 var keysPressed = {}
 
@@ -129,6 +129,9 @@ function setup() {
                 console.log("Loaded save")
 
                 // TODO: Check that save data has the expected fields
+                if (!gameState.stored.practiceMastery){
+                    initStoredState()
+                }
 
                 if (build != 'dev') {
                     savedScene = gameState.stored.sceneName
