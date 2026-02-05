@@ -194,9 +194,10 @@ export function navScene(gameState) {
                 tracer.start()
                 startButton.active = false
                 mngr.frozen = true
-
+                shipViewer.state = 'Trace'
             break
             case 'Result':
+                shipViewer.state = 'Wait'
                 startButton.active = true
                 startButton.label = "Next"
                 startButton.onclick = () => {
