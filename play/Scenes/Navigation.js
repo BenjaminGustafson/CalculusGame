@@ -1,7 +1,12 @@
 import {Color, Shapes} from '../util/index.js'
-import {Grid, FunctionTracer, Button, ImageObject, IntegralTracer, MathBlock, MathBlockManager, MathBlockField, Slider, Target, TargetAdder, TextBox} from '../GameObjects/index.js'
+import {Grid, FunctionTracer, Button, ImageObject, IntegralTracer, MathBlock, MathBlockManager,
+     MathBlockField, Slider, Target, TargetAdder, TextBox,
+    ShipViewer} from '../GameObjects/index.js'
 import { loadScene, CANVAS_HEIGHT } from '../Scene.js'
 import * as Planet from './Planet.js'
+import { GameObjectGroup } from '../GameObjects/GameObject.js'
+import * as Header from './Header.js'
+import * as Scene from '../Scene.js'
 
 /**
  * NAVIGATION
@@ -11,13 +16,11 @@ import * as Planet from './Planet.js'
  * 
  * The player gains mastery of a puzzle type by answering correctly and loses mastery
  * on an incorrect answer.
- * 
- *  
- * 
+
  * After a planet has been reached, the player can teleport to it at any time.
  * The player can also bring up practice puzzles from completed planets.
  * 
- * 
+
  * 
  */
 
@@ -26,26 +29,30 @@ import * as Planet from './Planet.js'
  * 
  * The randomly generated navigation levels
  * 
- * 
- * 
  */
 export function navScene(gameState) {
     const gss = gameState.stored
-    const prevPlanet = gss.planet
-    const nextPlanet = gss.nextPlanet
+    const planet = gss.planet
 
-    
-    //gss.currentNavFunction = null
-    var mathBlockFun = new MathBlock({})
-    if (gss.currentNavFunction != null){
-        // Rehydrate object
-        mathBlockFun = MathBlock.rehydrate(gss.currentNavFunction)
-    }else{
-        mathBlockFun = newRNGPuzzle(gameState)
-    }
-    // DEBUG
-    //mathBlockFun = newRNGPuzzle(gameState)
+    const category = 'all'
+    const mastery = gss.practiceMastery[planet]
+    console.log('mastery', mastery)
+
+    // Header
+    Header.header(gameState, {
+        buttonOptsList: [
+            {onclick: ()=> Scene.loadScene(gameState, 'planetMap'), label:"←"}
+        ],
+        title: ''
+    })
+
+
+    // Target function
+    var mathBlockFun = newRNGPuzzle(gameState)
     var fun = mathBlockFun.toFunction()
+    mathBlockFun.x = 100
+    mathBlockFun.y = 300
+    mathBlockFun.insert(gameState.objects)
     
     
     const padLeft = 100
@@ -54,60 +61,59 @@ export function navScene(gameState) {
     const intDist = Math.floor(gameState.stored.totalDistance)
     const gridY = CANVAS_HEIGHT-padBottom-gridDim
 
+    // Grids
     const gridLeft = new Grid({
         canvasX:100, canvasY:400,
         canvasWidth:400, canvasHeight:400, 
         gridXMin:-10, gridXMax:10, gridYMin:-10, gridYMax:10,
         labels:true, arrows:false, 
         autoCellSize:true,
+        yAxisLabel : 'Position',
+        xAxisLabel : 'Time'
     })
+    gridLeft.insert(gameState.objects)
     const gridRight = new Grid({
         canvasX:600, canvasY:gridY,
         canvasWidth:400, canvasHeight:400, 
         gridXMin:-10, gridXMax:10, gridYMin:-10, gridYMax:10,
         labels:true, arrows:false, 
         autoCellSize:true,
+        yAxisLabel : 'Velocity',
+        xAxisLabel : 'Time'
     })
-    //const gridRight = new Grid(padLeft+gridDim+100, gridY, gridDim, gridDim, grid_setting.grid_width, grid_setting.grid_height, 5, 4, 0, labels=true)
+    gridRight.insert(gameState.objects)
+
+    // Sliders
     const tySlider = new Slider({
-        canvasX: 1200, canvasY:gridY, canvasLength:400,
+        canvasX: 1150, canvasY:gridY, canvasLength:400,
         sliderLength: 10, maxValue: 5, showAxis: true, lineWidth:3
     })
+    tySlider.insert(gameState.objects)
     const sySlider = new Slider({
         canvasX: 1100, canvasY: gridY, canvasLength: 400,
         sliderLength: 10, maxValue: 5, startValue: 1,showAxis: true, lineWidth:3
     })
+    sySlider.insert(gameState.objects)
+
+    // Function tracers
     const funRight = new FunctionTracer({grid:gridRight, lineWidth:5, xStep:0.1})
-
+    funRight.insert(gameState.objects, 1)
     const funLeft = new FunctionTracer({grid:gridLeft, inputFunction:fun, lineWidth:5, xStep:0.1, unsolvedColor:Color.magenta})
+    funLeft.insert(gameState.objects, 1)
 
+    // Mathblocks
     const mathBlocks = Planet.standardBlocks(gameState.stored.planet)
-    // [
-    //     new MathBlock({type:MathBlock.CONSTANT}),
-    //     new MathBlock({type:MathBlock.VARIABLE, token:'x'}),
-    //     new MathBlock({type:MathBlock.POWER, token:'2'}),
-    //     new MathBlock({type:MathBlock.POWER, token:'3'}),
-    //     new MathBlock({type:MathBlock.EXPONENT}),
-    //     new MathBlock({type:MathBlock.FUNCTION, token:'sin'}),
-    //     new MathBlock({type:MathBlock.FUNCTION, token:'cos'}),
-    //     new MathBlock({type:MathBlock.BIN_OP, token:'+'}),
-    //     new MathBlock({type:MathBlock.BIN_OP, token:'*'}),
-    //     new MathBlock({type:MathBlock.BIN_OP, token:'/'}),
-    // ]
-    // const mathBlocks = [new MathBlock({type:MathBlock.VARIABLE, token:'x'})]
-    // for (let b of gss.mathBlocksUnlocked){
-    //     mathBlocks.push(new MathBlock({type: b.type, token: b.token}))
-    // }
 
-
-    const blockField = new MathBlockField({minX: 600, minY:250, maxX: 1200, maxY:350})
+    const blockField = new MathBlockField({minX: 600, minY:150, maxX: 1000, maxY:350})
     const mngr = new MathBlockManager({
         blocks:mathBlocks, blockSize:26,
         translateYSlider:tySlider, scaleYSlider:sySlider, 
         blockFields: [blockField],
         funTracers: [funRight],
     })
+    mngr.insert(gameState.objects, 10)
     
+    // Targets
     const targets = []
     const numTargets = 400
     for (let i = 0; i < numTargets - 1; i++) {
@@ -117,7 +123,10 @@ export function navScene(gameState) {
             targets.push(new Target({grid: gridLeft, gridX: x, gridY: y, size:5}))
         }
     }
+    const targetGroup = new GameObjectGroup(targets)
+    targetGroup.insert(gameState.objects)
 
+    // Integral tracer
     const tracer = new IntegralTracer({grid: gridLeft, input:{type:'mathBlock',  blockField: blockField},
          targets:targets, originGridY: fun(gridLeft.gridXMin), pixelsPerSec:100, autoStart:false,
         precision:0.0001})
@@ -170,103 +179,18 @@ export function navScene(gameState) {
     }
 
     // Asteroids
-    const shipViewer = {
-        shipImg: document.getElementById("shipSide"),
-        asteroidImg: document.getElementById("asteroidImg"),
-        originX: 300,
-        originY:50,
-        width:650,
-        height:150,
-        shipX: fun(-10),
-        shipWidth:3,
-        asteroids:[],
-        update: function(ctx, audio, mouse){
-            Color.setFill(ctx, Color.darkBlack)
-            ctx.save()
-            ctx.beginPath()
-            ctx.rect(this.originX, this.originY, this.width, this.height)
-            ctx.clip()
-            Shapes.Rectangle({ctx:ctx, originX:this.originX, originY:this.originY, width:this.width,height:this.height,inset:true} )
-            if (state == 'Trace'){
-                this.shipX = tracer.currentY
-                this.shipXMin = this.shipX - this.shipWidth/2
-                this.shipXMax = this.shipX + this.shipWidth/2
-            }
-            ctx.save() // Local coordinates at center of rect
-            ctx.translate(this.originX + this.width/2, this.originY + this.height/2)
-            ctx.scale((this.width-100)/20,(this.width-100)/20)
-            ctx.save() // Flip ship if needed
-            ctx.translate(this.shipX,0)
-            if (tracer.currentDelta < 0) ctx.scale(-1,1)
-            ctx.drawImage(this.shipImg, -this.shipWidth/2,-this.shipWidth/3/2,this.shipWidth,this.shipWidth/3)
-            ctx.restore() // Back to local coords
-            const t = tracer.currentX
-            if (state == 'Trace'){
-                var hit = false
-                for (let asteroid of this.asteroids){
-                    if (asteroid.y(t) > -5 && asteroid.y(t) < 5)
-                        ctx.drawImage(this.asteroidImg, asteroid.x-0.5,asteroid.y(t)-0.5, 1,1)
-                    if (this.checkCollision(asteroid, this.shipX, t)){
-                        hit = true
-                    }
-                }
-                if (hit){
-                    audio.play('back_001', {pitch:(Math.random())*3-6, volume:0.7})
-                    ctx.fillStyle = `rgb(255,0,0,0.5)`
-                    ctx.fillRect(this.shipX - this.shipWidth/2, - this.shipWidth/3/2, this.shipWidth,this.shipWidth/3)
-                }
-            }
-            this.prevShipX = this.shipX
-            ctx.restore() // back to global coords
-            ctx.restore() // unclip
-            // for (let asteroid of this.asteroids){
-            //     Color.setColor(ctx,asteroid.color)
-            //     ctx.fillRect(gridLeft.gridToCanvasX(asteroid.tIntercept)-10,gridLeft.gridToCanvasY(asteroid.x), 20,20)
-            // }
-            // for (let i = -10; i < 10; i+=0.1){
-            //     Color.setColor(ctx,Color.magenta)
-            //     ctx.strokeRect(gridLeft.gridToCanvasX(i)-30,gridLeft.gridToCanvasY(fun(i))-10, 60,20)
-            // }
-        },
-        generateAsteroids: function(){
-
-            outerLoop: for (let i = 0; i < 100; i++){
-                const asteroid = {
-                    x: Math.random()*20-10, 
-                    tIntercept: Math.random()*20-10,
-                    slope: (Math.floor(Math.random()*2)*4-2),
-                    y: function(t){
-                        return this.slope * t - this.tIntercept * this.slope
-                    },
-                    color: Color.red,
-                }
-                for (let t = asteroid.tIntercept-0.5; t <= asteroid.tIntercept + 0.5; t+=0.01){
-                    if (this.checkCollision(asteroid, fun(t), t)){
-                        continue outerLoop
-                        //asteroid.color = Color.blue
-                    }
-                }
-                this.asteroids.push(asteroid)
-            }
-        },
-        checkCollision: function(asteroid, shipX, time){
-            if (asteroid.y(time) -0.5 > 0.5 || asteroid.y(time) + 0.5 < -0.5 
-            || asteroid.x > shipX + this.shipWidth/2 || asteroid.x+1 < shipX - this.shipWidth/2){
-                 return false
-            }else {
-                return true
-            }
-        },
-    }
-
+    const shipViewer = new ShipViewer({
+        fun: fun,
+        tracer: tracer,
+    })
     shipViewer.generateAsteroids()
+    shipViewer.insert(gameState.objects)
 
     const backButton = new Button({originX: 50, originY: 50, width:50, height:50,
          onclick:(() => loadScene(gameState,"planetMap")), label:"↑", lineWidth:5})
 
 
     const startButton = new Button({originX: 150, originY: 50, width: 100, height:100,label:"Start"})
-
 
     //const targetText = new TextBox(padLeft, gridY-40, funString, font = '40px monospace', color = Color.white)
     const axisLabels = {
@@ -289,49 +213,16 @@ export function navScene(gameState) {
     }
     
 
-    const strikes = {
-        update: (ctx) => {
-            for (let i = 0; i < 3; i++) {
-                if (gameState.stored.strikes <= i) {
-                    Color.setColor(ctx, Color.white)
-                    if(state == "Solved" && gameState.stored.strikes == i) {
-                        Color.setColor(ctx, Color.blue)
-                    }
-                } else {
-                    Color.setColor(ctx, Color.red)
-                }
-                Shapes.Circle({ctx:ctx, centerX:160 + i * 40, centerY:200, radius:16})
-            }
-        }
-    }
-
-    const toolTip = {
-        visible: true,
-        update: function(ctx) {
-            if (!this.visible){
-                return
-            }
-            ctx.font = '20px monospace'
-            ctx.textAlign = 'left'
-            ctx.textBaseline = 'top'
-            Color.setColor(ctx, Color.white)
-            ctx.fillText("Drag a block", 1100, 360)
-            ctx.fillText("to set function", 1100, 400)
-            Shapes.Line(ctx, 1250,320,1100,320,5,"arrow",5,true)
-        }
-    }
-
     /**
-     * Navigation level loop:
-     * - Travel: The ship moves closer to destination, and the progress bar updates.
-     *  UI elements are frozen until travelling is done and we go to Input
-     * - Input: Asteroid field warning appears. The user puts in input with mathblocks.
-     *  Waits until start button is pushed. 
+     * States:
+     * 
+     * - Input: Wait while the user puts in input with mathblocks.
+     * 
      * - Trace: The input function is traced and we see if it hits any asteroids. 
-     * - Strikeout: The result of the trace is a failure 3 times. Go back to Input with a new function.
-     * - Success: The result of the trace is a success. Wait for continue button to go to travelling.
+     *
+     * - Result: The progress bar updates
      */
-    const mainObjs  = [gridLeft, gridRight, shipViewer, tySlider, sySlider, startButton, axisLabels, strikes, progressBar, backButton]
+    //const mainObjs  = [gridLeft, gridRight, shipViewer, tySlider, sySlider, startButton, axisLabels, progressBar, backButton]
     
     var state = "Travel"
 
@@ -346,112 +237,110 @@ export function navScene(gameState) {
     // gss.navDistance = 100
 
     function changeToState(newState){
-        switch (newState){
-            case 'Travel':
-                startButton.active = false
-                startTime = Date.now()
-                mngr.frozen = true
-                startDistance = gss.navDistance - travelDistance
-                gameState.objects = mainObjs.concat([])
-                gameState.objects.push(mngr)
-            break
-            case 'Input':
-                mngr.frozen = false
-                startButton.label = "Start"
-                startButton.onclick = () => {changeToState('Trace')}
-                gameState.objects = mainObjs.concat([funLeft, funRight, tracer, mathBlockFun]).concat(targets)
-                gameState.objects.push(mngr)
-            break
-            case 'Trace':
-                tracer.frame = 0
-                tracer.reset()
-                tracer.start()
-                startButton.active = false
-                mngr.frozen = true
-                gameState.objects = mainObjs.concat([funLeft, funRight, tracer, mathBlockFun]).concat(targets)
-                gameState.objects.push(mngr)
-            break
-            case 'Solved':
-                gss.navDistance += travelDistance
-                startButton.active = true
-                startButton.label = "Next"
-                startButton.onclick = () => {
-                    gss.currentNavFunction = null
-                    gss.strikes = 0
-                    loadScene(gameState, 'navigation')
-                }
-            break
-            case 'Strikeout':
-                startButton.active = true
-                startButton.label = "Next"
-                startButton.onclick = () => {
-                    gss.currentNavFunction = null
-                    gss.strikes = 0
-                    loadScene(gameState, 'navigation')
-                }
-            break
-            case 'Finish':
-                startButton.active = true
-                startButton.label = "Done"
-                startButton.onclick = () => {
-                    loadScene(gameState, gss.nextPlanet)
-                }
-                break
-        }
-        state = newState
+        // switch (newState){
+        //     case 'Travel':
+        //         startButton.active = false
+        //         startTime = Date.now()
+        //         mngr.frozen = true
+        //         startDistance = gss.navDistance - travelDistance
+        //         gameState.objects = mainObjs.concat([])
+        //         gameState.objects.push(mngr)
+        //     break
+        //     case 'Input':
+        //         mngr.frozen = false
+        //         startButton.label = "Start"
+        //         startButton.onclick = () => {changeToState('Trace')}
+        //         gameState.objects = mainObjs.concat([funLeft, funRight, tracer, mathBlockFun]).concat(targets)
+        //         gameState.objects.push(mngr)
+        //     break
+        //     case 'Trace':
+        //         tracer.frame = 0
+        //         tracer.reset()
+        //         tracer.start()
+        //         startButton.active = false
+        //         mngr.frozen = true
+        //         gameState.objects = mainObjs.concat([funLeft, funRight, tracer, mathBlockFun]).concat(targets)
+        //         gameState.objects.push(mngr)
+        //     break
+        //     case 'Solved':
+        //         gss.navDistance += travelDistance
+        //         startButton.active = true
+        //         startButton.label = "Next"
+        //         startButton.onclick = () => {
+        //             gss.currentNavFunction = null
+        //             loadScene(gameState, 'navigation')
+        //         }
+        //     break
+        //     case 'Strikeout':
+        //         startButton.active = true
+        //         startButton.label = "Next"
+        //         startButton.onclick = () => {
+        //             gss.currentNavFunction = null
+        //             loadScene(gameState, 'navigation')
+        //         }
+        //     break
+        //     case 'Finish':
+        //         startButton.active = true
+        //         startButton.label = "Done"
+        //         startButton.onclick = () => {
+        //             loadScene(gameState, gss.nextPlanet)
+        //         }
+        //         break
+        // }
+        // state = newState
     }
     changeToState('Travel')
 
     gameState.update = () => {
-        switch (state) {
-            case 'Travel':{
-                const deltaTime = (Date.now() - startTime)/1000
-                if (progressBar.dist >= planetDistance){
-                    progressBar.dist = planetDistance
-                    changeToState('Finish')
-                } else if (progressBar.dist >= gss.navDistance){
-                    progressBar.dist = gss.navDistance
-                    changeToState('Input')
-                }else{
-                    progressBar.dist = startDistance + deltaTime / travelTime * travelDistance  
-                }
-            }
-            break
-            case "Input":{
+        // switch (state) {
+        //     case 'Travel':{
+        //         const deltaTime = (Date.now() - startTime)/1000
+        //         if (progressBar.dist >= planetDistance){
+        //             progressBar.dist = planetDistance
+        //             changeToState('Finish')
+        //         } else if (progressBar.dist >= gss.navDistance){
+        //             progressBar.dist = gss.navDistance
+        //             changeToState('Input')
+        //         }else{
+        //             progressBar.dist = startDistance + deltaTime / travelTime * travelDistance  
+        //         }
+        //     }
+        //     break
+        //     case "Input":{
 
-                if (blockField.rootBlock != null && blockField.rootBlock.toFunction() != null) {
-                    startButton.active = true
-                } else {
-                    startButton.active = false
-                }
-            }
-                break
-            case "Trace":{
-                if (tracer.state == 'STOPPED_AT_END') {
-                    // Correct answer
-                    if (tracer.solved) {
-                        updateNavigationProgress(gameState, gss.currentNavPuzzleType, 1)
-                        changeToState('Solved')
-                    // Incorrect answer
-                    } else {
-                        updateNavigationProgress(gameState, gss.currentNavPuzzleType, 0)
-                        gameState.stored.strikes += 1
-                        if (gameState.stored.strikes == 3) {
-                            changeToState('Strikeout')
-                        } else {
-                            changeToState('Input')
-                        }
-                    }
-                }
-            }
-                break
-            case "Solved":
-                break
-            case "Strikeout":
-                break
-            default:
-                break
-        }
+        //         if (blockField.rootBlock != null && blockField.rootBlock.toFunction() != null) {
+        //             startButton.active = true
+        //         } else {
+        //             startButton.active = false
+        //         }
+        //     }
+        //         break
+        //     case "Trace":{
+        //         if (tracer.state == 'STOPPED_AT_END') {
+        //             // Correct answer
+        //             if (tracer.solved) {
+        //                 updateNavigationProgress(gameState, gss.currentNavPuzzleType, 1)
+        //                 changeToState('Solved')
+        //             // Incorrect answer
+        //             } else {
+        //                 updateNavigationProgress(gameState, gss.currentNavPuzzleType, 0)
+        //                 gameState.stored.strikes += 1
+        //                 if (gameState.stored.strikes == 3) {
+        //                     changeToState('Strikeout')
+        //                 } else {
+        //                     changeToState('Input')
+        //                 }
+        //             }
+        //         }
+        //     }
+        //         break
+        //     case "Solved":
+        //         break
+        //     case "Strikeout":
+        //         break
+        //     default:
+        //         break
+        // }
     }
     //gss.currentNavFunction = MathBlock.dehydrate(mathBlockFun)
 }
@@ -506,7 +395,7 @@ function newRNGPuzzle (gameState){
 
     const gss = gameState.stored
     gss.strikes = 0
-    var puzzleMastery = gss.navPuzzleMastery
+    var puzzleMastery = gss.practiceMastery
 
     const DEBUG = false
     if (DEBUG){
@@ -521,22 +410,27 @@ function newRNGPuzzle (gameState){
             'chain':0,
         }
     }
-    // Pick puzzle type so that probability of each type is proportional to (1-mastery)
-    var sum = 0
-    for (const key in puzzleMastery){
-        sum += 1 - puzzleMastery[key]
-    }
-    const randNum = Math.random()*sum
+    
     var puzzleType = ''
-    var sum2 = 0
-    for (const key in puzzleMastery){
-        sum2 += 1 - puzzleMastery[key]
-        if (randNum < sum2){
-            puzzleType = key
-            break
+    if (gss.practiceCategory == 'all'){
+        // Pick puzzle type so that probability of each type is proportional to (1-mastery)
+        var sum = 0
+        for (const key in puzzleMastery){
+            sum += 1 - puzzleMastery[key]
         }
+        const randNum = Math.random()*sum
+        var sum2 = 0
+        for (const key in puzzleMastery){
+            sum2 += 1 - puzzleMastery[key]
+            if (randNum < sum2){
+                puzzleType = key
+                break
+            }
+        }
+    }else {
+        puzzleType = gss.practiceCategory
     }
-    gss.currentNavPuzzleType = puzzleType
+    
 
     var mathBlockFun = null
     switch (puzzleType.toLowerCase()){
@@ -628,8 +522,7 @@ function newRNGPuzzle (gameState){
         mathBlockFun.translateY += 10 - Math.ceil(maxOnInterval)
     }
 
-    mathBlockFun.x = 100
-    mathBlockFun.y = 250
+    
     gss.currentNavFunction = MathBlock.dehydrate(mathBlockFun)
     return mathBlockFun
 }
@@ -650,7 +543,7 @@ function updateNavigationProgress(gameState, puzzleType, wasCorrect){
         gameState.stored.navPuzzleAttempts[puzzleType] = 0
     gameState.stored.navPuzzleAttempts[puzzleType] ++
     const alpha = 0.3
-    gameState.stored.navPuzzleMastery[puzzleType] = alpha * wasCorrect + (1-alpha) * gameState.stored.navPuzzleMastery[puzzleType]
+    gameState.stored.practiceMastery[puzzleType] = alpha * wasCorrect + (1-alpha) * gameState.stored.practiceMastery[puzzleType]
 }
 
 
