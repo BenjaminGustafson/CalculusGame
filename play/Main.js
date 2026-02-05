@@ -133,11 +133,11 @@ function setup() {
                     initStoredState()
                 }
 
-                if (build != 'dev') {
-                    savedScene = gameState.stored.sceneName
-                    if (savedScene == 'startMenu') savedScene = null
-                    gameState.stored.sceneName = 'startMenu' // always start at menu
-                }
+                // if (build != 'dev') {
+                //     savedScene = gameState.stored.sceneName
+                //     if (savedScene == 'startMenu') savedScene = null
+                //     gameState.stored.sceneName = 'startMenu' // always start at menu
+                // }
             }
         }catch (e){
             console.log('Unable to parse stored state')
