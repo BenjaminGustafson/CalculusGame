@@ -102,7 +102,7 @@ export function navScene(gameState) {
     funLeft.insert(gameState.objects, 1)
 
     // Mathblocks
-    const mathBlocks = Planet.standardBlocks(gameState.stored.planet)
+    const mathBlocks = Planet.standardBlocks(gss.practiceCategory == 'all' ? 'product' : gss.practiceCategory)
 
     const blockField = new MathBlockField({minX: 600, minY:150, maxX: 1000, maxY:350})
     const mngr = new MathBlockManager({
@@ -124,59 +124,13 @@ export function navScene(gameState) {
         }
     }
     const targetGroup = new GameObjectGroup(targets)
-    targetGroup.insert(gameState.objects)
+    targetGroup.insert(gameState.objects, 2)
 
     // Integral tracer
     const tracer = new IntegralTracer({grid: gridLeft, input:{type:'mathBlock',  blockField: blockField},
          targets:targets, originGridY: fun(gridLeft.gridXMin), pixelsPerSec:100, autoStart:false,
         precision:0.0001})
-
-    const shipIcon = document.getElementById("shipicon_img");
-    const linIcon = document.getElementById("linearicon_img");
-    const quadIcon = document.getElementById("quadraticicon_img");
-    const progressBar = {
-        dist: 0,
-        originX: 1100,
-        length: 400,
-        update: function(ctx){
-            const originY = 100
-            const numTicks = 10
-            const tickLength = 10
-            const lineWidth = 5
-            const canvasDist = this.dist/planetDistance * this.length
-            Color.setColor(ctx, Color.white)
-            Shapes.RoundedLine(ctx, this.originX, originY, this.originX + this.length, originY, lineWidth)
-            Color.setColor(ctx, Color.blue)
-            Shapes.RoundedLine(ctx, this.originX, originY, this.originX + canvasDist, originY, lineWidth)
-            Color.setColor(ctx, Color.white)
-            ctx.font = '20px monospace'
-            ctx.textAlign = 'center'
-            ctx.textBaseline = 'top'
-            ctx.fillText(`${prevPlanet[0].toUpperCase() + prevPlanet.slice(1)} Planet`, this.originX, originY-60)
-            ctx.fillText(`${nextPlanet[0].toUpperCase() + nextPlanet.slice(1)} Planet`, this.originX+this.length, originY-60)
-            ctx.fillText(`${this.dist.toFixed(0)} u traveled`, this.originX+this.length/2, originY-60)
-            ctx.fillText('0 u', this.originX, originY+25)
-            ctx.fillText(`${planetDistance} u`, this.originX+this.length, originY+25)
-            
-
-            for (let i = 0; i < numTicks + 1; i++) {
-                const tickX = this.originX + this.length / numTicks * i
-                
-                //ctx.fillText(i, tickX, originY + tickLength + 5)
-                if (tickX < this.originX + canvasDist){
-                    Color.setColor(ctx, Color.blue)
-                }else{
-                    Color.setColor(ctx, Color.white)
-                }
-                Shapes.RoundedLine(ctx, tickX, originY - tickLength, tickX, originY + tickLength, lineWidth)
-            }
-            const iconSize = 40
-            ctx.drawImage(shipIcon, this.originX + canvasDist-iconSize/2, originY-iconSize/2, iconSize,iconSize)
-            ctx.drawImage(linIcon, this.originX-70, originY-iconSize/2, iconSize,iconSize)
-            ctx.drawImage(quadIcon, this.originX+this.length +30, originY - iconSize/2, iconSize,iconSize)
-
-        }
-    }
+    tracer.insert(gameState.objects, 1)
 
     // Asteroids
     const shipViewer = new ShipViewer({
@@ -186,32 +140,9 @@ export function navScene(gameState) {
     shipViewer.generateAsteroids()
     shipViewer.insert(gameState.objects)
 
-    const backButton = new Button({originX: 50, originY: 50, width:50, height:50,
-         onclick:(() => loadScene(gameState,"planetMap")), label:"↑", lineWidth:5})
+    const startButton = new Button({originX: 1050, originY: 150, width: 100, height:60, label:"Start"})
+    startButton.insert(gameState.objects)
 
-
-    const startButton = new Button({originX: 150, originY: 50, width: 100, height:100,label:"Start"})
-
-    //const targetText = new TextBox(padLeft, gridY-40, funString, font = '40px monospace', color = Color.white)
-    const axisLabels = {
-        update: function(ctx){
-            ctx.font = '20px monospace'
-            ctx.textAlign = 'center'
-            ctx.textBaseline = 'top'
-            Color.setColor(ctx, Color.white)
-            ctx.fillText("Time", padLeft + 200, gridY+gridDim+50)
-            ctx.fillText("Time", 800, gridY+gridDim+50)
-            ctx.translate(padLeft -70,600)
-            ctx.rotate(-Math.PI/2)
-            ctx.fillText("Position", 0, 0)
-            ctx.resetTransform()
-            ctx.translate(540,600)
-            ctx.rotate(-Math.PI/2)
-            ctx.fillText("Velocity", 0, 0)
-            ctx.resetTransform()
-        }
-    }
-    
 
     /**
      * States:
@@ -224,125 +155,63 @@ export function navScene(gameState) {
      */
     //const mainObjs  = [gridLeft, gridRight, shipViewer, tySlider, sySlider, startButton, axisLabels, progressBar, backButton]
     
-    var state = "Travel"
-
-    var startTime = 0 // Date.now() for keeping track of time in state
-    const travelDistance = 100 // how far is travelled at a time
-    var startDistance = 0 // Distance at start of travel animation
-    const planetDistance = 500 // Distance from start to destination
-    const travelTime = 0.8 // Seconds of travel animation
+    var state = "Input"
     
     // DEBUG
     // progressBar.dist = 100
     // gss.navDistance = 100
 
     function changeToState(newState){
-        // switch (newState){
-        //     case 'Travel':
-        //         startButton.active = false
-        //         startTime = Date.now()
-        //         mngr.frozen = true
-        //         startDistance = gss.navDistance - travelDistance
-        //         gameState.objects = mainObjs.concat([])
-        //         gameState.objects.push(mngr)
-        //     break
-        //     case 'Input':
-        //         mngr.frozen = false
-        //         startButton.label = "Start"
-        //         startButton.onclick = () => {changeToState('Trace')}
-        //         gameState.objects = mainObjs.concat([funLeft, funRight, tracer, mathBlockFun]).concat(targets)
-        //         gameState.objects.push(mngr)
-        //     break
-        //     case 'Trace':
-        //         tracer.frame = 0
-        //         tracer.reset()
-        //         tracer.start()
-        //         startButton.active = false
-        //         mngr.frozen = true
-        //         gameState.objects = mainObjs.concat([funLeft, funRight, tracer, mathBlockFun]).concat(targets)
-        //         gameState.objects.push(mngr)
-        //     break
-        //     case 'Solved':
-        //         gss.navDistance += travelDistance
-        //         startButton.active = true
-        //         startButton.label = "Next"
-        //         startButton.onclick = () => {
-        //             gss.currentNavFunction = null
-        //             loadScene(gameState, 'navigation')
-        //         }
-        //     break
-        //     case 'Strikeout':
-        //         startButton.active = true
-        //         startButton.label = "Next"
-        //         startButton.onclick = () => {
-        //             gss.currentNavFunction = null
-        //             loadScene(gameState, 'navigation')
-        //         }
-        //     break
-        //     case 'Finish':
-        //         startButton.active = true
-        //         startButton.label = "Done"
-        //         startButton.onclick = () => {
-        //             loadScene(gameState, gss.nextPlanet)
-        //         }
-        //         break
-        // }
-        // state = newState
+        switch (newState){
+            case 'Input':
+                mngr.frozen = false
+                startButton.label = "Start"
+                startButton.onclick = () => {changeToState('Trace')}
+            break
+            case 'Trace':
+                tracer.frame = 0
+                tracer.reset()
+                tracer.start()
+                startButton.active = false
+                mngr.frozen = true
+
+            break
+            case 'Result':
+                startButton.active = true
+                startButton.label = "Next"
+                startButton.onclick = () => {
+                    loadScene(gameState, 'navigation')
+                }
+            break
+        }
+        state = newState
     }
-    changeToState('Travel')
+    changeToState('Input')
 
     gameState.update = () => {
-        // switch (state) {
-        //     case 'Travel':{
-        //         const deltaTime = (Date.now() - startTime)/1000
-        //         if (progressBar.dist >= planetDistance){
-        //             progressBar.dist = planetDistance
-        //             changeToState('Finish')
-        //         } else if (progressBar.dist >= gss.navDistance){
-        //             progressBar.dist = gss.navDistance
-        //             changeToState('Input')
-        //         }else{
-        //             progressBar.dist = startDistance + deltaTime / travelTime * travelDistance  
-        //         }
-        //     }
-        //     break
-        //     case "Input":{
-
-        //         if (blockField.rootBlock != null && blockField.rootBlock.toFunction() != null) {
-        //             startButton.active = true
-        //         } else {
-        //             startButton.active = false
-        //         }
-        //     }
-        //         break
-        //     case "Trace":{
-        //         if (tracer.state == 'STOPPED_AT_END') {
-        //             // Correct answer
-        //             if (tracer.solved) {
-        //                 updateNavigationProgress(gameState, gss.currentNavPuzzleType, 1)
-        //                 changeToState('Solved')
-        //             // Incorrect answer
-        //             } else {
-        //                 updateNavigationProgress(gameState, gss.currentNavPuzzleType, 0)
-        //                 gameState.stored.strikes += 1
-        //                 if (gameState.stored.strikes == 3) {
-        //                     changeToState('Strikeout')
-        //                 } else {
-        //                     changeToState('Input')
-        //                 }
-        //             }
-        //         }
-        //     }
-        //         break
-        //     case "Solved":
-        //         break
-        //     case "Strikeout":
-        //         break
-        //     default:
-        //         break
-        // }
+        console.log(state, tracer.state)
+        switch (state) {
+            case "Input":{
+                if (blockField.rootBlock != null && blockField.rootBlock.toFunction() != null) {
+                    startButton.active = true
+                } else {
+                    startButton.active = false
+                }
+            }
+                break
+            case "Trace":{
+                if (tracer.state == 'STOPPED_AT_END') {
+                    updateNavigationProgress(gameState, gss.currentPuzzleType, tracer.solved ? 1 : 0)
+                    changeToState('Result')
+                }
+            }
+                break
+            case "Result":
+                break
+            default:
+                break
+        }
     }
-    //gss.currentNavFunction = MathBlock.dehydrate(mathBlockFun)
 }
 
 
@@ -430,6 +299,7 @@ function newRNGPuzzle (gameState){
     }else {
         puzzleType = gss.practiceCategory
     }
+    gss.currentPuzzleType = puzzleType
     
 
     var mathBlockFun = null
@@ -539,9 +409,9 @@ function newRNGPuzzle (gameState){
  * @param {number} wasCorrect 0 if incorrect, 1 if correct
  */
 function updateNavigationProgress(gameState, puzzleType, wasCorrect){
-    if (gameState.stored.navPuzzleAttempts[puzzleType] == null)
-        gameState.stored.navPuzzleAttempts[puzzleType] = 0
-    gameState.stored.navPuzzleAttempts[puzzleType] ++
+    // if (gameState.stored.navPuzzleAttempts[puzzleType] == null)
+    //     gameState.stored.navPuzzleAttempts[puzzleType] = 0
+    //gameState.stored.navPuzzleAttempts[puzzleType] ++
     const alpha = 0.3
     gameState.stored.practiceMastery[puzzleType] = alpha * wasCorrect + (1-alpha) * gameState.stored.practiceMastery[puzzleType]
 }
