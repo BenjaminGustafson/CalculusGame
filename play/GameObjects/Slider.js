@@ -34,7 +34,7 @@ export class Slider extends GameObject{
         vertical = true,
         showLines = true, 
         showAxis = false,
-        circleColor = new Color(255,20,0),//,
+        circleColor = Color.red,//new Color(255,20,0),//,
         lineWidth = 4,
         tickLength = 8,
         valueLabel = true,
@@ -197,7 +197,7 @@ export class Slider extends GameObject{
                 //this.grabPos = this.vertical ? mouse.y - this.circlePos :  mouse.x - this.circlePos
             }
             if (!mouse.held){
-                this.circleColor = Color.adjustLightness(this.baseCircleColor, 50)
+                //this.circleColor = Color.adjustLightness(this.baseCircleColor, 50)
                 mouse.cursor = 'grab'
             }
         }else{
@@ -207,7 +207,7 @@ export class Slider extends GameObject{
 
         if (this.grabbed){
             this.mouseValue = this.gaurdValue(this.canvasToValue(this.vertical ? mouse.y : mouse.x))
-            this.circleColor = Color.adjustLightness(this.baseCircleColor, -50)
+            //this.circleColor = Color.adjustLightness(this.baseCircleColor, -50)
             mouse.cursor =  'grabbing'
         }
 
@@ -291,16 +291,31 @@ export class Slider extends GameObject{
 
         // Draw slider handle (circle)
         if (!this.clickable) this.circleColor = Color.red
-        Color.setColor(ctx, this.active ? this.circleColor : Color.gray)
+
+        
         const circleX = this.vertical ? this.canvasX : this.circlePos
         const circleY = this.vertical ? this.circlePos : this.canvasY
+        
+        const drawColor = this.active ? this.circleColor : Color.gray
+        if (this.clickable){
+            Color.setColor(ctx, Color.adjustLightness(drawColor, -100))
+            Shapes.Circle({
+                ctx:ctx,
+                centerX: circleX,
+                centerY: circleY,
+                radius:this.circleRadius,
+                //inset: this.clickable,
+                //shadow:this.grabbed,
+            })
+        }
+        Color.setColor(ctx, drawColor)
         Shapes.Circle({
             ctx:ctx,
             centerX: circleX,
-            centerY: circleY,
+            centerY: circleY + (this.grabbed ? 0 : -3),
             radius:this.circleRadius,
-            inset: this.clickable,
-            shadow:this.grabbed,
+            //inset: this.clickable,
+            //shadow:this.grabbed,
         })
 
         // Slider name (e.g. Velocity)
