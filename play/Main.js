@@ -94,30 +94,20 @@ function setup() {
         gameState.stored = {
             sceneName: "planetMap", // the unique name of the current scene
             planet: 'linear', // the current planet landed on, or the planet we just left
-            landed:true, // true if the ship is on a planet, false if it is in space
             
             // Planet puzzles and experiments
             planetProgress: {}, // progress on each planet. {'PlanetName' : 'complete'} or 'in progress' or 'locked'
             completedScenes: {}, // completed puzzles, trials, and rules by scene name. {"level1":true}
             playerLocation: 'planetMap', // where the player is in the planet scene
             
-            // Navigation
-            nextPlanet: null,
-            navDistance: 0, // the distance the trip has travelled during navigation
-            currentNavFunction: null, // the puzzle that the navigation is currently on
-            currentNavPuzzleType: null,
-            strikes: 0, // the number of strikes (incorrect answers) at the navigation puzzle
-            navPuzzleMastery: {}, // list of mastery scores, indexed by puzzle type. {'linear1': 0.9}. null if puzzle not unlocked yet
-            navPuzzleAttempts: {}, // number of attempted puzzles, indexed by puzzle type
-            mathBlocksUnlocked: [{type:MathBlock.CONSTANT}],// the MathBlocks currently available, excluding variables
-
-            journal: {},
-
-            itemsUnlocked: {},
+            // Practice
+            practiceCategory : '', // Which planet is being practiced or 'all'
+            practiceMastery: {}, // list of mastery scores, indexed by puzzle type. {'linear1': 0.9}. null if puzzle not unlocked yet
         }
 
-        for (const planet in PLANETS){
-            gameState.stored.planetProgress[PLANETS[planet]] = 'locked'
+        for (const planet of PLANETS){
+            gameState.stored.planetProgress[planet] = 'visited'
+            gameState.stored.practiceMastery[planet] = 0 
         }
         gameState.stored.planetProgress['linear'] = 'visited'        
     }

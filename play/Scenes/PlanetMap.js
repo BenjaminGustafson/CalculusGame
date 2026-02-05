@@ -61,7 +61,7 @@ export async function planetMap (gameState){
         const practiceButton = new Button({
             originX: x, originY: 580,
             onclick: () => {
-                gss.planet = planets[i].name.toLowerCase()
+                gss.practiceCategory = planets[i].name.toLowerCase()
                 Scene.loadScene(gameState, 'navigation')
             },
             label: "Practice",
@@ -72,7 +72,7 @@ export async function planetMap (gameState){
             practiceButton.active = false
         }
 
-        const mastery = gss.navPuzzleMastery[planets[i].name.toLowerCase()]
+        const mastery = gss.practiceMastery[planets[i].name.toLowerCase()]
 
         const masteryText = new TextBox({
             originX: x, originY: 660,
@@ -87,6 +87,7 @@ export async function planetMap (gameState){
     const practiceAllButton = new Button({
         originX: 700, originY: 750,
         onclick: () => {
+            gss.practiceCategory = 'all'
             Scene.loadScene(gameState, 'navigation')
         },
         label: "Practice All",
