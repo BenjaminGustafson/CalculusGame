@@ -1,7 +1,7 @@
 import {Color, Shapes} from '../util/index.js'
 import {Grid, FunctionTracer, Button, ImageObject, IntegralTracer, MathBlock, MathBlockManager,
      MathBlockField, Slider, Target, TargetAdder, TextBox,
-    ShipViewer} from '../GameObjects/index.js'
+    ShipViewer, ProgressBar} from '../GameObjects/index.js'
 import { loadScene, CANVAS_HEIGHT } from '../Scene.js'
 import * as Planet from './Planet.js'
 import { GameObjectGroup } from '../GameObjects/GameObject.js'
@@ -20,7 +20,6 @@ import * as Scene from '../Scene.js'
  * After a planet has been reached, the player can teleport to it at any time.
  * The player can also bring up practice puzzles from completed planets.
  * 
-
  * 
  */
 
@@ -34,10 +33,6 @@ export function navScene(gameState) {
     const gss = gameState.stored
     const planet = gss.planet
 
-    const category = 'all'
-    const mastery = gss.practiceMastery[planet]
-    console.log('mastery', mastery)
-
     // Header
     Header.header(gameState, {
         buttonOptsList: [
@@ -46,14 +41,17 @@ export function navScene(gameState) {
         title: ''
     })
 
-
     // Target function
     var mathBlockFun = newRNGPuzzle(gameState)
     var fun = mathBlockFun.toFunction()
     mathBlockFun.x = 100
     mathBlockFun.y = 300
     mathBlockFun.insert(gameState.objects)
-    
+
+    // Progress bar
+    const progressBar = new ProgressBar({})
+    progressBar.value = gss.practiceMastery[gss.currentPuzzleType]
+    progressBar.insert(gameState.objects)
     
     const padLeft = 100
     const gridDim = 400
@@ -213,6 +211,7 @@ export function navScene(gameState) {
         }
     }
 }
+
 
 
 /**
