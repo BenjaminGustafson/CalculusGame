@@ -76,11 +76,22 @@ export async function planetMap (gameState){
 
         const masteryText = new TextBox({
             originX: x, originY: 660,
-            content: ((mastery ? mastery : 0)*100).toFixed(1) + '% mastery',
+            content: ((mastery ? mastery : 0)*100).toFixed(0) + '% mastery',
             font: '20px monospace'
         })
 
-        const planetGroup = new GameObjectGroup([learnButton, planetName, planetIcon, practiceButton, learnProgress, masteryText])
+        const masteryIcon = new ImageObject({
+            originX: x, originY: 670, id: masteryStar(mastery).toLowerCase()+'Star', width: 30, height:30,
+        })
+
+        const masteryStarText = new TextBox({
+            originX: x + 40 , originY: 695,
+            content: masteryStar(mastery),
+            font: '20px monospace'
+        })
+        
+
+        const planetGroup = new GameObjectGroup([learnButton, planetName, planetIcon, practiceButton, learnProgress, masteryText, masteryIcon, masteryStarText])
         planetGroup.insert(gameState.objects)
     }
 
@@ -94,4 +105,12 @@ export async function planetMap (gameState){
         width: 210,
     }).insert(gameState.objects)
 
+}
+
+export function masteryStar(mastery){
+    const stars = [
+        'Copper', 'Silver', 'Gold', 'Platinum', 'Neptunium', 'Plutonium', 'Curium' 
+    ]
+    const i = Math.floor(Math.log2(-1/(mastery-1)))
+    return stars[Math.min(i, stars.length-1)]
 }

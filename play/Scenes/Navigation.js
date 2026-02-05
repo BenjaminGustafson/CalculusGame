@@ -7,6 +7,7 @@ import * as Planet from './Planet.js'
 import { GameObjectGroup } from '../GameObjects/GameObject.js'
 import * as Header from './Header.js'
 import * as Scene from '../Scene.js'
+import { masteryStar } from './PlanetMap.js'
 
 /**
  * NAVIGATION
@@ -49,9 +50,30 @@ export function navScene(gameState) {
     mathBlockFun.insert(gameState.objects)
 
     // Progress bar
+    const mastery = gss.practiceMastery[gss.currentPuzzleType]
     const progressBar = new ProgressBar({})
-    progressBar.value = gss.practiceMastery[gss.currentPuzzleType]
+    progressBar.value = Math.round(mastery*100)/100
     progressBar.insert(gameState.objects)
+
+    const masteryText = new TextBox({
+        originX: 1150, originY: 65,
+        content: Math.round(mastery*100) + '% mastery',
+        font: '20px monospace'
+    })
+    masteryText.insert(gameState.objects)
+
+
+    const masteryIcon = new ImageObject({
+        originX: 300, originY: 40, id: masteryStar(mastery).toLowerCase()+'Star', width: 30, height:30,
+    })
+    masteryIcon.insert(gameState.objects)
+    
+    const masteryStarText = new TextBox({
+        originX: 300 + 40 , originY: 40+25,
+        content: masteryStar(mastery),
+        font: '20px monospace'
+    })
+    masteryStarText.insert(gameState.objects)
     
     const padLeft = 100
     const gridDim = 400
