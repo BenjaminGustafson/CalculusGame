@@ -361,8 +361,16 @@ export class MathBlockField extends GameObject{
     }
 
     update(ctx, audioManager, mouse){
-        Color.setColor(ctx,this.isHovered ? this.hoverColor : this.baseColor)
-        Shapes.Rectangle({ctx:ctx,originX:this.minX,originY:this.minY,width:this.width,height:this.height,recessed:true})
+        const mainColor = this.isHovered ? this.hoverColor : this.baseColor
+        Shapes.BorderRect({ctx:ctx,originX:this.minX-1.5,originY:this.minY,width:this.width+3,height:this.height,
+            borderOffset: 5,
+            mainColor,
+            borderColor: Color.gray,
+        })
+        Color.setStroke(ctx,Color.gray)
+        Shapes.Rectangle({ctx:ctx,originX:this.minX,originY:this.minY,width:this.width,height:this.height,
+            stroke: true, fill: false, lineWidth: 3, radius: 5
+        })
         this.isHovered = false
         if (this.rootBlock == null){
             if (this.functionString != ''){
