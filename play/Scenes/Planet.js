@@ -101,12 +101,12 @@ export function planetScene(gameState, {
                 break
             case 'ship':
                 sprites.push(new GameObjects.ImageObject({
-                    originX:canvasPos.x - 150,
-                    originY:canvasPos.y - 50,
+                    originX:canvasPos.x-50,
+                    originY:canvasPos.y,
                     id:'shipSE'
                 }))
-                button.originX = canvasPos.x-25,
-                button.originY = canvasPos.y+150,
+                button.originX = canvasPos.x+75,
+                button.originY = canvasPos.y+200,
                 button.width = 250
                 button.height = 150
                 break

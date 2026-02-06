@@ -15,7 +15,7 @@ function linearPlanet(gameState, pathData, goTo) {
     }
     planetScene(gameState, {
         planetName: 'linear',
-        tileMap:  new TileMap({ yTileOffset: -3, xTileOffset: -8, xImgOffset: 0, yImgOffset: 0}),
+        tileMap:  new TileMap({ yTileOffset: -3, xTileOffset: -7, xImgOffset: -10, yImgOffset: 10}),
         pathData: pathData,
         bgImg: 'linearPlanetBg',
         fgImg: 'linearPlanetFg',
