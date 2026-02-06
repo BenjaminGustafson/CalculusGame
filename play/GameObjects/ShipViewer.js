@@ -27,7 +27,7 @@ export class ShipViewer extends GameObject {
         ctx.beginPath()
         ctx.rect(this.originX, this.originY, this.width, this.height)
         ctx.clip()
-        Shapes.Rectangle({ctx:ctx, originX:this.originX, originY:this.originY, width:this.width,height:this.height,inset:true} )
+        Shapes.Rectangle({ctx:ctx, originX:this.originX, originY:this.originY, width:this.width,height:this.height,radius:5} )
         if (this.state == 'Trace'){
             this.shipX = this.tracer.currentY
             this.shipXMin = this.shipX - this.shipWidth/2
