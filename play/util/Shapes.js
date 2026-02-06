@@ -1,3 +1,4 @@
+import { Color } from "./Color.js";
 
 /**
  * Extra drawing methods for commonly used shapes.
@@ -84,20 +85,30 @@ export class Shapes {
     //     }
     // }
 
+    static BorderRect({ctx, originX, originY, width, height, radius = 5, borderOffset=5, mainColor, borderColor}){
+        if (borderColor == null)
+            borderColor = Color.adjustLightness(mainColor, -50)
+        Color.setFill(ctx, borderColor)
+        Shapes.Rectangle({ctx, originX, originY: originY + borderOffset, width, height, radius})
+
+        Color.setFill(ctx, mainColor)
+        Shapes.Rectangle({ctx, originX, originY, width, height, radius})
+    }
+
     static Rectangle({ctx, originX, originY, width, height,
         lineWidth = 5, fill = true, shadow = 0, stroke = false, radius = 5,
         inset = false, recessed = false,
-        inset2d = 0,
+        //inset2d = 0,
     }) {
         ctx.lineWidth = lineWidth;
-        if (inset2d != 0){
-            ctx.save()
-            ctx.fillStyle = 'rgb(0,0,0)'
-            ctx.beginPath();
-            ctx.roundRect(originX, originY+inset2d, width, height, radius);
-            ctx.fill();
-            ctx.restore()
-        }
+        // if (inset2d != 0){
+        //     ctx.save()
+        //     ctx.fillStyle = 'rgb(0,0,0)'
+        //     ctx.beginPath();
+        //     ctx.roundRect(originX, originY+inset2d, width, height, radius);
+        //     ctx.fill();
+        //     ctx.restore()
+        // }
 
         ctx.beginPath();
         ctx.roundRect(originX, originY, width, height, radius);
