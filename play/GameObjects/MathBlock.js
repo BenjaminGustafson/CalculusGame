@@ -240,16 +240,14 @@ export class MathBlock extends GameObject{
 
         const bgColor = this.bgColor
         const lineColor = this.isHighlighted ? Color.green : this.lineColor
-        const textColor = this.isHighlighted ? Color.green : this.lineColor
+        const textColor = this.lineColor
         Color.setFill(ctx, bgColor)
         Color.setStroke(ctx,lineColor)
         //ctx.fillRect(this.x,this.y, this.w, this.h)
-        Shapes.Rectangle({ctx:ctx, originX:this.x, originY:this.y, width:this.w, height:this.h,
-            lineWidth:this.lineWidth, 
-            stroke: !this.onToolBar, 
-            shadow: this.grabbed ? 8 : !this.parent ? 2 : 0,
-            inset: !this.parent,
-            radius : 4
+        Shapes.BorderRect({ctx:ctx, originX:this.x, originY:this.y, width:this.w, height:this.h,
+            radius : 4,
+            mainColor: this.isHighlighted ? Color.green : this.bgColor,
+            //borderOffset: this.attached ? 0 : 5
         })
         var contentX = this.x + this.padding
         const middleY = this.y + this.h/2
@@ -266,14 +264,13 @@ export class MathBlock extends GameObject{
                     child.draw(ctx)
                     contentX += child.w + this.padding
                 }else{ // Attach square
-                    if (obj.childIndex == this.attachHover){
-                        Color.setFill(ctx, Color.adjustLightness(bgColor, 150))
-                    }else{
-                        Color.setFill(ctx, Color.adjustLightness(bgColor, 40))
-                    }
+                    const squareColor = Color.adjustLightness(bgColor, obj.childIndex == this.attachHover ? 150 : 40)
                     const square = {x: contentX, y: middleY - this.baseSize/2, w: this.baseSize, h:this.baseSize}
                     this.attachSquares[obj.childIndex] = square
-                    Shapes.Rectangle({ctx:ctx, originX:square.x, originY:square.y, width:square.w, height:square.h, recessed:true})
+                    Shapes.BorderRect({ctx:ctx, originX:square.x, originY:square.y, width:square.w, height:square.h, mainColor: squareColor, 
+                        borderColor: Color.adjustLightness(squareColor, 50),
+                        borderOffset: 3
+                    })
                     contentX += this.baseSize + this.padding
                 }
             }
