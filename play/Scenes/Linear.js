@@ -9,33 +9,13 @@ import * as FileLoading from '../util/FileLoading.js'
 import { TileMap } from '../util/TileMap.js'
 
 
-function linearPlanet(gameState, pathData, goTo) {
-    if (!gameState.stored.completedScenes['linear.1a']){
-        gameState.stored.completedScenes['linear.1a'] = 'in progress'
-    }
-    planetScene(gameState, {
-        planetName: 'linear',
-        tileMap:  new TileMap({ yTileOffset: -3, xTileOffset: -7, xImgOffset: -10, yImgOffset: 10}),
-        pathData: pathData,
-        bgImg: 'linearPlanetBg',
-        fgImg: 'linearPlanetFg',
-        goTo:goTo,
-    })
-}
-
 export async function loadScene(gameState, sceneName, message={}) {
-    gameState.stored.planet = 'linear'
-
-    const pathData = await FileLoading.loadJsonFile('./data/linearPlanet.json')
-    
-    // Root scene
-    if (!sceneName){
-        linearPlanet(gameState, pathData, message.goTo)
-    }
-
-    Scene.sceneTitle(gameState, 'Linear'+' ' + (sceneName ? sceneName : 'Planet'))
-
-    gameState.temp.nodeData = pathData.nodes[sceneName]
+    const {pathData} = await Planet.planetLoad(gameState, {
+        planetName:'linear',
+        sceneName,
+        tileMap : new TileMap({ yTileOffset: -3, xTileOffset: -7, xImgOffset: -10, yImgOffset: 10}),
+        message,
+    })
 
     // Sub-scenes
     switch (sceneName) {
