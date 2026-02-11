@@ -31,7 +31,6 @@ export async function loadScene(gameState, sceneName, message = {}){
         message,
     })
 
-    
     const nextScenes = sceneName ? pathData.nodes[sceneName].next : null
     
     // Sub-scenes

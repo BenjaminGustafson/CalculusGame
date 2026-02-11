@@ -47,7 +47,10 @@ export async function planetMap (gameState){
 
         const learnButton = new Button({
             originX: x, originY: 450,
-            onclick: () => {Scene.loadScene(gameState, planets[i].name.toLowerCase())},
+            onclick: () => {
+                gameState.stored.playerLocation = "ship"
+                Scene.loadScene(gameState, planets[i].name.toLowerCase())
+            },
             label: "Learn",
             width: 100,
         })
