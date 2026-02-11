@@ -4,6 +4,8 @@ import * as Scene from '../Scene.js'
 import { TileMap } from '../util/TileMap.js'
 import { GameObjectGroup } from '../GameObjects/GameObject.js'
 import * as Header from './Header.js' 
+import * as FileLoading from '../util/FileLoading.js'
+
 
 export function planetScene(gameState, {
     planetName,
@@ -29,12 +31,6 @@ export function planetScene(gameState, {
         gss.playerLocation = 'ship'
     }
 
-
-    
-    function capFirst(str) {
-        if (!str) return "";
-        return str[0].toUpperCase() + str.slice(1);
-    }
 
     Header.header(gameState, {
         buttonOptsList: [
@@ -101,11 +97,11 @@ export function planetScene(gameState, {
                 break
             case 'ship':
                 sprites.push(new GameObjects.ImageObject({
-                    originX:canvasPos.x-50,
+                    originX:canvasPos.x-50-50,
                     originY:canvasPos.y,
                     id:'shipSE'
                 }))
-                button.originX = canvasPos.x+75,
+                button.originX = canvasPos.x+75-50,
                 button.originY = canvasPos.y+200,
                 button.width = 250
                 button.height = 150
@@ -137,6 +133,42 @@ export function planetScene(gameState, {
     if (goTo){
         player.moveTo(goTo)
     }
+}
+
+export async function planetLoad(gameState, {planetName, sceneName,
+    tileMap, message
+   }){
+   gameState.stored.planet = planetName
+   
+   const pathData = await FileLoading.loadJsonFile('./data/' + planetName + 'Planet.json')
+   
+   // Root scene
+   if (!sceneName){
+       if (!gameState.stored.completedScenes[planetName + '.1a']){
+           gameState.stored.completedScenes[planetName + '.1a'] = 'in progress'
+       }
+       planetScene(gameState, {
+           planetName,
+           tileMap,
+           pathData: pathData,
+           bgImg: planetName + 'PlanetBg',
+           fgImg: planetName + 'PlanetFg',
+           goTo: message.goTo,
+       })
+   }
+
+   Scene.sceneTitle(gameState, capFirst(planetName) +
+       ' ' + (sceneName ? sceneName : 'Planet'))
+
+   gameState.temp.nodeData = pathData.nodes[sceneName]
+
+   console.log('path data', pathData)
+   return {pathData}
+}
+
+function capFirst(str) {
+    if (!str) return "";
+    return str[0].toUpperCase() + str.slice(1);
 }
 
 // ---------------------------------------------------------------------------
@@ -201,9 +233,13 @@ export function nextButton (gameState, nextScenes){
 }
 
 
+
 export function hintButton (gameState){
     return new GameObjects.Button({originX:300, originY: 25, width:60, height: 60,
-        onclick: () => videoOverlay(gameState, gameState.temp.nodeData.hint),
+        onclick: () => {
+            if (gameState.temp.nodeData)
+                videoOverlay(gameState, gameState.temp.nodeData.hint)
+        },
         label:"?", fontSize: 30,
     })
 }
@@ -275,7 +311,7 @@ export function addWinCon(gameState, condition, nextButton, nextScenes){
 
             unlockScenes(nextScenes.map(s => gameState.stored.planet+'.'+s), gameState.stored)
 
-            videoOverlay(gameState, gameState.temp.nodeData.solution, 500)
+            //videoOverlay(gameState, gameState.temp.nodeData.solution, 500)
         }
     }
 }

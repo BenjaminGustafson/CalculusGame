@@ -24,20 +24,15 @@ function quadraticPlanet(gameState, pathData, goTo) {
 
 
 export async function loadScene(gameState, sceneName, message = {}){
-   gameState.stored.planet = 'quadratic'
-   
-    const pathData = await FileLoading.loadJsonFile('./data/quadraticPlanet.json')
-    
-    Scene.sceneTitle(gameState, 'Quadratic ' + (sceneName ? sceneName : 'Planet'))
-    
-    // Root scene
-    if (!sceneName){
-        quadraticPlanet(gameState, pathData, message.goTo)
-        return
-    }
+   const {pathData} = await Planet.planetLoad(gameState, {
+        planetName:'quadratic',
+        sceneName,
+        tileMap : new TileMap({ yTileOffset: -3, xTileOffset: -7, xImgOffset: -10, yImgOffset: 10}),
+        message,
+    })
 
-    const nextScenes = pathData.nodes[sceneName].next
-
+    const nextScenes = sceneName ? pathData.nodes[sceneName].next : null
+    
     // Sub-scenes
     switch(sceneName){
         case 'ship':{

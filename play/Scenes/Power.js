@@ -22,21 +22,14 @@ function powerPlanet(gameState, pathData, goTo) {
 
 
 export async function loadScene(gameState, sceneName, message = {}){
-    gameState.stored.planet = 'power'
+    const {pathData} = await Planet.planetLoad(gameState, {
+            planetName: 'power',
+            sceneName,
+            tileMap : new TileMap({ yTileOffset: -3, xTileOffset: -7, xImgOffset: -10, yImgOffset: 10}),
+            message,
+    })
 
-    const pathData = await FileLoading.loadJsonFile('./data/powerPlanet.json')
-    
-    Scene.sceneTitle(gameState, 'Power ' + (sceneName ? sceneName : 'Planet'))
-    
-    // Root scene
-    if (!sceneName){
-        powerPlanet(gameState, pathData, message.goTo)
-        console.log(gameState.objects)
-        return
-    }
-    
-
-    const nextScenes = pathData.nodes[sceneName].next
+    const nextScenes = sceneName ? pathData.nodes[sceneName].next : null
 
     const blocks = Planet.standardBlocks('power')
 
