@@ -97,11 +97,11 @@ export function planetScene(gameState, {
                 break
             case 'ship':
                 sprites.push(new GameObjects.ImageObject({
-                    originX:canvasPos.x-50,
+                    originX:canvasPos.x-50-50,
                     originY:canvasPos.y,
                     id:'shipSE'
                 }))
-                button.originX = canvasPos.x+75,
+                button.originX = canvasPos.x+75-50,
                 button.originY = canvasPos.y+200,
                 button.width = 250
                 button.height = 150
@@ -148,7 +148,7 @@ export async function planetLoad(gameState, {planetName, sceneName,
            gameState.stored.completedScenes[planetName + '.1a'] = 'in progress'
        }
        planetScene(gameState, {
-           planetName: 'linear',
+           planetName,
            tileMap,
            pathData: pathData,
            bgImg: planetName + 'PlanetBg',
@@ -311,7 +311,7 @@ export function addWinCon(gameState, condition, nextButton, nextScenes){
 
             unlockScenes(nextScenes.map(s => gameState.stored.planet+'.'+s), gameState.stored)
 
-            videoOverlay(gameState, gameState.temp.nodeData.solution, 500)
+            //videoOverlay(gameState, gameState.temp.nodeData.solution, 500)
         }
     }
 }
