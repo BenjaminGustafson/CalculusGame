@@ -49,6 +49,10 @@ export class Button extends GameObject{
     }
 
     update(ctx, audioManager, mouse){
+        if (this.fitButtonToTextFlag){
+            this.fitButtonToText(ctx)
+            this.fitButtonToTextFlag = false
+        }
         
         Color.setFill(ctx, this.bgColor)
         const buttonColor = this.active ? this.color : Color.gray 
@@ -101,17 +105,35 @@ export class Button extends GameObject{
             radius:10,
         })
 
-        ctx.font = "40px monospace"
-        ctx.textBaseline = 'alphabetic'
-        ctx.textAlign = 'start'
-        Color.setFill(ctx, buttonColor)
-        var text_size = ctx.measureText(this.label)
-        // Adjust to fit inside label
-        const font_size = Math.min(40 * this.width / text_size.width * 0.8 - 10, 40)
-        ctx.font = this.fontSize + "px monospace"
-        text_size = ctx.measureText(this.label)
+        this.setupFont(ctx)
+        Color.setFill(ctx, buttonColor)        
+        const text_size = ctx.measureText(this.label)
         // text baseline = top + half of height + half of font...
         ctx.fillText(this.label, this.originX + this.width/2-text_size.width/2, this.originY + this.height/2 + text_size.actualBoundingBoxAscent/2 + pressY)
     }
+
+    setupFont(ctx){
+        ctx.font = "40px monospace"
+        ctx.textBaseline = 'alphabetic'
+        ctx.textAlign = 'start'
+        ctx.font = this.fontSize + "px monospace"
+    }
+
+    fitButtonToText(ctx){
+        this.setupFont(ctx)
+        const textMeasure = ctx.measureText(this.label)
+        this.width = textMeasure.width + 20
+    }
+
+    setLabel(label){
+        this.label = label
+
+        // Because we need access to the rendering context 
+        // set a flag and call the function on the next update
+        this.fitButtonToTextFlag = true
+    }
+
+    // TODO if needed 
+    // fitTextToButton(){}
 
 }
