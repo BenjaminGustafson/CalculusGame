@@ -162,9 +162,13 @@ export function navScene(gameState) {
     shipViewer.insert(gameState.objects)
 
     // Start button
-    const startButton = new Button({originX: 1050, originY: 150, width: 100, height:60,
+    const startButton = new Button({originX: 1050, originY: 225, width: 100, height:60,
         label:"Check"})
     startButton.insert(gameState.objects)
+
+    const resultText = new TextBox({originX: 1050, originY: 180, 
+        font:'30px monospace'})
+    resultText.insert(gameState.objects)
 
 
     /**
@@ -202,6 +206,7 @@ export function navScene(gameState) {
             case 'Result':
                 shipViewer.state = 'Wait'
                 startButton.active = true
+                resultText.content = tracer.solved ? 'Correct' : 'Incorrect'
                 startButton.bgColor = tracer.solved ? Color.green : Color.red
                 startButton.setLabel("Continue")
                 startButton.onclick = () => {
