@@ -249,6 +249,22 @@ export class MathBlock extends GameObject{
             mainColor: this.isHighlighted ? Color.green : this.bgColor,
             //borderOffset: this.attached ? 0 : 5
         })
+        if (this.parent){
+            Color.setStroke(ctx,textColor)
+            Shapes.Rectangle({
+                ctx: ctx,
+                originX:this.x+1, originY:this.y+1, width:this.w-2, height:this.h-2,
+                radius: 4,
+                lineWidth: 2,
+                fill:false, stroke: true,
+            })
+            Shapes.Rectangle({
+                ctx: ctx,
+                originX:this.x+5, originY:this.y, width:this.w-10, height:this.h,
+                radius: 0,
+                fill:true, stroke: false,
+            })
+        }
         var contentX = this.x + this.padding
         const middleY = this.y + this.h/2
         this.content.forEach( obj => {
