@@ -65,7 +65,7 @@ export async function planetMap (gameState){
 
         const learnProgressText = new TextBox({
             originX: x, originY: 540,
-            content: numComplete + '/' + numPuzzles + ' puzzles complete',
+            content: numComplete + '/' + numPuzzles + ' puzzles solved',
             font: '20px monospace'
         })
 
