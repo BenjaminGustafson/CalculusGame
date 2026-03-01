@@ -85,6 +85,9 @@ export class Shapes {
     //     }
     // }
 
+    /** A rectangle with a darker rectangle below it
+     * creating a 3d-like effect
+     */
     static BorderRect({ctx, originX, originY, width, height, radius = 5, borderOffset=5, mainColor, borderColor}){
         if (borderColor == null)
             borderColor = Color.adjustLightness(mainColor, -50)

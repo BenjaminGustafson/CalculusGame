@@ -55,6 +55,7 @@ export function navScene(gameState) {
     progressBar.value = Math.round(mastery*100)/100
     progressBar.insert(gameState.objects)
 
+    // Mastery text (eg 75% mastery)
     const masteryText = new TextBox({
         originX: 1150, originY: 65,
         content: Math.round(mastery*100) + '% mastery',
@@ -62,26 +63,25 @@ export function navScene(gameState) {
     })
     masteryText.insert(gameState.objects)
 
-
+    // Mastery star icon
     const masteryIcon = new ImageObject({
         originX: 300, originY: 40, id: masteryStar(mastery).toLowerCase()+'Star', width: 30, height:30,
     })
     masteryIcon.insert(gameState.objects)
     
+    // Mastery star text (eg "Gold")
     const masteryStarText = new TextBox({
         originX: 300 + 40 , originY: 40+25,
         content: masteryStar(mastery),
         font: '20px monospace'
     })
     masteryStarText.insert(gameState.objects)
-    
-    const padLeft = 100
-    const gridDim = 400
-    const padBottom = 100
-    const intDist = Math.floor(gameState.stored.totalDistance)
-    const gridY = CANVAS_HEIGHT-padBottom-gridDim
+
+
 
     // Grids
+    const gridY = 900 - 100 - 400
+    
     const gridLeft = new Grid({
         canvasX:100, canvasY:400,
         canvasWidth:400, canvasHeight:400, 
@@ -92,6 +92,7 @@ export function navScene(gameState) {
         xAxisLabel : 'Time'
     })
     gridLeft.insert(gameState.objects)
+
     const gridRight = new Grid({
         canvasX:600, canvasY:gridY,
         canvasWidth:400, canvasHeight:400, 
@@ -160,8 +161,14 @@ export function navScene(gameState) {
     shipViewer.generateAsteroids()
     shipViewer.insert(gameState.objects)
 
-    const startButton = new Button({originX: 1050, originY: 150, width: 100, height:60, label:"Start"})
+    // Start button
+    const startButton = new Button({originX: 1050, originY: 225, width: 100, height:60,
+        label:"Check"})
     startButton.insert(gameState.objects)
+
+    const resultText = new TextBox({originX: 1050, originY: 180, 
+        font:'30px monospace'})
+    resultText.insert(gameState.objects)
 
 
     /**
@@ -185,7 +192,7 @@ export function navScene(gameState) {
         switch (newState){
             case 'Input':
                 mngr.frozen = false
-                startButton.label = "Start"
+                startButton.setLabel("Check")
                 startButton.onclick = () => {changeToState('Trace')}
             break
             case 'Trace':
@@ -199,7 +206,9 @@ export function navScene(gameState) {
             case 'Result':
                 shipViewer.state = 'Wait'
                 startButton.active = true
-                startButton.label = "Next"
+                resultText.content = tracer.solved ? 'Correct' : 'Incorrect'
+                startButton.bgColor = tracer.solved ? Color.green : Color.red
+                startButton.setLabel("Continue")
                 startButton.onclick = () => {
                     loadScene(gameState, 'navigation')
                 }

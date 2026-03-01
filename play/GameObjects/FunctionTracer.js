@@ -1,5 +1,6 @@
 import {Color, Shapes} from '../util/index.js'
 import { GameObject } from "./GameObject.js"
+import { TextBox } from './TextBox.js'
 
 /**
  * 
@@ -57,7 +58,18 @@ export class FunctionTracer extends GameObject{
         this.state = FunctionTracer.STOPPED_AT_END
         this.selectedIndex = null
 
+        // If we want numLabels, make a textbox object
+        if (numLabel){
+            this.numLabel = new TextBox({align: 'right', bgColor: Color.darkBlack})
+            this.numLabel.hidden = true
+        }
+
         this.reset()
+    }
+
+    insert(list, z){
+        super.insert(list, z)
+        if (this.numLabel) this.numLabel.insert(list, 1000)
     }
 
 
@@ -177,6 +189,8 @@ export class FunctionTracer extends GameObject{
         var prevCy = cyObj.y
         var prevOob = cyObj.out
 
+        if (this.numLabel) this.numLabel.hidden = true
+
         // i = the index of the current pixel in gridYs to draw
         for (let i = 1; i <= this.pixelIndex; i++){
             // x = the canvas value of the current pixel
@@ -209,29 +223,12 @@ export class FunctionTracer extends GameObject{
             ctx.closePath()
             if (this.numLabel && ctx.isPointInStroke(mouse.x, mouse.y)){
                 Shapes.Circle({ctx:ctx, centerX:x, centerY:cy, radius: this.lineWidth*1.5})
-                ctx.save()
-                const fontSize = 30
-                ctx.font = `${fontSize}px monospace`
                 const text = '(' + Number((Math.round(this.grid.canvasToGridX(this.grid.canvasX+i)*10)/10).toFixed(1)) 
                     + ',' + Number((Math.round(this.gridYs[i]*10)/10).toFixed(1)) + ')'
-                const textWidth = ctx.measureText(text).width
-                const labelPad = 5
-                const labelRight = x - 10
-                const labelBottom = cy - 10
-                Color.setColor(ctx, Color.gray)
-                Shapes.Rectangle({
-                    ctx: ctx, 
-                    originX: labelRight - labelPad * 2 - textWidth,
-                    originY: labelBottom-fontSize,
-                    width: textWidth + 20,
-                    height: fontSize,
-                    shadow: 8,
-                })
-                ctx.textAlign = 'right'
-                ctx.textBaseline = 'middle'
-                Color.setColor(ctx, Color.white)
-                ctx.fillText(text,labelRight - labelPad, labelBottom-fontSize/2)
-                ctx.restore()
+                this.numLabel.originX = x-10
+                this.numLabel.originY = cy-5
+                this.numLabel.content = text
+                this.numLabel.hidden = false
             }
 
                 

@@ -1,5 +1,5 @@
 import {Color, Shapes} from '../util/index.js'
-import {Button, ImageObject, TextBox} from '../GameObjects/index.js'
+import {Button, ImageObject, ProgressBar, TextBox} from '../GameObjects/index.js'
 import * as Scene from '../Scene.js'
 import * as Header from './Header.js'
 import { GameObjectGroup } from '../GameObjects/GameObject.js'
@@ -34,19 +34,19 @@ export async function planetMap (gameState){
         
 
         const planetName = new TextBox({
-            originX: x, originY: 240,
+            originX: x, originY: 200,
             content: planets[i].name,
             font: '30px monospace'
         })
 
         const planetIcon = new ImageObject({
-            originX: x, originY: 260,
+            originX: x, originY: 220,
             width: 150, height:150,
             id: planets[i].img,
         })
 
         const learnButton = new Button({
-            originX: x, originY: 450,
+            originX: x, originY: 420,
             onclick: () => {
                 gameState.stored.playerLocation = "ship"
                 Scene.loadScene(gameState, planets[i].name.toLowerCase())
@@ -55,9 +55,17 @@ export async function planetMap (gameState){
             width: 100,
         })
 
-        const learnProgress = new TextBox({
+        const learnProgressBar = new ProgressBar({
+            originX : x+10,
+            originY: 500,
+            length: 150,
+            width: 20
+        })
+        learnProgressBar.value = numComplete / numPuzzles
+
+        const learnProgressText = new TextBox({
             originX: x, originY: 540,
-            content: numComplete + '/' + numPuzzles + ' puzzles',
+            content: numComplete + '/' + numPuzzles + ' puzzles solved',
             font: '20px monospace'
         })
 
@@ -94,7 +102,7 @@ export async function planetMap (gameState){
         })
         
 
-        const planetGroup = new GameObjectGroup([learnButton, planetName, planetIcon, practiceButton, learnProgress, masteryText, masteryIcon, masteryStarText])
+        const planetGroup = new GameObjectGroup([learnButton, planetName, planetIcon, practiceButton, learnProgressText, learnProgressBar, masteryText, masteryIcon, masteryStarText])
         planetGroup.insert(gameState.objects)
     }
 
