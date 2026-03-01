@@ -61,15 +61,15 @@ export class FunctionTracer extends GameObject{
         // If we want numLabels, make a textbox object
         if (numLabel){
             this.numLabel = new TextBox({align: 'right', bgColor: Color.darkBlack})
+            this.numLabel.hidden = true
         }
-        this.numLabel.hidden = true
 
         this.reset()
     }
 
     insert(list, z){
         super.insert(list, z)
-        this.numLabel.insert(list, 1000)
+        if (this.numLabel) this.numLabel.insert(list, 1000)
     }
 
 
@@ -189,7 +189,7 @@ export class FunctionTracer extends GameObject{
         var prevCy = cyObj.y
         var prevOob = cyObj.out
 
-        this.numLabel.hidden = true
+        if (this.numLabel) this.numLabel.hidden = true
 
         // i = the index of the current pixel in gridYs to draw
         for (let i = 1; i <= this.pixelIndex; i++){

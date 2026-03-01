@@ -841,11 +841,7 @@ export function planetUnlockOnSolve (gameState, {
         const gss = gameState.stored
         if (gameState.temp.solved){
             if (gss.planetProgress[planetUnlock] == null || gss.planetProgress[planetUnlock] == 'locked')
-                gss.planetProgress[[planetUnlock]] = 'unvisited'
-        
-            if (gss.navPuzzleMastery[gss.planet] == null) {
-                gss.navPuzzleMastery[gss.planet] = 0
-            }
+                gss.planetProgress[[planetUnlock]] = 'unvisited'  
         }
     })
 }
