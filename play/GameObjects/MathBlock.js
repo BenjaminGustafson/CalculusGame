@@ -203,6 +203,7 @@ export class MathBlock extends GameObject{
         child.depth = this.depth + 1
         child.selfChildIndex = i
         child.parent = this
+        child.baseSize = this.baseSize
     }
 
     detachFromParent(){
@@ -374,7 +375,19 @@ export class MathBlock extends GameObject{
        this.draw(ctx)
     }
 
-    
+    checkInBounds(xBound, yBound){
+        if (this.x + this.w > xBound || this.y + this.h > yBound) return false
+        var childrenInBounds = true
+        this.children.forEach(c => {
+            childrenInBounds = childrenInBounds && (c==null || c.checkInBounds())
+        })
+        return childrenInBounds
+    }
+
+    setBaseSize(baseSize){
+        this.baseSize = baseSize
+        this.children.forEach(c => c.setBaseSize(baseSize))
+    }
 
     /**
      * Grammar:
