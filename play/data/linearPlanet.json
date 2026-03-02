@@ -60,25 +60,29 @@
     "x": 15,
     "y": 2,
     "dir": "NE",
-    "next": ["4b", "4c", "5a"]
+    "next": ["4b", "4c", "5a"],
+    "hint": "BgAY1kp_CwM"
 },
 "4b": {
     "x": 16,
     "y": 2,
     "dir": "NE",
-    "next": ["4c"]
+    "next": ["4c"],
+    "hint": "1ePGLytT0OM"
 },
 "4c": {
     "x": 17,
     "y": 2,
     "dir": "NE",
-    "next": ["5a"]
+    "next": ["5a"],
+    "hint": "bisTr4bzzLI"
 },
 "5a": {
     "x": 13,
     "y": 0,
     "dir": "NE",
-    "next": ["5b", "5c", "5d", "6a"]
+    "next": ["5b", "5c", "5d", "6a"],
+    "hint": "Qbq6i7wI75I"
 },
 "5b": {
     "x": 12,
