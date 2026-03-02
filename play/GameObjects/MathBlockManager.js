@@ -384,6 +384,13 @@ export class MathBlockField extends GameObject{
             ctx.beginPath()
             ctx.rect(this.minX, this.minY, this.width, this.height)
             ctx.clip()
+            if (!this.rootBlock.checkInBounds(this.maxX, this.maxY) && this.rootBlock.baseSize > 10){
+                this.rootBlock.setBaseSize(this.rootBlock.baseSize-0.1)
+                console.log('large',this.rootBlock.baseSize)
+            } else if (this.rootBlock.checkInBounds(this.maxX-10, this.maxY-10) && this.rootBlock.baseSize <= 26){
+                this.rootBlock.setBaseSize(this.rootBlock.baseSize+0.1)
+                console.log('small',this.rootBlock.baseSize)
+            }
             this.rootBlock.update(ctx, audioManager, mouse)
             ctx.restore()
             const newString = this.rootBlock.toString()
