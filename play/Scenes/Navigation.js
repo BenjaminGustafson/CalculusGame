@@ -49,12 +49,21 @@ export function navScene(gameState) {
     mathBlockFun.y = 300
     mathBlockFun.insert(gameState.objects)
 
+
     // Progress bar
-    const mastery = gss.practiceMastery[gss.currentPuzzleType]
+    var mastery = 0 
+    if (gss.practiceCategory == 'all'){
+        for (const key in gss.practiceMastery){
+            mastery += gss.practiceMastery[key]
+        }
+        mastery /= Object.keys(gss.practiceMastery).length
+    }else {
+        mastery = gss.practiceMastery[gss.practiceCategory]
+    }
     const progressBar = new ProgressBar({})
     progressBar.value = Math.round(mastery*100)/100
     progressBar.insert(gameState.objects)
-
+    
     // Mastery text (eg 75% mastery)
     const masteryText = new TextBox({
         originX: 1150, originY: 65,
@@ -62,7 +71,7 @@ export function navScene(gameState) {
         font: '20px monospace'
     })
     masteryText.insert(gameState.objects)
-
+    
     // Mastery star icon
     const masteryIcon = new ImageObject({
         originX: 300, originY: 40, id: masteryStar(mastery).toLowerCase()+'Star', width: 30, height:30,
@@ -76,7 +85,7 @@ export function navScene(gameState) {
         font: '20px monospace'
     })
     masteryStarText.insert(gameState.objects)
-
+    
 
 
     // Grids
