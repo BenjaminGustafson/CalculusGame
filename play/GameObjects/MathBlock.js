@@ -250,13 +250,14 @@ export class MathBlock extends GameObject{
             mainColor: this.isHighlighted ? Color.green : this.bgColor,
             //borderOffset: this.attached ? 0 : 5
         })
+        // Draw parentheses
         if (this.parent){
             Color.setStroke(ctx,textColor)
             Shapes.Rectangle({
                 ctx: ctx,
                 originX:this.x+1, originY:this.y+1, width:this.w-2, height:this.h-2,
                 radius: 4,
-                lineWidth: 2,
+                lineWidth: this.baseSize > 15 ? 2 : 1,
                 fill:false, stroke: true,
             })
             Shapes.Rectangle({
@@ -386,7 +387,8 @@ export class MathBlock extends GameObject{
 
     setBaseSize(baseSize){
         this.baseSize = baseSize
-        this.children.forEach(c => c.setBaseSize(baseSize))
+        this.padding = 7/26 * baseSize
+        this.children.forEach(c => {if (c) c.setBaseSize(baseSize)})
     }
 
     /**

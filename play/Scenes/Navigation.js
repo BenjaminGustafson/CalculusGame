@@ -228,7 +228,6 @@ export function navScene(gameState) {
     changeToState('Input')
 
     gameState.update = () => {
-        console.log(state, tracer.state)
         switch (state) {
             case "Input":{
                 if (blockField.rootBlock != null && blockField.rootBlock.toFunction() != null) {
