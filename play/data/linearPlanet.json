@@ -12,44 +12,49 @@
     "y": 6,
     "dir": "NE",
     "next": ["1b", "2a"],
-    "hint": "8vBJUr6Ua4c",
-    "solution": "8vBJUr6Ua4c"
+    "hint": "8vBJUr6Ua4c"
 },
 "1b": {
     "x": 12,
     "y": 6,
     "dir": "NE",
-    "next": ["2a"]
+    "next": ["2a"],
+    "hint": "gL4lpTpIL_4"
 },
 "2a": {
     "x": 15,
     "y": 5,
     "dir": "NE",
-    "next": ["2b", "2c", "3a"]
+    "next": ["2b", "2c", "3a"],
+    "hint": "3_BTtvyQPho"
 },
 "2b": {
     "x": 16,
     "y": 5,
     "dir": "NE",
-    "next": ["2c"]
+    "next": ["2c"],
+    "hint": "mcsg8-I2MQw"
 },
 "2c": {
     "x": 17,
     "y": 5,
     "dir": "NE",
-    "next": ["3a"]
+    "next": ["3a"],
+    "hint": "jdKwcly945I"
 },
 "3a": {
     "x": 13,
     "y": 3,
     "dir": "NE",
-    "next": ["3b", "4a"]
+    "next": ["3b", "4a"],
+    "hint": "w3kSiQz2FYQ"
 },
 "3b": {
     "x": 12,
     "y": 3,
     "dir": "NE",
-    "next": ["4a"]
+    "next": ["4a"],
+    "hint": "LHFYOGYLS9M"
 },
 "4a": {
     "x": 15,
