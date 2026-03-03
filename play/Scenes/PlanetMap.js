@@ -22,11 +22,26 @@ export async function planetMap (gameState){
         {name:'Power', img: 'powerPlanetIcon', data: 'powerPlanet.json'},
         // {name:'Sine', img: 'quadPlanetIcon'},
     ]
+
+    const practiceAllButton = new Button({
+        originX: 700, originY: 750,
+        onclick: () => {
+            gss.practiceCategory = 'all'
+            Scene.loadScene(gameState, 'navigation')
+        },
+        label: "Practice All",
+        width: 210,
+    }).insert(gameState.objects)
     
     for (let i = 0; i < planets.length; i++){
         const planet = planets[i].name.toLowerCase()
         const x = 100 + i * 400
         
+        /**
+         * The best solution while we are still changing things is to just load the 
+         * files and count the number of puzzles. This means that on first load (before the browser caches)
+         * it takes a second to load the planet map.
+         */
         const pathData = await FileLoading.loadJsonFile('./data/'+planets[i].data)
         const numPuzzles = Object.keys(pathData.nodes).length - 1
         const numComplete = Object.entries(gameState.stored.completedScenes)
@@ -106,15 +121,7 @@ export async function planetMap (gameState){
         planetGroup.insert(gameState.objects)
     }
 
-    const practiceAllButton = new Button({
-        originX: 700, originY: 750,
-        onclick: () => {
-            gss.practiceCategory = 'all'
-            Scene.loadScene(gameState, 'navigation')
-        },
-        label: "Practice All",
-        width: 210,
-    }).insert(gameState.objects)
+    
 
 }
 
