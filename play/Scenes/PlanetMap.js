@@ -17,14 +17,14 @@ export async function planetMap (gameState){
     })
 
     const planets = [
-        {name:'Linear', img: 'linearPlanetIcon', data: 'linearPlanet.json'},
-        {name:'Quadratic', img: 'quadPlanetIcon', data: 'quadraticPlanet.json'},
-        {name:'Power', img: 'powerPlanetIcon', data: 'powerPlanet.json'},
-        {name:'Exponential', img: 'exponentialPlanetIcon', data: ''},
-        {name:'Sine', img: 'sinePlanetIcon', data: ''},
-        {name:'Sum', img: 'sumPlanetIcon', data: ''},
-        {name:'Product', img: 'productPlanetIcon', data: ''},
-        {name:'Chain', img: 'chainPlanetIcon', data: ''},
+        {name:'Linear', img: 'linearPlanetIcon', data: 'linearPlanet.json', numPuzzles:20},
+        {name:'Quadratic', img: 'quadPlanetIcon', data: 'quadraticPlanet.json', numPuzzles:23},
+        {name:'Power', img: 'powerPlanetIcon', data: 'powerPlanet.json', numPuzzles:25},
+        {name:'Exponential', img: 'exponentialPlanetIcon', data: '', numPuzzles:1},
+        {name:'Sine', img: 'sinePlanetIcon', data: '', numPuzzles:1},
+        {name:'Sum', img: 'sumPlanetIcon', data: '', numPuzzles:1},
+        {name:'Product', img: 'productPlanetIcon', data: '',numPuzzles:1},
+        {name:'Chain', img: 'chainPlanetIcon', data: '', numPuzzles:1},
     ]
 
     const practiceAllButton = new Button({
@@ -54,17 +54,13 @@ export async function planetMap (gameState){
             width: 100,
         })
         
-        /**
-         * The best solution while we are still changing things is to just load the 
-         * files and count the number of puzzles. This means that on first load (before the browser caches)
-         * it takes a second to load the planet map.
-        */
-        try {
-            const pathData = await FileLoading.loadJsonFile('./data/'+planets[i].data)
-            numPuzzles = Object.keys(pathData.nodes).length - 1
-            numComplete = Object.entries(gameState.stored.completedScenes)
+        // Loading data is slow enough to be annoying, so just hard code the puzzle numbers,
+        // Only thing that would break
+
+        numPuzzles = planets[i].numPuzzles//Object.keys(pathData.nodes).length - 1
+        numComplete = Object.entries(gameState.stored.completedScenes)
             .filter(([key, value]) => key.startsWith(planet) && value === 'complete').length
-        }catch(e){
+        if (numPuzzles == 1){
             learnButton.active = false
         }
         
