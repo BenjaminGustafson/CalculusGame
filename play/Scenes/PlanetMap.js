@@ -91,6 +91,9 @@ export async function planetMap (gameState){
             content: numComplete + '/' + numPuzzles + ' puzzles solved',
             font: '20px monospace'
         })
+        if (numPuzzles == 1){
+            learnProgressText.content = 'No puzzles yet'
+        }
         
         const practiceButton = new Button({
             originX: x, originY: 580,
