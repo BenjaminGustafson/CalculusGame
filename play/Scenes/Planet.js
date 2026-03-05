@@ -346,6 +346,7 @@ export function standardBlocks(planet){
         case 'sum':
             return blocks.slice(0,8)
         case 'product':
+        case 'chain':    
             return blocks.slice(0,9)
     }
     
