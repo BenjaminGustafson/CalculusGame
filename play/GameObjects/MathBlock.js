@@ -172,6 +172,16 @@ export class MathBlock extends GameObject{
         }
     }
 
+
+    attachHoverOff (){
+        this.attachHover = -1
+        for(let i = 0; i < this.children.length; i++){
+            if (this.children[i] != null){
+                this.children[i].attachHoverOff()
+            }
+        }
+    }
+
     /**
      * 
      * @param {*} x 
@@ -179,15 +189,21 @@ export class MathBlock extends GameObject{
      * @returns 
      */
     checkAttach(x,y,w,h){
-        this.attachHover = -1
+        this.attachHoverOff()
+
+        // Check all children for hover
         for(let i = 0; i < this.children.length; i++){
+            // If child has a block attached, recursively call checkAttach
             if (this.children[i] != null){
                 const check = this.children[i].checkAttach(x,y,w,h)
                 if (check != null){
                     return check
                 }
-            }else{
+            }
+            // Otherwise child is empty, and is an attach square
+            else{
                 const a = this.attachSquares[i]
+                // Check if the block's square overlaps with the attach square
                 if (x + w >= a.x && x <= a.x + a.w && y + h >= a.y && y <= a.y + a.h){
                     this.attachHover = i
                     return {block: this, childIndex:i}
