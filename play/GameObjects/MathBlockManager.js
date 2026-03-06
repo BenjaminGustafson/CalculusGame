@@ -137,17 +137,20 @@ export class MathBlockManager extends GameObject{
                 this.grabbed.x = mouse.x - this.grabX
                 this.grabbed.y = mouse.y - this.grabY
 
-                // Check if the grabbed block is hovering over something 
-                this.blockFields.forEach(field => {
-                    // Check hover over other blocks
-                    if (field.rootBlock != null){
-                        field.rootBlock.checkAttach(this.grabbed.x,this.grabbed.y,this.grabbed.w,this.grabbed.h)
-                    } 
-                    // Check hover over an empty field
-                    else {
-                        field.checkAttach(this.grabbed)
-                    }
-                })
+                if (this.grabMoved){
+
+                    // Check if the grabbed block is hovering over something 
+                    this.blockFields.forEach(field => {
+                        // Check hover over other blocks
+                        if (field.rootBlock != null){
+                            field.rootBlock.checkAttach(this.grabbed.x,this.grabbed.y,this.grabbed.w,this.grabbed.h)
+                        } 
+                        // Check hover over an empty field
+                        else {
+                            field.checkAttach(this.grabbed)
+                        }
+                    })
+                }
             }
             // The mathblock is let go
             else{ 
