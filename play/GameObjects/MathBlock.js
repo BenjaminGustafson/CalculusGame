@@ -250,6 +250,11 @@ export class MathBlock extends GameObject{
         })
     }
 
+    /**
+     * Draw the block
+     * 
+     * 
+     */
     draw(ctx){
         ctx.font = this.baseSize+"px monospace"
         ctx.textBaseline = 'middle'
@@ -266,9 +271,16 @@ export class MathBlock extends GameObject{
             mainColor: this.isHighlighted ? Color.green : this.bgColor,
             //borderOffset: this.attached ? 0 : 5
         })
-        // Draw parentheses
+
+        /**
+         * If the block has a parent, it gets parentheses
+         * Parens are drawn by stroking a rounded rect on the border of the block, 
+         * and then an unrounded block to cover the middle
+         */
         if (this.parent){
             Color.setStroke(ctx,textColor)
+            // At defualt baseSize of 26px, the parens are 2 px wide
+            const parenWidth = this.baseSize
             Shapes.Rectangle({
                 ctx: ctx,
                 originX:this.x+1, originY:this.y+1, width:this.w-2, height:this.h-2,
@@ -392,15 +404,18 @@ export class MathBlock extends GameObject{
        this.draw(ctx)
     }
 
+    /**
+     * Checks if the right and bottom edges of the block are within some bound.
+     * Useful for checking if the block is too large to fit in a blockfield.
+     */
     checkInBounds(xBound, yBound){
-        if (this.x + this.w > xBound || this.y + this.h > yBound) return false
-        var childrenInBounds = true
-        this.children.forEach(c => {
-            childrenInBounds = childrenInBounds && (c==null || c.checkInBounds())
-        })
-        return childrenInBounds
+        // We don't need to check the bounds on children, since they are within the bounds of the parent block
+        return this.x + this.w <= xBound && this.y + this.h <= yBound
     }
 
+    /**
+     * Recursively set the baseSize of a block and all its children
+     */
     setBaseSize(baseSize){
         this.baseSize = baseSize
         this.padding = 7/26 * baseSize
