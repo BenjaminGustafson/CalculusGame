@@ -229,6 +229,13 @@ export class MathBlock extends GameObject{
         this.selfChildIndex = null
     }
 
+    /**
+     * Calculate the width w and height h of the block
+     * based off of the text and children it contains
+     * 
+     * Iterate through the content (text, children, and attach squares)
+     * and add padding around all content
+     */
     calculateSize(ctx){
         ctx.font = this.baseSize+"px monospace"
         this.w = this.padding
@@ -251,50 +258,73 @@ export class MathBlock extends GameObject{
     }
 
     /**
-     * Draw the block
-     * 
-     * 
+     * Draw the block's rectangle, parentheses and content
      */
     draw(ctx){
+        // Font setup
         ctx.font = this.baseSize+"px monospace"
         ctx.textBaseline = 'middle'
         ctx.textAlign = 'left'
 
-        const bgColor = this.bgColor
-        const lineColor = this.isHighlighted ? Color.green : this.lineColor
+        // Color setup
+        const bgColor = this.isHighlighted ? Color.green : this.bgColor
         const textColor = this.lineColor
         Color.setFill(ctx, bgColor)
-        Color.setStroke(ctx,lineColor)
-        //ctx.fillRect(this.x,this.y, this.w, this.h)
-        Shapes.BorderRect({ctx:ctx, originX:this.x, originY:this.y, width:this.w, height:this.h,
-            radius : 4,
-            mainColor: this.isHighlighted ? Color.green : this.bgColor,
-            //borderOffset: this.attached ? 0 : 5
+        Color.setStroke(ctx,textColor)
+
+        // Draw the rectangle base of the block
+        const blockRadius = 4
+        if (!this.attached){
+            Color.setFill(ctx,Color.adjustLightness(bgColor, -50))
+            Shapes.Rectangle({ctx:ctx,
+                originX:this.x, originY:this.y + 5, width:this.w, height:this.h,
+                radius : blockRadius,
+            })
+        }
+        Color.setFill(ctx,bgColor)
+        Shapes.Rectangle({ctx:ctx,
+            originX:this.x, originY:this.y, width:this.w, height:this.h,
+            radius : blockRadius,
         })
+
 
         /**
          * If the block has a parent, it gets parentheses
-         * Parens are drawn by stroking a rounded rect on the border of the block, 
-         * and then an unrounded block to cover the middle
          */
         if (this.parent){
-            Color.setStroke(ctx,textColor)
-            // At defualt baseSize of 26px, the parens are 2 px wide
-            const parenWidth = this.baseSize
+            Color.setStroke(ctx,this.lineColor)
+            // At defualt baseSize of 26px, the parens are 4 px wide (half will get clipped)
+            const parenWidth = this.baseSize / 26 * 4
+             // How far the paren extends into the block, default 6
+            const parenLength = this.baseSize / 26 * 6
+            // Set clip to left and right sides of the block
+            ctx.save()
+            let region = new Path2D()
+            region.rect(this.x-10,0,10+parenLength,900)
+            region.rect(this.x+this.w-parenLength,0,10+parenLength,900)
+            ctx.clip(region)
+            // Also clip the block border
+            let region2 = new Path2D()
+            region2.roundRect(this.x, this.y, this.w, this.h, blockRadius)
+            ctx.clip(region2)
+
+            // Stroke a rounded rectangle
             Shapes.Rectangle({
                 ctx: ctx,
-                originX:this.x+1, originY:this.y+1, width:this.w-2, height:this.h-2,
-                radius: 4,
-                lineWidth: this.baseSize > 15 ? 2 : 1,
+                originX:this.x, originY:this.y,
+                width:this.w, height:this.h,
+                originX:this.x, originY:this.y, width:this.w, height:this.h,
+                radius: blockRadius,
+                lineWidth: parenWidth,
                 fill:false, stroke: true,
             })
-            Shapes.Rectangle({
-                ctx: ctx,
-                originX:this.x+5, originY:this.y, width:this.w-10, height:this.h,
-                radius: 0,
-                fill:true, stroke: false,
-            })
+            ctx.restore()
         }
+
+        /**
+         * Loop through the content of the block and draw it
+         * 
+         */
         var contentX = this.x + this.padding
         const middleY = this.y + this.h/2
         this.content.forEach( obj => {
@@ -310,7 +340,7 @@ export class MathBlock extends GameObject{
                     child.draw(ctx)
                     contentX += child.w + this.padding
                 }else{ // Attach square
-                    const squareColor = Color.adjustLightness(bgColor, obj.childIndex == this.attachHover ? 150 : 40)
+                    const squareColor = Color.adjustLightness(this.bgColor, obj.childIndex == this.attachHover ? 150 : 40)
                     const square = {x: contentX, y: middleY - this.baseSize/2, w: this.baseSize, h:this.baseSize}
                     this.attachSquares[obj.childIndex] = square
                     Shapes.BorderRect({ctx:ctx, originX:square.x, originY:square.y, width:square.w, height:square.h, mainColor: squareColor, 

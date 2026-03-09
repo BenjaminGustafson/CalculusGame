@@ -91,14 +91,18 @@ export class Shapes {
     static BorderRect({ctx, originX, originY, width, height, radius = 5, borderOffset=5, mainColor, borderColor}){
         if (borderColor == null)
             borderColor = Color.adjustLightness(mainColor, -50)
+
         Color.setFill(ctx, borderColor)
-        Shapes.Rectangle({ctx, originX, originY: originY + borderOffset, width, height, radius})
+        if (borderOffset != 0)
+            Shapes.Rectangle({ctx, originX, originY: originY + borderOffset, width, height, radius})
 
         Color.setFill(ctx, mainColor)
         Shapes.Rectangle({ctx, originX, originY, width, height, radius})
     }
 
-    static Rectangle({ctx, originX, originY, width, height,
+    static Rectangle({ctx,
+        originX, originY,
+        width, height,
         lineWidth = 5, fill = true, shadow = 0, stroke = false, radius = 5,
         inset = false, recessed = false,
         //inset2d = 0,
@@ -194,7 +198,6 @@ export class Shapes {
      * @param {int} end_y the y coordinate of the middle of the end point
      * @param {int} width the width of the line
     */
-   // Deprecated?
     static LineSegment(ctx, originX, originY, end_x, end_y, width, endpointSize){
         ctx.beginPath();
         ctx.moveTo(originX, originY);
@@ -211,7 +214,6 @@ export class Shapes {
         ctx.fill();
     }
 
-    // Deprecated?
     // A line with rounded endpoints.
     static RoundedLine(ctx, originX, originY, end_x, end_y, width){
         this.LineSegment(ctx, originX, originY, end_x, end_y, width, width/2)
