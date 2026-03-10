@@ -2,15 +2,12 @@ import {Color, Shapes} from '../util/index.js'
 import { GameObject } from "./GameObject.js"
 
 /**
- * 
  * A MathBlock is a draggable rectangle that has a function or operation.
+ * 
  * MathBlocks can nest in each other to form more complex functions.
+ * 
  * MathBlocks are an input option for defining a function in a puzzle.
- * 
- * 
  */
-
-
 export class MathBlock extends GameObject{
 
     static VARIABLE = 'VARIABLE' // m x +b
@@ -19,60 +16,27 @@ export class MathBlock extends GameObject{
     static FUNCTION = 'FUNCTION' // m f([]) +b
     static BIN_OP = 'BIN_OP'   // []+[]
     static CONSTANT = 'CONSTANT' // c
-    static FRACTION = '' // [] / []
+    static FRACTION = 'FRACTION' // [] / []
 
-    depth = 0
     
-    translateY = 0
-    scaleY = 1
-    
-    grabbed = false
-
-    attached = false
-    parent = null
-    /**
-     * If this block is a child, selfChildIndex is the index of this block
-     * in its parent's children array.
-     */
-    selfChildIndex = null
-
-    padding = 7
-    w = 50
-    h = 50
-
-    /**
-     * The block is currently on the toolbar, or was just grabbed
-     * from the toolbar.
-     */
-    onToolBar = false
-
-    /**
-     * The MathBlockField that the block is the root of.
-     * Or null if the block is not the root.
-     */
-    rootOfField = null
-
-    attachHover = -1
-    
-    lineWidth = 1.5
-
-    manager = null
-
-    prefix = ""
-    suffix = ""
-
-    deleted = false
-
     constructor ({
-        type, token = "",
-        originX = -100, originY = -100,
+        // One of the static strings enumerating the types of block
+        type,
+        // The token associated with the block, e.g. e, sin, x, +, *
+        token = "",
+        // The coordinate (originX, originY) is where the block is spawned. 
+        originX = -100,
+        originY = -100,
+        // The font size
         baseSize = 26,
     }){
         super()
-        // originX, _y is where the block is spawned. x,y is where it currently is
-        Object.assign(this, {type, token, originX, originY, baseSize})
+        Object.assign(this, {type,token,originX,originY,baseSize})
+
+        // The block's current coordinates
         this.x = originX
         this.y = originY
+
         switch (type){
             case MathBlock.POWER:
             case MathBlock.EXPONENT:
@@ -87,16 +51,24 @@ export class MathBlock extends GameObject{
                 this.num_children = 0
                 break
         }
+
+        // The blocks attached to this one in left to right order
         this.children = new Array(this.num_children)
+
         /**
          * Attach squares are objects of the form {x,y,w,h}.
+         * They are regions where other blocks can attach
          */
         this.attachSquares = new Array(this.num_children)
-        this.token = token 
-        this.lineColor = Color.white
+        
+        // The main color of the block
         this.bgColor = Color.darkBlack
+
+        // The color of text on the block
+        this.lineColor = Color.white
+
+        // True if the 
         this.isHighlighted = false
-        this.asString = ""
 
         /**
          * If an attach square is currently hovered over, this.attachHover
@@ -106,127 +78,144 @@ export class MathBlock extends GameObject{
          */
         this.attachHover = null
 
-        this.formatType = "inline"
+        // The text on the block in left to right order
         this.content = []
 
+        // TODO
         this.toFunctionStored = null
+        
+        // TODO
         this.functionChanged = false
-    }
 
-    static rehydrate(block) {
-        const obj = new MathBlock({})
+        // How many layers deep the block is, starting at 0
+        this.depth = 0
     
-        // Only copy primitive / safe fields
-        obj.type = block.type
-        obj.token = block.token
-        obj.scaleY = block.scaleY
-        obj.translateY = block.translateY
-        obj.x = block.x
-        obj.y = block.y
-    
-        obj.children = []
-        for (let i = 0; i < block.children.length; i++) {
-            if (block.children[i] != null) {
-                const child = MathBlock.rehydrate(block.children[i])
-                obj.setChild(i, child)
-            }
-        }
-    
-        return obj
-    }
-    
+        // The two slider controls of blocks
+        this.translateY = 0
+        this.scaleY = 1
+        
+        // True when the block is currently grabbed by the mouse
+        this.grabbed = false
 
-    static dehydrate(mathBlock){
-        const children = []
-        mathBlock.children.forEach(c => children.push(MathBlock.dehydrate(c)))
-        return {
-            'type':mathBlock.type,
-            'token':mathBlock.token,
-            'scaleY':mathBlock.scaleY,
-            'translateY':mathBlock.translateY,
-            'x':mathBlock.x,
-            'y':mathBlock.y,
-            'children': children,
-        }
-     }
+        // The block is attached either to a block field or another block
+        this.attached = false
+        
+        // This mathblock that this block is attached to 
+        this.parent = null
 
-    checkGrab(x,y){
-        return x >= this.x && x <= this.x + this.w && y >= this.y && y <= this.y + this.h
-    }
+        // If this block is a child, selfChildIndex is the index of this block
+        // in its parent's children array.
+        this.selfChildIndex = null
 
-    checkGrabRecursive(x,y)
-    {   
-        if (this.checkGrab(x,y)){
-            for (let i = 0; i < this.num_children; i++){
-                const c = this.children[i]
-                if (c == null) continue
+        // The amount of space between elements in the block in px
+        this.padding = 7
 
-                const res = c.checkGrabRecursive(x,y)
-                if (res != null){
-                    return res
-                }
-            }
-            return this
-        }else{
-            return null 
-        }
-    }
+        // The width of the entire block in px
+        this.w = 50
 
+        // The height of the entire block in px
+        this.h = 50
 
-    attachHoverOff (){
+        // The block is currently on the toolbar, or was just grabbed
+        // from the toolbar.
+        this.onToolBar = false
+
+        // The MathBlockField that the block is the root of
+        // or null if the block is not the root.
+        this.rootOfField = null
+
+        // Index of the attach square that is currently highlighted
+        // or -1 if none are highlighted
         this.attachHover = -1
-        for(let i = 0; i < this.children.length; i++){
-            if (this.children[i] != null){
-                this.children[i].attachHoverOff()
-            }
-        }
+
+        // The associalted MathBlockManager
+        this.manager = null
+
+        // Leading text like 2*
+        this.prefix = ""
+
+        // Trailing text like "+10"
+        this.suffix = ""
     }
 
     /**
-     * 
-     * @param {*} x 
-     * @param {*} y 
-     * @returns 
+     * It is only necessary to call update on the root block, 
+     * since the functions called in update all recursively call
+     * on the block's children.
      */
-    checkAttach(x,y,w,h){
-        this.attachHoverOff()
+    update(ctx, audioManager, mouse){
+        this.setContent()
+        this.calculateSize(ctx)
+        this.draw(ctx)
+    }
 
-        // Check all children for hover
-        for(let i = 0; i < this.children.length; i++){
-            // If child has a block attached, recursively call checkAttach
-            if (this.children[i] != null){
-                const check = this.children[i].checkAttach(x,y,w,h)
-                if (check != null){
-                    return check
-                }
+    /**
+     * Determine what the text content of this block is.
+     */
+    setContent(){
+        const ty =  Number(this.translateY.toFixed(6))
+        const sy =  Number(this.scaleY.toFixed(6))
+
+        this.prefix = ""
+        this.suffix = ""
+        if (sy != 1){
+            if (sy == -1){
+                this.prefix = "-"
+            }else{
+                this.prefix = sy.toString()
             }
-            // Otherwise child is empty, and is an attach square
-            else{
-                const a = this.attachSquares[i]
-                // Check if the block's square overlaps with the attach square
-                if (x + w >= a.x && x <= a.x + a.w && y + h >= a.y && y <= a.y + a.h){
-                    this.attachHover = i
-                    return {block: this, childIndex:i}
-                }
+            if (sy == 0){
+                this.prefix = "0"
             }
         }
-        return null
-    }
+        if (ty != 0){
+            if (ty < 0 ){
+                this.suffix = ty.toString()
+            }else{
+                this.suffix = "+" + ty.toString()
+            }
+        }
 
-    setChild(i, child){
-        this.children[i] = child
-        child.attached = true
-        child.depth = this.depth + 1
-        child.selfChildIndex = i
-        child.parent = this
-        child.baseSize = this.baseSize
-    }
-
-    detachFromParent(){
-        this.attached = false
-        this.parent.children[this.selfChildIndex] = null
-        this.parent = null
-        this.selfChildIndex = null
+        switch (this.type){
+            case MathBlock.CONSTANT:{
+                    this.content = [{type:'string', string:ty.toString()}]
+                }
+                break
+            case MathBlock.VARIABLE:
+                this.content = [{type:'string', string:this.prefix + this.token + this.suffix}]
+                break
+            case MathBlock.FUNCTION:{
+                this.content = [
+                    {type:'string', string:this.prefix + this.token },
+                    {type:'child', childIndex:0},
+                    {type:'string', string: this.suffix}]
+            }
+            break
+            case MathBlock.POWER:{
+                this.content = [{type:'string', string:this.prefix},{type:'child', childIndex:0},{type:'string', string:'^' + this.token + this.suffix}] // todo
+            }
+                break
+            case MathBlock.EXPONENT:{
+                this.content = [{type:'string', string:this.prefix + this.token + '^'},{type:'child', childIndex:0},{type:'string', string:this.suffix}]
+            }
+                break
+            case MathBlock.BIN_OP:{
+                this.content = [
+                    {type:'string', string:this.prefix + (this.prefix == '' ? '' : '(')},
+                    {type:'child', childIndex:0},
+                    {type:'string', string:this.token},
+                    {type:'child', childIndex:1},
+                    {type:'string', string: (this.prefix == '' ? '' : ')')+this.suffix},]
+            }   
+                break
+            default:
+                break
+        }
+        this.children.forEach( c => {
+            if (c != null){
+                c.setContent()
+            }
+        })
     }
 
     /**
@@ -354,84 +343,164 @@ export class MathBlock extends GameObject{
 
     }
 
-    setContent(){
-        const ty =  Number(this.translateY.toFixed(6))
-        const sy =  Number(this.scaleY.toFixed(6))
 
-        this.prefix = ""
-        this.suffix = ""
-        if (sy != 1){
-            if (sy == -1){
-                this.prefix = "-"
-            }else{
-                this.prefix = sy.toString()
-            }
-            if (sy == 0){
-                this.prefix = "0"
-            }
+    /**
+     * Convert a MathBlock to an object with just the necessary data
+     * Used when saving a block to storage
+     */
+    static dehydrate(mathBlock){
+        const children = []
+        mathBlock.children.forEach(c => children.push(MathBlock.dehydrate(c)))
+        return {
+            'type':mathBlock.type,
+            'token':mathBlock.token,
+            'scaleY':mathBlock.scaleY,
+            'translateY':mathBlock.translateY,
+            'x':mathBlock.x,
+            'y':mathBlock.y,
+            'children': children,
         }
-        if (ty != 0){
-            if (ty < 0 ){
-                this.suffix = ty.toString()
-            }else{
-                this.suffix = "+" + ty.toString()
-            }
-        }
-
-        switch (this.type){
-            case MathBlock.CONSTANT:{
-                    this.content = [{type:'string', string:ty.toString()}]
-                }
-                break
-            case MathBlock.VARIABLE:
-                this.content = [{type:'string', string:this.prefix + this.token + this.suffix}]
-                break
-            case MathBlock.FUNCTION:{
-                this.content = [
-                    {type:'string', string:this.prefix + this.token },
-                    {type:'child', childIndex:0},
-                    {type:'string', string: this.suffix}]
-            }
-            break
-            case MathBlock.POWER:{
-                this.content = [{type:'string', string:this.prefix},{type:'child', childIndex:0},{type:'string', string:'^' + this.token + this.suffix}] // todo
-            }
-                break
-            case MathBlock.EXPONENT:{
-                this.content = [{type:'string', string:this.prefix + this.token + '^'},{type:'child', childIndex:0},{type:'string', string:this.suffix}]
-            }
-                break
-            case MathBlock.BIN_OP:{
-                this.content = [
-                    {type:'string', string:this.prefix + (this.prefix == '' ? '' : '(')},
-                    {type:'child', childIndex:0},
-                    {type:'string', string:this.token},
-                    {type:'child', childIndex:1},
-                    {type:'string', string: (this.prefix == '' ? '' : ')')+this.suffix},]
-            }   
-                break
-            default:
-                break
-        }
-        this.children.forEach( c => {
-            if (c != null){
-                c.setContent()
-            }
-        })
-    }
-
-    delete(){
-        this.children.forEach(c => {if (c) c.delete()})
-        this.deleted = true
     }
 
     /**
-     * Recursively calls on children; only call update on root block
+     * Convert an object with just data to a MathBlock
+     * Used when loading a block from storage
+     * 
+     * See dehydrate() above
      */
-    update(ctx, audioManager, mouse){
-       this.setContent()
-       this.calculateSize(ctx)
-       this.draw(ctx)
+    static rehydrate(block) {
+        const obj = new MathBlock({})
+    
+        // Only copy primitive / safe fields
+        obj.type = block.type
+        obj.token = block.token
+        obj.scaleY = block.scaleY
+        obj.translateY = block.translateY
+        obj.x = block.x
+        obj.y = block.y
+    
+        obj.children = []
+        for (let i = 0; i < block.children.length; i++) {
+            if (block.children[i] != null) {
+                const child = MathBlock.rehydrate(block.children[i])
+                obj.setChild(i, child)
+            }
+        }
+    
+        return obj
+    }
+    
+    /**
+     * Given a mouse coordinate check if it is grabbing this block
+     * 
+     * Returns true if it should be grabbed
+     */
+    checkGrab(x,y){
+        return x >= this.x && x <= this.x + this.w && y >= this.y && y <= this.y + this.h
+    }
+
+    /**
+     * Check this block and its children to see if any are grabbed by the 
+     * mouse at the given coordinate, (x,y).
+     * 
+     * The child that is highest on top is the one that should be grabbed.
+     * It is the lowest child in the tree.
+     * 
+     * Returns the MathBlock object that is grabbed
+     * Returns null if there is none
+     */
+    checkGrabRecursive(x,y){   
+        if (this.checkGrab(x,y)){
+            for (let i = 0; i < this.num_children; i++){
+                const c = this.children[i]
+                if (c == null) continue
+
+                const res = c.checkGrabRecursive(x,y)
+                if (res != null){
+                    return res
+                }
+            }
+            return this
+        }else{
+            return null 
+        }
+    }
+
+    /**
+     * Turn off all attach squares of this block and its children.
+     * 
+     * Useful to ensure that all squares turn off after an attaching block 
+     * passes over them. 
+     */
+    attachHoverOff (){
+        this.attachHover = -1
+        for(let i = 0; i < this.children.length; i++){
+            if (this.children[i] != null){
+                this.children[i].attachHoverOff()
+            }
+        }
+    }
+
+    /**
+     * Given a rectangular region check if that region is overlapping any 
+     * of this blocks attach squares.
+     * 
+     * If so, return 
+     * {
+     * block: the MathBlock that should be attached to
+     * childIndex: the index of the attach square
+     * }
+     * Otherwise return null
+     * 
+     * Also, sets this.attachHover which changes the color of the attach square. 
+     * 
+     * If multiple squares are overlapped, the leftmost one will be returned.
+     */
+    checkAttach(x,y,w,h){
+        this.attachHoverOff()
+
+        // Check all children for hover
+        for(let i = 0; i < this.children.length; i++){
+            // If child has a block attached, recursively call checkAttach
+            if (this.children[i] != null){
+                const check = this.children[i].checkAttach(x,y,w,h)
+                if (check != null){
+                    return check
+                }
+            }
+            // Otherwise child is empty, and is an attach square
+            else{
+                const a = this.attachSquares[i]
+                // Check if the block's square overlaps with the attach square
+                if (x + w >= a.x && x <= a.x + a.w && y + h >= a.y && y <= a.y + a.h){
+                    this.attachHover = i
+                    return {block: this, childIndex:i}
+                }
+            }
+        }
+        return null
+    }
+
+    /**
+     * Set a given block to be child of this block at index i 
+     */
+    setChild(i, child){
+        this.children[i] = child
+        child.attached = true
+        child.depth = this.depth + 1
+        child.selfChildIndex = i
+        child.parent = this
+        child.baseSize = this.baseSize
+    }
+
+    /**
+     * Remove this block from its parent
+     */
+    detachFromParent(){
+        this.attached = false
+        this.parent.children[this.selfChildIndex] = null
+        this.parent = null
+        this.selfChildIndex = null
     }
 
     /**
@@ -568,7 +637,9 @@ export class MathBlock extends GameObject{
         return block;
     }
 
-
+    /**
+     * Flatten this block and its children into an array
+     */
     toArray (){
         var arr = [this]
         for (let i = 0; i < this.children.length; i++){
@@ -644,6 +715,9 @@ export class MathBlock extends GameObject{
         }
     }
 
+    /**
+     * Convert the block to a human readable string
+     */
     toString(){
         var str = ""
         this.content.forEach(obj =>{

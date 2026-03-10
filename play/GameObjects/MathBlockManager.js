@@ -215,8 +215,6 @@ export class MathBlockManager extends GameObject{
                         }else{
                             audioManager.play('click2')
                             this.highlighted = null
-                            // g.delete()
-                            // this.blocks = this.blocks.filter(o => !o.deleted)
                         }
                     }
                 }
