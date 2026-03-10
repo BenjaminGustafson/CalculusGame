@@ -143,7 +143,7 @@ export class MathBlockManager extends GameObject{
                     this.blockFields.forEach(field => {
                         // Check hover over other blocks
                         if (field.rootBlock != null){
-                            field.rootBlock.checkAttach(this.grabbed.x,this.grabbed.y,this.grabbed.w,this.grabbed.h)
+                            field.rootBlock.checkHover(this.grabbed)
                         } 
                         // Check hover over an empty field
                         else {
@@ -166,28 +166,53 @@ export class MathBlockManager extends GameObject{
                     for (let i = 0; i < this.blockFields.length; i++){
                         const field = this.blockFields[i]
 
+                        function attachToField(){
+                            field.rootBlock = g
+                            g.attached = true
+                            g.rootOfField = field
+                            g.x = field.minX
+                            g.y = field.minY
+                            isAttaching = true
+                        }
+
                         //There is no root
                         if (field.rootBlock == null ){
                             // Attach to field
                             if (field.checkAttach(g)){
                                 audioManager.play('switch9')
-                                field.rootBlock = g
-                                g.attached = true
-                                g.rootOfField = field
-                                g.x = field.minX
-                                g.y = field.minY
-                                isAttaching = true
+                                attachToField()
                                 break
                             }
                         } 
                         // There is a root
                         else {
-                            const attachObj = field.rootBlock.checkAttach(g.x,g.y,g.w,g.h)
-                            // There is a block to attach to
-                            if (attachObj != null){
+                            const hoverObj = field.rootBlock.checkHover(g)
+
+                            // We are hovering something
+                            if (hoverObj != null){
                                 audioManager.play('switch6')
-                                attachObj.block.setChild(attachObj.childIndex, g)
-                                isAttaching = true
+                                // Attach
+                                if (hoverObj.action == 'attach'){
+                                    hoverObj.block.setChild(hoverObj.childIndex, g)
+                                    isAttaching = true
+                                } 
+                                // Swap
+                                else if (hoverObj.action == 'swap'){
+                                    const parent = hoverObj.block.parent
+                                    if (parent){
+                                        parent.setChild(hoverObj.block.selfChildIndex, g)
+                                        isAttaching = true
+                                    }else {
+                                        attachToField()
+                                    }
+                                    for (let i = 0; i < hoverObj.block.numChildren; i++){
+                                        const child = hoverObj.block.children[i]
+                                        if (child){
+                                            child.detachFromParent()
+                                            g.setChild(i,child)
+                                        }
+                                    }
+                                }
                                 break
                             }
                         }

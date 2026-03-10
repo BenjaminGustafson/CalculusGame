@@ -41,25 +41,25 @@ export class MathBlock extends GameObject{
             case MathBlock.POWER:
             case MathBlock.EXPONENT:
             case MathBlock.FUNCTION:
-                this.num_children = 1
+                this.numChildren = 1
                 break
             case MathBlock.BIN_OP:
-                this.num_children = 2
+                this.numChildren = 2
                 break
             case MathBlock.CONSTANT:
             default:
-                this.num_children = 0
+                this.numChildren = 0
                 break
         }
 
         // The blocks attached to this one in left to right order
-        this.children = new Array(this.num_children)
+        this.children = new Array(this.numChildren)
 
         /**
          * Attach squares are objects of the form {x,y,w,h}.
          * They are regions where other blocks can attach
          */
-        this.attachSquares = new Array(this.num_children)
+        this.attachSquares = new Array(this.numChildren)
         
         // The main color of the block
         this.bgColor = Color.darkBlack
@@ -128,6 +128,9 @@ export class MathBlock extends GameObject{
         // or -1 if none are highlighted
         this.attachHover = -1
 
+        // True if the block is being hovered by a swapping block
+        this.swapHover = false
+
         // The associalted MathBlockManager
         this.manager = null
 
@@ -136,6 +139,8 @@ export class MathBlock extends GameObject{
 
         // Trailing text like "+10"
         this.suffix = ""
+
+
     }
 
     /**
@@ -256,13 +261,14 @@ export class MathBlock extends GameObject{
         ctx.textAlign = 'left'
 
         // Color setup
-        const bgColor = this.isHighlighted ? Color.green : this.bgColor
+        var bgColor = this.isHighlighted ? Color.green : this.bgColor
+        if (this.swapHover) bgColor = Color.adjustLightness(bgColor, 50)
         const textColor = this.lineColor
         Color.setFill(ctx, bgColor)
         Color.setStroke(ctx,textColor)
 
         // Draw the rectangle base of the block
-        const blockRadius = 4
+        const blockRadius = this.baseSize * 6 / 26
         if (!this.attached){
             Color.setFill(ctx,Color.adjustLightness(bgColor, -50))
             Shapes.Rectangle({ctx:ctx,
@@ -411,7 +417,7 @@ export class MathBlock extends GameObject{
      */
     checkGrabRecursive(x,y){   
         if (this.checkGrab(x,y)){
-            for (let i = 0; i < this.num_children; i++){
+            for (let i = 0; i < this.numChildren; i++){
                 const c = this.children[i]
                 if (c == null) continue
 
@@ -432,13 +438,26 @@ export class MathBlock extends GameObject{
      * Useful to ensure that all squares turn off after an attaching block 
      * passes over them. 
      */
-    attachHoverOff (){
+    hoverOff (){
         this.attachHover = -1
+        this.swapHover = false
         for(let i = 0; i < this.children.length; i++){
             if (this.children[i] != null){
-                this.children[i].attachHoverOff()
+                this.children[i].hoverOff()
             }
         }
+    }
+
+    checkHover(hoveringBlock){
+        this.hoverOff()
+
+        const attach = this.checkAttach(hoveringBlock.x, hoveringBlock.y, hoveringBlock.w, hoveringBlock.h)
+        if (attach) return attach
+        
+        const swap = this.checkSwap(hoveringBlock.x, hoveringBlock.y, hoveringBlock.w, hoveringBlock.h, hoveringBlock.numChildren)
+        if (swap) return swap
+
+        return null
     }
 
     /**
@@ -457,8 +476,6 @@ export class MathBlock extends GameObject{
      * If multiple squares are overlapped, the leftmost one will be returned.
      */
     checkAttach(x,y,w,h){
-        this.attachHoverOff()
-
         // Check all children for hover
         for(let i = 0; i < this.children.length; i++){
             // If child has a block attached, recursively call checkAttach
@@ -474,11 +491,37 @@ export class MathBlock extends GameObject{
                 // Check if the block's square overlaps with the attach square
                 if (x + w >= a.x && x <= a.x + a.w && y + h >= a.y && y <= a.y + a.h){
                     this.attachHover = i
-                    return {block: this, childIndex:i}
+                    return {action: 'attach', block: this, childIndex:i}
                 }
             }
         }
         return null
+    }
+
+    /**
+     * 
+     * Similar to checkAttach, but look for the deepest block in the tree
+     * that the given region is overlapping.
+     * 
+     * In order to swap, the block must have the same number of children
+     */
+    checkSwap(x,y,w,h, numChildren){
+        // First check children for overlap
+        for(let i = 0; i < this.children.length; i++){
+            if (this.children[i] != null){
+                const check = this.children[i].checkSwap(x,y,w,h, numChildren)
+                if (check != null){
+                    return check
+                }
+            }
+        }
+        // Check if the block can be swapped with this one
+        if (x + w >= this.x && x <= this.x + this.w && y + h >= this.y && y <= this.y + this.h 
+            && this.numChildren == numChildren
+        ){
+            this.swapHover = true
+            return {action: 'swap', block:this}
+        }
     }
 
     /**
