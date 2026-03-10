@@ -379,7 +379,7 @@ function quadMathBlockLevel(gameState, {
     const {sySlider} = Puzzles.mathBlockLevel(gameState, {
         targetBuilder: Puzzles.buildTargetsFromFun({ fun: targetBlock.toFunction(), numTargets: 100, targetOpts: { size: 12 } }),
         blocks: Planet.standardBlocks('quadratic'),
-        sliderOpts: { showAxis:true, increment: 0.5 },
+        sliderOpts: { showAxis:true, increment: 0.1 },
         //gridOpts: {gridXMin:-5 , gridYMin:-5,gridXMax:5, gridYMax:5,},
         tracerOpts: { originGridY: targetBlock.toFunction()(-2) },
         nextScenes: nextScenes,

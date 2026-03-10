@@ -19,7 +19,7 @@ export async function planetMap (gameState){
     const planets = [
         {name:'Linear', img: 'linearPlanetIcon', data: 'linearPlanet.json', numPuzzles:20},
         {name:'Quadratic', img: 'quadPlanetIcon', data: 'quadraticPlanet.json', numPuzzles:23},
-        {name:'Power', img: 'powerPlanetIcon', data: 'powerPlanet.json', numPuzzles:25},
+        {name:'Power', img: 'powerPlanetIcon', data: 'powerPlanet.json', numPuzzles:24},
         {name:'Exponential', img: 'exponentialPlanetIcon', data: '', numPuzzles:1},
         {name:'Sine', img: 'sinePlanetIcon', data: '', numPuzzles:1},
         {name:'Sum', img: 'sumPlanetIcon', data: '', numPuzzles:1},
@@ -91,6 +91,9 @@ export async function planetMap (gameState){
             content: numComplete + '/' + numPuzzles + ' puzzles solved',
             font: '20px monospace'
         })
+        if (numPuzzles == 1){
+            learnProgressText.content = 'No puzzles yet'
+        }
         
         const practiceButton = new Button({
             originX: x, originY: 580,
