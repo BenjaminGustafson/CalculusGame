@@ -348,12 +348,12 @@ export async function loadScene(gameState, sceneName, message = {}){
 
         case '2b':
             populationLevel(gameState, {
-                solutionGrowthRate: 3,
+                solutionGrowthRate: 0.5,
                 initPop: 1,
                 nextScenes,
                 gridSetupOpts:{
                     gridOpts: {
-                        gridYMax:1000,
+                        gridYMax:100,
                     }
                 }
             })
@@ -362,12 +362,12 @@ export async function loadScene(gameState, sceneName, message = {}){
 
         case '2c':
             populationLevel(gameState, {
-                solutionGrowthRate: 0.5,
+                solutionGrowthRate: 3,
                 initPop: 1,
                 nextScenes,
                 gridSetupOpts:{
                     gridOpts: {
-                        gridYMax:100,
+                        gridYMax:1000,
                     }
                 }
             })
@@ -596,7 +596,7 @@ export async function loadScene(gameState, sceneName, message = {}){
         case '5c':
             const targetBlock = MathBlock.parse('[e^[-1*x]]')
             targetBlock.x = 200
-            targetBlock.y = 250
+            targetBlock.y = 250``
             targetBlock.insert(gameState.objects)
 
             const fLabel = new TextBox({font:'30px monospace',baseline: 'top', originX: 100,
@@ -962,11 +962,16 @@ class PetriDish extends GameObject{
     }
 
     update(ctx, audio, mouse){
-        if (this.prevPop != this.population){
-            if (this.prevPop < this.population){
-                audio.play('drop_001',{pitch:Math.random()*2})
+        if (this.prevPop != Math.floor(this.population)){
+            if (this.prevPop < Math.floor(this.population)){
+                console.log(Math.floor(this.prevPop), Math.floor(this.population))
+                for (let i = 0; i < 6; i++){
+                    if (this.prevPop < Math.floor(this.population)+1-Math.pow(2,i)){
+                        audio.play('drop_001',{pitch:Math.random()*6-6*i-6, channel: i})
+                    }
+                }
             }
-            this.prevPop = this.population
+            this.prevPop = Math.floor(this.population)
         }
         Color.setColor(ctx,Color.white)
         Shapes.Circle({ctx:ctx, centerX:this.originX, centerY:this.originY,
@@ -974,7 +979,7 @@ class PetriDish extends GameObject{
 
         ctx.globalAlpha = 0.8
         Color.setColor(ctx, Color.green)
-        for (let i = 0; i< this.population; i++ ){
+        for (let i = 0; i < Math.floor(this.population); i++ ){
             const r =  this.hash01(i*2)*(this.dishRadius-this.cellRadius)
             const theta = this.hash01(i*2+1)*Math.PI*2
             Shapes.Circle({ctx:ctx,centerX: this.originX + Math.cos(theta)*r,
@@ -984,6 +989,3 @@ class PetriDish extends GameObject{
         ctx.globalAlpha = 1
     }
 }
-
-
-
