@@ -500,11 +500,11 @@ function mathBlockTutorials(gameState, {
     ]
     if (withLinear) blocks.push(new GameObjects.MathBlock({ type: GameObjects.MathBlock.VARIABLE, token: 'x' }))
     const sySlider = new GameObjects.Slider({ canvasX: 1200, canvasY: 350, maxValue: 2, sliderLength: 4, startValue: 1, showAxis: true, valueLabel: false })
-    const tySlider = new GameObjects.Slider({ canvasX: withLinear ? 1300 : 1200, canvasY: 350, maxValue: 2, sliderLength: 4, showAxis: true, valueLabel: false, increment:0.5, })
+    const tySlider = new GameObjects.Slider({ canvasX: withLinear ? 1300 : 1200, canvasY: 350, maxValue: 2, sliderLength: 4, showAxis: true, valueLabel: false, increment:0.1, })
 
     const mbField = new GameObjects.MathBlockField({ minX: 600, minY: 100, maxX: 1000, maxY: 300 })
     const mbm = new GameObjects.MathBlockManager({
-        blocks: blocks, toolBarX: 1150, toolBarY: 150, outputType: "sliders",
+        blocks: blocks, outputType: "sliders",
         scaleYSlider: sySlider, translateYSlider: tySlider,
         blockFields: [mbField],
         funTracers: [functionTracer],
@@ -514,18 +514,18 @@ function mathBlockTutorials(gameState, {
         update: function (ctx) {
             if (!withUITip) return
             Color.setColor(ctx, Color.lightGray)
-            Shapes.Line(ctx, 1130, 180, 1030, 180, 5, 'arrow', 10, true)
+            Shapes.Line(ctx, 1370, 200, 1030, 200, 5, 'arrow', 10, true)
             ctx.font = '20px monospace'
             ctx.textAlign = 'left'
             ctx.textBaseline = 'bottom'
-            ctx.fillText('drag and drop', 1030, 120)
+            ctx.fillText('1 drag and drop', 1120, 150)
 
             if (mbField.rootBlock != null) {
                 Shapes.Line(ctx, 1250, 550, 1250, 450, 5, 'arrow', 10, true)
                 ctx.font = '20px monospace'
                 ctx.textAlign = 'left'
                 ctx.textBaseline = 'bottom'
-                ctx.fillText('click and drag', 1270, 500)
+                ctx.fillText('2', 1270, 500)
             }
         }
     }
