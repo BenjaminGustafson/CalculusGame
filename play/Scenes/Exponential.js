@@ -575,7 +575,7 @@ export async function loadScene(gameState, sceneName, message = {}){
                     numSliders,
                     sliderOpts: {
                         circleRadius:15,
-                        increment:0.1,
+                        increment:0.05,
                     },
                 },
                 nextScenes,
@@ -596,7 +596,7 @@ export async function loadScene(gameState, sceneName, message = {}){
         case '5c':
             const targetBlock = MathBlock.parse('[e^[-1*x]]')
             targetBlock.x = 200
-            targetBlock.y = 250``
+            targetBlock.y = 250
             targetBlock.insert(gameState.objects)
 
             const fLabel = new TextBox({font:'30px monospace',baseline: 'top', originX: 100,
@@ -649,7 +649,7 @@ export async function loadScene(gameState, sceneName, message = {}){
                     numSliders,
                     sliderOpts: {
                         circleRadius:15,
-                        increment:1,
+                        increment:0.5,
                     },
                 },
                 nextScenes,
