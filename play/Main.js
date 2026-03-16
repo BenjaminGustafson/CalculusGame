@@ -159,8 +159,6 @@ function setup() {
         mouse.held = false
         mouse.up = true
     });
-
-    canvas.addEventListener("dragstart", e => e.preventDefault());
     
     document.addEventListener('mousemove', e => {
         mouse.moved = true
@@ -168,6 +166,46 @@ function setup() {
         mouse.x = (e.clientX - rect.left) * (canvas.width / rect.width);
         mouse.y = (e.clientY - rect.top) * (canvas.height / rect.height);
     });
+
+
+    var touchPoints = []
+    canvas.addEventListener('touchstart', e => {
+        e.preventDefault();
+        mouse.held = true;
+        mouse.down = true;
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        mouse.x = (touch.clientX - rect.left) * (canvas.width / rect.width);
+        mouse.y = (touch.clientY - rect.top) * (canvas.height / rect.height);
+        touchPoints = []
+        for (const t of e.touches){
+            mouse.x = (t.clientX - rect.left) * (canvas.width / rect.width);
+            mouse.y = (t.clientY - rect.top) * (canvas.height / rect.height);
+            touchPoints.push({ x: mouse.x, y: mouse.y });
+        }
+    });
+    
+    canvas.addEventListener('touchend', e => {
+        e.preventDefault();
+        mouse.held = false;
+        mouse.up = true;
+    });
+    
+    canvas.addEventListener('touchmove', e => {
+        e.preventDefault();
+        mouse.moved = true;
+        const rect = canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        mouse.x = (touch.clientX - rect.left) * (canvas.width / rect.width);
+        mouse.y = (touch.clientY - rect.top) * (canvas.height / rect.height);
+        touchPoints = []
+        for (const t of e.touches){
+            mouse.x = (t.clientX - rect.left) * (canvas.width / rect.width);
+            mouse.y = (t.clientY - rect.top) * (canvas.height / rect.height);
+            touchPoints.push({ x: mouse.x, y: mouse.y });
+        }
+    });
+
 
     document.addEventListener("mouseout", (event) => {
         mouse.held = false
@@ -396,6 +434,8 @@ function setup() {
     allPerformance['background'] = 0
     const ctx = canvas.getContext('2d');
     function update() {
+
+        
         // if (performanceCounter % 1000 == 0) {
         //     const elapsed = performance.now() - performaceStartTime
         //     console.log('===========', elapsed/1000 ,'================')
@@ -467,12 +507,21 @@ function setup() {
         mouse.moved = false
         canvas.style.cursor = mouse.cursor
 
+        // Debug touch points
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        for (const p of touchPoints) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
         window.requestAnimationFrame(update);
     }
 
     update();
 }
 window.onload = setup;
+
 
 
 
