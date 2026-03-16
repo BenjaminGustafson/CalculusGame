@@ -1,7 +1,7 @@
 import {Color, Shapes} from '../util/index.js'
 import { GameObject } from "./GameObject.js"
 import { Label } from './Label.js'
-
+import { IS_MOBILE } from '../Main.js'
 /**
  * TODO: - Minor bug with slider showing label when it is not grabbed
  */
@@ -341,13 +341,17 @@ export class Slider extends GameObject{
     }
 
     mouseOverCircle(x,y){
+        var pad = 0
+        if (IS_MOBILE){
+            pad = 15
+        }
         const square = x => x * x;
         if (this.vertical){
             return square(this.canvasX - x) + square(this.circlePos- y) <=
-                   square(this.circleRadius)
+                   square(this.circleRadius + pad)
         } else {
             return square(this.canvasY - y) + square(this.circlePos - x) <=
-                   square(this.circleRadius)
+                   square(this.circleRadius + pad)
         }
     }
 

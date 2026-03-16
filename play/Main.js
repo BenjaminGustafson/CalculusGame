@@ -43,6 +43,8 @@ import { MathBlock } from './GameObjects/MathBlock.js'
 // "play" release version
 const build = "play"
 
+export const IS_MOBILE = ('ontouchstart' in window) && (window.innerWidth < 1024);
+
 var keysPressed = {}
 
 // Setup - called on page load 
@@ -507,11 +509,17 @@ function setup() {
         mouse.moved = false
         canvas.style.cursor = mouse.cursor
 
-        // Debug touch points
-        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        // Draw touch points
+        if (IS_MOBILE){
+            ctx.fillStyle = 'rgba(0,255,255,0.5)';
+        }else {
+            ctx.fillStyle = 'rgba(255,0,255,0.5)';
+        }
+        // Draw large cyan dots for small mobile, equal to padding size
+        // Draw small magenta dots for large mobile (no padding)
         for (const p of touchPoints) {
             ctx.beginPath();
-            ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
+            ctx.arc(p.x, p.y, IS_MOBILE ? 15 : 5, 0, Math.PI * 2);
             ctx.fill();
         }
 
