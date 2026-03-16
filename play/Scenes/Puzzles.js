@@ -36,6 +36,26 @@ import {Color, Shapes} from '../util/index.js'
 // class Puzzle extends Scene {
 
 // }
+/***
+ * 
+ * Puzzle {
+ *  objects
+ *  options 
+ * 
+ *  constructor(gameState, options){
+ *      
+ *  } 
+ * 
+ *  gridSetup({numGrids, etc}){
+ *      
+ *  }
+ * 
+ *  sliderLevel({gridSetupOpts}){
+ *      gridSetup(gridSetupOpts)
+ *  }
+ * 
+ * }
+ */
 
 
 
@@ -377,25 +397,32 @@ export function sliderLevelFromDdx(gameState, {
     })
 }
 
-
+/**
+ * Three graphs with sliders on the right, tracer in the middle
+ * and targets and tracer on the left.
+ */
 export function tripleGraphSliderLevel(gameState, {
-    targetBuilder,
+    gridSetupOpts,
+    sliderSetupOpts,
     tracerMiddleOpts,
     tracerLeftOpts,
-    sliderSetupOpts,
-    gridSetupOpts,
+    targetBuilder,
     nextScenes,
 }){
+    // Grids
     const gridGroup = gridSetup(gameState, {numGrids:3, spacing:50, 
         topMargin:150, ...gridSetupOpts})
     const grids = gridGroup.objects
 
+    // Sliders
     const sliderGroup = sliderSetup(gameState, {
         grid:grids[2],
         ...sliderSetupOpts
     })
     const sliders = sliderGroup.objects
     sliderLinesSetup(gameState, {sliders: sliders, grid:grids[2]})
+    
+    // Middle tracer
     const tracerMiddle = new IntegralTracer({
         grid: grids[1],
         input: {type:'sliders',
@@ -403,9 +430,12 @@ export function tripleGraphSliderLevel(gameState, {
         },
         ...tracerMiddleOpts,
     })
-
     tracerMiddle.insert(gameState.objects,1)
+
+    // Targets
     const targetGroup = targetBuilder(gameState, grids[0])
+
+    // Left tracer
     const tracerLeft = new IntegralTracer({
         grid: grids[0],
         input: {type:'tracer',
@@ -414,8 +444,8 @@ export function tripleGraphSliderLevel(gameState, {
         targets: targetGroup.objects,
         ...tracerLeftOpts,
     })
-
     tracerLeft.insert(gameState.objects,1)
+    
     Planet.levelNavigation(gameState, {
         winCon: () => tracerLeft.solved,
         nextScenes: nextScenes,
@@ -859,7 +889,7 @@ function mergeWithNested(defaults, overrides = {}, nestedKeys = []) {
     }
   
     return result;
-  }
+}
   
 
 function capFirst(str) {

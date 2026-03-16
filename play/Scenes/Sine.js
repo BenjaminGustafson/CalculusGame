@@ -1,5 +1,6 @@
 import { Color, Shapes } from '../util/index.js'
 import * as GameObjects from '../GameObjects/index.js'
+import { MathBlock } from '../GameObjects/index.js'
 import { GameObject } from '../GameObjects/GameObject.js'
 import * as Planet from './Planet.js'
 import * as Puzzles from './Puzzles.js'
@@ -47,50 +48,34 @@ export async function loadScene(gameState, sceneName, message = {}){
         }
         break
 
-        case '1a': {
-            const numSliders = 8
-            const {sliderGroup, targetGroup} = Puzzles.sliderLevel(gameState, {
-                gridSetupOpts: {gridOpts:{gridXMin:0, gridXMax: 4, gridYMin:-2, gridYMax:2}},
-                sliderSetupOpts: {numSliders: numSliders},
-                tracerOpts: {originGridY: 1},
-                targetBuilder: Puzzles.buildTargetsFromYs({
-                    targetYs: new Array(numSliders).fill(0),
-                    targetOpts: {size:20}, 
-                    indexOffset: 0,
-                }),
-            })
-            Puzzles.addToUpdate(gameState, () => {
-                for (let i = 0; i < numSliders; i++) {
-                    targetGroup.objects[i].setGridYPosition(-sliderGroup.objects[i].value)
-                }
-                if (gameState.temp.solved && !gameState.temp.shownDialogue){
-                    gameState.temp.shownDialogue = true
-                    Puzzles.dialogueOverlay(gameState, {filePath: './dialogue/sineENeg.txt'})
-                }
-            })
-        }
-            break
-        case '2':
-
-            // sineSliderLevel(gameState, {
-            //     numSliders: 4,
-            //     tracerLeftStart:0,
-            //     tracerMiddleStart:-1,
-            // })
-            // sineSliderLevel(gameState, {
-            //     numSliders: 4,
-            //     tracerLeftStart:0,
-            //     tracerMiddleStart:1,
-            // })
-            
-            break
-        case '3':
+        case '1a': 
             sineSliderLevel(gameState, {
-                numSliders: 8,
-                tracerLeftStart:0,
-                tracerMiddleStart:-1,
+                sliderSetupOpts: {numSliders: 4},
+                tracerMiddleOpts: {originGridY: 0},
+                tracerLeftOpts: {originGridY: -1},
             })
             
+            break
+        case '1b':
+            sineSliderLevel(gameState, {
+                sliderSetupOpts: {numSliders: 8},
+                tracerMiddleOpts: {originGridY: 0},
+                tracerLeftOpts: {originGridY: -1},
+            })
+            
+            break
+        case '1c':
+            sineSliderLevel(gameState, {
+                sliderSetupOpts: {numSliders: 16,
+                    sliderOpts: {circleRadius:10, increment: 0.05}
+                },
+                tracerMiddleOpts: {originGridY: -1},
+                tracerLeftOpts: {originGridY: 0},
+                targetOpts: {size:25},
+                gridSetupOpts: {gridOpts:{gridXMin:0,gridXMax:4,gridYMin:-2,gridYMax:2}},
+                withMathBlock: true,
+            })
+
             break
         case '4':
             sineSliderLevel(gameState, {
@@ -148,7 +133,7 @@ export async function loadScene(gameState, sceneName, message = {}){
             sineLevel(gameState, {numSliders:100, sliderSize:5, targetSize:12, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:6,
                     nextScenes:["sine.puzzle.10"], withMathBlock:true, increment:0.05, tracerLeftStart:1, tracerMiddleStart:-1})
             break
-        case '10':
+        case '3a':
             springLevel(gameState, {nextScenes:["sine.puzzle.10"],})
             break
     }
@@ -156,44 +141,50 @@ export async function loadScene(gameState, sceneName, message = {}){
 
 
 
-function sineSliderLevel(gameState, {numSliders, tracerMiddleStart,
-    tracerLeftStart,
-    targetOpts = {size:20},
-    sliderOpts = {size:15},
-    gridOpts = {},
+function sineSliderLevel(gameState, {
+    gridSetupOpts,
+    tracerLeftOpts,
+    tracerMiddleOpts,
+    targetOpts,
+    sliderSetupOpts,
     withMathBlock = false,
 }){
     var rightMargin = 0
     if (withMathBlock){
         rightMargin = 300
-        gridOpts.canvasWidth = 300
-        gridOpts.canvasHeight = 300
+        gridSetupOpts.gridOpts ??= {}
+        gridSetupOpts.gridOpts.canvasWidth = 300
+        gridSetupOpts.gridOpts.canvasHeight = 300
     }else{
-        gridOpts.canvasWidth = 400
-        gridOpts.canvasHeight = 400
+        gridSetupOpts.gridOpts ??= {}
+        gridSetupOpts.gridOpts.canvasWidth = 400
+        gridSetupOpts.gridOpts.canvasHeight = 400
     }
+    
     const {sliderGroup, targetGroup} = Puzzles.tripleGraphSliderLevel(gameState, {
-        gridSetupOpts: {rightMargin:rightMargin},
-        numSliders: numSliders,
-        gridOpts: gridOpts,
-        tracerMiddleOpts: {originGridY: tracerMiddleStart},
-        tracerLeftOpts: {originGridY: tracerLeftStart},
+        gridSetupOpts: {rightMargin, ...gridSetupOpts},
+        sliderSetupOpts,
+        tracerMiddleOpts,
+        tracerLeftOpts,
         targetBuilder: Puzzles.buildTargetsFromYs({
-            targetYs: new Array(numSliders).fill(0),
-            targetOpts: targetOpts, 
-            indexOffset: 0}
+            targetYs: new Array(sliderSetupOpts.numSliders).fill(0),
+            targetOpts, 
+            indexOffset: 1}
         ),
-        sliderOpts: sliderOpts,
     })
+
+    // Set targets to negative slider position
+    const sliders = sliderGroup.objects
     Puzzles.addToUpdate(gameState, () => {
-        for (let i = 0; i < numSliders; i++) {
-            targetGroup.objects[i].setGridYPosition(-sliderGroup.objects[i].value)
+        for (let i = 0; i < sliders.length; i++) {
+            targetGroup.objects[i].setGridYPosition(-sliders[i].value)
         }
     })
+
     if (withMathBlock){
-        sliderGroup.objects.forEach(s => s.clickable = false)
+        //sliderGroup.objects.forEach(s => s.clickable = false)
         Puzzles.addMathBlocksToSliderLevel(gameState, {
-            sliders:sliderGroup.objects,
+            sliders,
             mbSliderOpts: {},
             blocks: [
                 new MathBlock({type:MathBlock.VARIABLE, token:"x"}),
