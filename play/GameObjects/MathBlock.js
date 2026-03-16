@@ -1,5 +1,6 @@
 import {Color, Shapes} from '../util/index.js'
 import { GameObject } from "./GameObject.js"
+import { IS_MOBILE } from '../Main.js'
 
 /**
  * A MathBlock is a draggable rectangle that has a function or operation.
@@ -402,7 +403,14 @@ export class MathBlock extends GameObject{
      * Returns true if it should be grabbed
      */
     checkGrab(x,y){
-        return x >= this.x && x <= this.x + this.w && y >= this.y && y <= this.y + this.h
+        var pad = 0
+        if (IS_MOBILE){
+            pad = 5
+        }
+        return x >= this.x - pad
+            && x <= this.x + this.w + pad
+            && y >= this.y - pad
+            && y <= this.y + this.h + pad 
     }
 
     /**

@@ -1,5 +1,6 @@
 import {Color, Shapes} from '../util/index.js'
 import { GameObject } from './GameObject.js'
+import { IS_MOBILE } from '../Main.js'
 /**
  * A button GameObject
  * 
@@ -59,8 +60,17 @@ export class Button extends GameObject{
         Color.setStroke(ctx,buttonColor)
 
 
+        var pad = 0
+        if (IS_MOBILE){
+            pad = 15
+        }
+
         // If mouse over
-        if (this.active && this.originX <= mouse.x && mouse.x <= this.originX + this.width && this.originY <= mouse.y && mouse.y <= this.originY + this.height){
+        if (this.active 
+            && this.originX <= mouse.x + pad 
+            && mouse.x <= this.originX + this.width + pad 
+            && this.originY <= mouse.y + pad 
+            && mouse.y <= this.originY + this.height + pad ){
             // Mouse pressed on button
             if (mouse.down){
                 mouse.down = false // don't allow clicking multiple things
