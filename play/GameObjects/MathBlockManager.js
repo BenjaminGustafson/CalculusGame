@@ -52,7 +52,7 @@ export class MathBlockManager extends GameObject{
         toolBarY = 150,
         toolBarW = 150,
         toolBarH = 700,
-        blockSize = 40,
+        blockSize = 26,
     }){
         super()
         Object.assign(this,{

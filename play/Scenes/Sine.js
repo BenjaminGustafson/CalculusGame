@@ -71,7 +71,7 @@ export async function loadScene(gameState, sceneName, message = {}){
                 },
                 tracerMiddleOpts: {originGridY: -1},
                 tracerLeftOpts: {originGridY: 0},
-                targetSetupOpts: {targetOpts: {size:15}},
+                targetOpts: {size:25},
                 gridSetupOpts: {gridOpts:{gridXMin:0,gridXMax:4,gridYMin:-2,gridYMax:2}},
                 withMathBlock: true,
             })
@@ -145,7 +145,7 @@ function sineSliderLevel(gameState, {
     gridSetupOpts,
     tracerLeftOpts,
     tracerMiddleOpts,
-    targetOpts = {size:20},
+    targetOpts,
     sliderSetupOpts,
     withMathBlock = false,
 }){
@@ -168,7 +168,7 @@ function sineSliderLevel(gameState, {
         tracerLeftOpts,
         targetBuilder: Puzzles.buildTargetsFromYs({
             targetYs: new Array(sliderSetupOpts.numSliders).fill(0),
-            targetOpts: targetOpts, 
+            targetOpts, 
             indexOffset: 1}
         ),
     })
@@ -182,7 +182,7 @@ function sineSliderLevel(gameState, {
     })
 
     if (withMathBlock){
-        sliderGroup.objects.forEach(s => s.clickable = false)
+        //sliderGroup.objects.forEach(s => s.clickable = false)
         Puzzles.addMathBlocksToSliderLevel(gameState, {
             sliders,
             mbSliderOpts: {},
