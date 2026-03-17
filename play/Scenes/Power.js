@@ -6,19 +6,19 @@ import * as Scene from '../Scene.js'
 import { TileMap } from '../util/TileMap.js'
 
 
-function powerPlanet(gameState, pathData, goTo) {
-    if (!gameState.stored.completedScenes['power.1a']){
-        gameState.stored.completedScenes['power.1a'] = 'in progress'
-    }
-    Planet.planetScene(gameState, {
-        planetName: 'power',
-        tileMap:  new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0}),
-        pathData: pathData,
-        bgImg: 'placeholderBg',
-        fgImg: 'placeholderFg',
-        goTo:goTo,
-    })
-}
+// function powerPlanet(gameState, pathData, goTo) {
+//     if (!gameState.stored.completedScenes['power.1a']){
+//         gameState.stored.completedScenes['power.1a'] = 'in progress'
+//     }
+//     Planet.planetScene(gameState, {
+//         planetName: 'power',
+//         tileMap:  new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0}),
+//         pathData: pathData,
+//         bgImg: 'placeholderBg',
+//         fgImg: 'placeholderFg',
+//         goTo:goTo,
+//     })
+// }
 
 
 export async function loadScene(gameState, sceneName, message = {}){

@@ -61,21 +61,14 @@ function expMBSliderSetup(gameState, {
 }
 
 export async function loadScene(gameState, sceneName, message = {}){
-    gameState.stored.planet = 'exponential'
+    const {pathData} = await Planet.planetLoad(gameState, {
+        planetName: 'exponential',
+        sceneName,
+        tileMap : new TileMap({ yTileOffset: -3, xTileOffset: -7, xImgOffset: -10, yImgOffset: 10}),
+        message,
+    })
 
-    const pathData = await FileLoading.loadJsonFile('./data/exponentialPlanet.json')
-
-    Scene.sceneTitle(gameState, 'Exponential ' + (sceneName ? sceneName : 'Planet'))
-
-    // Root scene
-    if (!sceneName){
-        exponentialPlanet(gameState, pathData, message.goTo)
-        console.log(gameState.objects)
-        return
-    }
-
-    const nextScenes = pathData.nodes[sceneName].next
-
+    const nextScenes = sceneName ? pathData.nodes[sceneName].next : null
     const blocks = Planet.standardBlocks('exponential')
 
     // Sub-scenes
