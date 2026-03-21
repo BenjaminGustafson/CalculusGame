@@ -9,20 +9,6 @@ import * as FileLoading from '../util/FileLoading.js'
 import { TileMap } from '../util/TileMap.js'
 
 
-function exponentialPlanet(gameState, pathData, goTo) {
-    if (!gameState.stored.completedScenes['exponential.1a']){
-        gameState.stored.completedScenes['exponential.1a'] = 'in progress'
-    }
-    Planet.planetScene(gameState, {
-        planetName: 'exponential',
-        tileMap:  new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0}),
-        pathData: pathData,
-        bgImg: 'placeholderBg',
-        fgImg: 'placeholderFg',
-        goTo:goTo,
-    })
-}
-
 function expSliderTargets(gameState, {
     sliders, targets
 }){

@@ -9,36 +9,16 @@ import { TileMap } from '../util/TileMap.js'
 import * as Scene from '../Scene.js'
 
 
-function sinePlanet(gameState, pathData, goTo) {
-    if (!gameState.stored.completedScenes['sine.1a']){
-        gameState.stored.completedScenes['sine.1a'] = 'in progress'
-    }
-    Planet.planetScene(gameState, {
-        planetName: 'sine',
-        tileMap:  new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0}),
-        pathData: pathData,
-        bgImg: 'placeholderBg',
-        fgImg: 'placeholderFg',
-        goTo:goTo,
-    })
-}
-
 export async function loadScene(gameState, sceneName, message = {}){
+    const {pathData} = await Planet.planetLoad(gameState, {
+        planetName: 'sine',
+        sceneName,
+        tileMap : new TileMap({ yTileOffset: -3, xTileOffset: -7, xImgOffset: -10, yImgOffset: 10}),
+        message,
+    })
     gameState.stored.planet = 'sine'
 
-    const pathData = await FileLoading.loadJsonFile('./data/sinePlanet.json')
-
-    Scene.sceneTitle(gameState, 'Sine ' + (sceneName ? sceneName : 'Planet'))
-
-    // Root scene
-    if (!sceneName){
-        sinePlanet(gameState, pathData, message.goTo)
-        console.log(gameState.objects)
-        return
-    }
-
-    const nextScenes = pathData.nodes[sceneName].next
-
+    const nextScenes = sceneName ? pathData.nodes[sceneName].next : null
     const blocks = Planet.standardBlocks('sine')
 
     // Sub-scenes
@@ -51,67 +31,51 @@ export async function loadScene(gameState, sceneName, message = {}){
         case '1a': 
             sineSliderLevel(gameState, {
                 sliderSetupOpts: {numSliders: 4},
-                tracerMiddleOpts: {originGridY: 0},
-                tracerLeftOpts: {originGridY: -1},
+                tracerMiddleOpts: {originGridY: -1},
+                tracerLeftOpts: {originGridY: 0},
+                targetOpts:{size:20}, 
+                nextScenes
             })
-            
             break
         case '1b':
             sineSliderLevel(gameState, {
-                sliderSetupOpts: {numSliders: 8},
-                tracerMiddleOpts: {originGridY: 0},
-                tracerLeftOpts: {originGridY: -1},
+                sliderSetupOpts: {numSliders: 12},
+                tracerMiddleOpts: {originGridY: -1},
+                tracerLeftOpts: {originGridY: 0},
+                targetOpts:{size:20}, 
+                gridSetupOpts: {
+                    gridOpts:{gridXMin:0,gridXMax:6,gridYMin:-3,gridYMax:3}
+                    },
+                nextScenes,
             })
-            
             break
         case '1c':
             sineSliderLevel(gameState, {
-                sliderSetupOpts: {numSliders: 16,
+                sliderSetupOpts: {numSliders: 24,
                     sliderOpts: {circleRadius:10, increment: 0.05}
                 },
                 tracerMiddleOpts: {originGridY: -1},
                 tracerLeftOpts: {originGridY: 0},
                 targetOpts: {size:25},
-                gridSetupOpts: {gridOpts:{gridXMin:0,gridXMax:4,gridYMin:-2,gridYMax:2}},
+                gridSetupOpts: {gridOpts:{gridXMin:0,gridXMax:6,gridYMin:-3,gridYMax:3}},
                 withMathBlock: true,
+                nextScenes
             })
-
             break
-        case '4':
+        case '1d':
             sineSliderLevel(gameState, {
-                numSliders: 12,
-                tracerLeftStart:0,
-                tracerMiddleStart:1,
-                gridOpts:{canvasWidth:400, canvasHeight:400,gridXMin:-3,gridXMax:3,gridYMin:-3,gridYMax:3},
+                sliderSetupOpts: {numSliders: 24,
+                    sliderOpts: {circleRadius:10, increment: 0.05}
+                },
+                tracerMiddleOpts: {originGridY: 1},
+                tracerLeftOpts: {originGridY: 0},
+                targetOpts: {size:25},
+                gridSetupOpts: {gridOpts:{gridXMin:0,gridXMax:6,gridYMin:-3,gridYMax:3}},
+                withMathBlock: true,
+                nextScenes
             })
-            // Solution: -sin(x)
-            // sineLevel(gameState, {numSliders:100, sliderSize:5, targetSize:10, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:6,
-            //         nextScenes:["sine.puzzle.7"], withMathBlock:true, increment:0.05, tracerLeftStart:0, tracerMiddleStart:1})
             break
-        case '5':
-            sineSliderLevel(gameState, {
-                numSliders: 50,
-                tracerLeftStart:0,
-                tracerMiddleStart:-1,
-                targetOpts: {size:15},
-                sliderOpts: {circleRadius:10, increment: 0.05},
-                gridOpts:{gridXMin:0,gridXMax:4,gridYMin:-2,gridYMax:2},
-                withMathBlock:true,
-            })
-            
-            // Puzzles.addToUpdate(gameState, () => {
-            //     for (let i = 0; i < numSliders; i++) {
-            //         targetGroup.objects[i].setGridYPosition(-sliderGroup.objects[i].value)
-            //     }
-            // })
-            // Solution: sin(x)
-            // sineLevel(gameState, {numSliders:40, sliderSize:10, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:4,
-            //         nextScenes:["sine.puzzle.4"], withMathBlock:true, tracerLeftStart:0, tracerMiddleStart:-1})
-            // Too hard
-            // sineLevel(gameState, {numSliders:100, sliderSize:5, targetSize:10, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:6,
-            //         nextScenes:["sine.puzzle.6"], withMathBlock:true, increment:0.05, tracerLeftStart:1, tracerMiddleStart:0})
-            break
-        case '6':
+        case '2a':
             Puzzles.tripleGraphMathBlockLevel(gameState, {
                 targetBuilder: Puzzles.buildTargetsFromFun({fun: x => Math.sin(x), numTargets:200, targetOpts:{size:12}}),
                 tracerMiddleOpts: {originGridY: 1},
@@ -120,20 +84,15 @@ export async function loadScene(gameState, sceneName, message = {}){
                 sliderOpts: {maxValue:10, sliderLength:20, startValue: 1, showAxis:true, increment:1},
             })
             break
-        case '7':
+        case '3a':
             sineLevel(gameState, {numSliders:200, sliderSize:5, targetSize:12, gridYMin:-3, gridYMax:3,gridXMin:0,gridXMax:6,
                     nextScenes:["sine.puzzle.8"], withMathBlock:true, increment:0.05, tracerLeftStart:0, tracerMiddleStart:-2})
             break
-        case '8':
+        case '3b':
             sineLevel(gameState, {numSliders:100, sliderSize:5, targetSize:12, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:6,
                     nextScenes:["sine.puzzle.9"], withMathBlock:true, increment:0.05, tracerLeftStart:0, tracerMiddleStart:-0.5})
             break
-        case '9':
-            // I can't solve my own puzzle! Maybe I just put those starting numbers in by accident
-            sineLevel(gameState, {numSliders:100, sliderSize:5, targetSize:12, gridYMin:-2, gridYMax:2,gridXMin:0,gridXMax:6,
-                    nextScenes:["sine.puzzle.10"], withMathBlock:true, increment:0.05, tracerLeftStart:1, tracerMiddleStart:-1})
-            break
-        case '3a':
+        case '4a':
             springLevel(gameState, {nextScenes:["sine.puzzle.10"],})
             break
     }
@@ -142,12 +101,13 @@ export async function loadScene(gameState, sceneName, message = {}){
 
 
 function sineSliderLevel(gameState, {
-    gridSetupOpts,
+    gridSetupOpts = {},
     tracerLeftOpts,
     tracerMiddleOpts,
     targetOpts,
     sliderSetupOpts,
     withMathBlock = false,
+    nextScenes
 }){
     var rightMargin = 0
     if (withMathBlock){
@@ -171,6 +131,7 @@ function sineSliderLevel(gameState, {
             targetOpts, 
             indexOffset: 1}
         ),
+        nextScenes
     })
 
     // Set targets to negative slider position

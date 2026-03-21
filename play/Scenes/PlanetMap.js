@@ -21,7 +21,7 @@ export async function planetMap (gameState){
         {name:'Quadratic', img: 'quadPlanetIcon', data: 'quadraticPlanet.json', numPuzzles:23},
         {name:'Power', img: 'powerPlanetIcon', data: 'powerPlanet.json', numPuzzles:24},
         {name:'Exponential', img: 'exponentialPlanetIcon', data: 'exponentialPlanet.json', numPuzzles:22},
-        {name:'Sine', img: 'sinePlanetIcon', data: '', numPuzzles:1},
+        {name:'Sine', img: 'sinePlanetIcon', data: 'sinePlanet.json', numPuzzles:20},
         {name:'Sum', img: 'sumPlanetIcon', data: '', numPuzzles:1},
         {name:'Product', img: 'productPlanetIcon', data: '',numPuzzles:1},
         {name:'Chain', img: 'chainPlanetIcon', data: '', numPuzzles:1},
