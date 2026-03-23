@@ -467,8 +467,6 @@ function setup() {
         allPerformance['update'] += performance.now() - performanceTimeStamp
 
         performanceTimeStamp = performance.now()
-
-        // Get rendering context
          
 
         // Draw background
@@ -510,18 +508,18 @@ function setup() {
         canvas.style.cursor = mouse.cursor
 
         // Draw touch points
-        if (IS_MOBILE){
-            ctx.fillStyle = 'rgba(0,255,255,0.5)';
-        }else {
-            ctx.fillStyle = 'rgba(255,0,255,0.5)';
-        }
+        // if (IS_MOBILE){
+        //     ctx.fillStyle = 'rgba(0,255,255,0.5)';
+        // }else {
+        //     ctx.fillStyle = 'rgba(255,0,255,0.5)';
+        // }
         // Draw large cyan dots for small mobile, equal to padding size
         // Draw small magenta dots for large mobile (no padding)
-        for (const p of touchPoints) {
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, IS_MOBILE ? 15 : 5, 0, Math.PI * 2);
-            ctx.fill();
-        }
+        // for (const p of touchPoints) {
+        //     ctx.beginPath();
+        //     ctx.arc(p.x, p.y, IS_MOBILE ? 15 : 5, 0, Math.PI * 2);
+        //     ctx.fill();
+        // }
 
         window.requestAnimationFrame(update);
     }

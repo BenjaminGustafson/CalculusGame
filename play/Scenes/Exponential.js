@@ -9,20 +9,6 @@ import * as FileLoading from '../util/FileLoading.js'
 import { TileMap } from '../util/TileMap.js'
 
 
-function exponentialPlanet(gameState, pathData, goTo) {
-    if (!gameState.stored.completedScenes['exponential.1a']){
-        gameState.stored.completedScenes['exponential.1a'] = 'in progress'
-    }
-    Planet.planetScene(gameState, {
-        planetName: 'exponential',
-        tileMap:  new TileMap({yTileOffset:-3,xTileOffset:-7, xImgOffset:0, yImgOffset:0}),
-        pathData: pathData,
-        bgImg: 'placeholderBg',
-        fgImg: 'placeholderFg',
-        goTo:goTo,
-    })
-}
-
 function expSliderTargets(gameState, {
     sliders, targets
 }){
@@ -61,21 +47,14 @@ function expMBSliderSetup(gameState, {
 }
 
 export async function loadScene(gameState, sceneName, message = {}){
-    gameState.stored.planet = 'exponential'
+    const {pathData} = await Planet.planetLoad(gameState, {
+        planetName: 'exponential',
+        sceneName,
+        tileMap : new TileMap({ yTileOffset: -3, xTileOffset: -7, xImgOffset: -10, yImgOffset: 10}),
+        message,
+    })
 
-    const pathData = await FileLoading.loadJsonFile('./data/exponentialPlanet.json')
-
-    Scene.sceneTitle(gameState, 'Exponential ' + (sceneName ? sceneName : 'Planet'))
-
-    // Root scene
-    if (!sceneName){
-        exponentialPlanet(gameState, pathData, message.goTo)
-        console.log(gameState.objects)
-        return
-    }
-
-    const nextScenes = pathData.nodes[sceneName].next
-
+    const nextScenes = sceneName ? pathData.nodes[sceneName].next : null
     const blocks = Planet.standardBlocks('exponential')
 
     // Sub-scenes
