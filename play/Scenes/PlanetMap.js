@@ -21,7 +21,7 @@ export async function planetMap (gameState){
         {name:'Quadratic', img: 'quadPlanetIcon', data: 'quadraticPlanet.json', numPuzzles:23},
         {name:'Power', img: 'powerPlanetIcon', data: 'powerPlanet.json', numPuzzles:24},
         {name:'Exponential', img: 'exponentialPlanetIcon', data: 'exponentialPlanet.json', numPuzzles:22},
-        {name:'Sine', img: 'sinePlanetIcon', data: 'sinePlanet.json', numPuzzles:20},
+        {name:'Sine', img: 'sinePlanetIcon', data: 'sinePlanet.json', numPuzzles:4},
         {name:'Sum', img: 'sumPlanetIcon', data: '', numPuzzles:1},
         {name:'Product', img: 'productPlanetIcon', data: '',numPuzzles:1},
         {name:'Chain', img: 'chainPlanetIcon', data: '', numPuzzles:1},
@@ -35,7 +35,20 @@ export async function planetMap (gameState){
         },
         label: "Practice All",
         width: 210,
-    }).insert(gameState.objects)
+    })
+    practiceAllButton.insert(gameState.objects)
+
+    const playTestButton = new Button({
+        originX: 1100, originY: 20,
+        onclick: () => {
+            window.open('https://forms.gle/nt2zy22B6rxTzkiN9', '_blank')
+        },
+        label: "Submit Feedback",
+        bgColor: Color.green,
+        width: 300,
+    })
+    playTestButton.insert(gameState.objects)
+
 
     const planetGroups = []
     for (let i = 0; i < planets.length; i++){
